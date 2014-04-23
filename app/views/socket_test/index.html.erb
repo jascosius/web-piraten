@@ -1,0 +1,29 @@
+<h1><%= @message %></h1>
+<script>
+    var dispatcher = new WebSocketRails('localhost:3000/websocket');
+
+    dispatcher.on_open = function(data) {
+        console.log('Connection has been established: ', data);
+        // You can trigger new server events inside this callback if you wish.
+    }
+
+    var success = function(response) {
+        console.log("Wow it worked: ");
+        console.log(response);
+    }
+
+    var failure = function(response) {
+        console.log("That just totally failed: ");
+        console.log(response);
+    }
+
+    var sentTest = function(response){
+        console.log("Test event sent! Response: ");
+        console.log(response);
+    }
+
+    var object_to_send = { data: 'test', data2: "hallo welt" };
+
+    dispatcher.trigger('test', object_to_send, success, failure);
+    dispatcher.bind('test', success);
+</script>

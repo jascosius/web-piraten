@@ -1,0 +1,29 @@
+//= require codemirror
+//= require codemirror/themes/monokai
+//@import "custom_bootstrap/custom_bootstrap";
+
+@CodeMirrorBorderRadius: 5px;
+
+#console {
+  border: dotted 1px #222222;
+//  width: 100%;
+//  height: 200px;
+}
+
+#pirateGrid {
+  /*border: solid 2px #eee;*/
+}
+
+.code-wrapper {
+  .code-controls {
+    margin-bottom: 10px;
+  }
+}
+.CodeMirror {
+  border-radius: @CodeMirrorBorderRadius;
+  height: 340px;
+
+  .CodeMirror-linenumbers {
+    border-radius: @CodeMirrorBorderRadius;
+  }
+}

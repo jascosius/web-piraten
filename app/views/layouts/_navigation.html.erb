@@ -1,0 +1,44 @@
+
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <%= link_to t("app_name"), root_path, class: 'navbar-brand' %>
+
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li <% if current_page? root_path %>class="active" <% end %>>
+                    <%= link_to t("nav.home"), root_path %></li>
+                <li <% if current_page? learn_path %>class="active" <% end %>><%= link_to t("nav.learn"), learn_path %></li>
+            </ul>
+            <!--<div class="navbar-nav navbar-right">-->
+            <!--<span style="color: #FFF"><%= I18n.locale %></span>-->
+            <!--</div>-->
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <!--<%= t("nav.account") %>--> <span class="glyphicon glyphicon-user"></span> <b class="caret"></b>
+                    </a>
+                    <div class="dropdown-menu" id="account-dropdown">
+                        <% if user_signed_in? then %>
+                          <%= t "nav.greeting", :name => current_user.username %><br />
+                          <div class="btn-group">
+                            <%= link_to t("nav.account.logout"), destroy_user_session_path, :method => :delete, :class => "btn btn-default" %>
+                            <%= link_to t("nav.account.edit"), edit_user_registration_path , :class => "btn btn-default" %>
+                          </div>
+                    <% else %>
+                          <%= render 'devise/shared/login_form' %>
+                        <% end %>
+                    </div>
+                </li>
+            </ul>
+        </div><!--/.nav-collapse -->
+
+    </div>
+</div>

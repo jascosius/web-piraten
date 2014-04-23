@@ -1,0 +1,53 @@
+# Files in the config/locales directory are used for internationalization
+# and are automatically loaded by Rails. If you want to use locales other
+# than English, add the necessary files in this directory.
+#
+# To use the locales, use `I18n.t`:
+#
+#     I18n.t 'hello'
+#
+# In views, this is aliased to just `t`:
+#
+#     <%= t('hello') %>
+#
+# To use a different locale, set it with `I18n.locale`:
+#
+#     I18n.locale = :es
+#
+# This would use the information in config/locales/es.yml.
+#
+# To learn more, please read the Rails Internationalization guide
+# available at http://guides.rubyonrails.org/i18n.html.
+
+de:
+  hello: "Hallo Welt"
+  app_name: "WebPiraten"
+  nav:
+    home: "Start"
+    learn: "Lernen"
+    account: "Konto"
+    greeting: "Hallo, %{name}"
+  login:
+    login_label: "Benutzer oder E-Mail"
+    password_label: "Passwort"
+    remember_password_label: "Login merken"
+    login_button: "Anmelden"
+  registration:
+    heading: Registrierung
+  socketConsole:
+    label: "Serververbindung"
+  devise: # authentication gem
+    sessions:
+      signed_in: 'Signed in successfully.'
+    mailer:
+      confirmation_instructions:
+        subject: 'Hello everybody!'
+        user_subject: 'Hello User! Please confirm your email'
+      reset_password_instructions:
+        subject: 'Reset instructions'
+  errors:
+      messages:
+        not_found: "wurde nicht gefunden"
+        not_saved:
+          one: "1 Fehler hat verhindert, dass gespeichert werden konnte:" # %{resource}
+          other: "%{count} Fehler haben verhindert, dass gespeichert werden konnte:" # %{resource}

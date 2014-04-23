@@ -1,0 +1,10 @@
+
+<%= simple_form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+      <%= f.input :login, required: false, autofocus: true, label: false, placeholder: t("login.login_label") %>
+      <%= f.input :password, required: false, label: false, placeholder:t("login.password_label") %>
+      <%= f.input :remember_me, as: :boolean, label: false, inline_label: t("login.remember_password_label") if devise_mapping.rememberable? %>
+
+      <%= f.button :submit, t("login.login_button"), class: "btn-block btn-primary" %>
+<% end %>
+
+<%= render "devise/shared/links" %>
