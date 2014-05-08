@@ -47,12 +47,22 @@ class SocketController <  WebsocketRails::BaseController
     Dir.mktmpdir("session_") {|dir|
       # use the directory...
       open("#{dir}/code.rb", 'w+') { |file| #TODO: Create file as specific linux user
-        puts "Message: #{message[:code]}"
+        #tmp = message[:code].gsub("\n","\nline(3)\n")
+
+
+        i=0
+        code = ""
+        message[:code].each_line {|s| code = code + "line(#{i+=1})\n" + s}
+
+        code = injectShipLogic(code)
+        puts "Message: #{code}"
+
+
 
         #sleep(10)
         File.chmod(0777, file)
         #sleep(1)
-        File.write(file, message[:code])
+        File.write(file, code)
 
         IO.popen "ruby #{File.path(file)}" do |pipe|
 
@@ -69,8 +79,12 @@ class SocketController <  WebsocketRails::BaseController
             if line.include? 'end' then
               puts 'Ausführung abgebrochen!'
               break
+            elsif line.include? 'line'
+              puts line.split('?')[1]
             elsif line.include? 'turnRight' then
                rotateShipRight()
+            elsif line.include? 'turnLeft' then
+               rotateShipLeft()
             elsif line.include? 'move' then
                moveShip()
              end
@@ -98,14 +112,17 @@ class SocketController <  WebsocketRails::BaseController
 
   def injectShipLogic(code)
     'def move
-      `window.ship.move()`
-    end
-    def turnLeft
-      `window.ship.rotateLeft()`
-    end
-    def turnRight
-      `window.ship.rotateRight()`
-    end
+       puts "move"
+     end
+     def turnRight
+       puts "turnRight"
+     end
+     def turnLeft
+       puts "turnLeft"
+     end
+     def line(i)
+       puts "line?#{i}"
+     end
     ' + code
   end
 end
