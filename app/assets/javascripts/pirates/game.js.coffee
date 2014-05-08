@@ -23,7 +23,6 @@ window.grid = new window.Grid canvas, 32
 @ship = new @Ship 2, 4
 @buoy = new @Buoy 5, 4
 
-window.operationHandler = new OperationHandler(ship.move, ship.rotateLeft, ship.rotateRight)
 window.debugHandler = new DebugHandler()
 
 @grid.addObject buoy
@@ -50,10 +49,10 @@ $("#moveBtn").click () ->
 $("#rightBtn").click () ->
   webSocket.trigger "ship.right"
 $("#runBtn").click () ->
-  code = injectShipFunctions window.codeMirror.getValue()
-  console.log code
-  console.log eval(Opal.compile(code))
-  #webSocket.trigger "code", {code: window.codeMirror.getValue()}
+#  code = injectShipFunctions window.codeMirror.getValue()
+#  console.log code
+#  console.log eval(Opal.compile(code))
+  webSocket.trigger "code", {code: window.codeMirror.getValue()}
 
 injectShipFunctions = (code) ->
   "def move\n
