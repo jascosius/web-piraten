@@ -6,6 +6,7 @@
 #= require ./grid
 #= require jquery
 #= require codemirror
+#= require codemirror/addons/selection/active-line
 #= require codemirror/modes/ruby
 #= require codemirror/keymaps/sublime
 # //require opal
@@ -39,7 +40,8 @@ window.onload = () ->
     autofocus: true,
     mode: 'ruby',
     theme: 'monokai',
-    keymap: 'sublime'
+    keymap: 'sublime',
+    styleActiveLine: true
   }
 
 # Click handlers for demo buttons

@@ -27,6 +27,10 @@ class SocketController <  WebsocketRails::BaseController
     WebsocketRails[:operations].trigger(:right)
   end
 
+  def sendLine(line)
+    WebsocketRails[:operations].trigger(:line, line)
+  end
+
   def receive_code
     WebsocketRails[:debug].trigger :console, message[:code]
 
@@ -50,7 +54,7 @@ class SocketController <  WebsocketRails::BaseController
               #TODO Send error to client
               break
             elsif line.include? 'line'
-              puts line.split('?')[1]
+              sendLine line.split('?')[1].to_i
             elsif line.include? 'turnRight'
                rotateShipRight
             elsif line.include? 'turnLeft'
@@ -74,13 +78,11 @@ class SocketController <  WebsocketRails::BaseController
     puts message #TODO: Daten vom Client?
     msg = {:message => 'Message from test_event!'}
     send_message :test, msg
-
   end
 
   private
 
   def preprocessCode
-    # TODO Smart indentation!
     i=0
     code = ''
     message[:code].each_line do |s|

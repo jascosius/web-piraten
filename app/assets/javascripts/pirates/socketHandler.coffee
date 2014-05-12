@@ -54,6 +54,7 @@ class @OperationHandler extends ChannelHandler
 
   constructor: ()->
     super "operations"
+    @lifeTime = 0
     @operationQueue = []
     @channel.bind "line", (data) =>
       @operationQueue.push new Operation("line", data)
@@ -64,15 +65,21 @@ class @OperationHandler extends ChannelHandler
     @channel.bind "move", (data) =>
       @operationQueue.push new Operation("move", data)
 
-  hightlightLine: (data) ->
-    console.log "HightlightLine"
-    console.log data
+  highlightLine: (line) ->
+    line--
+    if @lastLine
+      window.codeMirror.removeLineClass @lastLine, 'background', 'processedLine'
+    window.codeMirror.addLineClass line, 'background', 'processedLine'
+    @lastLine = line
 
   update: (deltaTime) =>
-    if @operationQueue.length < 1
+    if (Config.simulationSpeed > 0 && (@lifeTime % Config.simulationSpeed) != 0) || @operationQueue.length < 1
+      @lifeTime++
       return
+
     currentOp = @operationQueue.shift() # Operation instance
-    console.log currentOp
+    @lifeTime++
+
     switch currentOp.event
       when "left" then ship.rotateLeft_()
       when "right" then ship.rotateRight_()
@@ -80,6 +87,7 @@ class @OperationHandler extends ChannelHandler
       when "line" then @highlightLine currentOp.data
       else
         window.Utils.logError "Invalid event: #{currentOp.event} data: #{currentOp.data}"
+
 
 class @DebugHandler extends ChannelHandler
   logToConsole = (data) ->
