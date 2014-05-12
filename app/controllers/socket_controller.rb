@@ -28,71 +28,40 @@ class SocketController <  WebsocketRails::BaseController
   end
 
   def receive_code
-
-    #code = injectShipLogic message[:code]
-    #puts code
-    #instance_eval(code)
     WebsocketRails[:debug].trigger :console, message[:code]
-    #WebsocketRails[:debug].trigger(:console, Opal.compile(code))
 
-
-    # erstelle temporäre Datei
-
-
-
-    # datei mit zusätzlichem Code anreichern
-    # führe datei mit ruby interpreter aus
-
-    # lösche datei
+    # create temporally file for execution of ruby code
     Dir.mktmpdir("session_") {|dir|
       # use the directory...
       open("#{dir}/code.rb", 'w+') { |file| #TODO: Create file as specific linux user
-        #tmp = message[:code].gsub("\n","\nline(3)\n")
 
-
-        i=0
-        code = ""
-        message[:code].each_line {|s| code = code + "line(#{i+=1})\n" + s}
-
-        code = injectShipLogic(code)
+        code = preprocessCode
         puts "Message: #{code}"
 
-
-
-        #sleep(10)
-        File.chmod(0777, file)
-        #sleep(1)
-        File.write(file, code)
+        File.chmod 0777, file
+        File.write file, code
 
         IO.popen "ruby #{File.path(file)}" do |pipe|
 
-          # until pipe.eof?
-          #   buffer = pipe.gets
-          #   pipe.puts buffer;
-          #   puts "2: #{buffer}"
-          #
-          #   pipe.flush
-          # end
           pipe.sync = true
           until pipe.eof?
             line = pipe.readline
-            if line.include? 'end' then
-              puts 'Ausführung abgebrochen!'
+            if line.include? 'end'
+              #TODO Send error to client
               break
             elsif line.include? 'line'
               puts line.split('?')[1]
-            elsif line.include? 'turnRight' then
-               rotateShipRight()
-            elsif line.include? 'turnLeft' then
-               rotateShipLeft()
-            elsif line.include? 'move' then
-               moveShip()
+            elsif line.include? 'turnRight'
+               rotateShipRight
+            elsif line.include? 'turnLeft'
+               rotateShipLeft
+            elsif line.include? 'move'
+               moveShip
              end
 
             puts line
           end
         end
-        puts 'simulation stopped!'
       }
       # mktmpdir deletes file automatically
     }
@@ -109,6 +78,18 @@ class SocketController <  WebsocketRails::BaseController
   end
 
   private
+
+  def preprocessCode
+    # TODO Smart indentation!
+    i=0
+    code = ''
+    message[:code].each_line do |s|
+      code = code + "line(#{i+=1})\n" + s
+    end
+
+    code = injectShipLogic(code)
+  end
+
 
   def injectShipLogic(code)
     'def move

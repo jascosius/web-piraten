@@ -8,8 +8,8 @@
 #= require codemirror
 #= require codemirror/modes/ruby
 #= require codemirror/keymaps/sublime
-#= require opal
-#= require ./opal-parser.min
+# //require opal
+# //require ./opal-parser.min
 ###
   everything that should be done before the main loop starts
 ###
@@ -23,12 +23,13 @@ window.grid = new window.Grid canvas, 32
 @ship = new @Ship 2, 4
 @buoy = new @Buoy 5, 4
 
+
 window.debugHandler = new DebugHandler()
 
 @grid.addObject buoy
 @grid.addObject ship
 
-#@socketHandler = new @OperationHandler()
+@operationHandler = new @OperationHandler()
 
 
 # Initialize CodeMirror
@@ -97,6 +98,7 @@ mainLoop = () ->
     context.font      = "normal 12pt Arial"
     context.fillText Math.round(fps)+" fps", 10, 20
 
+  operationHandler.update(deltaTime);
   grid.update(deltaTime)
   grid.draw()
 

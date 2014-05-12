@@ -47,15 +47,43 @@ class ChannelHandler
 
 # channel operator for game object operations
 class @OperationHandler extends ChannelHandler
-  constructor: (@actionMap) ->
+#  constructor: (@actionMap) ->
+#    super "operations"
+#    for action, call of actionMap
+#      @channel.bind action, call
+
+  constructor: ()->
     super "operations"
-    for action, call of actionMap
-      @channel.bind action, call
+    @operationQueue = []
+    @channel.bind "line", (data) =>
+      @operationQueue.push new Operation("line", data)
+    @channel.bind "left", (data) =>
+      @operationQueue.push new Operation("left", data)
+    @channel.bind "right", (data) =>
+      @operationQueue.push new Operation("right", data)
+    @channel.bind "move", (data) =>
+      @operationQueue.push new Operation("move", data)
+
+  hightlightLine: (data) ->
+    console.log "HightlightLine"
+    console.log data
+
+  update: (deltaTime) =>
+    if @operationQueue.length < 1
+      return
+    currentOp = @operationQueue.shift() # Operation instance
+    console.log currentOp
+    switch currentOp.event
+      when "left" then ship.rotateLeft_()
+      when "right" then ship.rotateRight_()
+      when "move" then ship.move_()
+      when "line" then @highlightLine currentOp.data
+      else
+        window.Utils.logError "Invalid event: #{currentOp.event} data: #{currentOp.data}"
 
 class @DebugHandler extends ChannelHandler
   logToConsole = (data) ->
     console.log data
-    eval data
   constructor: () ->
     super "debug"
     @channel.bind "console", logToConsole
