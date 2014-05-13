@@ -67,7 +67,7 @@ class @OperationHandler extends ChannelHandler
 
   highlightLine: (line) ->
     line--
-    if @lastLine
+    if @lastLine?
       window.codeMirror.removeLineClass @lastLine, 'background', 'processedLine'
     window.codeMirror.addLineClass line, 'background', 'processedLine'
     @lastLine = line

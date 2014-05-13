@@ -61,23 +61,13 @@ class SocketController <  WebsocketRails::BaseController
                rotateShipLeft
             elsif line.include? 'move'
                moveShip
-             end
-
+            end
             puts line
           end
         end
       }
       # mktmpdir deletes file automatically
     }
-  end
-
-  def test_event
-    puts '=============================='
-    puts 'TEST EVENT!'
-    puts '=============================='
-    puts message #TODO: Daten vom Client?
-    msg = {:message => 'Message from test_event!'}
-    send_message :test, msg
   end
 
   private
