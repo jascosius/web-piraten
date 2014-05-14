@@ -24,34 +24,20 @@ class @Ship extends GameObject
 
   constructor: (@x,@y) ->
     super "PirateShip", Config.shipImage, x, y
-    @actions = []
-#    @actions = [@move, @move, @rotateLeft, @rotateLeft,
-#                @move, @move, @rotateRight, @rotateRight]
+
     @handler = new OperationHandler {
       "left": @rotateLeft
       "move": @move
       "right": @rotateRight
     }
 
-  addToQueue: (fun) =>
-    @actions.push fun
-
   rotateRight: () =>
-    @addToQueue @rotateRight_
-
-  rotateRight_: () =>
     @rotation = (@rotation+1) % 4
 
   rotateLeft: () =>
-    @addToQueue @rotateLeft_
-
-  rotateLeft_: () =>
     @rotation = (@rotation-1) % 4;
     if @rotation < 0 # unexpected js
       @rotation = 4 + @rotation
-
-  monsterInFront: () =>
-    @addToQueue @monsterInFront_
 
   monsterInFront: () => # TODO kann probleme geben, wenn bewegung in queue...
     next = getNextCoordinate(@x,@y,@rotation)
@@ -61,21 +47,10 @@ class @Ship extends GameObject
     false
 
   move: () =>
-    @addToQueue @move_
-
-  move_: () =>
     coords = getNextCoordinate(@x,@y,@rotation)
     @x = coords.x
     @y = coords.y
 
-  update: (deltaTime) => # called every frame
-    if (Config.simulationSpeed > 0 && (@lifeTime % Config.simulationSpeed) != 0) || @actions.length < 1
-      super deltaTime
-      return
-
-    op = @actions.shift()
-    op()
-    super deltaTime # update lifeTime
 
 class @Buoy extends GameObject
   constructor: (x,y)->
