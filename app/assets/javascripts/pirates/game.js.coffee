@@ -44,17 +44,8 @@ jQuery () => # use jQuery to wait until DOM is ready
       styleActiveLine: true
     }
 
-  # Click handlers for demo buttons
-  $("#leftBtn").click () ->
-    webSocket.trigger "ship.left"
-  $("#moveBtn").click () ->
-    webSocket.trigger "ship.move"
-  $("#rightBtn").click () ->
-    webSocket.trigger "ship.right"
+  # Click handlers for the buttons
   $("#runBtn").click () ->
-  #  code = injectShipFunctions window.codeMirror.getValue()
-  #  console.log code
-  #  console.log eval(Opal.compile(code))
     webSocket.trigger "code", {code: window.codeMirror.getValue()}
 
   injectShipFunctions = (code) ->
