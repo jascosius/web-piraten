@@ -69,6 +69,10 @@ class @OperationHandler extends ChannelHandler
     line--
     if @lastLine?
       window.codeMirror.removeLineClass @lastLine, 'background', 'processedLine'
+    else
+      # reset everything when simulation starts (again)
+      window.codeMirror.removeLineClass(i, 'background', 'processedLine') for i in [0..window.codeMirror.lineCount()]
+
     window.codeMirror.addLineClass line, 'background', 'processedLine'
     @lastLine = line
 
@@ -76,17 +80,21 @@ class @OperationHandler extends ChannelHandler
     if (Config.simulationSpeed > 0 && (@lifeTime % Config.simulationSpeed) != 0) || @operationQueue.length < 1
       @lifeTime++
       return
+    repeat = true
+    while repeat
+      currentOp = @operationQueue.shift() # Operation instance
+      @lifeTime++
+      repeat = false
 
-    currentOp = @operationQueue.shift() # Operation instance
-    @lifeTime++
-
-    switch currentOp.event
-      when "left" then ship.rotateLeft_()
-      when "right" then ship.rotateRight_()
-      when "move" then ship.move_()
-      when "line" then @highlightLine currentOp.data
-      else
-        window.Utils.logError "Invalid event: #{currentOp.event} data: #{currentOp.data}"
+      switch currentOp.event
+        when "left" then ship.rotateLeft_()
+        when "right" then ship.rotateRight_()
+        when "move" then ship.move_()
+        when "line"
+          @highlightLine currentOp.data
+          repeat = true
+        else
+          window.Utils.logError "Invalid event: #{currentOp.event} data: #{currentOp.data}"
 
 
 class @DebugHandler extends ChannelHandler
