@@ -17,6 +17,12 @@ class SocketController <  WebsocketRails::BaseController
     WebsocketRails[:operations].trigger(:left)
   end
 
+  def addBuoy # event: ship.addBuoy
+    puts 'AddBuoy!'
+    WebsocketRails[:operations].trigger(:addBuoy)
+  end
+
+
   def moveShip # event: ship.move
     puts 'Move!'
     WebsocketRails[:operations].trigger(:move)
@@ -65,6 +71,8 @@ class SocketController <  WebsocketRails::BaseController
                rotateShipLeft
             elsif line.include? 'move'
                moveShip
+            elsif line.include? 'addBuoy'
+               addBuoy
             elsif !line.equal? ''
               WebsocketRails[:debug].trigger :console, line
             end
@@ -100,6 +108,9 @@ class SocketController <  WebsocketRails::BaseController
      end
      def turnLeft
        puts "turnLeft"
+     end
+     def addBuoy
+       puts "addBuoy"
      end
      def line(i)
        puts "\nline?#{i}"

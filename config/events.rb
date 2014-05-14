@@ -21,5 +21,6 @@ WebsocketRails::EventMap.describe do
     subscribe :left, :to => SocketController, :with_method => :rotateShipLeft
     subscribe :move, :to => SocketController, :with_method => :moveShip
     subscribe :right, :to => SocketController, :with_method => :rotateShipRight
+    subscribe :addBuoy, :to => SocketController, :with_method => :addBuoy
   end
 end

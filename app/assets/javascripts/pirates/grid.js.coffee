@@ -9,11 +9,7 @@ class @Grid
     @gridWidth = Math.floor (@canvasWidth/@size)
     @gridHeight = Math.floor (@canvasHeight/@size)
     @objects = []
-    @objectGrid = new Array(@gridWidth)
 
-    @objectGrid[i] = new Array(@gridHeight) for i in [0.. (@gridWidth-1)]
-
-    @operationQueue = [] # stores every operation the server sends that is not done yet
     @history = [] # list of every operation send by the server
 
     @canvas.addEventListener "mousedown", this.onClick, false;
