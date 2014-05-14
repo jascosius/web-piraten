@@ -64,8 +64,8 @@ class @OperationHandler extends ChannelHandler
       @operationQueue.push new Operation("right", data)
     @channel.bind "move", (data) =>
       @operationQueue.push new Operation("move", data)
-    @channel.bind "addbuoy", (data) =>
-      @operationQueue.push new Operation("addbuoy", data)
+    @channel.bind "addBuoy", (data) =>
+      @operationQueue.push new Operation("addBuoy", data)
 
   highlightLine: (line) ->
 
@@ -93,7 +93,7 @@ class @OperationHandler extends ChannelHandler
         when "left" then ship.rotateLeft()
         when "right" then ship.rotateRight()
         when "move" then ship.move()
-        when "addbuoy" then ship.addbuoy()
+        when "addBuoy" then ship.addBuoy()
         when "line"
           @highlightLine currentOp.data
           repeat = true if @operationQueue.length > 0 && @operationQueue[0].event != "line"

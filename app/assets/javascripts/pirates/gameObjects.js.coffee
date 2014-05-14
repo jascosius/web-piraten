@@ -46,6 +46,12 @@ class @Ship extends GameObject
         return true
     false
 
+  addBuoy: ()=>
+    buoy = new window.Buoy @x, @y
+    window.grid.addObject buoy
+
+
+
   move: () =>
     coords = getNextCoordinate(@x,@y,@rotation)
     @x = coords.x
