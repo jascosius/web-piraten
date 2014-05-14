@@ -48,21 +48,6 @@ jQuery () => # use jQuery to wait until DOM is ready
   $("#runBtn").click () ->
     webSocket.trigger "code", {code: window.codeMirror.getValue()}
 
-  injectShipFunctions = (code) ->
-    "def move\n
-      `window.ship.move()`\n
-    end\n
-    def turnLeft\n
-      `window.ship.rotateLeft()`\n
-    end\n
-    def turnRight\n
-      `window.ship.rotateRight()`\n
-    end\n
-    def monsterInFront\n
-      `window.ship.monsterInFront()`\n
-    end\n
-    #{ code }"
-
   ###
     Main Loop
   ###
