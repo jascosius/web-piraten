@@ -79,6 +79,10 @@ class @OperationHandler extends ChannelHandler
     console.log "Highlighted line #{line}"
     @lastLine = line
 
+  clear: () =>
+    @operationQueue = []
+    window.codeMirror.removeLineClass(i, 'background', 'processedLine') for i in [0..window.codeMirror.lineCount()]
+
   update: (deltaTime) =>
     if (Config.simulationSpeed > 0 && (@lifeTime % Config.simulationSpeed) != 0) || @operationQueue.length < 1
       @lifeTime++

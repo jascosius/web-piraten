@@ -3,6 +3,7 @@
 //@import "custom_bootstrap/custom_bootstrap";
 
 @CodeMirrorBorderRadius: 5px;
+@CodeMirrorDisabledBg: #2f0707;
 
 #console {
   border: dotted 1px #222222;
@@ -23,6 +24,10 @@
 .CodeMirror {
   border-radius: @CodeMirrorBorderRadius;
   height: 340px;
+
+  &.editing-disabled {
+    background: @CodeMirrorDisabledBg;
+  }
 
   .CodeMirror-linenumbers {
     border-radius: @CodeMirrorBorderRadius;

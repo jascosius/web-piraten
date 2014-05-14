@@ -32,6 +32,9 @@ jQuery () => # use jQuery to wait until DOM is ready
   @debugHandler = new DebugHandler()
   @operationHandler = new @OperationHandler()
 
+  @isSimulating = false
+
+  stopButtonHTML = '<span class="glyphicon glyphicon-stop"></span> Stop'
 
   # Initialize CodeMirror
   window.onload = () ->
@@ -45,14 +48,38 @@ jQuery () => # use jQuery to wait until DOM is ready
     }
 
   # Click handlers for the buttons
-  $("#runBtn").click () ->
+
+  # disable buttons and lock CodeMirror
+  toggleCodeMirrorOption = (option, value, def) ->
+    if codeMirror.options[option] != value
+      codeMirror.setOption option, value
+    else codeMirror.setOption option, def
+
+
+  toggleCodeEditing = () ->
+
+    $('.code-controls').toggleClass 'hidden'
+
+    #lock CodeMirror
+    toggleCodeMirrorOption 'readOnly', true, false
+    toggleCodeMirrorOption 'styleActiveLine', false, true
+    $(".code-wrapper .CodeMirror").toggleClass 'editing-disabled'
+
+  $("#runBtn").click () -> # start execution
+    toggleCodeEditing()
     webSocket.trigger "code", {code: window.codeMirror.getValue()}
+  $("#stopBtn").click () -> # start execution
+    operationHandler.clear()
+    toggleCodeEditing()
+
+  $("#debugBtn").click () -> # start execution
+    toggleCodeEditing()
 
   ###
     Main Loop
   ###
   lastRun = 0
-  window.simulate = true
+  window.stopRedrawing = false
   window.showFps = true
 
 
@@ -64,7 +91,7 @@ jQuery () => # use jQuery to wait until DOM is ready
 
 
     Utils.requestAnimFrame mainLoop
-    if(!window.simulate)
+    if(window.stopRedrawing)
       return
 
     # clear screen
