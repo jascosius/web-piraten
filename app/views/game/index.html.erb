@@ -2,22 +2,15 @@
 
   <div class="col-md-4 code-wrapper">
 
-      <div class="row code-controls">
-          <div class="btn-group">
-            <button class="btn btn-default" id="leftBtn">
-                <span class="glyphicon glyphicon-arrow-left"> </span> Left
-            </button>
-            <button class="btn btn-default" id="moveBtn">
-                <span class="glyphicon glyphicon-arrow-up"> </span> Move
-            </button>
-            <button class="btn btn-default" id="rightBtn">
-                <span class="glyphicon glyphicon-arrow-right"> </span> Right
-            </button>
-          </div>
-          <button class="btn btn-default pull-right" id="runBtn">
-              <span class="glyphicon glyphicon-arrow-right"> </span> Ausführen
+      <div class="row code-controls pull-right">
+          <button class="btn btn-default" id="debugBtn">
+              <span class="glyphicon glyphicon-search"> </span> Debug
+          </button>
+          <button class="btn btn-default" id="runBtn">
+              <span class="glyphicon glyphicon-play"> </span> Ausführen
           </button>
       </div>
+      <div class="clearfix"></div>
       <div class="row">
 
 <!-- no indentation because CodeMirror would display it -->
@@ -33,6 +26,17 @@ end
       </div>
   </div>
   <div class="col-md-8 grid-wrapper">
+      <div class="btn-group gameObject-controls">
+          <button class="btn btn-default" id="addTreasure">
+              <span class="glyphicon glyphicon-arrow-left"> </span> Schatz
+          </button>
+          <button class="btn btn-default" id="addMonster">
+              <span class="glyphicon glyphicon-arrow-up"> </span> Kraken
+          </button>
+          <button class="btn btn-default" id="addWave">
+              <span class="glyphicon glyphicon-arrow-right"> </span> Welle
+          </button>
+      </div>
       <canvas width="700" height="400" id="pirateGrid">Your browser is not supported!</canvas>
   </div>
 </div>
