@@ -33,6 +33,10 @@ class SocketController <  WebsocketRails::BaseController
 
   def receive_code
     WebsocketRails[:debug].trigger :console, message[:code]
+    puts '================================='
+    puts '===== received operation========='
+    puts '================================='
+    puts ''
 
     # create temporally file for execution of ruby code
     Dir.mktmpdir("session_") {|dir|
@@ -61,8 +65,11 @@ class SocketController <  WebsocketRails::BaseController
                rotateShipLeft
             elsif line.include? 'move'
                moveShip
+            elsif !line.equal? ''
+              WebsocketRails[:debug].trigger :console, line
             end
-            puts line
+            puts "has \\n? #{line.eql? '\n'} #{line.eql? "\n"} #{line.equal? '\n'} #{line.equal? "\n"}"
+            puts line.dump
           end
         end
       }
@@ -76,7 +83,8 @@ class SocketController <  WebsocketRails::BaseController
     i=0
     code = ''
     message[:code].each_line do |s|
-      code = code + "line(#{i+=1})\n" + s
+      code += s + "line(#{i})\n"
+      i += 1
     end
 
     code = injectShipLogic(code)
@@ -94,8 +102,8 @@ class SocketController <  WebsocketRails::BaseController
        puts "turnLeft"
      end
      def line(i)
-       puts "line?#{i}"
+       puts "\nline?#{i}"
      end
-    ' + code
+' + code
   end
 end
