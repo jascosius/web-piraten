@@ -68,7 +68,7 @@ class @OperationHandler extends ChannelHandler
       @operationQueue.push new Operation("addbuoy", data)
 
   highlightLine: (line) ->
-    line--
+
     if @lastLine?
       window.codeMirror.removeLineClass @lastLine, 'background', 'processedLine'
     else
@@ -76,6 +76,7 @@ class @OperationHandler extends ChannelHandler
       window.codeMirror.removeLineClass(i, 'background', 'processedLine') for i in [0..window.codeMirror.lineCount()]
 
     window.codeMirror.addLineClass line, 'background', 'processedLine'
+    console.log "Highlighted line #{line}"
     @lastLine = line
 
   update: (deltaTime) =>
@@ -95,7 +96,7 @@ class @OperationHandler extends ChannelHandler
         when "addbuoy" then ship.addbuoy()
         when "line"
           @highlightLine currentOp.data
-          repeat = true
+          repeat = true if @operationQueue.length > 0 && @operationQueue[0].event != "line"
         else
           window.Utils.logError "Invalid event: #{currentOp.event} data: #{currentOp.data}"
 
