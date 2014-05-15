@@ -1,16 +1,14 @@
 #= require websocket_rails/main
+#= require codemirror
+#= require codemirror/addons/selection/active-line
+#= require codemirror/modes/ruby
+#= require codemirror/keymaps/sublime
+#= require jquery
 #= require ./config
 #= require ./utilities
 #= require ./socketHandler
 #= require ./gameObjects
 #= require ./grid
-#= require jquery
-#= require codemirror
-#= require codemirror/addons/selection/active-line
-#= require codemirror/modes/ruby
-#= require codemirror/keymaps/sublime
-# //require opal
-# //require ./opal-parser.min
 ###
   everything that should be done before the main loop starts
 ###
@@ -34,18 +32,18 @@ jQuery () => # use jQuery to wait until DOM is ready
 
   @isSimulating = false
 
-  stopButtonHTML = '<span class="glyphicon glyphicon-stop"></span> Stop'
-
   # Initialize CodeMirror
-  window.onload = () ->
-    window.codeMirror = CodeMirror.fromTextArea document.getElementById("codemirror"), {
-      lineNumbers: true,
-      autofocus: true,
-      mode: 'ruby',
-      theme: 'monokai',
-      keymap: 'sublime',
-      styleActiveLine: true
-    }
+  @codeMirror = CodeMirror.fromTextArea document.getElementById("codemirror"), {
+    lineNumbers: true,
+    autofocus: true,
+    tabMode: 'spaces',
+    enterMode: 'spaces'
+    mode: 'ruby',
+    theme: 'monokai',
+    keymap: 'sublime',
+    styleActiveLine: true,
+  }
+  $('#codeMirror-loading').hide()
 
   # Click handlers for the buttons
 
@@ -64,6 +62,7 @@ jQuery () => # use jQuery to wait until DOM is ready
     toggleCodeMirrorOption 'readOnly', true, false
     toggleCodeMirrorOption 'styleActiveLine', false, true
     $(".code-wrapper .CodeMirror").toggleClass 'editing-disabled'
+    @isSimulating = !@isSimulating
 
   $("#runBtn").click () -> # start execution
     toggleCodeEditing()
