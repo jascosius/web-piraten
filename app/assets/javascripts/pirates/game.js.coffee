@@ -41,7 +41,7 @@ jQuery () => # use jQuery to wait until DOM is ready
     mode: 'ruby',
     theme: 'monokai',
     keymap: 'sublime',
-    styleActiveLine: true,
+    styleActiveLine: true
   }
   $('#codeMirror-loading').hide()
 
