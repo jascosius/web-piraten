@@ -3,14 +3,25 @@
   <div class="col-md-4 code-wrapper">
 
       <div class="row code-controls pull-right">
-          <button class="btn btn-default" id="debugBtn">
-              <span class="glyphicon glyphicon-search"> </span> Debug
-          </button>
-          <button class="btn btn-default" id="runBtn">
-              <span class="glyphicon glyphicon-play"> </span> Ausführen
-          </button>
+          <div class="btn-group">
+              <button type="button" class="btn btn-success" id="runBtn">
+                  <span class="glyphicon glyphicon-play"> </span> Ausführen
+              </button>
+              <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                  <span class="caret"></span>
+                  <span class="sr-only">Toggle Dropdown</span>
+              </button>
+              <ul class="dropdown-menu" role="menu">
+                  <li><a id="debugBtn" style="cursor: pointer">
+                      <span class="glyphicon glyphicon-search"> </span> Debug
+                  </a></li>
+              </ul>
+          </div>
       </div>
       <div class="row code-controls pull-right hidden" id="disabled-state-controls">
+          <button class="btn btn-default" id="resetBtn">
+              <span class="glyphicon glyphicon-step-backward"> </span> Reset
+          </button>
           <button class="btn btn-default" id="stopBtn">
               <span class="glyphicon glyphicon-stop"> </span> Stop
           </button>

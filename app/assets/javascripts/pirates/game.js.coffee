@@ -72,6 +72,10 @@ jQuery () => # use jQuery to wait until DOM is ready
     operationHandler.clear()
     toggleCodeEditing()
 
+  $("#resetBtn").click () -> # start execution
+    operationHandler.clear()
+    toggleCodeEditing()
+
   $("#debugBtn").click () -> # start execution
     toggleCodeEditing()
 
