@@ -47,10 +47,12 @@ class @Ship extends GameObject
     false
 
   addBuoy: ()=>
-    buoy = new window.Buoy @x, @y
-    window.grid.addObject buoy
-
-
+    for obj in window.grid.objects
+      if obj.x == @x && obj.y == @y && obj != this
+        Utils.logError "hier ist kein Platz mehr für eine Boje"
+      else
+        buoy = new window.Buoy @x, @y
+        window.grid.addObject buoy
 
   move: () =>
     coords = getNextCoordinate(@x,@y,@rotation)

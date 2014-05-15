@@ -78,9 +78,40 @@ jQuery () => # use jQuery to wait until DOM is ready
   $("#debugBtn").click () -> # start execution
     toggleCodeEditing()
 
-  ###
-    Main Loop
-  ###
+  $(".gameObject-controls button").click () ->
+    $(".gameObject-controls button").removeClass "btn-success"
+    $(this).addClass "btn-success"
+
+
+  @onKeyDown= (event) =>
+    console.log(document.activeElement)
+    switch event.keyCode
+      when 49
+        $(".gameObject-controls button").removeClass "btn-success"
+        $("#addTreasure").addClass "btn-success"
+      when 50
+        $(".gameObject-controls button").removeClass "btn-success"
+        $("#addMonster").addClass "btn-success"
+      when 51
+        $(".gameObject-controls button").removeClass "btn-success"
+        $("#addWave").addClass "btn-success"
+
+
+  @window.addEventListener "keydown", onKeyDown, false
+
+  @creatObjectFromButton= (x, y) =>
+    found = $(".gameObject-controls .btn-success")
+    switch found.attr 'id'
+        when 'addWave'
+          buoy = new window.Buoy x, y
+          window.grid.addObject buoy
+
+
+
+
+      ###
+        Main Loop
+      ###
   lastRun = 0
   window.stopRedrawing = false
   window.showFps = true

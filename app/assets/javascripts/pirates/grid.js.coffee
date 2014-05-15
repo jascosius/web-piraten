@@ -12,9 +12,9 @@ class @Grid
 
     @history = [] # list of every operation send by the server
 
-    @canvas.addEventListener "mousedown", this.onClick, false;
-    @canvas.addEventListener "mousemove", this.onMouseMove, false;
-    @canvas.addEventListener "mouseout", this.onMouseMove, false;
+    @canvas.addEventListener "mousedown", this.onClick, false
+    @canvas.addEventListener "mousemove", this.onMouseMove, false
+    @canvas.addEventListener "mouseout", this.onMouseMove, false
 
     @ANGLE = 90*(Math.PI/180)
 
@@ -102,6 +102,12 @@ class @Grid
 
   onClick: (event) =>
     console.log(@getMousePos(event))
+    pos = @getMousePos(event)
+    pos = @getGridCoordinates pos
+    console.log(@isSomethingOnPosition(pos.x, pos.y))
+    if @contains(pos) && @isSomethingOnPosition(pos.x, pos.y) == false && !window.isSimulating
+      window.creatObjectFromButton(pos.x, pos.y)
+
 
   onMouseMove: (event) =>
     @activeCell = null
@@ -113,7 +119,16 @@ class @Grid
   onMouseOut: (event) =>
     @activeCell = null
 
+  isSomethingOnPosition: (x, y) =>
+    for obj in window.grid.objects
+      if obj.x == x && obj.y == y
+        return obj
+    false
 
+  onKeyDown: (event) =>
+    taste = event.keyCode
+    console.log(taste)
+    console.log("hallo")
 
   drawLine: (x1, y1, x2, y2, width, strokeStyle) ->
     newX1 = Math.min(x1, x2)
