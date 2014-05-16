@@ -61,7 +61,6 @@ jQuery () => # use jQuery to wait until DOM is ready
 
 
   window.toggleCodeEditing = () ->
-    @operationHandler.received = false
     $('.code-controls').toggleClass 'hidden'
 
     #lock CodeMirror

@@ -38,7 +38,7 @@ class SocketController <  WebsocketRails::BaseController
   end
 
   def receive_code
-    WebsocketRails[:debug].trigger :console, message[:code]
+    #WebsocketRails[:debug].trigger :console, message[:code]
     puts '================================='
     puts '===== received operation========='
     puts '================================='

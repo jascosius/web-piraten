@@ -25,12 +25,6 @@ class @Ship extends GameObject
   constructor: (@x,@y) ->
     super "PirateShip", Config.shipImage, x, y
 
-    @handler = new OperationHandler {
-      "left": @rotateLeft
-      "move": @move
-      "right": @rotateRight
-    }
-
   rotateRight: () =>
     @rotation = (@rotation+1) % 4
 

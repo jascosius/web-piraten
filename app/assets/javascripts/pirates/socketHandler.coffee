@@ -64,7 +64,13 @@ class @OperationHandler extends ChannelHandler
     #bind operations for the operations channel
     for op in @operations
       @channel.bind op, (data) =>
-        @operationQueue.push new Operation(op, data)
+        ###
+          WebSocketRails workaround, because it does not give information
+          what the currently triggered event is. Works because event variable is a
+          MessageEvent from the native Websocket implementation
+        ###
+        operation = $.parseJSON(event.data)[0][0]
+        @operationQueue.push new Operation(operation, data)
 
 
   highlightLine: (line) ->
@@ -88,35 +94,36 @@ class @OperationHandler extends ChannelHandler
       @lifeTime++
       return
     repeat = true
+
     while repeat
       currentOp = @operationQueue.shift() # Operation instance
-      @lifeTime++
       repeat = false
 
-      nextOp = (event) =>
-        if !(event in ['line','done']) && @operationQueue.length > 0 && @operationQueue[0].event == "line"
+      nextOp = (op) =>
+        if !(op in ['line','done']) && @operationQueue.length > 0 && @operationQueue[0].event == 'line'
           repeat = true
         else
           repeat = false
 
       switch currentOp.event
-        when "left"
+        when 'left'
           ship.rotateLeft()
-        when "right"
+        when 'right'
           ship.rotateRight()
-        when "move"
+        when 'move'
           ship.move()
-        when "addBuoy"
+        when 'addBuoy'
           ship.addBuoy()
-        when "line"
+        when 'line'
           @highlightLine currentOp.data
-        when "done"
-          Utils.log "Ausführung beendet!"
+        when 'done'
+          Utils.log 'Ausführung beendet!'
           window.toggleCodeEditing()
         else
           window.Utils.logError "Invalid event: #{currentOp.event} data: #{currentOp.data}"
       nextOp(currentOp.event)
 
+    @lifeTime++
 
 class @DebugHandler extends ChannelHandler
   logToConsole = (data) ->
