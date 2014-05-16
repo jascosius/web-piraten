@@ -74,14 +74,17 @@ class SocketController <  WebsocketRails::BaseController
             elsif line.include? 'addBuoy'
                addBuoy
             elsif !line.equal? ''
-              WebsocketRails[:debug].trigger :console, line
+              #WebsocketRails[:debug].trigger :console, line
             end
-            puts "has \\n? #{line.eql? '\n'} #{line.eql? "\n"} #{line.equal? '\n'} #{line.equal? "\n"}"
-            puts line.dump
+            #puts "has \\n? #{line.eql? '\n'} #{line.eql? "\n"} #{line.equal? '\n'} #{line.equal? "\n"}"
+            #puts line.dump
           end
         end
       }
       # mktmpdir deletes file automatically
+      WebsocketRails[:operations].trigger :done
+      puts 'Simulation abgeschlossen'
+
     }
   end
 

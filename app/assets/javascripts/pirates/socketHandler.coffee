@@ -47,28 +47,27 @@ class ChannelHandler
 
 # channel operator for game object operations
 class @OperationHandler extends ChannelHandler
-#  constructor: (@actionMap) ->
-#    super "operations"
-#    for action, call of actionMap
-#      @channel.bind action, call
 
   constructor: ()->
     super "operations"
     @lifeTime = 0
     @operationQueue = []
-    @channel.bind "line", (data) =>
-      @operationQueue.push new Operation("line", data)
-    @channel.bind "left", (data) =>
-      @operationQueue.push new Operation("left", data)
-    @channel.bind "right", (data) =>
-      @operationQueue.push new Operation("right", data)
-    @channel.bind "move", (data) =>
-      @operationQueue.push new Operation("move", data)
-    @channel.bind "addBuoy", (data) =>
-      @operationQueue.push new Operation("addBuoy", data)
+    @operations = [
+      'left',
+      'right',
+      'move',
+      'addBuoy',
+      'line',
+      'done'
+    ]
+
+    #bind operations for the operations channel
+    for op in @operations
+      @channel.bind op, (data) =>
+        @operationQueue.push new Operation(op, data)
+
 
   highlightLine: (line) ->
-
     if @lastLine?
       window.codeMirror.removeLineClass @lastLine, 'background', 'processedLine'
     else
@@ -84,6 +83,7 @@ class @OperationHandler extends ChannelHandler
     window.codeMirror.removeLineClass(i, 'background', 'processedLine') for i in [0..window.codeMirror.lineCount()]
 
   update: (deltaTime) =>
+    if !window.isSimulating then return
     if (Config.simulationSpeed > 0 && (@lifeTime % Config.simulationSpeed) != 0) || @operationQueue.length < 1
       @lifeTime++
       return
@@ -93,16 +93,29 @@ class @OperationHandler extends ChannelHandler
       @lifeTime++
       repeat = false
 
+      nextOp = (event) =>
+        if !(event in ['line','done']) && @operationQueue.length > 0 && @operationQueue[0].event == "line"
+          repeat = true
+        else
+          repeat = false
+
       switch currentOp.event
-        when "left" then ship.rotateLeft()
-        when "right" then ship.rotateRight()
-        when "move" then ship.move()
-        when "addBuoy" then ship.addBuoy()
+        when "left"
+          ship.rotateLeft()
+        when "right"
+          ship.rotateRight()
+        when "move"
+          ship.move()
+        when "addBuoy"
+          ship.addBuoy()
         when "line"
           @highlightLine currentOp.data
-          repeat = true if @operationQueue.length > 0 && @operationQueue[0].event != "line"
+        when "done"
+          Utils.log "Ausführung beendet!"
+          window.toggleCodeEditing()
         else
           window.Utils.logError "Invalid event: #{currentOp.event} data: #{currentOp.data}"
+      nextOp(currentOp.event)
 
 
 class @DebugHandler extends ChannelHandler
