@@ -31,6 +31,7 @@ jQuery () => # use jQuery to wait until DOM is ready
   @operationHandler = new @OperationHandler()
 
   @isSimulating = false
+  @isInEditor = true
 
   # Initialize CodeMirror
   @codeMirror = CodeMirror.fromTextArea document.getElementById("codemirror"), {
@@ -41,8 +42,13 @@ jQuery () => # use jQuery to wait until DOM is ready
     mode: 'ruby',
     theme: 'monokai',
     keymap: 'sublime',
-    styleActiveLine: true
+    styleActiveLine: true,
   }
+
+  @codeMirror.on "blur", () -> @isInEditor = false
+
+  @codeMirror.on "focus", () -> @isInEditor = true
+
   $('#codeMirror-loading').hide()
 
   # Click handlers for the buttons
@@ -84,17 +90,22 @@ jQuery () => # use jQuery to wait until DOM is ready
 
 
   @onKeyDown= (event) =>
-    console.log(document.activeElement)
-    switch event.keyCode
-      when 49
-        $(".gameObject-controls button").removeClass "btn-success"
-        $("#addTreasure").addClass "btn-success"
-      when 50
-        $(".gameObject-controls button").removeClass "btn-success"
-        $("#addMonster").addClass "btn-success"
-      when 51
-        $(".gameObject-controls button").removeClass "btn-success"
-        $("#addWave").addClass "btn-success"
+    if !@isInEditor
+      switch event.keyCode
+        when 49, 97
+          $(".gameObject-controls button").removeClass "btn-success"
+          $("#addTreasure").addClass "btn-success"
+        when 50, 98
+          $(".gameObject-controls button").removeClass "btn-success"
+          $("#addMonster").addClass "btn-success"
+        when 51, 99
+          $(".gameObject-controls button").removeClass "btn-success"
+          $("#addWave").addClass "btn-success"
+        when 27
+          $(".gameObject-controls button").removeClass "btn-success"
+
+
+
 
 
   @window.addEventListener "keydown", onKeyDown, false

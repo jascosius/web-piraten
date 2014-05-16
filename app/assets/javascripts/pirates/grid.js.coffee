@@ -15,6 +15,8 @@ class @Grid
     @canvas.addEventListener "mousedown", this.onClick, false
     @canvas.addEventListener "mousemove", this.onMouseMove, false
     @canvas.addEventListener "mouseout", this.onMouseMove, false
+    @canvas.addEventListener "contextmenu", this.onContextmenu, false
+
 
     @ANGLE = 90*(Math.PI/180)
 
@@ -77,6 +79,14 @@ class @Grid
   addObject: (obj) ->
     @objects.push(obj)
 
+  deleteObject: (obj) ->
+    if obj != false
+      newObjects = []
+      for gameObject in @objects
+        if gameObject != obj
+          newObjects.push(gameObject)
+      @objects = newObjects
+
   isInCanvas: (coords) ->
     coords.x >= 0 && coords.y >= 0 && coords.x < @canvasWidth && coords.y < @canvasHeight
 
@@ -101,13 +111,19 @@ class @Grid
     { x1: x, y1: y, x2: @size, y2: @size }
 
   onClick: (event) =>
-    console.log(@getMousePos(event))
     pos = @getMousePos(event)
     pos = @getGridCoordinates pos
-    console.log(@isSomethingOnPosition(pos.x, pos.y))
-    if @contains(pos) && @isSomethingOnPosition(pos.x, pos.y) == false && !window.isSimulating
+    objectToDelete = false
+    if @contains(pos) && @isSomethingOnPosition(pos.x, pos.y) == false && !window.isSimulating && event.which == 1
       window.creatObjectFromButton(pos.x, pos.y)
+    else if event.which == 3
+      for obj in @objects
+        if obj.x == pos.x && obj.y == pos.y && obj.name != "PirateShip"
+          objectToDelete = obj
+    @deleteObject (objectToDelete)
 
+  onContextmenu: (event) =>
+    event.preventDefault()
 
   onMouseMove: (event) =>
     @activeCell = null
@@ -124,11 +140,6 @@ class @Grid
       if obj.x == x && obj.y == y
         return obj
     false
-
-  onKeyDown: (event) =>
-    taste = event.keyCode
-    console.log(taste)
-    console.log("hallo")
 
   drawLine: (x1, y1, x2, y2, width, strokeStyle) ->
     newX1 = Math.min(x1, x2)
