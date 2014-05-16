@@ -52,18 +52,20 @@ class @OperationHandler extends ChannelHandler
     super "operations"
     @lifeTime = 0
     @operationQueue = []
-    @channel.bind "line", (data) =>
-      @operationQueue.push new Operation("line", data)
-    @channel.bind "left", (data) =>
-      @operationQueue.push new Operation("left", data)
-    @channel.bind "right", (data) =>
-      @operationQueue.push new Operation("right", data)
-    @channel.bind "move", (data) =>
-      @operationQueue.push new Operation("move", data)
-    @channel.bind "addBuoy", (data) =>
-      @operationQueue.push new Operation("addBuoy", data)
-    @channel.bind "done", (data) =>
-      @operationQueue.push new Operation("done", data)
+    @operations = [
+      'left',
+      'right',
+      'move',
+      'addBuoy',
+      'line',
+      'done'
+    ]
+
+    #bind operations for the operations channel
+    for op in @operations
+      @channel.bind op, (data) =>
+        @operationQueue.push new Operation(op, data)
+
 
   highlightLine: (line) ->
     if @lastLine?
