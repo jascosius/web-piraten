@@ -3,7 +3,6 @@
 #= require codemirror/addons/selection/active-line
 #= require codemirror/modes/ruby
 #= require codemirror/keymaps/sublime
-#= require jquery
 #= require ./config
 #= require ./utilities
 #= require ./socketHandler
@@ -44,12 +43,37 @@ jQuery () => # use jQuery to wait until DOM is ready
     keymap: 'sublime',
     styleActiveLine: true,
   }
+  $('#codeMirror-loading').hide()
+
 
   @codeMirror.on "blur", () -> @isInEditor = false
 
   @codeMirror.on "focus", () -> @isInEditor = true
+#
+#  activeCodeControls = $('.code-controls:visible:first-child')
+#  activeCodeControls.popover({
+#    placement: 'right',
+#    trigger: 'manual',
+#    title: 'Beobachtete Variablen'
+#    content: () -> $('#watchlist').html()
+#    html: true,
+#  })
 
-  $('#codeMirror-loading').hide()
+  @getWatchList = () ->
+    watchlist = []
+    $("#watchlist li").each () ->
+      watchlist.push $(this).text()
+    return watchlist
+
+  @codeMirror.on 'dblclick', (event) =>
+#    codeControls.popover('hide')
+    selection = event.getSelection()
+    if $("#watchlist li:contains('#{selection}')").length > 0
+      # already in watchlist
+    else
+      $('#watchlist').append "<li>#{selection}</li>"
+#    activeCodeControls.popover('show')
+
 
   # Click handlers for the buttons
 

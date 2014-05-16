@@ -17,6 +17,8 @@
 //= require twitter/bootstrap/modal
 //= require twitter/bootstrap/affix
 //= require twitter/bootstrap/alert
+//= require twitter/bootstrap/tooltip
+//= require twitter/bootstrap/popover
 //= require turbolinks
 //= require_directory .
 //= require websocket_rails/main
