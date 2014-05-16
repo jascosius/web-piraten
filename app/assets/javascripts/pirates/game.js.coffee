@@ -54,32 +54,32 @@ jQuery () => # use jQuery to wait until DOM is ready
     else codeMirror.setOption option, def
 
 
-  toggleCodeEditing = () ->
-
+  window.toggleCodeEditing = () ->
+    @operationHandler.received = false
     $('.code-controls').toggleClass 'hidden'
 
     #lock CodeMirror
     toggleCodeMirrorOption 'readOnly', true, false
     toggleCodeMirrorOption 'styleActiveLine', false, true
-    $(".code-wrapper .CodeMirror").toggleClass 'editing-disabled'
+    $('.code-wrapper .CodeMirror').toggleClass 'editing-disabled'
     @isSimulating = !@isSimulating
 
   $("#runBtn").click () -> # start execution
-    toggleCodeEditing()
+    window.toggleCodeEditing()
     webSocket.trigger "code", {code: window.codeMirror.getValue()}
   $("#stopBtn").click () -> # start execution
     operationHandler.clear()
-    toggleCodeEditing()
+    window.toggleCodeEditing()
 
   $("#resetBtn").click () -> # start execution
     operationHandler.clear()
-    toggleCodeEditing()
+    window.toggleCodeEditing()
 
   $("#debugBtn").click () -> # start execution
-    toggleCodeEditing()
+    window.toggleCodeEditing()
 
   $(".gameObject-controls button").click () ->
-    $(".gameObject-controls button").removeClass "btn-success"
+    $('.gameObject-controls button').removeClass "btn-success"
     $(this).addClass "btn-success"
 
 

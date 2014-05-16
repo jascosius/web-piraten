@@ -47,10 +47,6 @@ class ChannelHandler
 
 # channel operator for game object operations
 class @OperationHandler extends ChannelHandler
-#  constructor: (@actionMap) ->
-#    super "operations"
-#    for action, call of actionMap
-#      @channel.bind action, call
 
   constructor: ()->
     super "operations"
@@ -66,6 +62,8 @@ class @OperationHandler extends ChannelHandler
       @operationQueue.push new Operation("move", data)
     @channel.bind "addBuoy", (data) =>
       @operationQueue.push new Operation("addBuoy", data)
+    @channel.bind "done", (data) =>
+      @operationQueue.push new Operation("done", data)
 
   highlightLine: (line) ->
     if @lastLine?
@@ -83,6 +81,7 @@ class @OperationHandler extends ChannelHandler
     window.codeMirror.removeLineClass(i, 'background', 'processedLine') for i in [0..window.codeMirror.lineCount()]
 
   update: (deltaTime) =>
+    if !window.isSimulating then return
     if (Config.simulationSpeed > 0 && (@lifeTime % Config.simulationSpeed) != 0) || @operationQueue.length < 1
       @lifeTime++
       return
@@ -92,8 +91,8 @@ class @OperationHandler extends ChannelHandler
       @lifeTime++
       repeat = false
 
-      nextOp = () =>
-        if @operationQueue.length > 0 && @operationQueue[0].event == "line"
+      nextOp = (event) =>
+        if !(event in ['line','done']) && @operationQueue.length > 0 && @operationQueue[0].event == "line"
           repeat = true
         else
           repeat = false
@@ -101,20 +100,20 @@ class @OperationHandler extends ChannelHandler
       switch currentOp.event
         when "left"
           ship.rotateLeft()
-          nextOp()
         when "right"
           ship.rotateRight()
-          nextOp()
         when "move"
           ship.move()
-          nextOp()
         when "addBuoy"
           ship.addBuoy()
-          nextOp()
         when "line"
           @highlightLine currentOp.data
+        when "done"
+          Utils.log "Ausführung beendet!"
+          window.toggleCodeEditing()
         else
           window.Utils.logError "Invalid event: #{currentOp.event} data: #{currentOp.data}"
+      nextOp(currentOp.event)
 
 
 class @DebugHandler extends ChannelHandler
