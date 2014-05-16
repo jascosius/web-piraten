@@ -68,7 +68,6 @@ class @OperationHandler extends ChannelHandler
       @operationQueue.push new Operation("addBuoy", data)
 
   highlightLine: (line) ->
-
     if @lastLine?
       window.codeMirror.removeLineClass @lastLine, 'background', 'processedLine'
     else
@@ -93,14 +92,27 @@ class @OperationHandler extends ChannelHandler
       @lifeTime++
       repeat = false
 
+      nextOp = () =>
+        if @operationQueue.length > 0 && @operationQueue[0].event == "line"
+          repeat = true
+        else
+          repeat = false
+
       switch currentOp.event
-        when "left" then ship.rotateLeft()
-        when "right" then ship.rotateRight()
-        when "move" then ship.move()
-        when "addBuoy" then ship.addBuoy()
+        when "left"
+          ship.rotateLeft()
+          nextOp()
+        when "right"
+          ship.rotateRight()
+          nextOp()
+        when "move"
+          ship.move()
+          nextOp()
+        when "addBuoy"
+          ship.addBuoy()
+          nextOp()
         when "line"
           @highlightLine currentOp.data
-          repeat = true if @operationQueue.length > 0 && @operationQueue[0].event != "line"
         else
           window.Utils.logError "Invalid event: #{currentOp.event} data: #{currentOp.data}"
 
