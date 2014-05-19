@@ -62,20 +62,27 @@ jQuery () => # use jQuery to wait until DOM is ready
   @getWatchList = () ->
     watchlist = []
     $("#watchlist li").each () ->
-      watchlist.push $(this).text()
+      watchlist.push $(this).text().trim()
     return watchlist
 
   @codeMirror.on 'dblclick', (event) =>
-#    codeControls.popover('hide')
-    selection = event.getSelection()
-    if $("#watchlist li:contains('#{selection}')").length > 0
-      # already in watchlist
+    selection = event.getSelection().trim() # selected word
+    cursor = event.getCursor()
+    type = event.getTokenTypeAt(cursor)
+    if selection == '' || !type? || type != 'variable'
+      console.log 'Das geklickte Wort kann keine Variable sein'
     else
-      $('#watchlist').append "<li>#{selection}</li>"
-#    activeCodeControls.popover('show')
-
+      if $("#watchlist li:contains('#{selection}')").length > 0
+        # already in watchlist
+      else
+        $('#watchlist').append "<li><span class='glyphicon glyphicon-remove watchlist-remove' aria-hidden='true'></span> #{selection}</li>"
 
   # Click handlers for the buttons
+  $('#watchlist').on 'click','.watchlist-remove', (event) ->
+    $(event.target).parent().remove()
+    console.log 'removed element from watch list'
+    #TODO WatchList Button animieren
+
 
   # disable buttons and lock CodeMirror
   toggleCodeMirrorOption = (option, value, def) ->

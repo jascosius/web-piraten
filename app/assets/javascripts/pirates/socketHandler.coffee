@@ -62,16 +62,28 @@ class @OperationHandler extends ChannelHandler
     ]
 
     #bind operations for the operations channel
-    for op in @operations
-      @channel.bind op, (data) =>
-        ###
+    @channel.bind 'left', (data) =>
+      @operationQueue.push new Operation('left', data)
+    @channel.bind 'right', (data) =>
+      @operationQueue.push new Operation('right', data)
+    @channel.bind 'move', (data) =>
+      @operationQueue.push new Operation('move', data)
+    @channel.bind 'addBuoy', (data) =>
+      @operationQueue.push new Operation('addBuoy', data)
+    @channel.bind 'line', (data) =>
+      @operationQueue.push new Operation('line', data)
+    @channel.bind 'done', (data) =>
+      @operationQueue.push new Operation('done', data)
+    ###for op in @operations
+      @channel.bind op, (data) ->
+        \#\#\#
           WebSocketRails workaround, because it does not give information
           what the currently triggered event is. Works because event variable is a
           MessageEvent from the native Websocket implementation
-        ###
+        \#\#\#
         operation = $.parseJSON(event.data)[0][0]
         @operationQueue.push new Operation(operation, data)
-
+    ###
 
   highlightLine: (line) ->
     if @lastLine?
