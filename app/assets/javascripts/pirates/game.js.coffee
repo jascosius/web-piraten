@@ -65,6 +65,11 @@ jQuery () => # use jQuery to wait until DOM is ready
       watchlist.push $(this).text().trim()
     return watchlist
 
+
+  updateQueueSize = () ->
+    watchlist = @getWatchList()
+    $('#watchlist-size').html watchlist.length
+
   @codeMirror.on 'dblclick', (event) =>
     selection = event.getSelection().trim() # selected word
     cursor = event.getCursor()
@@ -76,12 +81,16 @@ jQuery () => # use jQuery to wait until DOM is ready
         # already in watchlist
       else
         $('#watchlist').append "<li><span class='glyphicon glyphicon-remove watchlist-remove' aria-hidden='true'></span> #{selection}</li>"
+        updateQueueSize()
 
   # Click handlers for the buttons
   $('#watchlist').on 'click','.watchlist-remove', (event) ->
     $(event.target).parent().remove()
     console.log 'removed element from watch list'
     #TODO WatchList Button animieren
+    updateQueueSize()
+    
+
 
 
   # disable buttons and lock CodeMirror

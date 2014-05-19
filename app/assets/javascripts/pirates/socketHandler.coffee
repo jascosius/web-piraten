@@ -62,6 +62,7 @@ class @OperationHandler extends ChannelHandler
     ]
 
     #bind operations for the operations channel
+    # manual mode, because only Chrome offers the 'event' object
     @channel.bind 'left', (data) =>
       @operationQueue.push new Operation('left', data)
     @channel.bind 'right', (data) =>
