@@ -99,7 +99,7 @@ jQuery () => # use jQuery to wait until DOM is ready
         hoveringSelection = $ "<div class='flying cm-variable'>#{selection}</div>"
 
         dropdownToggle = $ '#watchlist-dropdown'
-        $(hoveringSelection).css({
+        hoveringSelection.css({
           position: 'absolute'
           top:  window.mouse.y
           left: window.mouse.x
