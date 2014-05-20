@@ -45,6 +45,14 @@ jQuery () => # use jQuery to wait until DOM is ready
   }
   $('#codeMirror-loading').hide()
 
+  mouseListener = (event) ->
+    if !mouse?
+      window.mouse = new Coordinate(0,0);
+    mouse.x = event.clientX || event.pageX
+    mouse.y = event.clientY || event.pageY
+
+  document.addEventListener 'mousemove',mouseListener ,false
+
 
   @codeMirror.on "blur", () -> @isInEditor = false
 
@@ -70,6 +78,13 @@ jQuery () => # use jQuery to wait until DOM is ready
     watchlist = @getWatchList()
     $('#watchlist-size').html watchlist.length
 
+  $.extend($.easing, # just for a nicer visualization, from jQuery UI
+    {
+      easeOutCubic: (x, t, b, c, d) ->
+        c*((t=t/d-1)*t*t + 1) + b
+    }
+  )
+
   @codeMirror.on 'dblclick', (event) =>
     selection = event.getSelection().trim() # selected word
     cursor = event.getCursor()
@@ -81,7 +96,30 @@ jQuery () => # use jQuery to wait until DOM is ready
         # already in watchlist
       else
         $('#watchlist').append "<li><span class='glyphicon glyphicon-remove watchlist-remove' aria-hidden='true'></span> #{selection}</li>"
-        updateQueueSize()
+        hoveringSelection = $ "<div class='flying cm-variable'>#{selection}</div>"
+
+        dropdownToggle = $ '#watchlist-dropdown'
+        $(hoveringSelection).css({
+          position: 'absolute'
+          top:  window.mouse.y
+          left: window.mouse.x
+          display: 'block'
+          opacity: 1
+        })
+        .appendTo('body')
+        .animate({
+            top: dropdownToggle.offset().top
+            left: dropdownToggle.offset().left
+            opacity: 0.0
+          },
+          {
+            duration: 1500
+            easing: 'easeOutCubic'
+            complete: () ->
+              hoveringSelection.remove()
+              updateQueueSize()
+          }
+        )
 
   # Click handlers for the buttons
   $('#watchlist').on 'click','.watchlist-remove', (event) ->
@@ -89,7 +127,7 @@ jQuery () => # use jQuery to wait until DOM is ready
     console.log 'removed element from watch list'
     #TODO WatchList Button animieren
     updateQueueSize()
-    
+
 
 
 
