@@ -158,8 +158,8 @@ jQuery () => # use jQuery to wait until DOM is ready
     operationHandler.clear()
     window.toggleCodeEditing()
 
-  $("#debugBtn").click () -> # start execution
-    window.toggleCodeEditing()
+#  $("#debugBtn").click () -> # start execution
+#    window.toggleCodeEditing()
 
   $(".gameObject-controls button").click () ->
     $('.gameObject-controls button').removeClass "btn-success"
