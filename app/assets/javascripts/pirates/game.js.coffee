@@ -98,7 +98,7 @@ jQuery () => # use jQuery to wait until DOM is ready
         # already in watchlist
       else
         $('#watchlist').append "<li><span class='glyphicon glyphicon-remove watchlist-remove' aria-hidden='true'></span> #{selection}</li>"
-        hoveringSelection = $ "<div class='flying cm-variable'>#{selection}</div>"
+        hoveringSelection = $ "<div class='flying cm-variable'><span>#{selection}</span></div>"
 
         dropdownToggle = $ '#watchlist-dropdown'
         hoveringSelection.css({
@@ -106,10 +106,21 @@ jQuery () => # use jQuery to wait until DOM is ready
           top:  window.mouse.y
           left: window.mouse.x
           display: 'block'
+          visibility: 'hidden'
           opacity: 1
+          'z-index': 5000
         })
-        .appendTo('body')
-        .animate({
+
+        hoveringSelection.appendTo('body')
+
+        $span = hoveringSelection.children('span:first')
+        hoveringSelection.css({
+          top: window.mouse.y - ($span.height()/2)
+          left: window.mouse.x - ($span.width()/2)
+          visibility: 'visible'
+        })
+
+        hoveringSelection.animate({
             top: dropdownToggle.offset().top
             left: dropdownToggle.offset().left
             opacity: 0.0
