@@ -33,12 +33,20 @@ class @Ship extends GameObject
     if @rotation < 0 # unexpected js
       @rotation = 4 + @rotation
 
-  monsterInFront: () => # TODO kann probleme geben, wenn bewegung in queue...
-    next = getNextCoordinate(@x,@y,@rotation)
-    for obj in window.grid.objects
-      if obj.x == next.x && obj.y == next.y && obj.name == "Buoy"
-        return true
-    false
+  look: () =>
+    window.grid.look = getNextCoordinate(@x,@y,@rotation)
+
+    #next = getNextCoordinate(@x,@y,@rotation)
+  #switch window.grid.isSomethingOnPosition(next.x, next.y).name
+    #  when "Buoy" then return "boje"
+    #  when "Wave" then return "welle"
+    #  when "Treasure" then return "schatz"
+    #  when "Monster" then return "monster"
+    #  else return false
+
+  lookAway: () =>
+    window.grid.look = false
+
 
   take: () =>
     obj = window.grid.isSomethingOnPosition(@x, @y)
@@ -50,12 +58,11 @@ class @Ship extends GameObject
 
 
   put: () =>
-    for obj in window.grid.objects
-      if obj.x == @x && obj.y == @y && obj != this
-        Utils.logError "hier ist kein Platz mehr für eine Boje"
-      else
-        buoy = new window.Buoy @x, @y
-        window.grid.addObject buoy
+   if window.grid.isSomethingOnPosition(@x, @y) != false
+    Utils.logError "hier ist kein Platz mehr für eine Boje"
+   else
+    buoy = new window.Buoy @x, @y
+    window.grid.addObject buoy
 
   move: () =>
     coords = getNextCoordinate(@x,@y,@rotation)
