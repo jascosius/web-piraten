@@ -80,8 +80,8 @@ jQuery () => # use jQuery to wait until DOM is ready
 
   $.extend($.easing, # just for a nicer visualization, from jQuery UI
     {
-      easeOutCubic: (x, t, b, c, d) ->
-        c*((t=t/d-1)*t*t + 1) + b
+      easeOutQuad: (x, t, b, c, d) ->
+        -c *(t/=d)*(t-2) + b
     }
   )
 
@@ -116,7 +116,7 @@ jQuery () => # use jQuery to wait until DOM is ready
           },
           {
             duration: 1500
-            easing: 'easeOutCubic'
+            easing: 'easeOutQuad'
             complete: () ->
               hoveringSelection.remove()
               updateQueueSize()
