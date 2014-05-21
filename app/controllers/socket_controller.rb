@@ -27,6 +27,11 @@ class SocketController <  WebsocketRails::BaseController
     WebsocketRails[:operations].trigger(:take)
   end
 
+  def look # event: ship.take
+    puts 'Look!'
+    WebsocketRails[:operations].trigger(:look)
+  end
+
   def moveShip # event: ship.move
     puts 'Move!'
     WebsocketRails[:operations].trigger(:move)
@@ -77,6 +82,8 @@ class SocketController <  WebsocketRails::BaseController
                moveShip
             elsif line.include? 'take'
                take
+            elsif line.include? 'look'
+              look
             elsif line.include? 'put'
                put
             elsif !line.equal? ''
@@ -111,6 +118,9 @@ class SocketController <  WebsocketRails::BaseController
   def injectShipLogic(code)
     'def move
        puts "move"
+     end
+     def look
+      puts "look"
      end
      def turnRight
        puts "turnRight"

@@ -23,6 +23,8 @@ WebsocketRails::EventMap.describe do
     subscribe :right, :to => SocketController, :with_method => :rotateShipRight
     subscribe :put, :to => SocketController, :with_method => :put
     subscribe :take, :to => SocketController, :with_method => :take
+    subscribe :look, :to => SocketController, :with_method => :look
+
 
   end
 end

@@ -12,6 +12,8 @@ class @Grid
     @objects = []
     @ship = null
 
+    @look = false
+
     @history = [] # list of every operation send by the server
 
     $canvas = $(@canvas)
@@ -76,6 +78,18 @@ class @Grid
       @ctx.beginPath()
       @ctx.rect rect.x1, rect.y1, rect.x2, rect.y2
       @ctx.fillStyle = 'rgba(0,0,0,0.1)'
+      @ctx.fill()
+
+      @ctx.restore()
+
+    #draw look
+    if @look
+      @ctx.save()
+      rect = @getCellRect @look
+
+      @ctx.beginPath()
+      @ctx.rect rect.x1, rect.y1, rect.x2, rect.y2
+      @ctx.fillStyle = 'rgba(255,0,0,0.2)'
       @ctx.fill()
 
       @ctx.restore()

@@ -59,7 +59,9 @@ class @OperationHandler extends ChannelHandler
       'put',
       'line',
       'done',
-      'take'
+      'take',
+      'look',
+      'unlook'
     ]
 
     #bind operations for the operations channel
@@ -74,6 +76,9 @@ class @OperationHandler extends ChannelHandler
       @operationQueue.push new Operation('put', data)
     @channel.bind 'take', (data) =>
       @operationQueue.push new Operation('take', data)
+    @channel.bind 'look', (data) =>
+      @operationQueue.push new Operation('look', data)
+      @operationQueue.push new Operation('lookAway', data)
     @channel.bind 'line', (data) =>
       @operationQueue.push new Operation('line', data)
     @channel.bind 'done', (data) =>
@@ -128,6 +133,10 @@ class @OperationHandler extends ChannelHandler
           ship.rotateRight()
         when 'move'
           ship.move()
+        when 'look'
+          ship.look()
+        when 'lookAway'
+          ship.lookAway()
         when 'put'
           ship.put()
         when 'take'
