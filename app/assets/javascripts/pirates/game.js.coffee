@@ -191,9 +191,14 @@ jQuery () => # use jQuery to wait until DOM is ready
     found = $(".gameObject-controls .btn-success")
     switch found.attr 'id'
         when 'addWave'
-          buoy = new window.Buoy x, y
-          window.grid.addObject buoy
-
+          wave = new window.Wave x, y
+          window.grid.addObject wave
+        when 'addTreasure'
+          treasure = new window.Treasure x, y
+          window.grid.addObject treasure
+        when 'addMonster'
+          monster = new window.Monster x, y
+          window.grid.addObject monster
 
 
 

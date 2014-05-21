@@ -58,3 +58,14 @@ class @Buoy extends GameObject
   constructor: (x,y)->
     super "Buoy", Config.buoyImage, x, y
 
+class @Wave extends GameObject
+  constructor: (x,y)->
+    super "Wave", Config.waveImage, x, y
+
+class @Treasure extends GameObject
+  constructor: (x,y)->
+    super "Treasure", Config.treasureImage, x, y
+
+class @Monster extends GameObject
+  constructor: (x,y)->
+    super "Monster", Config.monsterImage, x, y
