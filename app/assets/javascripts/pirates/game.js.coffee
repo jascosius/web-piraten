@@ -89,7 +89,9 @@ jQuery () => # use jQuery to wait until DOM is ready
     selection = event.getSelection().trim() # selected word
     cursor = event.getCursor()
     type = event.getTokenTypeAt(cursor)
-    if selection == '' || !type? || type != 'variable'
+
+    # only variables and single words allowed
+    if !type? || type != 'variable' || selection.length < 1 || /\s/.test(selection)
       console.log 'Das geklickte Wort kann keine Variable sein'
     else
       if $("#watchlist li:contains('#{selection}')").length > 0

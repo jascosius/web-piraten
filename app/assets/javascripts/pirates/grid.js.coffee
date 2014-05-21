@@ -12,10 +12,10 @@ class @Grid
 
     @history = [] # list of every operation send by the server
 
-    @canvas.addEventListener "mousedown", this.onClick, false
-    @canvas.addEventListener "mousemove", this.onMouseMove, false
-    @canvas.addEventListener "mouseout", this.onMouseMove, false
-    @canvas.addEventListener "contextmenu", this.onContextmenu, false
+    @canvas.addEventListener 'mousedown', this.onClick, false
+    @canvas.addEventListener 'mousemove', this.onMouseMove, false
+    @canvas.addEventListener 'mouseout', this.onMouseMove, false
+    @canvas.addEventListener 'contextmenu', this.onContextmenu, false
 
 
     @ANGLE = 90*(Math.PI/180)

@@ -80,7 +80,7 @@ class @OperationHandler extends ChannelHandler
         \#\#\#
           WebSocketRails workaround, because it does not give information
           what the currently triggered event is. Works because event variable is a
-          MessageEvent from the native Websocket implementation
+          MessageEvent from the native Websocket implementation (only in Chrome)
         \#\#\#
         operation = $.parseJSON(event.data)[0][0]
         @operationQueue.push new Operation(operation, data)
