@@ -40,7 +40,16 @@ class @Ship extends GameObject
         return true
     false
 
-  addBuoy: ()=>
+  take: () =>
+    obj = window.grid.isSomethingOnPosition(@x, @y)
+    if obj.name == "Treasure"
+      window.grid.deleteObject(obj)
+      console.log("Gold eingesammelt")
+    else
+      console.log("hier ist nichts zu holen")
+
+
+  put: () =>
     for obj in window.grid.objects
       if obj.x == @x && obj.y == @y && obj != this
         Utils.logError "hier ist kein Platz mehr für eine Boje"

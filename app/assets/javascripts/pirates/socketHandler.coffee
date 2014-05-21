@@ -56,9 +56,10 @@ class @OperationHandler extends ChannelHandler
       'left',
       'right',
       'move',
-      'addBuoy',
+      'put',
       'line',
-      'done'
+      'done',
+      'take'
     ]
 
     #bind operations for the operations channel
@@ -69,8 +70,10 @@ class @OperationHandler extends ChannelHandler
       @operationQueue.push new Operation('right', data)
     @channel.bind 'move', (data) =>
       @operationQueue.push new Operation('move', data)
-    @channel.bind 'addBuoy', (data) =>
-      @operationQueue.push new Operation('addBuoy', data)
+    @channel.bind 'put', (data) =>
+      @operationQueue.push new Operation('put', data)
+    @channel.bind 'take', (data) =>
+      @operationQueue.push new Operation('take', data)
     @channel.bind 'line', (data) =>
       @operationQueue.push new Operation('line', data)
     @channel.bind 'done', (data) =>
@@ -125,8 +128,10 @@ class @OperationHandler extends ChannelHandler
           ship.rotateRight()
         when 'move'
           ship.move()
-        when 'addBuoy'
-          ship.addBuoy()
+        when 'put'
+          ship.put()
+        when 'take'
+          ship.take()
         when 'line'
           @highlightLine currentOp.data
         when 'done'

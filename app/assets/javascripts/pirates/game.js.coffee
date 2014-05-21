@@ -24,7 +24,7 @@ jQuery () => # use jQuery to wait until DOM is ready
 
 
   @grid.addObject buoy
-  @grid.addObject ship
+  @grid.ship = ship
 
   @debugHandler = new DebugHandler()
   @operationHandler = new @OperationHandler()

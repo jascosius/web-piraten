@@ -10,15 +10,16 @@ class @Grid
     @gridWidth = Math.floor (@canvasWidth/@size)
     @gridHeight = Math.floor (@canvasHeight/@size)
     @objects = []
-    #@ship = null
+    @ship = null
 
     @history = [] # list of every operation send by the server
 
-    @canvas.addEventListener "mousedown", this.onClick, false
-    @canvas.addEventListener "mousemove", this.onMouseMove, false
-    @canvas.addEventListener "mouseout", this.onMouseMove, false
-    @canvas.addEventListener "contextmenu", this.onContextmenu, false
-    @canvas.addEventListener "mouseup", this.onMouseUp, false
+    $canvas = $(@canvas)
+    $canvas.on 'mousedown', this.onClick
+    $canvas.on 'mousemove', this.onMouseMove
+    $canvas.on 'mouseout', this.onMouseMove
+    $canvas.on 'contextmenu', this.onContextmenu
+    $canvas.on 'mouseup', this.onMouseUp
 
     @ANGLE = 90*(Math.PI/180)
 
@@ -51,21 +52,23 @@ class @Grid
       count++
 
     # draw objects
-    for i in [0.. (@objects.length-1)]
-      obj = @objects[i]
+    for i in [0.. (@objects.length)]
+      if i != @objects.length
+        obj = @objects[i]
+        @ctx.save()
+        posx = obj.x*@size + Math.floor(obj.image.width/2)
+        posy = obj.y*@size + Math.floor(obj.image.height/2)
+        @ctx.translate(posx, posy)
 
-      @ctx.save()
-      posx = obj.x*@size + Math.floor(obj.image.width/2)
-      posy = obj.y*@size + Math.floor(obj.image.height/2)
-      @ctx.translate(posx, posy)
+        @ctx.rotate(obj.rotation * @ANGLE)
 
-      @ctx.rotate(obj.rotation * @ANGLE)
+        if obj.rotation == 2
+            @ctx.scale 1, -1 # flip
+        @ctx.drawImage(obj.image, -Math.floor(obj.image.width/2), -Math.floor(obj.image.height/2))
+        @ctx.restore()
 
-      if obj.rotation == 2
-          @ctx.scale 1, -1 # flip
-      @ctx.drawImage(obj.image, -Math.floor(obj.image.width/2), -Math.floor(obj.image.height/2))
-      @ctx.restore()
 
+    #draw activeCell
     if @activeCell
       @ctx.save()
       rect = @getCellRect @activeCell
@@ -77,16 +80,28 @@ class @Grid
 
       @ctx.restore()
 
+    #draw ship
+    @ctx.save()
     if @mousePressedOnShip
-      @ctx.save()
-      obj = @objects[1]
+      obj = @ship
 
       posx = @mousePosition.x
       posy = @mousePosition.y
       @ctx.translate(posx, posy)
 
       @ctx.drawImage(obj.image, -Math.floor(obj.image.width/2), -Math.floor(obj.image.height/2))
-      @ctx.restore()
+    else
+      posx = @ship.x*@size + Math.floor(@ship.image.width/2)
+      posy = @ship.y*@size + Math.floor(@ship.image.height/2)
+      @ctx.translate(posx, posy)
+
+      @ctx.rotate(@ship.rotation * @ANGLE)
+
+      if @ship.rotation == 2
+        @ctx.scale 1, -1 # flip
+      @ctx.drawImage(@ship.image, -Math.floor(@ship.image.width/2), -Math.floor(@ship.image.height/2))
+    @ctx.restore()
+
 
   # end draw
 
@@ -127,17 +142,18 @@ class @Grid
   onClick: (event) =>
     pos = @getMousePos(event)
     pos = @getGridCoordinates pos
-    if @isSomethingOnPosition(pos.x, pos.y).name == "PirateShip"
+    if @ship.x == pos.x && @ship.y == pos.y && event.which == 1
       @mousePressedOnShip = true
-    if @contains(pos) && @isSomethingOnPosition(pos.x, pos.y) == false && !window.isSimulating && event.which == 1
-      window.creatObjectFromButton(pos.x, pos.y)
-    else if event.which == 3 && @isSomethingOnPosition(pos.x,pos.y).name != "PirateShip"
+    else
+      if @contains(pos) && @isSomethingOnPosition(pos.x, pos.y) == false && !window.isSimulating && event.which == 1
+        window.creatObjectFromButton(pos.x, pos.y)
+    if event.which == 3 && @isSomethingOnPosition(pos.x,pos.y).name != "PirateShip"
       @deleteObject (@isSomethingOnPosition(pos.x,pos.y))
 
   onMouseUp: (event) =>
     if @mousePressedOnShip
-      @objects[1].x = @getGridCoordinates(@getMousePos(event)).x
-      @objects[1].y = @getGridCoordinates(@getMousePos(event)).y
+      @ship.x = @getGridCoordinates(@getMousePos(event)).x
+      @ship.y = @getGridCoordinates(@getMousePos(event)).y
     @mousePressedOnShip = false
 
   onContextmenu: (event) =>
