@@ -8,6 +8,14 @@ class GameObject # "abstract" because of the missing @
     @image.src = img
     @lifeTime = 0
 
+  serialize: () =>
+    {
+    name: @name
+    x: @x
+    y: @y
+    }
+
+
   update: (deltaTime) =>
     @lifeTime++
 
@@ -46,6 +54,11 @@ class @Ship extends GameObject
 
   lookAway: () =>
     window.grid.look = false
+
+  serialize: () =>
+    obj = super()
+    obj.rotation = @rotation
+    return obj
 
 
   take: () =>
