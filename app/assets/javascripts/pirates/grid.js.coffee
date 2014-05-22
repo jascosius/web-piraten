@@ -19,7 +19,7 @@ class @Grid
     $canvas = $(@canvas)
     $canvas.on 'mousedown', this.onClick
     $canvas.on 'mousemove', this.onMouseMove
-    $canvas.on 'mouseout', this.onMouseMove
+    $canvas.on 'mouseout', this.onMouseOut
     $canvas.on 'contextmenu', this.onContextmenu
     $canvas.on 'mouseup', this.onMouseUp
 
@@ -154,20 +154,31 @@ class @Grid
     { x1: x, y1: y, x2: @size, y2: @size }
 
   onClick: (event) =>
-    pos = @getMousePos(event)
-    pos = @getGridCoordinates pos
+    mousPos = @getMousePos(event)
+    pos = @getGridCoordinates mousPos
     if @ship.x == pos.x && @ship.y == pos.y && event.which == 1
       @mousePressedOnShip = true
     else
-      if @contains(pos) && @isSomethingOnPosition(pos.x, pos.y) == false && !window.isSimulating && event.which == 1
+      if @contains(mousPos) && @isSomethingOnPosition(pos.x, pos.y) == false && !window.isSimulating && event.which == 1
         window.creatObjectFromButton(pos.x, pos.y)
     if event.which == 3 && @isSomethingOnPosition(pos.x,pos.y).name != "PirateShip"
       @deleteObject (@isSomethingOnPosition(pos.x,pos.y))
 
   onMouseUp: (event) =>
+    coords = @getGridCoordinates(@getMousePos(event))
+    x = coords.x
+    y = coords.y
     if @mousePressedOnShip
-      @ship.x = @getGridCoordinates(@getMousePos(event)).x
-      @ship.y = @getGridCoordinates(@getMousePos(event)).y
+      if !@contains(@getMousePos(event))
+        x = coords.x
+        y = coords.y
+        if x >= @gridWidth
+          x = @gridWidth - 1
+        if y >= @gridHeight
+          y = @gridHeight-1
+      @ship.x = x
+      @ship.y = y
+
     @mousePressedOnShip = false
 
   onContextmenu: (event) =>
@@ -183,12 +194,43 @@ class @Grid
 
   onMouseOut: (event) =>
     @activeCell = null
+    if @mousePressedOnShip
+      coords = @getGridCoordinates(@getMousePos(event))
+      x = coords.x
+      y = coords.y
+      if x < 0
+        x = 0
+      else if x >= @gridWidth
+        x = @gridWidth - 1
+
+      if y < 0
+        y = 0
+      else if y >= @gridHeight
+        y = @gridHeight-1
+
+      @ship.x = x
+      @ship.y = y
+    @mousePressedOnShip = false
 
   isSomethingOnPosition: (x, y) =>
     for obj in window.grid.objects
       if obj.x == x && obj.y == y
         return obj
     false
+
+  serialize: () =>
+    sendObjects = []
+    for gameObject in @objects
+      sendObjects.push(gameObject.serialize())
+
+    sendShip =  @ship.serialize()
+
+    {
+      width: @gridWidth
+      height: @gridHeight
+      objects: sendObjects
+      ship: sendShip
+    }
 
   drawLine: (x1, y1, x2, y2, width, strokeStyle) ->
     newX1 = Math.min(x1, x2)

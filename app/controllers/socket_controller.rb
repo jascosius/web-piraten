@@ -46,6 +46,18 @@ class SocketController <  WebsocketRails::BaseController
     WebsocketRails[:operations].trigger(:line, line)
   end
 
+  def simulateGrid
+    receive_code
+    grid = message[:grid]
+    puts grid
+    puts hallo['name']
+  end
+
+  def stopSimulation
+    puts 'stop'
+  end
+
+
   def receive_code
     #WebsocketRails[:debug].trigger :console, message[:code]
     puts '================================='
@@ -109,8 +121,8 @@ class SocketController <  WebsocketRails::BaseController
     message[:code].each_line do |s|
       code += s + "line(#{i})\n"
       i += 1
-    end
 
+    end
     code = injectShipLogic(code)
   end
 

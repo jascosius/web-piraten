@@ -186,11 +186,18 @@ jQuery () => # use jQuery to wait until DOM is ready
     @isSimulating = !@isSimulating
 
   $("#runBtn").click () -> # start execution
+
+    sendGrid =  window.grid.serialize()
+
     window.toggleCodeEditing()
-    webSocket.trigger "code", {code: window.codeMirror.getValue()}
+    webSocket.trigger "simulateGrid", {code: window.codeMirror.getValue(), grid: sendGrid}
+
+
   $("#stopBtn").click () -> # start execution
     operationHandler.clear()
     window.toggleCodeEditing()
+    webSocket.trigger "stopSimulation"
+
 
   $("#resetBtn").click () -> # start execution
     operationHandler.clear()
