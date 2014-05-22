@@ -1,4 +1,7 @@
 class SocketController <  WebsocketRails::BaseController
+
+  include Preprocessor
+
   def initialize_session
     puts 'new_event was called'
   end
@@ -70,7 +73,7 @@ class SocketController <  WebsocketRails::BaseController
       # use the directory...
       open("#{dir}/code.rb", 'w+') { |file| #TODO: Create file as specific linux user
 
-        code = preprocessCode
+        code = preprocess_code(message[:code])
         puts "Message: #{code}"
 
         File.chmod 0777, file
@@ -111,44 +114,5 @@ class SocketController <  WebsocketRails::BaseController
       puts 'Simulation abgeschlossen'
 
     }
-  end
-
-  private
-
-  def preprocessCode
-    i=0
-    code = ''
-    message[:code].each_line do |s|
-      code += s + "line(#{i})\n"
-      i += 1
-
-    end
-    code = injectShipLogic(code)
-  end
-
-
-  def injectShipLogic(code)
-    'def move
-       puts "move"
-     end
-     def look
-      puts "look"
-     end
-     def turnRight
-       puts "turnRight"
-     end
-     def turnLeft
-       puts "turnLeft"
-     end
-     def put
-       puts "put"
-     end
-     def take
-       puts "take"
-     end
-     def line(i)
-       puts "\nline?#{i}"
-     end
-' + code
   end
 end
