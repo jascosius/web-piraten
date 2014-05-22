@@ -114,17 +114,16 @@ class @OperationHandler extends ChannelHandler
     if (Config.simulationSpeed > 0 && (@lifeTime % Config.simulationSpeed) != 0) || @operationQueue.length < 1
       @lifeTime++
       return
+    @simulateOperation()
+
+    @lifeTime++
+
+  simulateOperation: () =>
     repeat = true
 
     while repeat
       currentOp = @operationQueue.shift() # Operation instance
       repeat = false
-
-      nextOp = (op) =>
-        if !(op in ['line','done']) && @operationQueue.length > 0 && @operationQueue[0].event == 'line'
-          repeat = true
-        else
-          repeat = false
 
       switch currentOp.event
         when 'left'
@@ -148,9 +147,10 @@ class @OperationHandler extends ChannelHandler
           window.toggleCodeEditing()
         else
           window.Utils.logError "Invalid event: #{currentOp.event} data: #{currentOp.data}"
-      nextOp(currentOp.event)
 
-    @lifeTime++
+      if !(currentOp.event in ['line','done']) && @operationQueue.length > 0 && @operationQueue[0].event == 'line'
+        repeat = true
+
 
 class @DebugHandler extends ChannelHandler
   logToConsole = (data) ->
