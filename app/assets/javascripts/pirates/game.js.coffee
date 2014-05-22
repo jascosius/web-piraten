@@ -78,6 +78,14 @@ jQuery () => # use jQuery to wait until DOM is ready
     watchlist = @getWatchList()
     $('#watchlist-size').html watchlist.length
 
+  addVariableToQueue = (word) ->
+    $('#watchlist-default').hide()
+    $('#watchlist').append "
+      <li>
+        <span class='glyphicon glyphicon-remove watchlist-remove' aria-hidden='true'></span>
+        #{word}
+      </li>"
+
   $.extend($.easing, # just for a nicer visualization, from jQuery UI
     {
       easeOutQuad: (x, t, b, c, d) ->
@@ -97,7 +105,7 @@ jQuery () => # use jQuery to wait until DOM is ready
       if $("#watchlist li:contains('#{selection}')").length > 0
         # already in watchlist
       else
-        $('#watchlist').append "<li><span class='glyphicon glyphicon-remove watchlist-remove' aria-hidden='true'></span> #{selection}</li>"
+        addVariableToQueue(selection)
         hoveringSelection = $ "<div class='flying cm-variable'><span>#{selection}</span></div>"
 
         dropdownToggle = $ '#watchlist-dropdown'
@@ -136,10 +144,27 @@ jQuery () => # use jQuery to wait until DOM is ready
 
   # Click handlers for the buttons
   $('#watchlist').on 'click','.watchlist-remove', (event) ->
-    $(event.target).parent().remove()
-    console.log 'removed element from watch list'
-    #TODO WatchList Button animieren
-    updateQueueSize()
+    #avoid that bootstrap closes the dropdown
+    event.stopPropagation()
+
+    slideDuration = 300
+
+    removeAndFade = () ->
+      $(this).remove()
+      updateQueueSize()
+
+      # show the default message if the watchlist is empty
+      if $('#watchlist-size').html() < 1
+        $('#watchlist-default').fadeIn({ duration: slideDuration, queue: false })
+        .css('display', 'none')
+        .slideDown(slideDuration)
+
+    $(event.target).parent().fadeOut({
+      duration: slideDuration
+      queue: false
+      complete: removeAndFade
+    })
+    .slideUp slideDuration
 
 
 
