@@ -7,6 +7,7 @@ class VirtualMachine
   end
 
   def run
+    prefix = 'CkyUHZVL3q_' #have to be the same as in the socket_controller
     loop {
       Thread.start(@server.accept) do |client| #spawn new process for a new client
 
@@ -15,7 +16,7 @@ class VirtualMachine
         loop do
           msg = client.gets
           puts msg
-          if msg.include?('CkyUHZVL3q_EOF')
+          if msg.include?("#{prefix}EOF")
             puts "Fertig"
             break
           end
@@ -39,14 +40,14 @@ class VirtualMachine
                 client.puts line
 
                 #wait for an answer, when read a question
-                if line.include?('CkyUHZVL3q_?')
+                if line.include?("#{prefix}_?")
                   msg = client.gets
                   pipe.write msg
                 end
               end
 
               #tell the client that the execution has finished
-              client.puts 'CkyUHZVL3q_end'
+              client.puts "#{prefix}_end"
             end
           end
         end

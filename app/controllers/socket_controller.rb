@@ -65,7 +65,10 @@ class SocketController < WebsocketRails::BaseController
   end
 
 
+
+
   def receive_code
+    prefix = 'CkyUHZVL3q_'
     #WebsocketRails[:debug].trigger :console, message[:code]
     puts '================================='
     puts '===== received operation========='
@@ -74,7 +77,7 @@ class SocketController < WebsocketRails::BaseController
 
     code = preprocess_code(message[:code])
 
-    code += "\nCkyUHZVL3q_EOF"
+    code += "\n#{prefix}EOF"
 
     begin
       #connect to TCPServer to execute the programm
@@ -89,8 +92,7 @@ class SocketController < WebsocketRails::BaseController
       #interact with the tcpserver
       loop do
         line = vm.gets
-        if line.include? 'CkyUHZVL3q_end'
-          #TODO Send error to client
+        if line.include? "#{prefix}_end"
           simulation_done
           break
         elsif line.include? 'line'
