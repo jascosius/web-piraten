@@ -72,13 +72,16 @@ class SocketController < WebsocketRails::BaseController
     code += "\nCkyUHZVL3q_EOF"
 
     begin
+      #connect to TCPServer to execute the programm
       vm = TCPSocket.open("localhost", 12340)
     rescue
       puts 'Could not connect to TCPSocket. Start ruby app/vm/vm.rb'
     else
 
+      #send programmcode to the server
       vm.puts code
 
+      #interact with the tcpserver
       loop do
         line = vm.gets
         if line.include? 'CkyUHZVL3q_end'
@@ -104,54 +107,5 @@ class SocketController < WebsocketRails::BaseController
       end
 
     end
-
-
-=begin
-    Dir.mktmpdir("session_") {|dir|
-      # use the directory...
-      open("#{dir}/code.rb", 'w+') { |file| #TODO: Create file as specific linux user
-
-        code = preprocess_code(message[:code])
-        puts "Message: #{code}"
-
-        File.chmod 0777, file
-        File.write file, code
-
-        IO.popen "ruby #{File.path(file)}" do |pipe|
-
-          pipe.sync = true
-          until pipe.eof?
-            line = pipe.readline
-            if line.include? 'end'
-              #TODO Send error to client
-              break
-            elsif line.include? 'line'
-              sendLine line.split('?')[1].to_i
-            elsif line.include? 'turnRight'
-               rotateShipRight
-            elsif line.include? 'turnLeft'
-               rotateShipLeft
-            elsif line.include? 'move'
-               moveShip
-            elsif line.include? 'take'
-               take
-            elsif line.include? 'look'
-              look
-            elsif line.include? 'put'
-               put
-            elsif !line.equal? ''
-              #WebsocketRails[:debug].trigger :console, line
-            end
-            #puts "has \\n? #{line.eql? '\n'} #{line.eql? "\n"} #{line.equal? '\n'} #{line.equal? "\n"}"
-            #puts line.dump
-          end
-        end
-      }
-      # mktmpdir deletes file automatically
-      WebsocketRails[:operations].trigger :done
-      puts 'Simulation abgeschlossen'
-
-    }
-=end
   end
 end

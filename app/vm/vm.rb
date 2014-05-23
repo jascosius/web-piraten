@@ -8,7 +8,9 @@ class VirtualMachine
 
   def run
     loop {
-      Thread.start(@server.accept) do |client|
+      Thread.start(@server.accept) do |client| #spawn new process for a new client
+
+        #get programmcode from client
         code = ''
         loop do
           msg = client.gets
@@ -20,14 +22,12 @@ class VirtualMachine
           code += msg
         end
 
-        puts 'Code erhalten'
+        puts code
 
         # create temporally file for execution of ruby code
         Dir.mktmpdir('session_') do |dir|
           # use the directory...
           open("#{dir}/code.rb", 'w+') do |file| #TODO: Create file as specific linux user
-
-            puts code
 
             File.chmod 0777, file
             File.write file, code
@@ -37,11 +37,15 @@ class VirtualMachine
               until pipe.eof?
                 line = pipe.readline
                 client.puts line
+
+                #wait for an answer, when read a question
                 if line.include?('CkyUHZVL3q_?')
                   msg = client.gets
                   pipe.write msg
                 end
               end
+
+              #tell the client that the execution has finished
               client.puts 'CkyUHZVL3q_end'
             end
           end
