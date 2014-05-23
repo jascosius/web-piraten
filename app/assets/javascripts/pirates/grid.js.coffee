@@ -1,5 +1,6 @@
 class @Grid
-  constructor: (@canvas, @size) ->
+  @initialize = (@canvas, @size) ->
+    Grid.GridControls._initialize()
     @ctx = canvas.getContext "2d"
     @canvasWidth = @ctx.canvas.width
     @canvasHeight = @ctx.canvas.height
@@ -27,11 +28,11 @@ class @Grid
 
     @mousePressedOnShip = false
 
-  update: (deltaTime) ->
+  @update = (deltaTime) ->
     for gameObject in @objects
       gameObject.update(deltaTime)
 
-  draw: =>
+  @draw = () =>
     count = 0
     strokeStyle = "#999"
 
@@ -119,10 +120,10 @@ class @Grid
 
   # end draw
 
-  addObject: (obj) ->
+  @addObject = (obj) ->
     @objects.push(obj)
 
-  deleteObject: (obj) ->
+  @deleteObject = (obj) ->
     if obj != false
       newObjects = []
       for gameObject in @objects
@@ -130,30 +131,30 @@ class @Grid
           newObjects.push(gameObject)
       @objects = newObjects
 
-  isInCanvas: (coords) ->
+  @isInCanvas = (coords) ->
     coords.x >= 0 && coords.y >= 0 && coords.x < @canvasWidth && coords.y < @canvasHeight
 
-  contains: (coords) ->
+  @contains = (coords) ->
     @isInCanvas(coords) && coords.x < Math.floor(@canvasWidth/@size)*@size &&
       coords.y < Math.floor(@canvasHeight/@size)*@size
 
-  getGridCoordinates: (coords) ->
+  @getGridCoordinates = (coords) ->
     new Coordinate Math.floor(coords.x/@size), Math.floor(coords.y/@size)
 
-  getCanvasCoordinates: (coords) ->
+  @getCanvasCoordinates = (coords) ->
     new Coordinate Math.floor(coords.x*@size), Math.floor(coords.y*@size)
 
-  getMousePos: (mouseEvent) =>
+  @getMousePos = (mouseEvent) =>
     rect = @canvas.getBoundingClientRect()
     new Coordinate mouseEvent.clientX - rect.left, mouseEvent.clientY - rect.top
 
   # relative to canvas
-  getCellRect: (coords) ->
+  @getCellRect = (coords) ->
     x = coords.x*@size
     y = coords.y*@size
     { x1: x, y1: y, x2: @size, y2: @size }
 
-  onClick: (event) =>
+  @onClick = (event) =>
     mousPos = @getMousePos(event)
     pos = @getGridCoordinates mousPos
     if @ship.x == pos.x && @ship.y == pos.y && event.which == 1
@@ -164,7 +165,7 @@ class @Grid
     if event.which == 3 && @isSomethingOnPosition(pos.x,pos.y).name != "PirateShip"
       @deleteObject (@isSomethingOnPosition(pos.x,pos.y))
 
-  onMouseUp: (event) =>
+  @onMouseUp = (event) =>
     coords = @getGridCoordinates(@getMousePos(event))
     x = coords.x
     y = coords.y
@@ -181,10 +182,10 @@ class @Grid
 
     @mousePressedOnShip = false
 
-  onContextmenu: (event) =>
+  @onContextmenu = (event) =>
     event.preventDefault()
 
-  onMouseMove: (event) =>
+  @onMouseMove = (event) =>
     @activeCell = null
     pos = @getMousePos(event)
     @mousePosition = pos
@@ -192,7 +193,7 @@ class @Grid
       pos = @getGridCoordinates pos
       @activeCell = pos
 
-  onMouseOut: (event) =>
+  @onMouseOut = (event) =>
     @activeCell = null
     if @mousePressedOnShip
       coords = @getGridCoordinates(@getMousePos(event))
@@ -212,13 +213,13 @@ class @Grid
       @ship.y = y
     @mousePressedOnShip = false
 
-  isSomethingOnPosition: (x, y) =>
-    for obj in window.grid.objects
+  @isSomethingOnPosition = (x, y) =>
+    for obj in @objects
       if obj.x == x && obj.y == y
         return obj
     false
 
-  serialize: () =>
+  @serialize = () =>
     sendObjects = []
     for gameObject in @objects
       sendObjects.push(gameObject.serialize())
@@ -232,7 +233,7 @@ class @Grid
       ship: sendShip
     }
 
-  drawLine: (x1, y1, x2, y2, width, strokeStyle) ->
+  @drawLine = (x1, y1, x2, y2, width, strokeStyle) ->
     newX1 = Math.min(x1, x2)
     newY1 = Math.min(y1, y2)
     newX2 = Math.max(x1, x2)
@@ -257,3 +258,36 @@ class @Grid
 
     @ctx.restore()
 
+
+# Controls the buttons above the grid
+class Grid.GridControls
+  @_initialize = () ->
+    $(document).on "keydown", @onKeyDown
+
+    #preload queries for optimization
+    @_$buttons = $(".gameObject-controls button")
+    @_$buttons.click @onClick
+    @_$treasureButton = $("#addTreasure")
+    @_$monsterButton = $("#addMonster")
+    @_$waveButton = $("#addWave")
+
+  # switch between gameobject selection with number keys
+  @onKeyDown = (event) =>
+    return if @isInEditor
+    switch event.keyCode
+      when 49, 97
+        @_$buttons.removeClass "btn-success"
+        @_$treasureButton.addClass "btn-success"
+      when 50, 98
+        @_$buttons.removeClass "btn-success"
+        @_$monsterButton.addClass "btn-success"
+      when 51, 99
+        @_$buttons.removeClass "btn-success"
+        @_$waveButton.addClass "btn-success"
+      when 27
+        @_$buttons.removeClass "btn-success"
+
+  self = this
+  @onClick = () ->
+    self._$buttons.removeClass "btn-success"
+    $(this).addClass "btn-success"

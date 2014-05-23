@@ -94,20 +94,11 @@ class @OperationHandler extends ChannelHandler
         @operationQueue.push new Operation(operation, data)
     ###
 
-  highlightLine: (line) ->
-    if @lastLine?
-      window.codeMirror.removeLineClass @lastLine, 'background', 'processedLine'
-    else
-      # reset everything when simulation starts (again)
-      window.codeMirror.removeLineClass(i, 'background', 'processedLine') for i in [0..window.codeMirror.lineCount()]
 
-    window.codeMirror.addLineClass line, 'background', 'processedLine'
-    console.log "Highlighted line #{line}"
-    @lastLine = line
 
   clear: () =>
     @operationQueue = []
-    window.codeMirror.removeLineClass(i, 'background', 'processedLine') for i in [0..window.codeMirror.lineCount()]
+    CodeGUI.clearHighlighting()
 
   update: (deltaTime) =>
     if !window.isSimulating then return
@@ -127,26 +118,26 @@ class @OperationHandler extends ChannelHandler
 
       switch currentOp.event
         when 'left'
-          ship.rotateLeft()
+          Grid.ship.rotateLeft()
         when 'right'
-          ship.rotateRight()
+          Grid.ship.rotateRight()
         when 'move'
-          ship.move()
+          Grid.ship.move()
         when 'look'
-          ship.look()
+          Grid.ship.look()
         when 'lookAway'
-          ship.lookAway()
+          Grid.ship.lookAway()
         when 'put'
-          ship.put()
+          Grid.ship.put()
         when 'take'
-          ship.take()
+          Grid.ship.take()
         when 'line'
-          @highlightLine currentOp.data
+          CodeGUI.highlightLine currentOp.data
         when 'done'
           Utils.log 'Ausführung beendet!'
-          window.toggleCodeEditing()
+          CodeGUI.toggleCodeEditing()
         else
-          window.Utils.logError "Invalid event: #{currentOp.event} data: #{currentOp.data}"
+          Utils.logError "Invalid event: #{currentOp.event} data: #{currentOp.data}"
 
       if !(currentOp.event in ['line','done']) && @operationQueue.length > 0 && @operationQueue[0].event == 'line'
         repeat = true

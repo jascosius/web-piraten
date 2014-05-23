@@ -6,3 +6,8 @@
   waveImage: "./assets/wave.png"
   treasureImage: "./assets/treasure.png"
   monsterImage: "./assets/monster.png"
+  getWatchListRemoveButtonHTML: (word) ->
+    "<li>
+      <span class='glyphicon glyphicon-remove watchlist-remove' aria-hidden='true'></span>
+      #{word}
+    </li>"
