@@ -1,4 +1,4 @@
-class SocketController <  WebsocketRails::BaseController
+class SocketController < WebsocketRails::BaseController
 
   include Preprocessor
 
@@ -53,7 +53,6 @@ class SocketController <  WebsocketRails::BaseController
     receive_code
     grid = message[:grid]
     puts grid
-    puts hallo['name']
   end
 
   def stopSimulation
@@ -68,7 +67,46 @@ class SocketController <  WebsocketRails::BaseController
     puts '================================='
     puts ''
 
-    # create temporally file for execution of ruby code
+    code = preprocess_code(message[:code])
+
+    code += "\nCkyUHZVL3q_EOF"
+
+    begin
+      vm = TCPSocket.open("localhost", 12340)
+    rescue
+      puts 'Could not connect to TCPSocket. Start ruby app/vm/vm.rb'
+    else
+
+      vm.puts code
+
+      loop do
+        line = vm.gets
+        if line.include? 'CkyUHZVL3q_end'
+          #TODO Send error to client
+          break
+        elsif line.include? 'line'
+          sendLine line.split('?')[1].to_i
+        elsif line.include? 'turnRight'
+          rotateShipRight
+        elsif line.include? 'turnLeft'
+          rotateShipLeft
+        elsif line.include? 'move'
+          moveShip
+        elsif line.include? 'take'
+          take
+        elsif line.include? 'look'
+          look
+        elsif line.include? 'put'
+          put
+        elsif !line.equal? ''
+          #WebsocketRails[:debug].trigger :console, line
+        end
+      end
+
+    end
+
+
+=begin
     Dir.mktmpdir("session_") {|dir|
       # use the directory...
       open("#{dir}/code.rb", 'w+') { |file| #TODO: Create file as specific linux user
@@ -114,5 +152,6 @@ class SocketController <  WebsocketRails::BaseController
       puts 'Simulation abgeschlossen'
 
     }
+=end
   end
 end
