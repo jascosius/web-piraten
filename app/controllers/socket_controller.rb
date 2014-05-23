@@ -1,4 +1,8 @@
-class SocketController <  WebsocketRails::BaseController
+class SocketController < WebsocketRails::BaseController
+  $prefix = 'CkyUHZVL3q_'
+
+  include Preprocessor
+
   def initialize_session
     puts 'new_event was called'
   end
@@ -12,7 +16,7 @@ class SocketController <  WebsocketRails::BaseController
   end
 
   # test events for the remote control buttons
-  def rotateShipLeft # event: ship.left
+  def rotate_ship_left # event: ship.left
     puts 'Left!'
     WebsocketRails[:operations].trigger(:left)
   end
@@ -32,17 +36,22 @@ class SocketController <  WebsocketRails::BaseController
     WebsocketRails[:operations].trigger(:look)
   end
 
-  def moveShip # event: ship.move
+  def move_ship # event: ship.move
     puts 'Move!'
     WebsocketRails[:operations].trigger(:move)
   end
 
-  def rotateShipRight # event: ship.right
+  def rotate_ship_right # event: ship.right
     puts 'Right!'
     WebsocketRails[:operations].trigger(:right)
   end
 
-  def sendLine(line)
+  def simulation_done
+    puts 'done'
+    WebsocketRails[:operations].trigger(:done)
+  end
+
+  def send_line(line)
     WebsocketRails[:operations].trigger(:line, line)
   end
 
@@ -50,12 +59,13 @@ class SocketController <  WebsocketRails::BaseController
     receive_code
     grid = message[:grid]
     puts grid
-    puts hallo['name']
   end
 
   def stopSimulation
     puts 'stop'
   end
+
+
 
 
   def receive_code
@@ -65,90 +75,45 @@ class SocketController <  WebsocketRails::BaseController
     puts '================================='
     puts ''
 
-    # create temporally file for execution of ruby code
-    Dir.mktmpdir("session_") {|dir|
-      # use the directory...
-      open("#{dir}/code.rb", 'w+') { |file| #TODO: Create file as specific linux user
+    code = preprocess_code(message[:code])
 
-        code = preprocessCode
-        puts "Message: #{code}"
+    code += "\n#{$prefix}EOF"
 
-        File.chmod 0777, file
-        File.write file, code
+    begin
+      #connect to TCPServer to execute the programm
+      vm = TCPSocket.open("localhost", 12340)
+    rescue
+      puts 'Could not connect to TCPSocket. Start ruby app/vm/vm.rb'
+    else
 
-        IO.popen "ruby #{File.path(file)}" do |pipe|
+      #send programmcode to the server
+      vm.puts code
 
-          pipe.sync = true
-          until pipe.eof?
-            line = pipe.readline
-            if line.include? 'end'
-              #TODO Send error to client
-              break
-            elsif line.include? 'line'
-              sendLine line.split('?')[1].to_i
-            elsif line.include? 'turnRight'
-               rotateShipRight
-            elsif line.include? 'turnLeft'
-               rotateShipLeft
-            elsif line.include? 'move'
-               moveShip
-            elsif line.include? 'take'
-               take
-            elsif line.include? 'look'
-              look
-            elsif line.include? 'put'
-               put
-            elsif !line.equal? ''
-              #WebsocketRails[:debug].trigger :console, line
-            end
-            #puts "has \\n? #{line.eql? '\n'} #{line.eql? "\n"} #{line.equal? '\n'} #{line.equal? "\n"}"
-            #puts line.dump
-          end
+      #interact with the tcpserver
+      loop do
+        line = vm.gets
+        if line.include? "#{$prefix}end"
+          simulation_done
+          break
+        elsif line.include? "#{$prefix}line"
+          send_line line.split('!')[1].to_i
+        elsif line.include? "#{$prefix}turnRight"
+          rotate_ship_right
+        elsif line.include? "#{$prefix}turnLeft"
+          rotate_ship_left
+        elsif line.include? "#{$prefix}move"
+          move_ship
+        elsif line.include? "#{$prefix}take"
+          take
+        elsif line.include? "#{$prefix}look"
+          look
+        elsif line.include? "#{$prefix}put"
+          put
+        elsif !line.equal? ''
+          #WebsocketRails[:debug].trigger :console, line
         end
-      }
-      # mktmpdir deletes file automatically
-      WebsocketRails[:operations].trigger :done
-      puts 'Simulation abgeschlossen'
-
-    }
-  end
-
-  private
-
-  def preprocessCode
-    i=0
-    code = ''
-    message[:code].each_line do |s|
-      code += s + "line(#{i})\n"
-      i += 1
+      end
 
     end
-    code = injectShipLogic(code)
-  end
-
-
-  def injectShipLogic(code)
-    'def move
-       puts "move"
-     end
-     def look
-      puts "look"
-     end
-     def turnRight
-       puts "turnRight"
-     end
-     def turnLeft
-       puts "turnLeft"
-     end
-     def put
-       puts "put"
-     end
-     def take
-       puts "take"
-     end
-     def line(i)
-       puts "\nline?#{i}"
-     end
-' + code
   end
 end
