@@ -15,7 +15,7 @@ WebsocketRails::EventMap.describe do
 
   subscribe :client_connected, :to => SocketController, :with_method => :client_connected
   subscribe :client_disconnected, :to => SocketController, :with_method => :client_disconnected
-  subscribe :simulateGrid, :to => SocketController, :with_method => :simulateGrid
+  subscribe :simulateGrid, :to => SocketController, :with_method => :receive_code
   subscribe :stopSimulation, :to =>SocketController, :with_method => :stopSimulation
 
   namespace :ship do

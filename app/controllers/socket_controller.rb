@@ -2,6 +2,7 @@ class SocketController < WebsocketRails::BaseController
 
   include Preprocessor
 
+
   def initialize_session
     puts 'new_event was called'
   end
@@ -37,6 +38,7 @@ class SocketController < WebsocketRails::BaseController
 
   def move_ship # event: ship.move
     puts 'Move!'
+
     WebsocketRails[:operations].trigger(:move)
   end
 
@@ -54,10 +56,20 @@ class SocketController < WebsocketRails::BaseController
     WebsocketRails[:operations].trigger(:line, line)
   end
 
-  def simulateGrid
-    receive_code
+  def read_JSON
     grid = message[:grid]
     puts grid
+    x = grid['width']
+    y = grid['height']
+    @grid_size = [x,y]
+    @objects = grid['objects'].to_a
+    @ship = grid['ship']
+    #puts obja.to_s
+    #@objects.each{ |obj|
+    #  if  obj['name'] == 'Monster'
+    #    puts obj
+    #  end
+    #}
   end
 
   def stopSimulation
@@ -68,6 +80,7 @@ class SocketController < WebsocketRails::BaseController
 
 
   def receive_code
+    read_JSON
     prefix = 'CkyUHZVL3q_'
     #WebsocketRails[:debug].trigger :console, message[:code]
     puts '================================='
