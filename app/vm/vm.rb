@@ -41,14 +41,14 @@ class VirtualMachine
                 client.puts line
 
                 #wait for an answer, when read a question
-                if line.include?("#{$prefix}_?")
+                if line.include?("#{$prefix}?")
                   msg = client.gets
                   pipe.write msg
                 end
               end
 
               #tell the client that the execution has finished
-              client.puts "#{$prefix}_end"
+              client.puts "#{$prefix}end"
             end
           end
         end

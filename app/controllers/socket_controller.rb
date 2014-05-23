@@ -92,22 +92,22 @@ class SocketController < WebsocketRails::BaseController
       #interact with the tcpserver
       loop do
         line = vm.gets
-        if line.include? "#{$prefix}_end"
+        if line.include? "#{$prefix}end"
           simulation_done
           break
-        elsif line.include? "#{$prefix}_line"
-          send_line line.split('?')[1].to_i
-        elsif line.include? 'turnRight'
+        elsif line.include? "#{$prefix}line"
+          send_line line.split('!')[1].to_i
+        elsif line.include? "#{$prefix}turnRight"
           rotate_ship_right
-        elsif line.include? 'turnLeft'
+        elsif line.include? "#{$prefix}turnLeft"
           rotate_ship_left
-        elsif line.include? 'move'
+        elsif line.include? "#{$prefix}move"
           move_ship
-        elsif line.include? 'take'
+        elsif line.include? "#{$prefix}take"
           take
-        elsif line.include? 'look'
+        elsif line.include? "#{$prefix}look"
           look
-        elsif line.include? 'put'
+        elsif line.include? "#{$prefix}put"
           put
         elsif !line.equal? ''
           #WebsocketRails[:debug].trigger :console, line
