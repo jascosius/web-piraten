@@ -1,7 +1,7 @@
 class SocketController < WebsocketRails::BaseController
+  $prefix = 'CkyUHZVL3q_'
 
   include Preprocessor
-
 
   def initialize_session
     puts 'new_event was called'
@@ -38,7 +38,6 @@ class SocketController < WebsocketRails::BaseController
 
   def move_ship # event: ship.move
     puts 'Move!'
-
     WebsocketRails[:operations].trigger(:move)
   end
 
@@ -56,20 +55,10 @@ class SocketController < WebsocketRails::BaseController
     WebsocketRails[:operations].trigger(:line, line)
   end
 
-  def read_JSON
+  def simulateGrid
+    receive_code
     grid = message[:grid]
     puts grid
-    x = grid['width']
-    y = grid['height']
-    @grid_size = [x,y]
-    @objects = grid['objects'].to_a
-    @ship = grid['ship']
-    #puts obja.to_s
-    #@objects.each{ |obj|
-    #  if  obj['name'] == 'Monster'
-    #    puts obj
-    #  end
-    #}
   end
 
   def stopSimulation
@@ -80,8 +69,6 @@ class SocketController < WebsocketRails::BaseController
 
 
   def receive_code
-    read_JSON
-    prefix = 'CkyUHZVL3q_'
     #WebsocketRails[:debug].trigger :console, message[:code]
     puts '================================='
     puts '===== received operation========='
@@ -90,7 +77,7 @@ class SocketController < WebsocketRails::BaseController
 
     code = preprocess_code(message[:code])
 
-    code += "\n#{prefix}EOF"
+    code += "\n#{$prefix}EOF"
 
     begin
       #connect to TCPServer to execute the programm
@@ -105,10 +92,10 @@ class SocketController < WebsocketRails::BaseController
       #interact with the tcpserver
       loop do
         line = vm.gets
-        if line.include? "#{prefix}_end"
+        if line.include? "#{$prefix}_end"
           simulation_done
           break
-        elsif line.include? 'line'
+        elsif line.include? "#{$prefix}_line"
           send_line line.split('?')[1].to_i
         elsif line.include? 'turnRight'
           rotate_ship_right

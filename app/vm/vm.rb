@@ -1,13 +1,15 @@
 require 'socket'
 require 'tmpdir'
 class VirtualMachine
+
+  $prefix = 'CkyUHZVL3q_' #have to be the same as in the socket_controller
+
   def initialize(port, ip)
     @server = TCPServer.open(ip, port)
     run
   end
 
   def run
-    prefix = 'CkyUHZVL3q_' #have to be the same as in the socket_controller
     loop {
       Thread.start(@server.accept) do |client| #spawn new process for a new client
 
@@ -16,8 +18,7 @@ class VirtualMachine
         loop do
           msg = client.gets
           puts msg
-          if msg.include?("#{prefix}EOF")
-            puts "Fertig"
+          if msg.include?("#{$prefix}EOF")
             break
           end
           code += msg
@@ -40,14 +41,14 @@ class VirtualMachine
                 client.puts line
 
                 #wait for an answer, when read a question
-                if line.include?("#{prefix}_?")
+                if line.include?("#{$prefix}_?")
                   msg = client.gets
                   pipe.write msg
                 end
               end
 
               #tell the client that the execution has finished
-              client.puts "#{prefix}_end"
+              client.puts "#{$prefix}_end"
             end
           end
         end
@@ -56,4 +57,4 @@ class VirtualMachine
   end
 end
 
-VirtualMachine.new(12340, "localhost")
+VirtualMachine.new(12340, 'localhost')
