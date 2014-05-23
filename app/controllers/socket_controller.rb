@@ -15,7 +15,7 @@ class SocketController < WebsocketRails::BaseController
   end
 
   # test events for the remote control buttons
-  def rotateShipLeft # event: ship.left
+  def rotate_ship_left # event: ship.left
     puts 'Left!'
     WebsocketRails[:operations].trigger(:left)
   end
@@ -35,17 +35,22 @@ class SocketController < WebsocketRails::BaseController
     WebsocketRails[:operations].trigger(:look)
   end
 
-  def moveShip # event: ship.move
+  def move_ship # event: ship.move
     puts 'Move!'
     WebsocketRails[:operations].trigger(:move)
   end
 
-  def rotateShipRight # event: ship.right
+  def rotate_ship_right # event: ship.right
     puts 'Right!'
     WebsocketRails[:operations].trigger(:right)
   end
 
-  def sendLine(line)
+  def simulation_done
+    puts 'done'
+    WebsocketRails[:operations].trigger(:done)
+  end
+
+  def send_line(line)
     WebsocketRails[:operations].trigger(:line, line)
   end
 
@@ -86,15 +91,16 @@ class SocketController < WebsocketRails::BaseController
         line = vm.gets
         if line.include? 'CkyUHZVL3q_end'
           #TODO Send error to client
+          simulation_done
           break
         elsif line.include? 'line'
-          sendLine line.split('?')[1].to_i
+          send_line line.split('?')[1].to_i
         elsif line.include? 'turnRight'
-          rotateShipRight
+          rotate_ship_right
         elsif line.include? 'turnLeft'
-          rotateShipLeft
+          rotate_ship_left
         elsif line.include? 'move'
-          moveShip
+          move_ship
         elsif line.include? 'take'
           take
         elsif line.include? 'look'
