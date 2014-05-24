@@ -145,7 +145,7 @@ class @OperationHandler extends ChannelHandler
           Utils.log 'Ausführung beendet!'
           CodeGUI.toggleCodeEditing()
         when 'done_error'
-          Utils.logError 'Ausführung abgebrochen!'
+          Utils.logError currentOp.data
           CodeGUI.toggleCodeEditing()
         else
           Utils.logError "Invalid event: #{currentOp.event} data: #{currentOp.data}"

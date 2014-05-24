@@ -52,9 +52,9 @@ class SocketController < WebsocketRails::BaseController
     WebsocketRails[:operations].trigger(:done)
   end
 
-  def simulation_done_error
+  def simulation_done_error(msg)
     puts 'done_error'
-    WebsocketRails[:operations].trigger(:done_error)
+    WebsocketRails[:operations].trigger(:done_error, "Ausführung beendet: #{msg}")
   end
 
   def send_line(line)
@@ -93,7 +93,7 @@ class SocketController < WebsocketRails::BaseController
         sleep(@@timeout)
         if thread.alive?
           puts 'kill'
-          simulation_done_error
+          simulation_done_error 'Ausführungszeit wurde überschritten.'
           thread.kill
         end
       end
@@ -113,7 +113,7 @@ class SocketController < WebsocketRails::BaseController
         loop do
           line = vm.gets
           if line.include? "#{$prefix}end_error"
-            simulation_done_error
+            simulation_done_error 'Maximale Anzahl der Operationen wurde erreicht.'
             break
           elsif line.include? "#{$prefix}end"
             simulation_done
