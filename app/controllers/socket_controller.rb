@@ -85,10 +85,12 @@ class SocketController < WebsocketRails::BaseController
 
     code = preprocess_code(message[:code])
 
+    #add EOF to show Wrapper the end of the code
     code += "\n#{$prefix}EOF"
 
     Thread.start do
 
+      #Thread to stop the execution after timeout time
       Thread.start(Thread.current) do |thread|
         sleep(@@timeout)
         if thread.alive?
@@ -100,9 +102,10 @@ class SocketController < WebsocketRails::BaseController
 
       begin
         #connect to TCPServer to execute the programm
-        vm = TCPSocket.open("localhost", 12340)
+        vm = TCPSocket.open('localhost', 12340)
       rescue
         puts 'Could not connect to TCPSocket. Start ruby app/vm/vm.rb'
+        simulation_done_error 'Ein interner Fehler ist aufgetreten.'
       else
 
         #send programmcode to the server
@@ -138,7 +141,6 @@ class SocketController < WebsocketRails::BaseController
           end
         end
       end
-
     end
   end
 end
