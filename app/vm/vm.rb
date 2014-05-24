@@ -3,6 +3,8 @@ require 'tmpdir'
 class VirtualMachine
 
   $prefix = 'CkyUHZVL3q_' #have to be the same as in the socket_controller
+  @@timeout = 5 #have to be the same as in the socket_controller
+  @@max_ops = 1000 #the maximal counter of ops to execute
 
   def initialize(port, ip)
     @server = TCPServer.open(ip, port)
@@ -12,6 +14,14 @@ class VirtualMachine
   def run
     loop {
       Thread.start(@server.accept) do |client| #spawn new process for a new client
+
+        Thread.start(Thread.current) do |thread|
+          sleep(@@timeout)
+          if thread.alive?
+            puts 'kill'
+            thread.kill
+          end
+        end
 
         #get programmcode from client
         code = ''
@@ -24,8 +34,6 @@ class VirtualMachine
           code += msg
         end
 
-        puts code
-
         # create temporally file for execution of ruby code
         Dir.mktmpdir('session_') do |dir|
           # use the directory...
@@ -36,8 +44,20 @@ class VirtualMachine
 
             IO.popen("ruby #{File.path(file)}", 'r+') do |pipe|
               pipe.sync = true
-              until pipe.eof?
+              counter = 0
+              loop do
+                if pipe.eof?
+                  #tell the client that the execution has finished successful
+                  client.puts "#{$prefix}end"
+                  break
+                elsif counter > @@max_ops
+                  #tell the client that the execution has finished with errors
+                  client.puts "#{$prefix}end_error"
+                  break
+                end
+                counter += 1
                 line = pipe.readline
+                puts line
                 client.puts line
 
                 #wait for an answer, when read a question
@@ -46,9 +66,6 @@ class VirtualMachine
                   pipe.write msg
                 end
               end
-
-              #tell the client that the execution has finished
-              client.puts "#{$prefix}end"
             end
           end
         end

@@ -59,6 +59,7 @@ class @OperationHandler extends ChannelHandler
       'put',
       'line',
       'done',
+      'done_error'
       'take',
       'look',
       'unlook'
@@ -83,6 +84,8 @@ class @OperationHandler extends ChannelHandler
       @operationQueue.push new Operation('line', data)
     @channel.bind 'done', (data) =>
       @operationQueue.push new Operation('done', data)
+    @channel.bind 'done_error', (data) =>
+      @operationQueue.push new Operation('done_error', data)
     ###for op in @operations
       @channel.bind op, (data) ->
         \#\#\#
@@ -135,6 +138,9 @@ class @OperationHandler extends ChannelHandler
           CodeGUI.highlightLine currentOp.data
         when 'done'
           Utils.log 'Ausführung beendet!'
+          CodeGUI.toggleCodeEditing()
+        when 'done_error'
+          Utils.log 'Ausführung abgebrochen!'
           CodeGUI.toggleCodeEditing()
         else
           Utils.logError "Invalid event: #{currentOp.event} data: #{currentOp.data}"
