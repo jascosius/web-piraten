@@ -61,6 +61,10 @@ class SocketController < WebsocketRails::BaseController
     WebsocketRails[:operations].trigger(:line, line)
   end
 
+  def puts_user_output(line)
+    WebsocketRails[:operations].trigger(:output, line)
+  end
+
   def simulateGrid
     receive_code
     grid = message[:grid]
@@ -128,7 +132,8 @@ class SocketController < WebsocketRails::BaseController
             look
           elsif line.include? "#{$prefix}put"
             put
-          elsif !line.equal? ''
+          elsif !line.chomp.empty?
+            puts_user_output line
             #WebsocketRails[:debug].trigger :console, line
           end
         end

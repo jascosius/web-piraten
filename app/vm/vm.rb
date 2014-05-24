@@ -39,7 +39,6 @@ class VirtualMachine
           # use the directory...
           open("#{dir}/code.rb", 'w+') do |file| #TODO: Create file as specific linux user
 
-            File.chmod 0777, file
             File.write file, code
 
             IO.popen("ruby #{File.path(file)}", 'r+') do |pipe|
@@ -53,6 +52,7 @@ class VirtualMachine
                 elsif counter > @@max_ops
                   #tell the client that the execution has finished with errors
                   client.puts "#{$prefix}end_error"
+                  puts 'max_ops reached'
                   break
                 end
                 counter += 1

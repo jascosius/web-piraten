@@ -58,6 +58,7 @@ class @OperationHandler extends ChannelHandler
       'move',
       'put',
       'line',
+      'output'
       'done',
       'done_error'
       'take',
@@ -82,6 +83,8 @@ class @OperationHandler extends ChannelHandler
       @operationQueue.push new Operation('lookAway', data)
     @channel.bind 'line', (data) =>
       @operationQueue.push new Operation('line', data)
+    @channel.bind 'output', (data) =>
+      @operationQueue.push new Operation('output', data)
     @channel.bind 'done', (data) =>
       @operationQueue.push new Operation('done', data)
     @channel.bind 'done_error', (data) =>
@@ -136,17 +139,19 @@ class @OperationHandler extends ChannelHandler
           Grid.ship.take()
         when 'line'
           CodeGUI.highlightLine currentOp.data
+        when 'output'
+          Utils.log currentOp.data
         when 'done'
           Utils.log 'Ausführung beendet!'
           CodeGUI.toggleCodeEditing()
         when 'done_error'
-          Utils.log 'Ausführung abgebrochen!'
+          Utils.logError 'Ausführung abgebrochen!'
           CodeGUI.toggleCodeEditing()
         else
           Utils.logError "Invalid event: #{currentOp.event} data: #{currentOp.data}"
 
-      if !(currentOp.event in ['line','done']) && @operationQueue.length > 0 && @operationQueue[0].event == 'line'
-        repeat = true
+      if !(currentOp.event in ['line','done','done_error']) && @operationQueue.length > 0 && @operationQueue[0].event == 'line'
+          repeat = true
 
 
 class @DebugHandler extends ChannelHandler
