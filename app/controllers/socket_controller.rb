@@ -1,5 +1,6 @@
 class SocketController < WebsocketRails::BaseController
   $prefix = 'CkyUHZVL3q_'
+  @@timeout = 5 #timeout time for the programm to execute
 
   include Preprocessor
 
@@ -51,8 +52,17 @@ class SocketController < WebsocketRails::BaseController
     WebsocketRails[:operations].trigger(:done)
   end
 
+  def simulation_done_error(msg)
+    puts 'done_error'
+    WebsocketRails[:operations].trigger(:done_error, "Ausführung beendet: #{msg}")
+  end
+
   def send_line(line)
     WebsocketRails[:operations].trigger(:line, line)
+  end
+
+  def puts_user_output(line)
+    WebsocketRails[:operations].trigger(:output, line)
   end
 
   def simulateGrid
@@ -66,8 +76,6 @@ class SocketController < WebsocketRails::BaseController
   end
 
 
-
-
   def receive_code
     #WebsocketRails[:debug].trigger :console, message[:code]
     puts '================================='
@@ -77,43 +85,62 @@ class SocketController < WebsocketRails::BaseController
 
     code = preprocess_code(message[:code])
 
+    #add EOF to show Wrapper the end of the code
     code += "\n#{$prefix}EOF"
 
-    begin
-      #connect to TCPServer to execute the programm
-      vm = TCPSocket.open("localhost", 12340)
-    rescue
-      puts 'Could not connect to TCPSocket. Start ruby app/vm/vm.rb'
-    else
+    Thread.start do
 
-      #send programmcode to the server
-      vm.puts code
-
-      #interact with the tcpserver
-      loop do
-        line = vm.gets
-        if line.include? "#{$prefix}end"
-          simulation_done
-          break
-        elsif line.include? "#{$prefix}line"
-          send_line line.split('!')[1].to_i
-        elsif line.include? "#{$prefix}turnRight"
-          rotate_ship_right
-        elsif line.include? "#{$prefix}turnLeft"
-          rotate_ship_left
-        elsif line.include? "#{$prefix}move"
-          move_ship
-        elsif line.include? "#{$prefix}take"
-          take
-        elsif line.include? "#{$prefix}look"
-          look
-        elsif line.include? "#{$prefix}put"
-          put
-        elsif !line.equal? ''
-          #WebsocketRails[:debug].trigger :console, line
+      #Thread to stop the execution after timeout time
+      Thread.start(Thread.current) do |thread|
+        sleep(@@timeout)
+        if thread.alive?
+          puts 'kill'
+          simulation_done_error 'Ausführungszeit wurde überschritten.'
+          thread.kill
         end
       end
 
+      begin
+        #connect to TCPServer to execute the programm
+        vm = TCPSocket.open('localhost', 12340)
+      rescue
+        puts 'Could not connect to TCPSocket. Start ruby app/vm/vm.rb'
+        simulation_done_error 'Ein interner Fehler ist aufgetreten.'
+      else
+
+        #send programmcode to the server
+        vm.puts code
+        puts code
+
+        #interact with the tcpserver
+        loop do
+          line = vm.gets
+          if line.include? "#{$prefix}end_error"
+            simulation_done_error 'Maximale Anzahl der Operationen wurde erreicht.'
+            break
+          elsif line.include? "#{$prefix}end"
+            simulation_done
+            break
+          elsif line.include? "#{$prefix}line"
+            send_line line.split('!')[1].to_i
+          elsif line.include? "#{$prefix}turnRight"
+            rotate_ship_right
+          elsif line.include? "#{$prefix}turnLeft"
+            rotate_ship_left
+          elsif line.include? "#{$prefix}move"
+            move_ship
+          elsif line.include? "#{$prefix}take"
+            take
+          elsif line.include? "#{$prefix}look"
+            look
+          elsif line.include? "#{$prefix}put"
+            put
+          elsif !line.chomp.empty?
+            puts_user_output line
+            #WebsocketRails[:debug].trigger :console, line
+          end
+        end
+      end
     end
   end
 end

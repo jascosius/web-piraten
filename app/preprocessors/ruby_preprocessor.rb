@@ -17,6 +17,7 @@ class RubyPreprocessor < BasePreprocessor
   #  def line(i)
   #    puts "\nline?#{i}"
   #  end
+  LANGUAGE_LOGIC = "STDOUT.sync = true\n"
   SHIP_LOGIC = "def move\n  puts \"#{$prefix}move\"\nend\ndef turnRight\n  puts \"#{$prefix}turnRight\"\nend\ndef turnLeft\n  puts \"#{$prefix}turnLeft\"\nend\ndef put\n  puts \"#{$prefix}put\"\nend\ndef line(i)\n  puts \"\\n#{$prefix}line!\#{i}\"\nend\n\n"
 
   def initialize(attribut)
@@ -31,7 +32,7 @@ class RubyPreprocessor < BasePreprocessor
       codes += s + "line(#{i})\n"
       i += 1
     end
-    SHIP_LOGIC + codes + "\n"
+    LANGUAGE_LOGIC + SHIP_LOGIC + codes + "\n"
   end
 
   def debug_code(code_msg, vars)
@@ -42,7 +43,7 @@ class RubyPreprocessor < BasePreprocessor
       code += s + "line(#{i})\n" #TO DO: add the json object for tracing variables
       i += 1
     end
-    SHIP_LOGIC + code + "\n"
+    LANGUAGE_LOGIC + SHIP_LOGIC + code + "\n"
   end
 
 end
