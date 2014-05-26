@@ -26,3 +26,13 @@ Things you may want to cover:
 
 Please feel free to use a different markup language if you do not plan to run
 <tt>rake doc:app</tt>.
+
+Grafiken:
+
+## pirate-ship_32.png
+by http://www.fatcow.com/free-icons
+unter Creative Commons Attribution 3.0 Lizenz
+via http://www.myrebus.com/
+
+## boje.png
+http://www.iconarchive.com/show/blueberry-basic-icons-by-icojam/help-ring-buoy-icon.html

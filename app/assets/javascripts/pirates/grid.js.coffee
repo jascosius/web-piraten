@@ -6,16 +6,15 @@ class @Grid
     @canvasHeight = @ctx.canvas.height
     @offsetX = @canvasWidth % @size
     @offsetY = @canvasHeight % @size
-    @activeCell = null
-    @mousePosition = null
     @gridWidth = Math.floor (@canvasWidth/@size)
     @gridHeight = Math.floor (@canvasHeight/@size)
-    @objects = []
+
+    @activeCell = null
+    @look = null
+    @mousePosition = null
+
     @ship = null
-
-    @look = false
-
-    @history = [] # list of every operation send by the server
+    @objects = []
 
     $canvas = $(@canvas)
     $canvas.on 'mousedown', this.onClick
