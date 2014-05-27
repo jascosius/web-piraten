@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class RubyPreprocessor < BasePreprocessor
 
   # A constant that stores the ship-logic for Ruby that's put in the code of the user to get the ship moving.

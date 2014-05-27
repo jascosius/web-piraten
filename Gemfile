@@ -59,3 +59,5 @@ gem 'codemirror-rails' # MIT License
 
 gem 'opal' # ruby2javascript compiler
 gem 'opal-rails'
+
+gem 'magic_encoding' #every file as UTF - 8

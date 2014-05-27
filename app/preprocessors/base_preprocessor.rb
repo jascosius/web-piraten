@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class BasePreprocessor
   attr_accessor :attrib
 

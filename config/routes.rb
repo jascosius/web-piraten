@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 RailsPrototype::Application.routes.draw do
   devise_for :users
   #get "game/index"

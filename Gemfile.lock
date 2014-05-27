@@ -72,6 +72,7 @@ GEM
     less-rails-bootstrap (3.1.1.1)
       less-rails (~> 2.5.0)
     libv8 (3.16.14.3)
+    magic_encoding (0.0.2)
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
@@ -186,6 +187,7 @@ DEPENDENCIES
   jbuilder (~> 1.2)
   jquery-rails
   less-rails-bootstrap
+  magic_encoding
   opal
   opal-rails
   rails (= 4.0.4)

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module Preprocessor
 
   require 'ruby_preprocessor'

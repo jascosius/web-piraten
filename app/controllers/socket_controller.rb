@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 class SocketController < WebsocketRails::BaseController
   $prefix = 'CkyUHZVL3q_'
   @@timeout = 5 #timeout time for the programm to execute
@@ -38,12 +40,41 @@ class SocketController < WebsocketRails::BaseController
   end
 
   def move_ship # event: ship.move
-    puts 'Move!'
+    puts 'Move!' #TODO Überprüfung ist nextPosition im Feld
+    case @ship['rotation']
+      when 0
+        @ship['x'] = @ship['x']+1
+      when 1
+        @ship['y'] = @ship['y']+1
+      when 2
+        @ship['x'] = @ship['x']-1
+      when 3
+        @ship['y'] = @ship['y']-1
+    end
+
+
+    # getNextCoordinate = (x, y, rotation) ->
+    #     switch rotation
+    # when 0 then x++ # east
+    # when 1 then y++ # south
+    # when 2 then x-- # west
+    # when 3 then y-- # north
+    # return { x: x, y: y }
+    # coords = getNextCoordinate(@x,@y,@rotation)
+    # @x = coords.x
+    # @y = coords.y
+
+
     WebsocketRails[:operations].trigger(:move)
   end
 
   def rotate_ship_right # event: ship.right
     puts 'Right!'
+    if @ship['rotation'] >= 3
+      @ship['rotation'] =0
+    else
+      @ship['rotation'] = @ship['rotation']+1
+    end
     WebsocketRails[:operations].trigger(:right)
   end
 
@@ -54,7 +85,7 @@ class SocketController < WebsocketRails::BaseController
 
   def simulation_done_error(msg)
     puts 'done_error'
-    WebsocketRails[:operations].trigger(:done_error, "Ausführung beendet: #{msg}")
+    WebsocketRails[:operations].trigger(:done_error, "Ausfuehrung beendet: #{msg}")
   end
 
   def send_line(line)
@@ -65,10 +96,20 @@ class SocketController < WebsocketRails::BaseController
     WebsocketRails[:operations].trigger(:output, line)
   end
 
-  def simulateGrid
-    receive_code
+  def read_JSON
     grid = message[:grid]
     puts grid
+    x = grid['width']
+    y = grid['height']
+    @grid_size = [x,y]
+    @objects = grid['objects'].to_a
+    @ship = grid['ship']
+    #puts obja.to_s
+    #@objects.each{ |obj|
+    #  if  obj['name'] == 'Monster'
+    #    puts obj
+    #  end
+    #}
   end
 
   def stopSimulation
@@ -77,6 +118,7 @@ class SocketController < WebsocketRails::BaseController
 
 
   def receive_code
+    read_JSON
     #WebsocketRails[:debug].trigger :console, message[:code]
     puts '================================='
     puts '===== received operation========='
