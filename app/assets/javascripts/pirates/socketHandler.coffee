@@ -2,32 +2,21 @@
 #= require websocket_rails/main
 
 onOpen = (event) ->
-  Utils.log("Connection established!")
-#  console.log("Websocket Connection open!")
-#  console.log(event)
+  Utils.log("Verbindung zum Server hergestellt!")
 
 onClose = (event) ->
-  Utils.log("Connection closed!")
-#  console.log(event)
+  Utils.log("Verbindung zum Server verloren, bitte lade die Seite neu!")
 
-onMessage = (event) ->
-  Utils.log("Message received:" + event.data)
-#  console.log(event)
 
 onError = (event) ->
-  Utils.logError("Connection error!")
-#  console.log(event)
-
-sendMessage= (message) ->
-  Utils.log("Sent: "+message)
-  webSocket.send(message)
+  Utils.logError("Fehler bei der Verbindung mit dem Server, bitte lade die Seite neu!")
+  console.log event
 
 # establish connection
 window.webSocket = new WebSocketRails 'localhost:3000/websocket'
-webSocket.on_open    = onOpen
-webSocket.on_close   = onClose
-webSocket.on_message = onMessage
-webSocket.on_error   = onError
+webSocket.on_open = onOpen
+webSocket.on_close = onClose
+webSocket.on_error = onError
 
 
 # allows to subscribe to several channels
@@ -37,11 +26,10 @@ class ChannelHandler
     @channel = webSocket.subscribe(channelName, @onSubscribe, @onSubscribeFail)
 
   onSubscribe: (event) =>
-    console.log "Subscribed to channel '#{ @channelName }'!"
-    console.log event
+    console.log "Subscribed to channel '#{@channelName}'"
 
   onSubscribeFail: (event) =>
-    console.log "Channel '#{ @channelName }' lost connection"
+    Utils.logError "Fehler bei der Kommunikation, bitte lade die Seite neu!"
     console.log event
 
 
@@ -63,7 +51,7 @@ class @OperationHandler extends ChannelHandler
       'done_error'
       'take',
       'look',
-      'unlook'
+      'lookAway'
     ]
 
     #bind operations for the operations channel
@@ -106,7 +94,7 @@ class @OperationHandler extends ChannelHandler
     @operationQueue = []
     CodeGUI.clearHighlighting()
 
-  update: (deltaTime) =>
+  update: () =>
     if !window.isSimulating then return
     if (Config.simulationSpeed > 0 && (@lifeTime % Config.simulationSpeed) != 0) || @operationQueue.length < 1
       @lifeTime++
@@ -156,7 +144,7 @@ class @OperationHandler extends ChannelHandler
 
 class @DebugHandler extends ChannelHandler
   logToConsole = (data) ->
-    console.log data
+    Utils.log data
   constructor: () ->
     super "debug"
     @channel.bind "console", logToConsole

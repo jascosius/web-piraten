@@ -27,9 +27,9 @@ class @Grid
 
     @mousePressedOnShip = false
 
-  @update = (deltaTime) ->
+  @update = () ->
     for gameObject in @objects
-      gameObject.update(deltaTime)
+      gameObject.update(Simulation.deltaTime)
 
   @draw = () =>
     count = 0
@@ -160,7 +160,7 @@ class @Grid
       @mousePressedOnShip = true
     else
       if @contains(mousPos) && @isSomethingOnPosition(pos.x, pos.y) == false && !window.isSimulating && event.which == 1
-        window.creatObjectFromButton(pos.x, pos.y)
+        @GridControls.creatObjectFromButton(pos.x, pos.y)
     if event.which == 3 && @isSomethingOnPosition(pos.x,pos.y).name != "PirateShip"
       @deleteObject (@isSomethingOnPosition(pos.x,pos.y))
 
@@ -290,3 +290,19 @@ class Grid.GridControls
   @onClick = () ->
     self._$buttons.removeClass "btn-success"
     $(this).addClass "btn-success"
+
+
+  @creatObjectFromButton = (x, y) =>
+    found = $(".gameObject-controls .btn-success")
+    switch found.attr 'id'
+      when 'addWave'
+        wave = new Wave x, y
+        Grid.addObject wave
+      when 'addTreasure'
+        treasure = new Treasure x, y
+        Grid.addObject treasure
+      when 'addMonster'
+        monster = new Monster x, y
+        Grid.addObject monster
+
+
