@@ -1,9 +1,7 @@
 # -*- encoding : utf-8 -*-
 RailsPrototype::Application.routes.draw do
   devise_for :users
-  #get "game/index"
-  #get "main/index"
-  get "socket_test/index"
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
