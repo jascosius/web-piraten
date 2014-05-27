@@ -33,7 +33,7 @@ class @Simulation
     @stopRedrawing = false
     @showFps = true
 
-    $(document).on 'mousemove', (event) ->
+    $(document).on 'mousemove', (event) =>
       if !@mouse?
         @mouse = new Coordinate(0,0);
       @mouse.x = event.clientX || event.pageX

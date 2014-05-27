@@ -52,8 +52,8 @@ class @CodeGUI
     dropdownToggle = $ '#watchlist-dropdown'
     hoveringSelection.css({
       position: 'absolute'
-      top:  window.mouse.y
-      left: window.mouse.x
+      top:  Simulation.mouse.y
+      left: Simulation.mouse.x
       display: 'block'
       visibility: 'hidden'
       opacity: 1
@@ -64,8 +64,8 @@ class @CodeGUI
 
     $span = hoveringSelection.children('span:first')
     hoveringSelection.css({
-      top: window.mouse.y - ($span.height()/2)
-      left: window.mouse.x - ($span.width()/2)
+      top: Simulation.mouse.y - ($span.height()/2)
+      left: Simulation.mouse.x - ($span.width()/2)
       visibility: 'visible'
     })
 
