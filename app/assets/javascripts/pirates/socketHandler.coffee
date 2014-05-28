@@ -95,7 +95,7 @@ class @OperationHandler extends ChannelHandler
     CodeGUI.clearHighlighting()
 
   update: () =>
-    if !window.isSimulating then return
+    if !Simulation.isSimulating then return
     if (Config.simulationSpeed > 0 && (@lifeTime % Config.simulationSpeed) != 0) || @operationQueue.length < 1
       @lifeTime++
       return
