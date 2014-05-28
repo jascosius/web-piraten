@@ -15,10 +15,8 @@ class GameObject # "abstract" because of the missing @
     y: @y
     }
 
-
-  update: (deltaTime) =>
+  update: () =>
     @lifeTime++
-
 
 class @Ship extends GameObject
 
@@ -42,43 +40,32 @@ class @Ship extends GameObject
       @rotation = 4 + @rotation
 
   look: () =>
-    window.grid.look = getNextCoordinate(@x,@y,@rotation)
-
-    #next = getNextCoordinate(@x,@y,@rotation)
-  #switch window.grid.isSomethingOnPosition(next.x, next.y).name
-    #  when "Buoy" then return "boje"
-    #  when "Wave" then return "welle"
-    #  when "Treasure" then return "schatz"
-    #  when "Monster" then return "monster"
-    #  else return false
+    Grid.look = getNextCoordinate @x, @y, @rotation
 
   lookAway: () =>
-    window.grid.look = false
+    Grid.look = null
 
   serialize: () =>
     obj = super()
     obj.rotation = @rotation
     return obj
 
-
   take: () =>
-    obj = window.grid.isSomethingOnPosition(@x, @y)
+    obj = Grid.isSomethingOnPosition @x, @y
     if obj.name == "Treasure"
-      window.grid.deleteObject(obj)
-      console.log("Gold eingesammelt")
+      Grid.deleteObject(obj)
+      console.log "Gold eingesammelt"
     else
-      console.log("hier ist nichts zu holen")
-
+      console.log "hier ist nichts zu holen"
 
   put: () =>
-   if window.grid.isSomethingOnPosition(@x, @y) != false
+   if Grid.isSomethingOnPosition(@x, @y) != false
     Utils.logError "hier ist kein Platz mehr für eine Boje"
    else
-    buoy = new window.Buoy @x, @y
-    window.grid.addObject buoy
+    Grid.addObject (new Buoy @x, @y)
 
   move: () =>
-    coords = getNextCoordinate(@x,@y,@rotation)
+    coords = getNextCoordinate @x, @y, @rotation
     @x = coords.x
     @y = coords.y
 

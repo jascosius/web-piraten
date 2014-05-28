@@ -22,6 +22,7 @@ class @Grid
     $canvas.on 'mouseout', this.onMouseOut
     $canvas.on 'contextmenu', this.onContextmenu
     $canvas.on 'mouseup', this.onMouseUp
+    $canvas.on 'selectstart', () -> return false
 
     @ANGLE = 90*(Math.PI/180)
 
@@ -159,7 +160,7 @@ class @Grid
     if @ship.x == pos.x && @ship.y == pos.y && event.which == 1
       @mousePressedOnShip = true
     else
-      if @contains(mousPos) && @isSomethingOnPosition(pos.x, pos.y) == false && !window.isSimulating && event.which == 1
+      if @contains(mousPos) && @isSomethingOnPosition(pos.x, pos.y) == false && !Simulation.isSimulating && event.which == 1
         @GridControls.creatObjectFromButton(pos.x, pos.y)
     if event.which == 3 && @isSomethingOnPosition(pos.x,pos.y).name != "PirateShip"
       @deleteObject (@isSomethingOnPosition(pos.x,pos.y))
@@ -272,7 +273,7 @@ class Grid.GridControls
 
   # switch between gameobject selection with number keys
   @onKeyDown = (event) =>
-    return if @isInEditor
+    return if CodeGUI.isInEditor
     switch event.keyCode
       when 49, 97
         @_$buttons.removeClass "btn-success"
@@ -292,17 +293,14 @@ class Grid.GridControls
     $(this).addClass "btn-success"
 
 
-  @creatObjectFromButton = (x, y) =>
-    found = $(".gameObject-controls .btn-success")
-    switch found.attr 'id'
+  @creatObjectFromButton = (x, y) ->
+    $found = $(".gameObject-controls .btn-success")
+    switch $found.attr 'id'
       when 'addWave'
-        wave = new Wave x, y
-        Grid.addObject wave
+        Grid.addObject (new Wave x, y)
       when 'addTreasure'
-        treasure = new Treasure x, y
-        Grid.addObject treasure
+        Grid.addObject (new Treasure x, y)
       when 'addMonster'
-        monster = new Monster x, y
-        Grid.addObject monster
+        Grid.addObject (new Monster x, y)
 
 

@@ -26,7 +26,6 @@ class @Simulation
     @operationHandler = new OperationHandler()
 
     @isSimulating = false
-    @isInEditor = true
 
     #main loop
     @lastRun = 0

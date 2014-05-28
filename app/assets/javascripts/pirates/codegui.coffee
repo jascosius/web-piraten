@@ -21,8 +21,8 @@ class @CodeGUI
       }
     )
 
-    @codeMirror.on  "blur", () -> window.isInEditor = false #TODO implement Game class
-    @codeMirror.on  "focus", () -> window.isInEditor = true
+    @codeMirror.on  "blur", () => @isInEditor = false
+    @codeMirror.on  "focus", () => @isInEditor = true
 
     @codeMirror.on 'dblclick', @onDoubleClick
 
@@ -96,8 +96,8 @@ class @CodeGUI
     @toggleSetting 'readOnly', true, false
     @toggleSetting 'styleActiveLine', false, true
     $('.code-wrapper .CodeMirror').toggleClass 'editing-disabled'
-    window.isSimulating = !window.isSimulating #TODO Game class
-    @clearHighlighting() if !window.isSimulating
+    Simulation.isSimulating = !Simulation.isSimulating
+    @clearHighlighting() if !Simulation.isSimulating
 
   @getCode = () ->
     @codeMirror.getValue()
