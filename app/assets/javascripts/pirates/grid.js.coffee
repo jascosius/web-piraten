@@ -1,20 +1,17 @@
 class @Grid
-  @initialize = (@canvas, @size) ->
+  @initialize = (@canvas) ->
     Grid.GridControls._initialize()
+    @size = 32 # pixel per cell
     @ctx = canvas.getContext "2d"
     @canvasWidth = @ctx.canvas.width
     @canvasHeight = @ctx.canvas.height
-    @offsetX = @canvasWidth % @size
-    @offsetY = @canvasHeight % @size
-    @gridWidth = Math.floor (@canvasWidth/@size)
-    @gridHeight = Math.floor (@canvasHeight/@size)
+    #TODO load default
+    defaultData = $('#gridData').html()
+    @load $.parseJSON(defaultData)
 
     @activeCell = null
     @look = null
     @mousePosition = null
-
-    @ship = null
-    @objects = []
 
     $canvas = $(@canvas)
     $canvas.on 'mousedown', this.onClick
@@ -28,96 +25,25 @@ class @Grid
 
     @mousePressedOnShip = false
 
-  @update = () ->
-    for gameObject in @objects
-      gameObject.update(Simulation.deltaTime)
 
-  @draw = () =>
-    count = 0
-    strokeStyle = "#999"
+  @load = (obj) =>
+    @gridWidth = obj.width
+    @gridHeight = obj.height
 
-    coords = new Coordinate 0,0
+    s = obj.ship
+    console.log s
+    @ship = new Ship s.x, s.y, s.rotation
 
-    # draw horizontal lines
-    while(@isInCanvas(coords))
-      @drawLine 0, coords.y, @canvasWidth - @offsetX, coords.y, 1, strokeStyle
-      coords.y += @size
-      count++
-
-    count = 0
-    coords = new Coordinate 0, 0
-
-    # draw vertical
-    while(@isInCanvas(coords))
-      this.drawLine coords.x, 0, coords.x, @canvasHeight - @offsetY, 1, strokeStyle
-      coords.x += @size
-      count++
-
-    # draw objects
-    for i in [0.. (@objects.length)]
-      if i != @objects.length
-        obj = @objects[i]
-        @ctx.save()
-        posx = obj.x*@size + Math.floor(obj.image.width/2)
-        posy = obj.y*@size + Math.floor(obj.image.height/2)
-        @ctx.translate(posx, posy)
-
-        @ctx.rotate(obj.rotation * @ANGLE)
-
-        if obj.rotation == 2
-            @ctx.scale 1, -1 # flip
-        @ctx.drawImage(obj.image, -Math.floor(obj.image.width/2), -Math.floor(obj.image.height/2))
-        @ctx.restore()
+    @objects = []
+    for o in obj.objects
+      switch o.name
+        when 'PirateShip' then @objects.push (new Ship obj)
 
 
-    #draw activeCell
-    if @activeCell
-      @ctx.save()
-      rect = @getCellRect @activeCell
+    # canvas can be bigger than the grid should be
+    offsetX = @canvasWidth - @gridWidth*@size
+    offsetY = @canvasHeight - @gridHeight*@size
 
-      @ctx.beginPath()
-      @ctx.rect rect.x1, rect.y1, rect.x2, rect.y2
-      @ctx.fillStyle = 'rgba(0,0,0,0.1)'
-      @ctx.fill()
-
-      @ctx.restore()
-
-    #draw look
-    if @look
-      @ctx.save()
-      rect = @getCellRect @look
-
-      @ctx.beginPath()
-      @ctx.rect rect.x1, rect.y1, rect.x2, rect.y2
-      @ctx.fillStyle = 'rgba(255,0,0,0.2)'
-      @ctx.fill()
-
-      @ctx.restore()
-
-    #draw ship
-    @ctx.save()
-    if @mousePressedOnShip
-      obj = @ship
-
-      posx = @mousePosition.x
-      posy = @mousePosition.y
-      @ctx.translate(posx, posy)
-
-      @ctx.drawImage(obj.image, -Math.floor(obj.image.width/2), -Math.floor(obj.image.height/2))
-    else
-      posx = @ship.x*@size + Math.floor(@ship.image.width/2)
-      posy = @ship.y*@size + Math.floor(@ship.image.height/2)
-      @ctx.translate(posx, posy)
-
-      @ctx.rotate(@ship.rotation * @ANGLE)
-
-      if @ship.rotation == 2
-        @ctx.scale 1, -1 # flip
-      @ctx.drawImage(@ship.image, -Math.floor(@ship.image.width/2), -Math.floor(@ship.image.height/2))
-    @ctx.restore()
-
-
-  # end draw
 
   @addObject = (obj) ->
     @objects.push(obj)
@@ -130,12 +56,12 @@ class @Grid
           newObjects.push(gameObject)
       @objects = newObjects
 
-  @isInCanvas = (coords) ->
+  @isInCanvas = (coords) =>
     coords.x >= 0 && coords.y >= 0 && coords.x < @canvasWidth && coords.y < @canvasHeight
 
-  @contains = (coords) ->
-    @isInCanvas(coords) && coords.x < Math.floor(@canvasWidth/@size)*@size &&
-      coords.y < Math.floor(@canvasHeight/@size)*@size
+  @contains = (coords) => # is in grid, pixel
+    @isInCanvas(coords) && coords.x <= @gridWidth*@size &&
+      coords.y <= @gridHeight*@size
 
   @getGridCoordinates = (coords) ->
     new Coordinate Math.floor(coords.x/@size), Math.floor(coords.y/@size)
@@ -231,6 +157,97 @@ class @Grid
       objects: sendObjects
       ship: sendShip
     }
+
+  @update = () ->
+    for gameObject in @objects
+      gameObject.update(Simulation.deltaTime)
+
+  @draw = () =>
+    count = 0
+    strokeStyle = "#999"
+
+    coords = new Coordinate 0,0 # in pixel
+
+    # draw horizontal lines
+    while(@contains(coords))
+      @drawLine 0, coords.y, @gridWidth*@size, coords.y, 1, strokeStyle
+      coords.y += @size
+      count++
+
+    count = 0
+    coords = new Coordinate 0, 0
+
+    # draw vertical
+    while(@contains(coords))
+      this.drawLine coords.x, 0, coords.x, @gridHeight*@size, 1, strokeStyle
+      coords.x += @size
+      count++
+
+    # draw objects
+    for obj in @objects
+      @ctx.save()
+      posx = obj.x*@size + Math.floor(obj.image.width/2)
+      posy = obj.y*@size + Math.floor(obj.image.height/2)
+      @ctx.translate(posx, posy)
+
+      @ctx.rotate(obj.rotation * @ANGLE)
+
+      if obj.rotation == 2
+        @ctx.scale 1, -1 # flip
+      console.log "Image width:" #TODO
+      console.log obj.image.width
+      @ctx.scale obj.image.width/@size, obj.image.height/@size
+      @ctx.drawImage(obj.image, -Math.floor(obj.image.width/2), -Math.floor(obj.image.height/2))
+      @ctx.restore()
+
+
+    #draw activeCell
+    if @activeCell
+      @ctx.save()
+      rect = @getCellRect @activeCell
+
+      @ctx.beginPath()
+      @ctx.rect rect.x1, rect.y1, rect.x2, rect.y2
+      @ctx.fillStyle = 'rgba(0,0,0,0.1)'
+      @ctx.fill()
+
+      @ctx.restore()
+
+    #draw look
+    if @look
+      @ctx.save()
+      rect = @getCellRect @look
+
+      @ctx.beginPath()
+      @ctx.rect rect.x1, rect.y1, rect.x2, rect.y2
+      @ctx.fillStyle = 'rgba(255,0,0,0.2)'
+      @ctx.fill()
+
+      @ctx.restore()
+
+    #draw ship
+    @ctx.save()
+    if @mousePressedOnShip # drag and drop
+      @ctx.translate @mousePosition.x, @mousePosition.y
+
+      @ctx.scale @size/@ship.image.width, @size/@ship.image.height
+      @ctx.drawImage(@ship.image, -Math.floor(@ship.image.width/2), -Math.floor(@ship.image.height/2))
+    else
+      widthFactor = @size/@ship.image.width
+      heightFactor = @size/@ship.image.height
+      newWidth = widthFactor*@ship.image.width
+      newHeight = heightFactor*@ship.image.height
+      cellCenterX = @ship.x*@size + Math.floor(newWidth/2)
+      cellCenterY = @ship.y*@size + Math.floor(newHeight/2)
+
+      @ctx.translate cellCenterX, cellCenterY
+      @ctx.rotate @ship.rotation*@ANGLE
+      @ctx.scale widthFactor, heightFactor
+
+      if @ship.rotation == 2
+        @ctx.scale 1, -1 # flip
+      @ctx.drawImage(@ship.image, -Math.floor(@ship.image.width/2), -Math.floor(@ship.image.height/2))
+    @ctx.restore()
 
   @drawLine = (x1, y1, x2, y2, width, strokeStyle) ->
     newX1 = Math.min x1, x2

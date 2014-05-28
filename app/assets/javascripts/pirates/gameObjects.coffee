@@ -2,17 +2,27 @@
 #= require ./config
 #= require ./socketHandler
 class GameObject # "abstract" because of the missing @
-  constructor: (@name, @img, @x, @y) ->
-    @rotation = 0; # east, clockwise
+  constructor: () ->
+    if arguments.length == 2 # (serialized, img)
+      serialized = arguments[0]
+      @img = arguments[1]
+      @x = serialized.x
+      @y = serialized.y
+    else if arguments.length == 4 # (name, img, x, y)
+      @name = arguments[0]
+      @img = arguments[1]
+      @x = arguments[2]
+      @y = arguments[3]
+    else "invalid game object constructor call"
     @image = new Image()
-    @image.src = img
+    @image.src = @img
     @lifeTime = 0
 
   serialize: () =>
     {
-    name: @name
-    x: @x
-    y: @y
+      name: @name
+      x: @x
+      y: @y
     }
 
   update: () =>
@@ -28,8 +38,18 @@ class @Ship extends GameObject
       when 3 then y-- # north
     return { x: x, y: y }
 
-  constructor: (@x,@y) ->
-    super "PirateShip", Config.shipImage, x, y
+  constructor: () ->
+    if arguments.length == 1 # serialized obj
+      serialized = arguments[0]
+      super serialized, Config.shipImage
+      @rotation = serialized.rotation
+    else if arguments.length <= 3
+      @x = arguments[0]
+      @y = arguments[1]
+      @rotation = arguments[2] || 0 #optional
+      super "PirateShip", Config.shipImage, @x, @y
+    else throw "invalid ship constructor call"
+
 
   rotateRight: () =>
     @rotation = (@rotation+1) % 4

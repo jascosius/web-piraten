@@ -19,8 +19,8 @@ class @Simulation
     Grid.initialize @canvas, 32
     CodeGUI.initialize 'codemirror'
 
-    Grid.addObject (new Buoy 5, 4)
-    Grid.ship = new Ship 2, 4
+    #Grid.addObject (new Buoy 5, 4)
+    #Grid.ship = new Ship 2, 4
 
     @debugHandler = new DebugHandler()
     @operationHandler = new OperationHandler()
