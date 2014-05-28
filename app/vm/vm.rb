@@ -60,6 +60,7 @@ loop {
             #wait for an answer, when read a question
             if line.include?("#{PREFIX}?")
               msg = client.gets
+              puts msg
               pipe.write msg
             end
           end

@@ -18,8 +18,6 @@ class RubyPreprocessor < BasePreprocessor
   #  def line(i)
   #    puts "\nline?#{i}"
   #  end
-  LANGUAGE_LOGIC = "STDOUT.sync = true\n"
-  SHIP_LOGIC = "def move\n  puts \"#{$prefix}move\"\nend\ndef turnRight\n  puts \"#{$prefix}turnRight\"\nend\ndef turnLeft\n  puts \"#{$prefix}turnLeft\"\nend\ndef put\n  puts \"#{$prefix}put\"\nend\ndef line(i)\n  puts \"\\n#{$prefix}line!\#{i}\"\nend\ndef look(dir)\n  case dir\n    when 'right' then puts \"#{$prefix}?_look_right\"\n    when 'left' then puts \"#{$prefix}?_look_left\"\n    when 'here' then puts \"#{$prefix}?_look_here\"\n    when 'back' then puts \"#{$prefix}?_look_back\"\n    when 'front' then puts \"#{$prefix}?_look_front\"\n  end\nret = gets\nret\nend\n\n"
 
   def initialize(attribut)
     super(attribut)
@@ -33,7 +31,7 @@ class RubyPreprocessor < BasePreprocessor
       codes += s + "line(#{i})\n"
       i += 1
     end
-    LANGUAGE_LOGIC + SHIP_LOGIC + codes + "\n"
+    insert_logic + codes + "\n"
   end
 
   def debug_code(code_msg, vars)
@@ -45,6 +43,37 @@ class RubyPreprocessor < BasePreprocessor
       i += 1
     end
     LANGUAGE_LOGIC + SHIP_LOGIC + code + "\n"
+  end
+
+  def insert_logic
+    "STDOUT.sync = true\n" +
+        "def move\n" +
+        "  puts \"#{$prefix}move\"\n" +
+        "end\n" +
+        "def turnRight\n" +
+        "  puts \"#{$prefix}turnRight\"\n" +
+        "end\n" +
+        "def turnLeft\n" +
+        "  puts \"#{$prefix}turnLeft\"\n" +
+        "end\n" +
+        "def put\n" +
+        "  puts \"#{$prefix}put\"\n" +
+        "end\n" +
+        "def line(i)\n" +
+        "  puts \"\\n#{$prefix}line!\#{i}\"\n" +
+        "end\n" +
+        "def look(dir)\n" +
+        "  case dir\n" +
+        "    when 'right' then puts \"#{$prefix}?_look_right\"\n" +
+        "    when 'left' then puts \"#{$prefix}?_look_left\"\n" +
+        "    when 'here' then puts \"#{$prefix}?_look_here\"\n" +
+        "    when 'back' then puts \"#{$prefix}?_look_back\"\n" +
+        "    when 'front' then puts \"#{$prefix}?_look_front\"\n"+
+        "  end\n" +
+        "  ret = gets\n" +
+        "  ret\n" +
+        "end\n\n"
+
   end
 
 end
