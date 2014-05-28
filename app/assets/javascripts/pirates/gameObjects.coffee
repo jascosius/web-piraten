@@ -59,8 +59,11 @@ class @Ship extends GameObject
     if @rotation < 0 # unexpected js
       @rotation = 4 + @rotation
 
-  look: () =>
-    Grid.look = getNextCoordinate @x, @y, @rotation
+  look: (coord) =>
+    coord2 = new Coordinate()
+    coord2.x = coord[0]
+    coord2.y = coord[1]
+    Grid.look = coord2
 
   lookAway: () =>
     Grid.look = null

@@ -85,7 +85,7 @@ class SocketController < WebsocketRails::BaseController
         puts obj['name']
       end
     }
-    WebsocketRails[:operations].trigger(:look, look_obj)
+    WebsocketRails[:operations].trigger(:look, coord)
     look_obj
 
   end
