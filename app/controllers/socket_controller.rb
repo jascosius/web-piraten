@@ -154,6 +154,10 @@ class SocketController < WebsocketRails::BaseController
     WebsocketRails[:operations].trigger(:output, line)
   end
 
+  def puts_user_output_error(line)
+    WebsocketRails[:operations].trigger(:output_error, line)
+  end
+
   def read_JSON
     grid = message[:grid]
     puts grid
@@ -245,7 +249,12 @@ class SocketController < WebsocketRails::BaseController
             vm.puts test
           elsif line.include? "#{$prefix}put"
             put
+          elsif line.include? "#{$prefix}stderr"
+            line.slice!("#{$prefix}stderr")
+            line.slice!($prefix)
+            puts_user_output_error "Error: #{line}"
           elsif !line.chomp.empty?
+            line.slice!($prefix)
             puts_user_output line
             #WebsocketRails[:debug].trigger :console, line
           end

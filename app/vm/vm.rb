@@ -38,7 +38,7 @@ loop {
         #File.chmod(777, file)
         File.write file, code
 
-        IO.popen("ruby #{File.path(file)}", 'r+') do |pipe|
+        IO.popen("(ruby #{File.path(file)} 3>&1 1>&2 2>&3 | sed s/^/#{PREFIX}stderr/ ) 2>&1", 'r+') do |pipe|
           pipe.sync = true
           counter = 0
           loop do
