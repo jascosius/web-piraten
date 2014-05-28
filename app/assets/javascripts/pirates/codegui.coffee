@@ -123,7 +123,7 @@ class @CodeGUI
     }
 
   @stop = () =>
-    operationHandler.clear()
+    Simulation.operationHandler.clear()
     @toggleCodeEditing()
     webSocket.trigger "stopSimulation"
 
