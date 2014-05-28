@@ -2,7 +2,7 @@
 
 class SocketController < WebsocketRails::BaseController
   $prefix = 'CkyUHZVL3q_'
-  @@timeout = 5 #timeout time for the programm to execute
+  @@timeout = 5#timeout time for the programm to execute
 
   include Preprocessor
 
@@ -43,12 +43,10 @@ class SocketController < WebsocketRails::BaseController
 
     puts 'Look!'
     coord = [@ship['x'], @ship['y']]
-    puts coord
-    puts direction
     case direction
       when :front
         coord = get_next_position
-      when :front
+      when :back
         coord = get_next_position
       when 'right'
         coord = get_next_position
@@ -65,7 +63,7 @@ class SocketController < WebsocketRails::BaseController
         puts obj['name']
       end
     }
-    WebsocketRails[:operations].trigger(:look)
+    WebsocketRails[:operations].trigger(:look, look_obj)
     look_obj
 
   end
@@ -218,7 +216,10 @@ class SocketController < WebsocketRails::BaseController
           elsif line.include? "#{$prefix}?_look_back"
             vm.puts "#{$prefix}!_#{look(:back)}"
           elsif line.include? "#{$prefix}?_look_front"
-            vm.puts "#{$prefix}!_#{look(:front)}"
+            lookf = look(:front)
+            puts lookf
+            vm.puts "#{$prefix}!_#{lookf}"
+            puts 'fertig'
           elsif line.include? "#{$prefix}?_look_here"
             vm.puts "#{$prefix}!_#{look(:here)}"
           elsif line.include? "#{$prefix}put"

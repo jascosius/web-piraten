@@ -19,7 +19,7 @@ class RubyPreprocessor < BasePreprocessor
   #    puts "\nline?#{i}"
   #  end
   LANGUAGE_LOGIC = "STDOUT.sync = true\n"
-  SHIP_LOGIC = "def move\n  puts \"#{$prefix}move\"\nend\ndef turnRight\n  puts \"#{$prefix}turnRight\"\nend\ndef turnLeft\n  puts \"#{$prefix}turnLeft\"\nend\ndef put\n  puts \"#{$prefix}put\"\nend\ndef line(i)\n  puts \"\\n#{$prefix}line!\#{i}\"\nend\ndef look(dir)\n  case dir\n    when 'right' then puts \"#{$prefix}?_look_right\"\n    when 'left' then puts \"#{$prefix}?_look_left\"\n    when 'here' then puts \"#{$prefix}?_look_here\"\n    when 'back' then puts \"#{$prefix}?_look_back\"\n    when 'front' then puts \"#{$prefix}?_look_front\"\n  end\nend\n\n"
+  SHIP_LOGIC = "def move\n  puts \"#{$prefix}move\"\nend\ndef turnRight\n  puts \"#{$prefix}turnRight\"\nend\ndef turnLeft\n  puts \"#{$prefix}turnLeft\"\nend\ndef put\n  puts \"#{$prefix}put\"\nend\ndef line(i)\n  puts \"\\n#{$prefix}line!\#{i}\"\nend\ndef look(dir)\n  case dir\n    when 'right' then puts \"#{$prefix}?_look_right\"\n    when 'left' then puts \"#{$prefix}?_look_left\"\n    when 'here' then puts \"#{$prefix}?_look_here\"\n    when 'back' then puts \"#{$prefix}?_look_back\"\n    when 'front' then puts \"#{$prefix}?_look_front\"\n  end\nret = gets\nret\nend\n\n"
 
   def initialize(attribut)
     super(attribut)
