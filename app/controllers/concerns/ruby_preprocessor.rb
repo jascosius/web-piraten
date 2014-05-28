@@ -1,24 +1,6 @@
 # -*- encoding : utf-8 -*-
 class RubyPreprocessor < BasePreprocessor
 
-  # A constant that stores the ship-logic for Ruby that's put in the code of the user to get the ship moving.
-  # Looks like this:
-  #  def move
-  #    puts "move"
-  #  end
-  #  def turnRight
-  #    puts "turnRight"
-  #  end
-  #  def turnLeft
-  #    puts "turnLeft"
-  #  end
-  #  def addBuoy
-  #    puts "addBuoy"
-  #  end
-  #  def line(i)
-  #    puts "\nline?#{i}"
-  #  end
-
   def initialize(attribut)
     super(attribut)
   end
@@ -39,12 +21,14 @@ class RubyPreprocessor < BasePreprocessor
     code = ''
     code_msg << "\n"
     code_msg.each_line do |s|
-      code += s + "line(#{i})\n" #TO DO: add the json object for tracing variables
+      code += s + "line(#{i})\n" #TODO: add the json object for tracing variables
       i += 1
     end
-    LANGUAGE_LOGIC + SHIP_LOGIC + code + "\n"
+    insert_logic + code + "\n"
   end
 
+  # A method that stores the language- and ship-logic for Ruby that's put in the
+  # code of the user to get the ship moving and so on.
   def insert_logic
     "STDOUT.sync = true\n" +
         "def move\n" +
@@ -73,7 +57,6 @@ class RubyPreprocessor < BasePreprocessor
         "  ret = gets\n" +
         "  ret\n" +
         "end\n\n"
-
   end
 
 end
