@@ -2,7 +2,7 @@
 
 class SocketController < WebsocketRails::BaseController
   $prefix = 'CkyUHZVL3q_'
-  @@timeout = 5 #timeout time for the programm to execute
+  @@timeout = 5#timeout time for the programm to execute
 
   include Preprocessor
 
@@ -21,10 +21,10 @@ class SocketController < WebsocketRails::BaseController
   # test events for the remote control buttons
   def rotate_ship_left # event: ship.left
     puts 'Left!'
-    if @ship['rotation'] >= 0
-      @ship['rotation'] =3
+    if @ship['rotation'] >= 3
+      @ship['rotation'] =0
     else
-      @ship['rotation'] -=-1
+      @ship['rotation'] += 1
     end
     WebsocketRails[:operations].trigger(:left)
   end
@@ -43,17 +43,37 @@ class SocketController < WebsocketRails::BaseController
 
     puts 'Look!'
     coord = [@ship['x'], @ship['y']]
-    puts coord
-    puts direction
+    next_coord = get_next_position
+    rotate = @ship['rotation']
+    puts rotate
     case direction
       when :front
-        coord = get_next_position
-      when :front
-        coord = get_next_position
-      when 'right'
-        coord = get_next_position
-      when 'left'
-        coord = get_next_position
+        coord = next_coord
+      when :back
+        coord[0] -= next_coord[0] - coord[0]
+        coord[1] -= next_coord[1] - coord[1]
+      when :left
+        case rotate
+          when 3
+            coord[0] += 1
+          when 1
+            coord[0] -= 1
+          when 0
+            coord[1] -= 1
+          when 2
+            coord[1] += 1
+        end
+      when :right
+        case rotate
+          when 3
+            coord[0] -= 1
+          when 1
+            coord[0] += 1
+          when 0
+            coord[1] += 1
+          when 2
+            coord[1] -= 1
+        end
     end
     puts coord
     look_obj = 'nothing'
@@ -65,7 +85,7 @@ class SocketController < WebsocketRails::BaseController
         puts obj['name']
       end
     }
-    WebsocketRails[:operations].trigger(:look)
+    WebsocketRails[:operations].trigger(:look, look_obj)
     look_obj
 
   end
@@ -108,10 +128,10 @@ class SocketController < WebsocketRails::BaseController
 
   def rotate_ship_right # event: ship.right
     puts 'Right!'
-    if @ship['rotation'] >= 3
-      @ship['rotation'] =0
+    if @ship['rotation'] <= 0
+      @ship['rotation'] =3
     else
-      @ship['rotation'] += 1
+      @ship['rotation'] -= 1
     end
     WebsocketRails[:operations].trigger(:right)
   end
@@ -132,6 +152,10 @@ class SocketController < WebsocketRails::BaseController
 
   def puts_user_output(line)
     WebsocketRails[:operations].trigger(:output, line)
+  end
+
+  def puts_user_output_error(line)
+    WebsocketRails[:operations].trigger(:output_error, line)
   end
 
   def read_JSON
@@ -220,10 +244,17 @@ class SocketController < WebsocketRails::BaseController
           elsif line.include? "#{$prefix}?_look_front"
             vm.puts "#{$prefix}!_#{look(:front)}"
           elsif line.include? "#{$prefix}?_look_here"
-            vm.puts "#{$prefix}!_#{look(:here)}"
+            test = "#{$prefix}!_#{look(:here)}"
+            puts test
+            vm.puts test
           elsif line.include? "#{$prefix}put"
             put
+          elsif line.include? "#{$prefix}stderr"
+            line.slice!("#{$prefix}stderr")
+            line.slice!($prefix)
+            puts_user_output_error "Error: #{line}"
           elsif !line.chomp.empty?
+            line.slice!($prefix)
             puts_user_output line
             #WebsocketRails[:debug].trigger :console, line
           end

@@ -46,7 +46,8 @@ class @OperationHandler extends ChannelHandler
       'move',
       'put',
       'line',
-      'output'
+      'output',
+      'output_error',
       'done',
       'done_error'
       'take',
@@ -73,6 +74,8 @@ class @OperationHandler extends ChannelHandler
       @operationQueue.push (new Operation 'line', data)
     @channel.bind 'output', (data) =>
       @operationQueue.push (new Operation 'output', data)
+    @channel.bind 'output_error', (data) =>
+      @operationQueue.push (new Operation 'output_error', data)
     @channel.bind 'done', (data) =>
       @operationQueue.push (new Operation 'done', data)
     @channel.bind 'done_error', (data) =>
@@ -127,6 +130,8 @@ class @OperationHandler extends ChannelHandler
           CodeGUI.highlightLine currentOp.data
         when 'output'
           Utils.log currentOp.data
+        when 'output_error'
+          Utils.logError currentOp.data
         when 'done'
           Utils.log 'Ausführung beendet!'
           CodeGUI.toggleCodeEditing()
