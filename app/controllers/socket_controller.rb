@@ -238,11 +238,11 @@ class SocketController < WebsocketRails::BaseController
           elsif line.include? "#{$prefix}?_look_back"
             vm.puts "#{$prefix}!_#{look(:back)}"
           elsif line.include? "#{$prefix}?_look_front"
-            lookf = look(:front)
-            vm.puts "#{$prefix}!_#{lookf}"
-            puts 'fertig'
+            vm.puts "#{$prefix}!_#{look(:front)}"
           elsif line.include? "#{$prefix}?_look_here"
-            vm.puts "#{$prefix}!_#{look(:here)}"
+            test = "#{$prefix}!_#{look(:here)}"
+            puts test
+            vm.puts test
           elsif line.include? "#{$prefix}put"
             put
           elsif !line.chomp.empty?

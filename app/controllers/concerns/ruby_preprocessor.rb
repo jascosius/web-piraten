@@ -48,14 +48,24 @@ class RubyPreprocessor < BasePreprocessor
         "end\n" +
         "def look(dir)\n" +
         "  case dir\n" +
-        "    when 'right' then puts \"#{$prefix}?_look_right\"\n" +
-        "    when 'left' then puts \"#{$prefix}?_look_left\"\n" +
-        "    when 'here' then puts \"#{$prefix}?_look_here\"\n" +
-        "    when 'back' then puts \"#{$prefix}?_look_back\"\n" +
-        "    when 'front' then puts \"#{$prefix}?_look_front\"\n"+
+        "    when :right then puts \"#{$prefix}?_look_right\"\n" +
+        "    when :left then puts \"#{$prefix}?_look_left\"\n" +
+        "    when :here then puts \"#{$prefix}?_look_here\"\n" +
+        "    when :back then puts \"#{$prefix}?_look_back\"\n" +
+        "    when :front then puts \"#{$prefix}?_look_front\"\n"+
         "  end\n" +
         "  ret = gets\n" +
-        "  ret\n" +
+        "  if ret.include? \"#{$prefix}!_Buoy\"\n" +
+        "    return :buoy\n" +
+        "  elsif ret.include? \"#{$prefix}!_Monster\"\n" +
+        "    return :monster\n" +
+        "  elsif ret.include? \"#{$prefix}!_Treasure\"\n" +
+        "    return :treasure\n" +
+        "  elsif ret.include? \"#{$prefix}!_Wave\"\n" +
+        "    return :wave\n" +
+        "  else\n" +
+        "    return :nothing\n" +
+        "  end\n" +
         "end\n\n"
   end
 
