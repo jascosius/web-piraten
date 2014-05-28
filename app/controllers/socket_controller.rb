@@ -21,10 +21,10 @@ class SocketController < WebsocketRails::BaseController
   # test events for the remote control buttons
   def rotate_ship_left # event: ship.left
     puts 'Left!'
-    if @ship['rotation'] >= 0
-      @ship['rotation'] =3
+    if @ship['rotation'] >= 3
+      @ship['rotation'] =0
     else
-      @ship['rotation'] -=-1
+      @ship['rotation'] += 1
     end
     WebsocketRails[:operations].trigger(:left)
   end
@@ -43,15 +43,37 @@ class SocketController < WebsocketRails::BaseController
 
     puts 'Look!'
     coord = [@ship['x'], @ship['y']]
+    next_coord = get_next_position
+    rotate = @ship['rotation']
+    puts rotate
     case direction
       when :front
-        coord = get_next_position
+        coord = next_coord
       when :back
-        coord = get_next_position
-      when 'right'
-        coord = get_next_position
-      when 'left'
-        coord = get_next_position
+        coord[0] -= next_coord[0] - coord[0]
+        coord[1] -= next_coord[1] - coord[1]
+      when :left
+        case rotate
+          when 3
+            coord[0] += 1
+          when 1
+            coord[0] -= 1
+          when 0
+            coord[1] -= 1
+          when 2
+            coord[1] += 1
+        end
+      when :right
+        case rotate
+          when 3
+            coord[0] -= 1
+          when 1
+            coord[0] += 1
+          when 0
+            coord[1] += 1
+          when 2
+            coord[1] -= 1
+        end
     end
     puts coord
     look_obj = 'nothing'
@@ -106,10 +128,10 @@ class SocketController < WebsocketRails::BaseController
 
   def rotate_ship_right # event: ship.right
     puts 'Right!'
-    if @ship['rotation'] >= 3
-      @ship['rotation'] =0
+    if @ship['rotation'] <= 0
+      @ship['rotation'] =3
     else
-      @ship['rotation'] += 1
+      @ship['rotation'] -= 1
     end
     WebsocketRails[:operations].trigger(:right)
   end
@@ -217,7 +239,6 @@ class SocketController < WebsocketRails::BaseController
             vm.puts "#{$prefix}!_#{look(:back)}"
           elsif line.include? "#{$prefix}?_look_front"
             lookf = look(:front)
-            puts lookf
             vm.puts "#{$prefix}!_#{lookf}"
             puts 'fertig'
           elsif line.include? "#{$prefix}?_look_here"
