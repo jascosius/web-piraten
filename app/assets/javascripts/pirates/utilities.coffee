@@ -2,19 +2,19 @@ class @Utils
 
   @log: (message) ->
     clientConsole = document.getElementById "console"
-    line = document.createElement("p")
+    line = document.createElement "p"
     line.style.wordWrap = "break-word"
     line.innerHTML = message
-    clientConsole.appendChild(line)
+    clientConsole.appendChild line
     console.log message
 
   @logError: (message) ->
     clientConsole = document.getElementById "console"
-    line = document.createElement("p")
+    line = document.createElement "p"
     line.style.wordWrap = "break-word"
     line.innerHTML = message
     line.style.color = "red"
-    clientConsole.appendChild(line)
+    clientConsole.appendChild line
     console.log message
 
 

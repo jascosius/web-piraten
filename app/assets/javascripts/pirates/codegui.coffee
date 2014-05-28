@@ -23,7 +23,6 @@ class @CodeGUI
 
     @codeMirror.on  "blur", () => @isInEditor = false
     @codeMirror.on  "focus", () => @isInEditor = true
-
     @codeMirror.on 'dblclick', @onDoubleClick
 
     $("#runBtn").click @start
@@ -31,6 +30,8 @@ class @CodeGUI
 
     $('#codeMirror-loading').hide()
 
+    @_$codeControls = $('.code-controls')
+    @_$CodeMirror = $('.code-wrapper .CodeMirror')
 
   @onDoubleClick = (event) =>
     selection = event.getSelection().trim() # selected word
@@ -46,7 +47,7 @@ class @CodeGUI
       # already in watchlist
       return
 
-    @WatchList.addVariable(selection)
+    @WatchList.addVariable selection
     hoveringSelection = $ "<div class='flying cm-variable'><span>#{selection}</span></div>"
 
     dropdownToggle = $ '#watchlist-dropdown'
@@ -60,9 +61,9 @@ class @CodeGUI
       'z-index': 5000
     })
 
-    hoveringSelection.appendTo('body')
+    hoveringSelection.appendTo 'body'
 
-    $span = hoveringSelection.children('span:first')
+    $span = hoveringSelection.children 'span:first'
     hoveringSelection.css({
       top: Simulation.mouse.y - ($span.height()/2)
       left: Simulation.mouse.x - ($span.width()/2)
@@ -90,12 +91,12 @@ class @CodeGUI
 
 
   @toggleCodeEditing = () ->
-    $('.code-controls').toggleClass 'hidden'
+    @_$codeControls.toggleClass 'hidden'
 
     #lock CodeMirror
     @toggleSetting 'readOnly', true, false
     @toggleSetting 'styleActiveLine', false, true
-    $('.code-wrapper .CodeMirror').toggleClass 'editing-disabled'
+    @_$CodeMirror.toggleClass 'editing-disabled'
     Simulation.isSimulating = !Simulation.isSimulating
     @clearHighlighting() if !Simulation.isSimulating
 
@@ -105,9 +106,6 @@ class @CodeGUI
   @highlightLine: (line) ->
     if @lastLine?
       @codeMirror.removeLineClass @lastLine, 'background', 'processedLine'
-#    else
-#      # reset everything when simulation starts (again)
-#      @clearHighlighting()
 
     @codeMirror.addLineClass line, 'background', 'processedLine'
     @lastLine = line
@@ -134,9 +132,9 @@ class @CodeGUI
 class CodeGUI.WatchList
 
   @_initialize = () ->
-    @_$watchlist = $('#watchlist')
-    @_$default = $('#watchlist-default')
-    @_$size = $('#watchlist-size')
+    @_$watchlist = $ '#watchlist'
+    @_$default = $ '#watchlist-default'
+    @_$size = $ '#watchlist-size'
     @_$watchlist.on 'click','.watchlist-remove', @onClick
 
   @addVariable = (word) ->

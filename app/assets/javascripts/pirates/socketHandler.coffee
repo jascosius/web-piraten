@@ -2,14 +2,14 @@
 #= require websocket_rails/main
 
 onOpen = (event) ->
-  Utils.log("Verbindung zum Server hergestellt!")
+  Utils.log "Verbindung zum Server hergestellt!"
 
 onClose = (event) ->
-  Utils.log("Verbindung zum Server verloren, bitte lade die Seite neu!")
+  Utils.log "Verbindung zum Server verloren, bitte lade die Seite neu!"
 
 
 onError = (event) ->
-  Utils.logError("Fehler bei der Verbindung mit dem Server, bitte lade die Seite neu!")
+  Utils.logError "Fehler bei der Verbindung mit dem Server, bitte lade die Seite neu!"
   console.log event
 
 # establish connection
@@ -23,7 +23,7 @@ webSocket.on_error = onError
 class ChannelHandler
 
   constructor: (@channelName) ->
-    @channel = webSocket.subscribe(channelName, @onSubscribe, @onSubscribeFail)
+    @channel = webSocket.subscribe channelName, @onSubscribe, @onSubscribeFail
 
   onSubscribe: (event) =>
     console.log "Subscribed to channel '#{@channelName}'"
@@ -57,26 +57,26 @@ class @OperationHandler extends ChannelHandler
     #bind operations for the operations channel
     # manual mode, because only Chrome offers the 'event' object
     @channel.bind 'left', (data) =>
-      @operationQueue.push new Operation('left', data)
+      @operationQueue.push (new Operation 'left', data)
     @channel.bind 'right', (data) =>
-      @operationQueue.push new Operation('right', data)
+      @operationQueue.push (new Operation 'right', data)
     @channel.bind 'move', (data) =>
-      @operationQueue.push new Operation('move', data)
+      @operationQueue.push (new Operation 'move', data)
     @channel.bind 'put', (data) =>
-      @operationQueue.push new Operation('put', data)
+      @operationQueue.push (new Operation 'put', data)
     @channel.bind 'take', (data) =>
-      @operationQueue.push new Operation('take', data)
+      @operationQueue.push (new Operation 'take', data)
     @channel.bind 'look', (data) =>
-      @operationQueue.push new Operation('look', data)
-      @operationQueue.push new Operation('lookAway', data)
+      @operationQueue.push (new Operation 'look', data)
+      @operationQueue.push (new Operation 'lookAway', data)
     @channel.bind 'line', (data) =>
-      @operationQueue.push new Operation('line', data)
+      @operationQueue.push (new Operation 'line', data)
     @channel.bind 'output', (data) =>
-      @operationQueue.push new Operation('output', data)
+      @operationQueue.push (new Operation 'output', data)
     @channel.bind 'done', (data) =>
-      @operationQueue.push new Operation('done', data)
+      @operationQueue.push (new Operation 'done', data)
     @channel.bind 'done_error', (data) =>
-      @operationQueue.push new Operation('done_error', data)
+      @operationQueue.push (new Operation 'done_error', data)
     ###for op in @operations
       @channel.bind op, (data) ->
         \#\#\#
@@ -87,8 +87,6 @@ class @OperationHandler extends ChannelHandler
         operation = $.parseJSON(event.data)[0][0]
         @operationQueue.push new Operation(operation, data)
     ###
-
-
 
   clear: () =>
     @operationQueue = []

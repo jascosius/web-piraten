@@ -17,7 +17,7 @@ class @Simulation
     @context = @canvas.getContext "2d"
 
     Grid.initialize @canvas, 32
-    CodeGUI.initialize('codemirror')
+    CodeGUI.initialize 'codemirror'
 
     Grid.addObject (new Buoy 5, 4)
     Grid.ship = new Ship 2, 4
@@ -34,7 +34,7 @@ class @Simulation
 
     $(document).on 'mousemove', (event) =>
       if !@mouse?
-        @mouse = new Coordinate(0,0);
+        @mouse = new Coordinate 0,0
       @mouse.x = event.clientX || event.pageX
       @mouse.y = event.clientY || event.pageY
 

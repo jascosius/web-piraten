@@ -44,7 +44,6 @@ class @Grid
       coords.y += @size
       count++
 
-
     count = 0
     coords = new Coordinate 0, 0
 
@@ -166,7 +165,7 @@ class @Grid
       @deleteObject (@isSomethingOnPosition(pos.x,pos.y))
 
   @onMouseUp = (event) =>
-    coords = @getGridCoordinates(@getMousePos(event))
+    coords = @getGridCoordinates @getMousePos(event)
     x = coords.x
     y = coords.y
     if @mousePressedOnShip
@@ -222,7 +221,7 @@ class @Grid
   @serialize = () =>
     sendObjects = []
     for gameObject in @objects
-      sendObjects.push(gameObject.serialize())
+      sendObjects.push gameObject.serialize()
 
     sendShip =  @ship.serialize()
 
@@ -234,10 +233,10 @@ class @Grid
     }
 
   @drawLine = (x1, y1, x2, y2, width, strokeStyle) ->
-    newX1 = Math.min(x1, x2)
-    newY1 = Math.min(y1, y2)
-    newX2 = Math.max(x1, x2)
-    newY2 = Math.max(y1, y2)
+    newX1 = Math.min x1, x2
+    newY1 = Math.min y1, y2
+    newX2 = Math.max x1, x2
+    newY2 = Math.max y1, y2
 
     @ctx.save()
     @ctx.beginPath()
@@ -249,8 +248,8 @@ class @Grid
       newX2 += 0.5
       newY2 += 0.5
 
-    @ctx.moveTo(newX1,newY1)
-    @ctx.lineTo(newX2,newY2)
+    @ctx.moveTo newX1,newY1
+    @ctx.lineTo newX2,newY2
     @ctx.closePath()
     @ctx.lineWidth = width
     @ctx.strokeStyle = strokeStyle
@@ -265,11 +264,11 @@ class Grid.GridControls
     $(document).on "keydown", @onKeyDown
 
     #preload queries for optimization
-    @_$buttons = $(".gameObject-controls button")
+    @_$buttons = $ ".gameObject-controls button"
     @_$buttons.click @onClick
-    @_$treasureButton = $("#addTreasure")
-    @_$monsterButton = $("#addMonster")
-    @_$waveButton = $("#addWave")
+    @_$treasureButton = $ "#addTreasure"
+    @_$monsterButton = $ "#addMonster"
+    @_$waveButton = $ "#addWave"
 
   # switch between gameobject selection with number keys
   @onKeyDown = (event) =>
