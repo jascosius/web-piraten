@@ -21,6 +21,11 @@ class SocketController < WebsocketRails::BaseController
   # test events for the remote control buttons
   def rotate_ship_left # event: ship.left
     puts 'Left!'
+    if @ship['rotation'] >= 0
+      @ship['rotation'] =3
+    else
+      @ship['rotation'] -=-1
+    end
     WebsocketRails[:operations].trigger(:left)
   end
 
@@ -34,38 +39,71 @@ class SocketController < WebsocketRails::BaseController
     WebsocketRails[:operations].trigger(:take)
   end
 
-  def look # event: ship.take
+  def look(direction) # event: ship.take
+
     puts 'Look!'
+    coord = [@ship['x'], @ship['y']]
+    puts coord
+    puts direction
+    case direction
+      when :front
+        coord = get_next_position
+      when :front
+        coord = get_next_position
+      when 'right'
+        coord = get_next_position
+      when 'left'
+        coord = get_next_position
+    end
+    puts coord
+    look_obj = 'nothing'
+    @objects.each{ |obj|
+      x = obj['x']
+      y = obj['y']
+      if  [x,y] == coord
+        look_obj = obj['name'].to_s
+        puts obj['name']
+      end
+    }
     WebsocketRails[:operations].trigger(:look)
+    look_obj
+
   end
 
   def move_ship # event: ship.move
-    puts 'Move!' #TODO Überprüfung ist nextPosition im Feld
+    puts 'Move!'
+    coord = get_next_position
+    if coords_in_grid(coord)
+      @ship['x'] =  coord[0]
+      @ship['y'] =  coord[1]
+      WebsocketRails[:operations].trigger(:move)
+    else
+      WebsocketRails[:operations].trigger(:output,'Spielfeld verlassen')
+    end
+  end
+
+  def coords_in_grid(coord)
+    if coord[0] >= 0 && coord[0] < @grid_size[0] && coord[1] >= 0 && coord[1]< @grid_size[1]
+      true
+    else
+      false
+    end
+  end
+
+  def get_next_position
+    x = @ship['x']
+    y = @ship['y']
     case @ship['rotation']
       when 0
-        @ship['x'] = @ship['x']+1
+        x += 1
       when 1
-        @ship['y'] = @ship['y']+1
+        y += 1
       when 2
-        @ship['x'] = @ship['x']-1
+        x -= 1
       when 3
-        @ship['y'] = @ship['y']-1
+        y -= 1
     end
-
-
-    # getNextCoordinate = (x, y, rotation) ->
-    #     switch rotation
-    # when 0 then x++ # east
-    # when 1 then y++ # south
-    # when 2 then x-- # west
-    # when 3 then y-- # north
-    # return { x: x, y: y }
-    # coords = getNextCoordinate(@x,@y,@rotation)
-    # @x = coords.x
-    # @y = coords.y
-
-
-    WebsocketRails[:operations].trigger(:move)
+    [x,y]
   end
 
   def rotate_ship_right # event: ship.right
@@ -73,7 +111,7 @@ class SocketController < WebsocketRails::BaseController
     if @ship['rotation'] >= 3
       @ship['rotation'] =0
     else
-      @ship['rotation'] = @ship['rotation']+1
+      @ship['rotation'] += 1
     end
     WebsocketRails[:operations].trigger(:right)
   end
@@ -173,8 +211,16 @@ class SocketController < WebsocketRails::BaseController
             move_ship
           elsif line.include? "#{$prefix}take"
             take
-          elsif line.include? "#{$prefix}look"
-            look
+          elsif line.include? "#{$prefix}?_look_right"
+            vm.puts "#{$prefix}!_#{look(:right)}"
+          elsif line.include? "#{$prefix}?_look_left"
+            vm.puts "#{$prefix}!_#{look(:left)}"
+          elsif line.include? "#{$prefix}?_look_back"
+            vm.puts "#{$prefix}!_#{look(:back)}"
+          elsif line.include? "#{$prefix}?_look_front"
+            vm.puts "#{$prefix}!_#{look(:front)}"
+          elsif line.include? "#{$prefix}?_look_here"
+            vm.puts "#{$prefix}!_#{look(:here)}"
           elsif line.include? "#{$prefix}put"
             put
           elsif !line.chomp.empty?

@@ -19,14 +19,5 @@ WebsocketRails::EventMap.describe do
   subscribe :simulateGrid, :to => SocketController, :with_method => :receive_code
   subscribe :stopSimulation, :to =>SocketController, :with_method => :stopSimulation
 
-  namespace :ship do
-    subscribe :left, :to => SocketController, :with_method => :rotateShipLeft
-    subscribe :move, :to => SocketController, :with_method => :moveShip
-    subscribe :right, :to => SocketController, :with_method => :rotateShipRight
-    subscribe :put, :to => SocketController, :with_method => :put
-    subscribe :take, :to => SocketController, :with_method => :take
-    subscribe :look, :to => SocketController, :with_method => :look
 
-
-  end
 end
