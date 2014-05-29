@@ -151,11 +151,11 @@ class SocketController < WebsocketRails::BaseController
   end
 
   def puts_user_output(line)
-    WebsocketRails[:operations].trigger(:output, line)
+    WebsocketRails[:operations].trigger(:output, CGI::escapeHTML(line))
   end
 
   def puts_user_output_error(line)
-    WebsocketRails[:operations].trigger(:output_error, line)
+    WebsocketRails[:operations].trigger(:output_error, CGI::escapeHTML(line))
   end
 
   def read_JSON

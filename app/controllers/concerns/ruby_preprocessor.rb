@@ -30,7 +30,9 @@ class RubyPreprocessor < BasePreprocessor
   # A method that stores the language- and ship-logic for Ruby that's put in the
   # code of the user to get the ship moving and so on.
   def insert_logic
-    "STDOUT.sync = true\n" +
+    "# encoding: UTF-8\n" +
+        "STDOUT.sync = true\n" +
+        "STDERR.sync = true\n" +
         "def move\n" +
         "  puts \"#{$prefix}move\"\n" +
         "end\n" +
