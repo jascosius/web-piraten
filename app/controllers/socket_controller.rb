@@ -2,7 +2,7 @@
 
 class SocketController < WebsocketRails::BaseController
   $prefix = 'CkyUHZVL3q_'
-  @@timeout = 5#timeout time for the programm to execute
+  @@timeout = 5 #timeout time for the programm to execute
 
   include Preprocessor
 
@@ -46,52 +46,54 @@ class SocketController < WebsocketRails::BaseController
   end
 
   def look(direction) # event: ship.take
-    puts 'Look!'
-    coord = [@ship['x'], @ship['y']]
-    next_coord = get_next_position
-    rotate = @ship['rotation']
-    puts rotate
-    case direction
-      when :front
-        coord = next_coord
-      when :back
-        coord[0] -= next_coord[0] - coord[0]
-        coord[1] -= next_coord[1] - coord[1]
-      when :left
-        case rotate
-          when 3
-            coord[0] += 1
-          when 1
-            coord[0] -= 1
-          when 0
-            coord[1] -= 1
-          when 2
-            coord[1] += 1
-        end
-      when :right
-        case rotate
-          when 3
-            coord[0] -= 1
-          when 1
-            coord[0] += 1
-          when 0
-            coord[1] += 1
-          when 2
-            coord[1] -= 1
-        end
-    end
-    puts coord
-    look_obj = 'nothing'
-    @objects.each{ |obj|
-      x = obj['x']
-      y = obj['y']
-      if  [x,y] == coord
-        look_obj = obj['name'].to_s
-        puts obj['name']
-      end
-    }
     if !@is_simulation_done
+      puts 'Look!'
+      coord = [@ship['x'], @ship['y']]
+      next_coord = get_next_position
+      rotate = @ship['rotation']
+      puts rotate
+      case direction
+        when :front
+          coord = next_coord
+        when :back
+          coord[0] -= next_coord[0] - coord[0]
+          coord[1] -= next_coord[1] - coord[1]
+        when :left
+          case rotate
+            when 3
+              coord[0] += 1
+            when 1
+              coord[0] -= 1
+            when 0
+              coord[1] -= 1
+            when 2
+              coord[1] += 1
+          end
+        when :right
+          case rotate
+            when 3
+              coord[0] -= 1
+            when 1
+              coord[0] += 1
+            when 0
+              coord[1] += 1
+            when 2
+              coord[1] -= 1
+          end
+      end
+      puts coord
+      look_obj = 'nothing'
+      @objects.each { |obj|
+        x = obj['x']
+        y = obj['y']
+        if  [x, y] == coord
+          look_obj = obj['name'].to_s
+          puts obj['name']
+        end
+      }
       WebsocketRails[:operations].trigger(:look, coord)
+    else
+      look_obj='stop'
     end
     look_obj
   end
@@ -101,11 +103,12 @@ class SocketController < WebsocketRails::BaseController
       puts 'Move!'
       coord = get_next_position
       if coords_in_grid(coord)
-        @ship['x'] =  coord[0]
-        @ship['y'] =  coord[1]
+        @ship['x'] = coord[0]
+        @ship['y'] = coord[1]
         WebsocketRails[:operations].trigger(:move, coord)
       else
-        WebsocketRails[:operations].trigger(:done_error,'Spielfeld verlassen')
+        @is_simulation_done = true
+        WebsocketRails[:operations].trigger(:done_error, 'Spielfeld verlassen')
       end
     end
 
@@ -132,7 +135,7 @@ class SocketController < WebsocketRails::BaseController
       when 3
         y -= 1
     end
-    [x,y]
+    [x, y]
   end
 
   def rotate_ship_right # event: ship.right
@@ -190,7 +193,7 @@ class SocketController < WebsocketRails::BaseController
     puts grid
     x = grid['width']
     y = grid['height']
-    @grid_size = [x,y]
+    @grid_size = [x, y]
     @objects = grid['objects'].to_a
     @ship = grid['ship']
     #puts obja.to_s
@@ -202,6 +205,7 @@ class SocketController < WebsocketRails::BaseController
   end
 
   def stopSimulation
+    @is_simulation_done = true
     puts 'stop'
   end
 
@@ -246,6 +250,7 @@ class SocketController < WebsocketRails::BaseController
 
         #interact with the tcpserver
         loop do
+          puts @is_simulation_done
           line = vm.gets
           if line.include? "#{$prefix}end_error"
             simulation_done_error 'Maximale Anzahl der Operationen wurde erreicht.'

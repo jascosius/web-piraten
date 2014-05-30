@@ -55,7 +55,7 @@ loop {
             end
             counter += 1
             line = pipe.readline
-            line = HTMLEntities.new.encode(line, :hexadecimal)
+            #line = HTMLEntities.new.encode(line, :hexadecimal)
             puts line
             client.puts line
 
@@ -63,7 +63,12 @@ loop {
             if line.include?("#{PREFIX}?")
               msg = client.gets
               puts msg
-              pipe.write msg
+              if msg.include?("#{PREFIX}!_stop")
+                puts "Ausführung beendet"
+                break
+              else
+                pipe.write msg
+              end
             end
           end
         end
