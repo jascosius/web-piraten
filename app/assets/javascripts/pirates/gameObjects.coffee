@@ -88,6 +88,7 @@ class @Ship extends GameObject
     Grid.addObject (new Buoy @x, @y)
 
   move: () =>
+    console.log(@rotation)
     coords = getNextCoordinate @x, @y, @rotation
     @x = coords.x
     @y = coords.y

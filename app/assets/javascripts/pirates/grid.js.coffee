@@ -93,7 +93,7 @@ class @Grid
       if @ship.rotation <= 0
         @ship.rotation = 3
       else
-        @ship.rotation++
+        @ship.rotation--
     else
       if event.which == 3 && @isSomethingOnPosition(pos.x,pos.y).name != "PirateShip"
         @deleteObject (@isSomethingOnPosition(pos.x,pos.y))
