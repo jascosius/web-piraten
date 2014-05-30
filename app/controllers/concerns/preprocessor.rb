@@ -9,6 +9,8 @@ module Preprocessor
 
   private # TODO is that really necessary?
 
+  @lang
+
   # A method that takes the given message aka the code of the user and checks which
   # programming language is selected as well as if the debug mode is set or not.
   # Default set ist no debug mode and Ruby. The method then commits the code to the
@@ -16,15 +18,31 @@ module Preprocessor
   def preprocess_code(msg, language='Ruby', debug=false)
     case language
       when 'Ruby'
-        ruby = RubyPreprocessor.new('Ruby')
-        @code = debug ? ruby.debug_code(msg, var=[]) : ruby.process_code(msg)
+        @lang = RubyPreprocessor.new('Ruby')
+        @code = debug ? @lang.debug_code(msg, var=[]) : @lang.process_code(msg)
       when 'Java'
-        java = JavaPreprocessor.new('Java')
-        @code =debug ? java.debug_code(msg, var=[]) : java.process_code(msg)
+        @lang = JavaPreprocessor.new('Java')
+        @code =debug ? @lang.debug_code(msg, var=[]) : @lang.process_code(msg)
       else
         @code = 'Something went terribly wrong!'
     end
     @code
+  end
+
+  def postprocess_error(line,code,file)
+    @lang.postprocess_error(line,code,file)
+  end
+
+  def preprocess_filename
+    @lang.filename
+  end
+
+  def preprocess_execute
+    @lang.execute
+  end
+
+  def preprocess_compile
+    @lang.compile
   end
 
 end

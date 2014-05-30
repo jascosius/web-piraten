@@ -170,12 +170,14 @@ class SocketController < WebsocketRails::BaseController
 
   def puts_user_output(line)
     if !@is_simulation_done
+      puts line
       WebsocketRails[:operations].trigger(:output, CGI::escapeHTML(line))
     end
   end
 
   def puts_user_output_error(line)
     if !@is_simulation_done
+      puts line
       WebsocketRails[:operations].trigger(:output_error, CGI::escapeHTML(line))
     end
   end
@@ -201,7 +203,6 @@ class SocketController < WebsocketRails::BaseController
     puts 'stop'
   end
 
-
   def receive_code
     @is_simulation_done = false
     read_JSON
@@ -214,7 +215,7 @@ class SocketController < WebsocketRails::BaseController
     code = preprocess_code(message[:code])
 
     #add EOF to show Wrapper the end of the code
-    code += "\n#{$prefix}EOF"
+    code += "\n#{$prefix}EOF\n"
 
     Thread.start do
 
@@ -236,13 +237,17 @@ class SocketController < WebsocketRails::BaseController
         simulation_done_error 'Ein interner Fehler ist aufgetreten.'
       else
 
+        #send commands to the server
+        vm.puts preprocess_filename
+        vm.puts preprocess_compile
+        vm.puts preprocess_execute
+
         #send programmcode to the server
         vm.puts code
         puts code
 
         #interact with the tcpserver
         loop do
-          puts @is_simulation_done
           line = vm.gets
           if line.include? "#{$prefix}end_error"
             simulation_done_error 'Maximale Anzahl der Operationen wurde erreicht.'
@@ -278,6 +283,7 @@ class SocketController < WebsocketRails::BaseController
             put
           elsif line.include? "#{$prefix}stderr"
             line.slice!("#{$prefix}stderr")
+            line = postprocess_error(line, code, preprocess_filename)
             line.slice!($prefix)
             puts_user_output_error "Error: #{line}"
           elsif !line.chomp.empty?

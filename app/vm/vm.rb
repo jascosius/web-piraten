@@ -20,6 +20,10 @@ loop {
       end
     end
 
+    filename = client.gets.chomp
+    compile = client.gets.chomp
+    execute = client.gets.chomp
+
     #get programmcode from client
     code = ''
     loop do
@@ -34,12 +38,13 @@ loop {
     # create temporally file for execution of ruby code
     Dir.mktmpdir('session_') do |dir|
       # use the directory...
-      open("#{dir}/code.rb", 'w+') do |file| #TODO: Create file as specific linux user
+      open("#{dir}/#{PREFIX}#{filename}", 'w+') do |file| #TODO: Create file as specific linux user
 
         #File.chmod(777, file)
         File.write file, code
 
-        IO.popen("(ruby #{File.path(file)} 3>&1 1>&2 2>&3 | sed s/^/#{PREFIX}stderr/ ) 2>&1", 'r+') do |pipe|
+        #IO.popen("(ruby #{File.path(file)} 3>&1 1>&2 2>&3 | sed s/^/#{PREFIX}stderr/ ) 2>&1", 'r+') do |pipe|
+        IO.popen("(#{execute.gsub('$FILE$', File.path(file))} 3>&1 1>&2 2>&3 | sed s/^/#{PREFIX}stderr/ ) 2>&1", 'r+') do |pipe|
           pipe.sync = true
           counter = 0
           loop do

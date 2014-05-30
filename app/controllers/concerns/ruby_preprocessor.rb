@@ -1,19 +1,66 @@
 # -*- encoding : utf-8 -*-
 class RubyPreprocessor < BasePreprocessor
 
+  attr :filename
+  attr :execute
+  attr :compile
+
   def initialize(attribut)
     super(attribut)
+    @filename = 'code.rb'
+    @execute = 'ruby $FILE$'
+    @compile = ''
   end
 
   def process_code(code_msg)
     i=0
     codes = ''
-    code_msg << "\n"
     code_msg.each_line do |s|
-      codes += s + "#{$prefix}line(#{i})\n"
+      codes += s.chomp + " # #{$prefix}(#{i+1}#{$prefix})\n" + "#{$prefix}line(#{i})\n"
       i += 1
     end
     insert_logic + codes + "\n"
+  end
+
+  def postprocess_error(line,code,file)
+
+    #remove filepath
+    index_begin = line.index('/') #filepath starts with /
+    index_end = line.index($prefix+file) #filepath ends with filename
+    if index_begin and index_end and index_begin < index_end #found a filepath?
+      index_end += "#{$prefix+file}".length #add the lenght of the filename to the end
+      line.slice!(index_begin...index_end) #remove the filepath
+
+      #chance the linenumber
+      index_line_end = line.index(':', index_begin+1) #find the : after the linenumber
+      line_number = line[index_begin+1...index_line_end] #get the linenumber between the two :
+      i = 1 #Set a counter
+      new_line = '?' #Set a result string
+      code.each_line() do |l| #search in the executed code for the right line. In every line is a comment with the original linenumber
+        if i == line_number.to_i #find the line from the errormessage
+          line_begin=l.index("#{$prefix}(") #find the begin of the original linenumber in the comment
+          line_end=l.index("#{$prefix})") #find the end of the original linenumber in the comment
+          if line_begin and line_end #found something?
+            new_line = l[line_begin+"#{$prefix}(".length...line_end] #Set the new linenumber to the number in the comment
+          end
+        end
+        i += 1
+      end
+      line.slice!(index_begin+1...index_line_end) #remove the old linenumber from the error
+      line = line.insert(index_begin+1, new_line) #add the new linenumber to the error
+
+      line = line.insert(index_begin, 'line') #add a line to the error instead of the filepath
+    end
+    line
+  end
+
+  def preprocess_filename
+  end
+
+  def preprocess_execute
+  end
+
+  def preprocess_compile
   end
 
   def debug_code(code_msg, vars)
