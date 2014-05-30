@@ -49,8 +49,8 @@ class RubyPreprocessor < BasePreprocessor
       line.slice!(index_begin+1...index_line_end) #remove the old linenumber from the error
       line = line.insert(index_begin+1, new_line) #add the new linenumber to the error
 
-      if new_line == ''
-        line.slice!(index_begin..index_begin+1)
+      if new_line == '' #is there a result for the new linenumber?
+        line.slice!(index_begin..index_begin+1) #remove the : around the old number
       else
         line = line.insert(index_begin, 'line') #add a line to the error instead of the filepath
       end
