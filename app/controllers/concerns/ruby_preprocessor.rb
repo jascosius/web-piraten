@@ -48,7 +48,7 @@ class RubyPreprocessor < BasePreprocessor
         "def line(i)\n" +
         "  puts \"\\n#{$prefix}line!\#{i}\"\n" +
         "end\n" +
-        "def look(dir)\n" +
+        "def look(dir = :here)\n" +
         "  case dir\n" +
         "    when :right then puts \"#{$prefix}?_look_right\"\n" +
         "    when :left then puts \"#{$prefix}?_look_left\"\n" +
