@@ -1,7 +1,6 @@
 # -*- encoding : utf-8 -*-
 require 'socket'
 require 'tmpdir'
-require 'htmlentities'
 
 PREFIX = 'CkyUHZVL3q_' #have to be the same as in the socket_controller
 TIMEOUT = 5 #have to be the same as in the socket_controller
@@ -44,7 +43,6 @@ loop {
         #File.chmod(777, file)
         File.write file, code
 
-        #IO.popen("(ruby #{File.path(file)} 3>&1 1>&2 2>&3 | sed s/^/#{PREFIX}stderr/ ) 2>&1", 'r+') do |pipe|
         IO.popen("(#{execute.gsub('$FILE$', File.path(file))} 3>&1 1>&2 2>&3 | sed s/^/#{PREFIX}stderr/ ) 2>&1", 'r+') do |pipe|
           pipe.sync = true
           counter = 0
@@ -61,7 +59,6 @@ loop {
             end
             counter += 1
             line = pipe.readline
-            #line = HTMLEntities.new.encode(line, :hexadecimal)
             puts line
             client.puts line
 
