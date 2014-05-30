@@ -6,7 +6,7 @@ require 'htmlentities'
 PREFIX = 'CkyUHZVL3q_' #have to be the same as in the socket_controller
 TIMEOUT = 5 #have to be the same as in the socket_controller
 MAX_OPS = 1000 #the maximal counter of ops to execute
-PORT = 12340
+PORT = 12340 #have to be the same as in the socket_controller
 
 server = TCPServer.new PORT
 loop {
@@ -20,6 +20,7 @@ loop {
       end
     end
 
+    #get commands from client
     filename = client.gets.chomp
     compile = client.gets.chomp
     execute = client.gets.chomp
