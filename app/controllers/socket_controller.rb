@@ -20,13 +20,15 @@ class SocketController < WebsocketRails::BaseController
 
   # test events for the remote control buttons
   def rotate_ship_left # event: ship.left
-    puts 'Left!'
-    if @ship['rotation'] <= 0
-      @ship['rotation'] =3
-    else
-      @ship['rotation'] -= 1
+    if !@is_simulation_done
+      puts 'Left!'
+      if @ship['rotation'] <= 0
+        @ship['rotation'] =3
+      else
+        @ship['rotation'] -= 1
+      end
+      WebsocketRails[:operations].trigger(:left)
     end
-    WebsocketRails[:operations].trigger(:left)
   end
 
   def put # event: ship.put
@@ -96,9 +98,9 @@ class SocketController < WebsocketRails::BaseController
     if coords_in_grid(coord)
       @ship['x'] =  coord[0]
       @ship['y'] =  coord[1]
-      WebsocketRails[:operations].trigger(:move)
+      WebsocketRails[:operations].trigger(:move, coord)
     else
-      WebsocketRails[:operations].trigger(:output,'Spielfeld verlassen')
+      WebsocketRails[:operations].trigger(:done_error,'Spielfeld verlassen')
     end
   end
 
@@ -139,11 +141,15 @@ class SocketController < WebsocketRails::BaseController
   def simulation_done
     puts 'done'
     WebsocketRails[:operations].trigger(:done)
+    @is_simulation_done = true
   end
 
   def simulation_done_error(msg)
-    puts 'done_error'
-    WebsocketRails[:operations].trigger(:done_error, "Ausfuehrung beendet: #{msg}")
+    if !@is_simulation_done
+      puts 'done_error'
+      WebsocketRails[:operations].trigger(:done_error, "Ausfuehrung beendet: #{msg}")
+    end
+    @is_simulation_done = true
   end
 
   def send_line(line)
@@ -180,6 +186,7 @@ class SocketController < WebsocketRails::BaseController
 
 
   def receive_code
+    @is_simulation_done = false
     read_JSON
     #WebsocketRails[:debug].trigger :console, message[:code]
     puts '================================='
