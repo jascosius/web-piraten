@@ -24,25 +24,13 @@ class SocketController < WebsocketRails::BaseController
       case direction
         when :left
           puts 'Left!'
-          if @ship['rotation'] <= 0
-            @ship['rotation'] =3
-          else
-            @ship['rotation'] -= 1
-          end
+          @ship['rotation'] = (@ship['rotation'] - 1) % 4
         when :right
           puts 'Right!'
-          if @ship['rotation'] >= 3
-            @ship['rotation'] =0
-          else
-            @ship['rotation'] += 1
-          end
+          @ship['rotation'] = (@ship['rotation'] + 1) % 4
         when :over
           puts 'Over!'
-          if @ship['rotation'] >= 2
-            @ship['rotation'] -= 2
-          else
-            @ship['rotation'] += 2
-          end
+          @ship['rotation'] = (@ship['rotation'] + 2) % 4
       end
       WebsocketRails[:operations].trigger(:turn, @ship['rotation'])
     end
