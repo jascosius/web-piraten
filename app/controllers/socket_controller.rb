@@ -32,17 +32,20 @@ class SocketController < WebsocketRails::BaseController
   end
 
   def put # event: ship.put
-    puts 'Put!'
-    WebsocketRails[:operations].trigger(:put)
+    if !@is_simulation_done
+      puts 'Put!'
+      WebsocketRails[:operations].trigger(:put)
+    end
   end
 
   def take # event: ship.take
-    puts 'Take!'
-    WebsocketRails[:operations].trigger(:take)
+    if !@is_simulation_done
+      puts 'Take!'
+      WebsocketRails[:operations].trigger(:take)
+    end
   end
 
   def look(direction) # event: ship.take
-
     puts 'Look!'
     coord = [@ship['x'], @ship['y']]
     next_coord = get_next_position
@@ -87,21 +90,25 @@ class SocketController < WebsocketRails::BaseController
         puts obj['name']
       end
     }
-    WebsocketRails[:operations].trigger(:look, coord)
+    if !@is_simulation_done
+      WebsocketRails[:operations].trigger(:look, coord)
+    end
     look_obj
-
   end
 
   def move_ship # event: ship.move
-    puts 'Move!'
-    coord = get_next_position
-    if coords_in_grid(coord)
-      @ship['x'] =  coord[0]
-      @ship['y'] =  coord[1]
-      WebsocketRails[:operations].trigger(:move, coord)
-    else
-      WebsocketRails[:operations].trigger(:done_error,'Spielfeld verlassen')
+    if !@is_simulation_done
+      puts 'Move!'
+      coord = get_next_position
+      if coords_in_grid(coord)
+        @ship['x'] =  coord[0]
+        @ship['y'] =  coord[1]
+        WebsocketRails[:operations].trigger(:move, coord)
+      else
+        WebsocketRails[:operations].trigger(:done_error,'Spielfeld verlassen')
+      end
     end
+
   end
 
   def coords_in_grid(coord)
@@ -129,39 +136,53 @@ class SocketController < WebsocketRails::BaseController
   end
 
   def rotate_ship_right # event: ship.right
-    puts 'Right!'
-    if @ship['rotation'] >= 3
-      @ship['rotation'] =0
-    else
-      @ship['rotation'] += 1
+    if !@is_simulation_done
+      puts 'Right!'
+      if @ship['rotation'] >= 3
+        @ship['rotation'] =0
+      else
+        @ship['rotation'] += 1
+      end
+      WebsocketRails[:operations].trigger(:right)
     end
-    WebsocketRails[:operations].trigger(:right)
+
   end
 
   def simulation_done
-    puts 'done'
-    WebsocketRails[:operations].trigger(:done)
-    @is_simulation_done = true
+    if !@is_simulation_done
+      puts 'done'
+      WebsocketRails[:operations].trigger(:done)
+      @is_simulation_done = true
+    end
+
   end
 
   def simulation_done_error(msg)
     if !@is_simulation_done
       puts 'done_error'
       WebsocketRails[:operations].trigger(:done_error, "Ausfuehrung beendet: #{msg}")
+      @is_simulation_done = true
     end
-    @is_simulation_done = true
+
   end
 
   def send_line(line)
-    WebsocketRails[:operations].trigger(:line, line)
+    if !@is_simulation_done
+      WebsocketRails[:operations].trigger(:line, line)
+    end
+
   end
 
   def puts_user_output(line)
-    WebsocketRails[:operations].trigger(:output, CGI::escapeHTML(line))
+    if !@is_simulation_done
+      WebsocketRails[:operations].trigger(:output, CGI::escapeHTML(line))
+    end
   end
 
   def puts_user_output_error(line)
-    WebsocketRails[:operations].trigger(:output_error, CGI::escapeHTML(line))
+    if !@is_simulation_done
+      WebsocketRails[:operations].trigger(:output_error, CGI::escapeHTML(line))
+    end
   end
 
   def read_JSON
