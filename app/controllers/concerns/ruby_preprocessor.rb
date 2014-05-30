@@ -22,7 +22,7 @@ class RubyPreprocessor < BasePreprocessor
     insert_logic + codes + "\n"
   end
 
-  def postprocess_error(line,code,file)
+  def postprocess_error(line, code, file)
 
     #remove filepath
     index_begin = line.index('/') #filepath starts with /
@@ -35,7 +35,7 @@ class RubyPreprocessor < BasePreprocessor
       index_line_end = line.index(':', index_begin+1) #find the : after the linenumber
       line_number = line[index_begin+1...index_line_end] #get the linenumber between the two :
       i = 1 #Set a counter
-      new_line = '?' #Set a result string
+      new_line = '' #Set a result string
       code.each_line() do |l| #search in the executed code for the right line. In every line is a comment with the original linenumber
         if i == line_number.to_i #find the line from the errormessage
           line_begin=l.index("#{$prefix}(") #find the begin of the original linenumber in the comment
@@ -49,7 +49,11 @@ class RubyPreprocessor < BasePreprocessor
       line.slice!(index_begin+1...index_line_end) #remove the old linenumber from the error
       line = line.insert(index_begin+1, new_line) #add the new linenumber to the error
 
-      line = line.insert(index_begin, 'line') #add a line to the error instead of the filepath
+      if new_line == ''
+        line.slice!(index_begin..index_begin+1)
+      else
+        line = line.insert(index_begin, 'line') #add a line to the error instead of the filepath
+      end
     end
     line
   end
