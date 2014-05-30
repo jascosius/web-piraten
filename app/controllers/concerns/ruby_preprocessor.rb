@@ -58,15 +58,6 @@ class RubyPreprocessor < BasePreprocessor
     line
   end
 
-  def preprocess_filename
-  end
-
-  def preprocess_execute
-  end
-
-  def preprocess_compile
-  end
-
   def debug_code(code_msg, vars)
     i=0
     code = ''

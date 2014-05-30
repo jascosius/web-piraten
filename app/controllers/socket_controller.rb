@@ -173,14 +173,15 @@ class SocketController < WebsocketRails::BaseController
   def puts_user_output(line)
     if !@is_simulation_done
       puts line
-      WebsocketRails[:operations].trigger(:output, CGI::escapeHTML(line))
+      line = CGI::escapeHTML(line)
+      WebsocketRails[:operations].trigger(:output, line)
     end
   end
 
   def puts_user_output_error(line)
     if !@is_simulation_done
-      puts line
-      WebsocketRails[:operations].trigger(:output_error, CGI::escapeHTML(line))
+      line = CGI::escapeHTML(line)
+      WebsocketRails[:operations].trigger(:output_error, line)
     end
   end
 
@@ -287,6 +288,7 @@ class SocketController < WebsocketRails::BaseController
             line.slice!("#{$prefix}stderr")
             line = postprocess_error(line, code, preprocess_filename)
             line.slice!($prefix)
+            puts line
             puts_user_output_error "Error: #{line}"
           elsif !line.chomp.empty?
             line.slice!($prefix)
