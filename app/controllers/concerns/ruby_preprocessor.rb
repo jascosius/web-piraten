@@ -8,7 +8,7 @@ class RubyPreprocessor < BasePreprocessor
   def initialize(attribut)
     super(attribut)
     @filename = 'code.rb'
-    @execute = 'ruby $FILE$'
+    @execute = 'ruby $FILE$' #$FILE$ will be replaced
     @compile = ''
   end
 
@@ -16,6 +16,7 @@ class RubyPreprocessor < BasePreprocessor
     i=0
     codes = ''
     code_msg.each_line do |s|
+      #      # remove \n   #add linenumber in commend          #add linefunction for linehighlighting
       codes += s.chomp + " # #{$prefix}(#{i+1}#{$prefix})\n" + "#{$prefix}line(#{i})\n"
       i += 1
     end
@@ -47,11 +48,11 @@ class RubyPreprocessor < BasePreprocessor
         i += 1
       end
       line.slice!(index_begin+1...index_line_end) #remove the old linenumber from the error
-      line = line.insert(index_begin+1, new_line) #add the new linenumber to the error
 
       if new_line == '' #is there a result for the new linenumber?
         line.slice!(index_begin..index_begin+1) #remove the : around the old number
       else
+        line = line.insert(index_begin+1, new_line) #add the new linenumber to the error
         line = line.insert(index_begin, 'line') #add a line to the error instead of the filepath
       end
     end
@@ -73,8 +74,8 @@ class RubyPreprocessor < BasePreprocessor
   # code of the user to get the ship moving and so on.
   def insert_logic
     "# -*- encoding : utf-8 -*-\n" +
-        "STDOUT.sync = true\n" +
-        "STDERR.sync = true\n" +
+        "$stdout.sync = false\n" +
+        "$stderr.sync = false\n" +
         "def move\n" +
         "  puts \"#{$prefix}move\"\n" +
         "end\n" +

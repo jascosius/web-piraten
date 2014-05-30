@@ -3,8 +3,8 @@
 class SocketController < WebsocketRails::BaseController
   $prefix = 'CkyUHZVL3q_'
   @@timeout = 5 #timeout time for the programm to execute
-  PORT = 12340 #port to connect to the vm
-  HOST = 'localhost' #host to connect to the vm
+  @@port = 12340 #port to connect to the vm
+  @@host = 'localhost' #host to connect to the vm
 
   include Preprocessor
 
@@ -234,7 +234,7 @@ class SocketController < WebsocketRails::BaseController
 
       begin
         #connect to TCPServer to execute the programm
-        vm = TCPSocket.open(HOST, PORT)
+        vm = TCPSocket.open(@@host, @@port)
       rescue
         puts 'Could not connect to TCPSocket. Start ruby app/vm/vm.rb'
         simulation_done_error 'Ein interner Fehler ist aufgetreten.'
