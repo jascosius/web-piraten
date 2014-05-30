@@ -135,9 +135,11 @@ class @OperationHandler extends ChannelHandler
         when 'done'
           Utils.log 'Ausführung beendet!'
           CodeGUI.toggleCodeEditing()
+          @operationQueue = []
         when 'done_error'
           Utils.logError currentOp.data
           CodeGUI.toggleCodeEditing()
+          @operationQueue = []
         else
           Utils.logError "Invalid event: #{currentOp.event} data: #{currentOp.data}"
 
