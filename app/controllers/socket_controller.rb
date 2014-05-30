@@ -21,10 +21,10 @@ class SocketController < WebsocketRails::BaseController
   # test events for the remote control buttons
   def rotate_ship_left # event: ship.left
     puts 'Left!'
-    if @ship['rotation'] >= 3
-      @ship['rotation'] =0
+    if @ship['rotation'] <= 0
+      @ship['rotation'] =3
     else
-      @ship['rotation'] += 1
+      @ship['rotation'] -= 1
     end
     WebsocketRails[:operations].trigger(:left)
   end
@@ -128,10 +128,10 @@ class SocketController < WebsocketRails::BaseController
 
   def rotate_ship_right # event: ship.right
     puts 'Right!'
-    if @ship['rotation'] <= 0
-      @ship['rotation'] =3
+    if @ship['rotation'] >= 3
+      @ship['rotation'] =0
     else
-      @ship['rotation'] -= 1
+      @ship['rotation'] += 1
     end
     WebsocketRails[:operations].trigger(:right)
   end

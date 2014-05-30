@@ -81,22 +81,23 @@ class @Grid
     { x1: x, y1: y, x2: @size, y2: @size }
 
   @onClick = (event) =>
-    mousPos = @getMousePos(event)
-    pos = @getGridCoordinates mousPos
-    if @ship.x == pos.x && @ship.y == pos.y && event.which == 1 && Simulation.isSimulating == false
-      @mousePressedOnShip = true
-    else
-      if @contains(mousPos) && @isSomethingOnPosition(pos.x, pos.y) == false && !Simulation.isSimulating && event.which == 1
-        @GridControls.creatObjectFromButton(pos.x, pos.y)
-
-    if event.which == 3 && @ship.x == pos.x && @ship.y == pos.y
-      if @ship.rotation <= 0
-        @ship.rotation = 3
+    if !Simulation.isSimulating
+      mousPos = @getMousePos(event)
+      pos = @getGridCoordinates mousPos
+      if @ship.x == pos.x && @ship.y == pos.y && event.which == 1
+        @mousePressedOnShip = true
       else
-        @ship.rotation--
-    else
-      if event.which == 3 && @isSomethingOnPosition(pos.x,pos.y).name != "PirateShip"
-        @deleteObject (@isSomethingOnPosition(pos.x,pos.y))
+        if @contains(mousPos) && @isSomethingOnPosition(pos.x, pos.y) == false && event.which == 1
+          @GridControls.creatObjectFromButton(pos.x, pos.y)
+
+      if event.which == 3 && @ship.x == pos.x && @ship.y == pos.y
+        if @ship.rotation <= 0
+          @ship.rotation = 3
+        else
+          @ship.rotation--
+      else
+        if event.which == 3 && @isSomethingOnPosition(pos.x,pos.y).name != "PirateShip"
+          @deleteObject (@isSomethingOnPosition(pos.x,pos.y))
 
   @onMouseUp = (event) =>
     coords = @getGridCoordinates @getMousePos(event)
