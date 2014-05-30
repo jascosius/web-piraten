@@ -10,7 +10,7 @@ class RubyPreprocessor < BasePreprocessor
     codes = ''
     code_msg << "\n"
     code_msg.each_line do |s|
-      codes += s + "line(#{i})\n"
+      codes += s + "#{$prefix}line(#{i})\n"
       i += 1
     end
     insert_logic + codes + "\n"
@@ -46,7 +46,7 @@ class RubyPreprocessor < BasePreprocessor
         "def put\n" +
         "  puts \"#{$prefix}put\"\n" +
         "end\n" +
-        "def line(i)\n" +
+        "def #{$prefix}line(i)\n" +
         "  puts \"\\n#{$prefix}line!\#{i}\"\n" +
         "end\n" +
         "def look(dir = :here)\n" +

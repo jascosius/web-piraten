@@ -64,7 +64,7 @@ loop {
               msg = client.gets
               puts msg
               if msg.include?("#{PREFIX}!_stop")
-                puts "Ausführung beendet"
+                puts 'Ausführung beendet'
                 break
               else
                 pipe.write msg
