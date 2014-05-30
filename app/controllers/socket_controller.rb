@@ -19,15 +19,32 @@ class SocketController < WebsocketRails::BaseController
   end
 
   # test events for the remote control buttons
-  def rotate_ship_left # event: ship.left
+  def rotate_ship(direction) # event: ship.left
     if !@is_simulation_done
-      puts 'Left!'
-      if @ship['rotation'] <= 0
-        @ship['rotation'] =3
-      else
-        @ship['rotation'] -= 1
+      case direction
+        when :left
+          puts 'Left!'
+          if @ship['rotation'] <= 0
+            @ship['rotation'] =3
+          else
+            @ship['rotation'] -= 1
+          end
+        when :right
+          puts 'Right!'
+          if @ship['rotation'] >= 3
+            @ship['rotation'] =0
+          else
+            @ship['rotation'] += 1
+          end
+        when :over
+          puts 'Over!'
+          if @ship['rotation'] >= 2
+            @ship['rotation'] -= 2
+          else
+            @ship['rotation'] += 2
+          end
       end
-      WebsocketRails[:operations].trigger(:left)
+      WebsocketRails[:operations].trigger(:turn, @ship['rotation'])
     end
   end
 
@@ -136,19 +153,6 @@ class SocketController < WebsocketRails::BaseController
         y -= 1
     end
     [x, y]
-  end
-
-  def rotate_ship_right # event: ship.right
-    if !@is_simulation_done
-      puts 'Right!'
-      if @ship['rotation'] >= 3
-        @ship['rotation'] =0
-      else
-        @ship['rotation'] += 1
-      end
-      WebsocketRails[:operations].trigger(:right)
-    end
-
   end
 
   def simulation_done
@@ -260,10 +264,12 @@ class SocketController < WebsocketRails::BaseController
             break
           elsif line.include? "#{$prefix}line"
             send_line line.split('!')[1].to_i
-          elsif line.include? "#{$prefix}turnRight"
-            rotate_ship_right
-          elsif line.include? "#{$prefix}turnLeft"
-            rotate_ship_left
+          elsif line.include? "#{$prefix}turn_right"
+            rotate_ship(:right)
+          elsif line.include? "#{$prefix}turn_left"
+            rotate_ship(:left)
+          elsif line.include? "#{$prefix}turn_over"
+            rotate_ship(:over)
           elsif line.include? "#{$prefix}move"
             move_ship
           elsif line.include? "#{$prefix}take"

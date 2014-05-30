@@ -36,11 +36,12 @@ class RubyPreprocessor < BasePreprocessor
         "def move\n" +
         "  puts \"#{$prefix}move\"\n" +
         "end\n" +
-        "def turnRight\n" +
-        "  puts \"#{$prefix}turnRight\"\n" +
-        "end\n" +
-        "def turnLeft\n" +
-        "  puts \"#{$prefix}turnLeft\"\n" +
+        "def turn(dir = :over)\n" +
+        "  case dir\n"+
+        "    when :right then puts \"#{$prefix}turn_right\"\n" +
+        "    when :left then puts \"#{$prefix}turn_left\"\n" +
+        "    when :over then puts \"#{$prefix}turn_over\"\n" +
+        "  end\n"+
         "end\n" +
         "def put\n" +
         "  puts \"#{$prefix}put\"\n" +

@@ -41,8 +41,7 @@ class @OperationHandler extends ChannelHandler
     @lifeTime = 0
     @operationQueue = []
     @operations = [
-      'left',
-      'right',
+      'turn',
       'move',
       'put',
       'line',
@@ -57,10 +56,8 @@ class @OperationHandler extends ChannelHandler
 
     #bind operations for the operations channel
     # manual mode, because only Chrome offers the 'event' object
-    @channel.bind 'left', (data) =>
-      @operationQueue.push (new Operation 'left', data)
-    @channel.bind 'right', (data) =>
-      @operationQueue.push (new Operation 'right', data)
+    @channel.bind 'turn', (data) =>
+      @operationQueue.push (new Operation 'turn', data)
     @channel.bind 'move', (data) =>
       @operationQueue.push (new Operation 'move', data)
     @channel.bind 'put', (data) =>
@@ -112,10 +109,8 @@ class @OperationHandler extends ChannelHandler
       repeat = false
 
       switch currentOp.event
-        when 'left'
-          Grid.ship.rotateLeft()
-        when 'right'
-          Grid.ship.rotateRight()
+        when 'turn'
+          Grid.ship.turn(currentOp.data)
         when 'move'
           Grid.ship.move()
         when 'look'

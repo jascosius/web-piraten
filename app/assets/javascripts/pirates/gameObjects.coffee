@@ -50,14 +50,8 @@ class @Ship extends GameObject
       super "PirateShip", Config.shipImage, @x, @y
     else throw "invalid ship constructor call"
 
-
-  rotateRight: () =>
-    @rotation = (@rotation+1) % 4
-
-  rotateLeft: () =>
-    @rotation = (@rotation-1) % 4;
-    if @rotation < 0 # unexpected js
-      @rotation = 4 + @rotation
+  turn: (rotation) =>
+    @rotation = rotation
 
   look: (coord) =>
     coord2 = new Coordinate()
