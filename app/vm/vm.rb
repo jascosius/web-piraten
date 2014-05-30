@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'socket'
 require 'tmpdir'
+require 'htmlentities'
 
 PREFIX = 'CkyUHZVL3q_' #have to be the same as in the socket_controller
 TIMEOUT = 5 #have to be the same as in the socket_controller
@@ -54,6 +55,7 @@ loop {
             end
             counter += 1
             line = pipe.readline
+            line = HTMLEntities.new.encode(line, :hexadecimal)
             puts line
             client.puts line
 
