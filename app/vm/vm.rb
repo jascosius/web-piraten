@@ -53,7 +53,7 @@ loop {
               break
             elsif counter > MAX_OPS
               #tell the client that the execution has finished with errors
-              client.puts "#{PREFIX}end_error"
+              client.puts "#{PREFIX}end_errorMaximale Anzahl der Operationen erreicht."
               puts 'max_ops reached'
               break
             end

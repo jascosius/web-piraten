@@ -253,7 +253,9 @@ class SocketController < WebsocketRails::BaseController
         loop do
           line = vm.gets
           if line.include? "#{$prefix}end_error"
-            simulation_done_error 'Maximale Anzahl der Operationen wurde erreicht.'
+            line.slice!("#{$prefix}end_error")
+            line.slice!($prefix)
+            simulation_done_error line
             break
           elsif line.include? "#{$prefix}end"
             simulation_done

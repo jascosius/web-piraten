@@ -84,6 +84,7 @@ class RubyPreprocessor < BasePreprocessor
         "    when :right then puts \"#{$prefix}turn_right\"\n" +
         "    when :left then puts \"#{$prefix}turn_left\"\n" +
         "    when :over then puts \"#{$prefix}turn_over\"\n" +
+        "    else raise(ArgumentError, \"unknown argument\")\n" +
         "  end\n"+
         "end\n" +
         "def put\n" +
@@ -99,6 +100,7 @@ class RubyPreprocessor < BasePreprocessor
         "    when :here then puts \"#{$prefix}?_look_here\"\n" +
         "    when :back then puts \"#{$prefix}?_look_back\"\n" +
         "    when :front then puts \"#{$prefix}?_look_front\"\n"+
+        "    else raise(ArgumentError, \"unknown argument\")\n" +
         "  end\n" +
         "  ret = gets\n" +
         "  if ret.include? \"#{$prefix}!_Buoy\"\n" +
