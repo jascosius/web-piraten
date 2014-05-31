@@ -74,8 +74,8 @@ class RubyPreprocessor < BasePreprocessor
   # code of the user to get the ship moving and so on.
   def insert_logic
     "# -*- encoding : utf-8 -*-\n" +
-        "$stdout.sync = false\n" +
-        "$stderr.sync = false\n" +
+        "$stdout.sync = true\n" +
+        "$stderr.sync = true\n" +
         "def move\n" +
         "  puts \"#{$prefix}move\"\n" +
         "end\n" +
