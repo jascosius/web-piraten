@@ -17,7 +17,16 @@ class JavaPreprocessor < BasePreprocessor
   end
 
   def process_code(code_msg)
-    insert_logic + code_msg + insert_logic_end + "\n"
+    i=0
+    codes = ''
+    code_msg.each_line do |s|
+      #      # remove \n   #add linenumber in commend          #add linefunction for linehighlighting
+      codes += s.chomp + " // #{$prefix}(#{i+1}#{$prefix})\n" + "line(#{i});\n"
+      i += 1
+    end
+    codes.slice!("line(#{i-1});\n")
+
+    insert_logic + codes + insert_logic_end + "\n"
   end
 
   def postprocess_error(line, code)
