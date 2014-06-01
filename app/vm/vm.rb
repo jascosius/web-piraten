@@ -47,7 +47,7 @@ loop {
         File.write file, code
 
         exec = true
-        if not compile == ''
+        if compile != ''
           #execute the compilecommand with the right path. add PREFIXstderr_compile to errors
           IO.popen("(#{compile.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed s/^/#{PREFIX}stderr_compile/ ) 2>&1", 'r+') do |pipe|
             line = ''
@@ -65,7 +65,7 @@ loop {
           end
         end
 
-        if (exec)
+        if exec
           #execute the executecommand with the right path. add PREFIXstderr to errors
           IO.popen("(#{execute.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed s/^/#{PREFIX}stderr/ ) 2>&1", 'r+') do |pipe|
             pipe.sync = true
@@ -84,7 +84,7 @@ loop {
               counter += 1
               line = pipe.readline
               puts line
-              if (not execute_error == '') and line.include? execute_error #check if the compiled file is found. Maybe not in case of a compileerror
+              if execute_error != '' and line.include? execute_error #check if the compiled file is found. Maybe not in case of a compileerror
                 client.puts "#{PREFIX}end_errorFehler beim Compilieren. (Beim Ausführen bemerkt)"
                 break
               end

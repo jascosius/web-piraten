@@ -178,6 +178,8 @@ class SocketController < WebsocketRails::BaseController
       line.each_char do |c|
         if c == ' '
           new_line += '&nbsp;'
+        elsif c == "\t"
+          new_line += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
         else
           new_line += c
         end
@@ -193,6 +195,8 @@ class SocketController < WebsocketRails::BaseController
       line.each_char do |c|
         if c == ' '
           new_line += '&nbsp;'
+        elsif c == "\t"
+          new_line += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
         else
           new_line += c
         end

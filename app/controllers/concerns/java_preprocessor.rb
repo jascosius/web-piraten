@@ -49,31 +49,31 @@ class JavaPreprocessor < BasePreprocessor
 
     "public class Main {\n" +
 
-    "  private BufferedReader br;\n" +
+    "  private BufferedReader #{$prefix}br;\n" +
 
     "  public static void main(String[] args) {\n" +
     "    new Main();\n" +
     "  }\n" +
 
-    "  private String readLine() {\n" +
-    "    try {\n" +
-    "      return br.readLine();\n" +
-    "    } catch (IOException e) {\n" +
-    "      e.printStackTrace();\n" +
-    "    }\n" +
-    "  return \"\";\n" +
-    "  }\n" +
-
     "  public Main() {\n" +
     "    InputStreamReader isr = new InputStreamReader(System.in);\n" +
-    "    br = new BufferedReader(isr);\n" +
+    "    #{$prefix}br = new BufferedReader(isr);\n" +
     "    start();\n" +
     "    try {\n" +
-    "      br.close();\n" +
-    "      isr.close();\n" +
+    "      #{$prefix}br.close();\n" +
+    "      isr.close();\n " +
     "    } catch (IOException e) {\n" +
     "      e.printStackTrace();\n" +
     "    }\n" +
+    "  }\n" +
+
+    "  public String #{$prefix}readLine() {\n" +
+    "  try {\n" +
+    "    return #{$prefix}br.readLine();\n" +
+    "  } catch (IOException e) {\n" +
+    "    e.printStackTrace();\n" +
+    "  }\n" +
+    "    return \"\";\n" +
     "  }\n" +
 
     "  public void move() {\n" +
@@ -91,6 +91,8 @@ class JavaPreprocessor < BasePreprocessor
     "    case \"over\":\n" +
     "      System.out.println(\"#{$prefix}turn_over\");\n" +
     "      break;\n" +
+    "    default:\n" +
+    "      throw new RuntimeException(\"unknown argument\");\n" +
     "    }\n" +
     "  }\n" +
 
@@ -119,8 +121,10 @@ class JavaPreprocessor < BasePreprocessor
     "    case \"front\":\n" +
     "      System.out.println(\"#{$prefix}?_look_front\");\n" +
     "      break;\n" +
+    "    default:\n" +
+    "      throw new RuntimeException(\"unknown argument\");\n" +
     "    }\n" +
-    "    String ret = readLine();\n" +
+    "    String ret = #{$prefix}readLine();\n" +
     "    if (ret.contains(\"#{$prefix}!_Buoy\")) {\n" +
     "      return \"buoy\";\n" +
     "    } else if (ret.contains(\"#{$prefix}!_Monster\")) {\n" +

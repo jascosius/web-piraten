@@ -15,7 +15,7 @@ module Preprocessor
   # programming language is selected as well as if the debug mode is set or not.
   # Default set ist no debug mode and Ruby. The method then commits the code to the
   # specified preprocessor and afterwards returns the modified code.
-  def preprocess_code(msg, language='Ruby', debug=false)
+  def preprocess_code(msg, language='Java', debug=false)
     case language
       when 'Ruby'
         @lang = RubyPreprocessor.new('Ruby')
