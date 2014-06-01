@@ -174,14 +174,30 @@ class SocketController < WebsocketRails::BaseController
     if !@is_simulation_done
       puts line
       line = CGI::escapeHTML(line)
-      WebsocketRails[:operations].trigger(:output, line)
+      new_line = ''
+      line.each_char do |c|
+        if c == ' '
+          new_line += '&nbsp;'
+        else
+          new_line += c
+        end
+      end
+      WebsocketRails[:operations].trigger(:output, new_line)
     end
   end
 
   def puts_user_output_error(line)
     if !@is_simulation_done
       line = CGI::escapeHTML(line)
-      WebsocketRails[:operations].trigger(:output_error, line)
+      new_line = ''
+      line.each_char do |c|
+        if c == ' '
+          new_line += '&nbsp;'
+        else
+          new_line += c
+        end
+      end
+      WebsocketRails[:operations].trigger(:output_error, new_line)
     end
   end
 
@@ -244,6 +260,8 @@ class SocketController < WebsocketRails::BaseController
         vm.puts preprocess_filename
         vm.puts preprocess_compile
         vm.puts preprocess_execute
+        vm.puts preprocess_compile_error
+        vm.puts preprocess_execute_error
 
         #send programmcode to the server
         vm.puts code
@@ -260,6 +278,18 @@ class SocketController < WebsocketRails::BaseController
           elsif line.include? "#{$prefix}end"
             simulation_done
             break
+          elsif line.include? "#{$prefix}stderr_compile"
+            line.slice!("#{$prefix}stderr_compile")
+            line = postprocess_error_compile(line, code)
+            line.slice!($prefix)
+            puts line
+            puts_user_output_error line
+          elsif line.include? "#{$prefix}stderr"
+            line.slice!("#{$prefix}stderr")
+            line = postprocess_error(line, code)
+            line.slice!($prefix)
+            puts line
+            puts_user_output_error line
           elsif line.include? "#{$prefix}line"
             send_line line.split('!')[1].to_i
           elsif line.include? "#{$prefix}turn_right"
@@ -286,16 +316,9 @@ class SocketController < WebsocketRails::BaseController
             vm.puts test
           elsif line.include? "#{$prefix}put"
             put
-          elsif line.include? "#{$prefix}stderr"
-            line.slice!("#{$prefix}stderr")
-            line = postprocess_error(line, code, preprocess_filename)
-            line.slice!($prefix)
-            puts line
-            puts_user_output_error "Error: #{line}"
           elsif !line.chomp.empty?
             line.slice!($prefix)
             puts_user_output line
-            #WebsocketRails[:debug].trigger :console, line
           end
         end
       end

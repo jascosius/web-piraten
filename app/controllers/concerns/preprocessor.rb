@@ -29,20 +29,32 @@ module Preprocessor
     @code
   end
 
-  def postprocess_error(line,code,file)
-    @lang.postprocess_error(line,code,file)
+  def postprocess_error(line,code)
+    @lang.postprocess_error(line,code)
+  end
+
+  def postprocess_error_compile(line,code)
+    @lang.postprocess_error_compile(line,code)
   end
 
   def preprocess_filename
     @lang.filename
   end
 
+  def preprocess_compile
+    @lang.compile
+  end
+
   def preprocess_execute
     @lang.execute
   end
 
-  def preprocess_compile
-    @lang.compile
+  def preprocess_compile_error
+    @lang.compile_error
+  end
+
+  def preprocess_execute_error
+    @lang.execute_error
   end
 
 end

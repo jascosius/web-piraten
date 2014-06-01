@@ -2,14 +2,18 @@
 class RubyPreprocessor < BasePreprocessor
 
   attr :filename
-  attr :execute
   attr :compile
+  attr :execute
+  attr :compile_error
+  attr :execute_error
 
   def initialize(attribut)
     super(attribut)
-    @filename = 'code.rb'
-    @execute = 'ruby $FILE$' #$FILE$ will be replaced
+    @filename = "#{$prefix}code.rb"
     @compile = ''
+    @execute = "ruby $PATH$/#{$prefix}code.rb" #$PATH$ will be replaced
+    @compile_error = ''
+    @execute_error = ''
   end
 
   def process_code(code_msg)
@@ -23,13 +27,13 @@ class RubyPreprocessor < BasePreprocessor
     insert_logic + codes + "\n"
   end
 
-  def postprocess_error(line, code, file)
+  def postprocess_error(line, code)
 
     #remove filepath
     index_begin = line.index('/') #filepath starts with /
-    index_end = line.index($prefix+file) #filepath ends with filename
+    index_end = line.index(@filename) #filepath ends with filename
     if index_begin and index_end and index_begin < index_end #found a filepath?
-      index_end += "#{$prefix+file}".length #add the lenght of the filename to the end
+      index_end += "#{@filename}".length #add the lenght of the filename to the end
       line.slice!(index_begin...index_end) #remove the filepath
 
       #chance the linenumber
@@ -57,6 +61,10 @@ class RubyPreprocessor < BasePreprocessor
       end
     end
     line
+  end
+
+  def postprocess_error_compile(lang,code)
+
   end
 
   def debug_code(code_msg, vars)
