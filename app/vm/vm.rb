@@ -11,6 +11,7 @@ server = TCPServer.new PORT
 loop {
   Thread.start(server.accept) do |client| #spawn new process for a new client
 
+    #thread to kill the execution after a while
     Thread.start(Thread.current) do |thread|
       sleep(TIMEOUT)
       if thread.alive?
@@ -20,11 +21,11 @@ loop {
     end
 
     #get commands from client
-    filename = client.gets.chomp
-    compile = client.gets.chomp
-    execute = client.gets.chomp
-    compile_error = client.gets.chomp
-    execute_error = client.gets.chomp
+    filename = client.gets.chomp #filename for the code
+    compile = client.gets.chomp #command to compile the code
+    execute = client.gets.chomp #command to execute the code
+    compile_error = client.gets.chomp #string to find an compile error in the output of the compiler
+    execute_error = client.gets.chomp #string to find an compile error in the output of the execution (can't find compiled file)
 
 
     #get programmcode from client
@@ -32,7 +33,7 @@ loop {
     loop do
       msg = client.gets
       puts msg
-      if msg.include?("#{PREFIX}EOF")
+      if msg.include?("#{PREFIX}EOF") #end of programmcode
         break
       end
       code += msg
@@ -43,17 +44,16 @@ loop {
       # use the directory...
       open("#{dir}/#{filename}", 'w+') do |file| #TODO: Create file as specific linux user
 
-        #File.chmod(777, file)
         File.write file, code
 
         exec = true
         if not compile == ''
+          #execute the compilecommand with the right path. add PREFIXstderr_compile to errors
           IO.popen("(#{compile.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed s/^/#{PREFIX}stderr_compile/ ) 2>&1", 'r+') do |pipe|
             line = ''
             loop do
               if pipe.eof?
-                puts "Letzte Zeile #{line}"
-                if (not compile_error == '') and line.include? compile_error
+                if (not compile_error == '') and line.include? compile_error #check if there is a compileerror
                   client.puts "#{PREFIX}end_errorFehler beim Compilieren. (Beim Compilieren bemerkt)"
                   exec = false
                 end
@@ -66,6 +66,7 @@ loop {
         end
 
         if (exec)
+          #execute the executecommand with the right path. add PREFIXstderr to errors
           IO.popen("(#{execute.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed s/^/#{PREFIX}stderr/ ) 2>&1", 'r+') do |pipe|
             pipe.sync = true
             counter = 0
@@ -83,7 +84,7 @@ loop {
               counter += 1
               line = pipe.readline
               puts line
-              if (not execute_error == '') and line.include? execute_error
+              if (not execute_error == '') and line.include? execute_error #check if the compiled file is found. Maybe not in case of a compileerror
                 client.puts "#{PREFIX}end_errorFehler beim Compilieren. (Beim Ausführen bemerkt)"
                 break
               end
@@ -94,6 +95,7 @@ loop {
               if line.include?("#{PREFIX}?")
                 msg = client.gets
                 puts msg
+                #check, if programm is stopped
                 if msg.include?("#{PREFIX}!_stop")
                   puts 'Ausführung beendet'
                   break
