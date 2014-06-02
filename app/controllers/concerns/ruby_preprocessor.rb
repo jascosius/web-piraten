@@ -98,6 +98,9 @@ class RubyPreprocessor < BasePreprocessor
         "def put\n" +
         "  puts \"#{$prefix}put\"\n" +
         "end\n" +
+        "def take\n" +
+        "  puts \"#{$prefix}take\"\n" +
+        "end\n" +
         "def #{$prefix}line(i)\n" +
         "  puts \"\\n#{$prefix}line!\#{i}\"\n" +
         "end\n" +

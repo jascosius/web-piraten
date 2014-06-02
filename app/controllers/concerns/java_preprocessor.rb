@@ -21,10 +21,10 @@ class JavaPreprocessor < BasePreprocessor
     codes = ''
     code_msg.each_line do |s|
       #      # remove \n   #add linenumber in commend          #add linefunction for linehighlighting
-      codes += s.chomp + " // #{$prefix}(#{i+1}#{$prefix})\n" + "line(#{i});\n"
+      codes += s.chomp + " // #{$prefix}(#{i+1}#{$prefix})\n" + "#{$prefix}line(#{i});\n"
       i += 1
     end
-    codes.slice!("line(#{i-1});\n")
+    codes.slice!("#{$prefix}line(#{i-1});\n")
 
     insert_logic + codes + insert_logic_end + "\n"
   end
@@ -100,7 +100,11 @@ class JavaPreprocessor < BasePreprocessor
     "    System.out.println(\"#{$prefix}put\");\n" +
     "  }\n" +
 
-    "  public void line(int i) {\n" +
+    "  public void take() {\n" +
+    "    System.out.println(\"#{$prefix}take\");\n" +
+    "  }\n" +
+
+    "  public void #{$prefix}line(int i) {\n" +
     "    System.out.println(\"#{$prefix}line!\" + i);\n" +
     "  }\n" +
 
