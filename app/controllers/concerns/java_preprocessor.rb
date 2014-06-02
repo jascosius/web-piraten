@@ -13,7 +13,7 @@ class JavaPreprocessor < BasePreprocessor
     @compile = 'javac $PATH$/Main.java' #$PATH$ will be replaced
     @execute = 'java -cp $PATH$ Main'
     @compile_error = 'error' #break, when this is in the last line of compiler error
-    @execute_error = '' #break, when this is in the first line of the execution error
+    @execute_error = 'Could not find or load main class Main' #break, when this is in the first line of the execution error
   end
 
   def process_code(code_msg)

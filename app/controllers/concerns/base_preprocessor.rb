@@ -22,12 +22,20 @@ class BasePreprocessor
     crash_for_abstract_violation('preprocess filename')
   end
 
+  def preprocess_compile
+    crash_for_abstract_violation('preprocess compile')
+  end
+
   def preprocess_execute
     crash_for_abstract_violation('preprocess execute')
   end
 
-  def preprocess_compile
-    crash_for_abstract_violation('preprocess compile')
+  def preprocess_compile_error
+    crash_for_abstract_violation('preprocess compile error')
+  end
+
+  def preprocess_execute_error
+    crash_for_abstract_violation('preprocess execute error')
   end
 
   # Same as process_code but with the exception that there has to be a special

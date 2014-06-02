@@ -49,11 +49,11 @@ loop {
         exec = true
         if compile != ''
           #execute the compilecommand with the right path. add PREFIXstderr_compile to errors
-          IO.popen("(#{compile.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed s/^/#{PREFIX}stderr_compile/ ) 2>&1", 'r+') do |pipe|
+          IO.popen("(#{compile.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed -unbuffered s/^/#{PREFIX}stderr_compile/ ) 2>&1", 'r+') do |pipe|
             line = ''
             loop do
               if pipe.eof?
-                if (not compile_error == '') and line.include? compile_error #check if there is a compileerror
+                if  compile_error != '' and line.include? compile_error #check if there is a compileerror
                   client.puts "#{PREFIX}end_errorFehler beim Compilieren. (Beim Compilieren bemerkt)"
                   exec = false
                 end
@@ -66,8 +66,9 @@ loop {
         end
 
         if exec
+          buf = "stdbuf --output=L --error=L" #command to unbuffer output by the system
           #execute the executecommand with the right path. add PREFIXstderr to errors
-          IO.popen("(#{execute.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed s/^/#{PREFIX}stderr/ ) 2>&1", 'r+') do |pipe|
+          IO.popen("(#{buf} #{execute.gsub('$PATH$', dir)} 3>&1 #{buf} 1>&2 #{buf} 2>&3 | #{buf} sed --unbuffered s/^/#{PREFIX}stderr/ ) 2>&1", 'r+') do |pipe|
             pipe.sync = true
             counter = 0
             loop do
