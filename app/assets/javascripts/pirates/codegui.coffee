@@ -123,6 +123,7 @@ class @CodeGUI
   @stop = () =>
     Simulation.operationHandler.clear()
     @toggleCodeEditing()
+    Grid.look = null
     webSocket.trigger "stopSimulation"
 
 

@@ -50,17 +50,14 @@ class @Ship extends GameObject
       super "PirateShip", Config.shipImage, @x, @y
     else throw "invalid ship constructor call"
 
+  turn: (rotation) =>
+    @rotation = rotation
 
-  rotateRight: () =>
-    @rotation = (@rotation+1) % 4
-
-  rotateLeft: () =>
-    @rotation = (@rotation-1) % 4;
-    if @rotation < 0 # unexpected js
-      @rotation = 4 + @rotation
-
-  look: () =>
-    Grid.look = getNextCoordinate @x, @y, @rotation
+  look: (coord) =>
+    coord2 = new Coordinate()
+    coord2.x = coord[0]
+    coord2.y = coord[1]
+    Grid.look = coord2
 
   lookAway: () =>
     Grid.look = null
@@ -85,6 +82,7 @@ class @Ship extends GameObject
     Grid.addObject (new Buoy @x, @y)
 
   move: () =>
+    console.log(@rotation)
     coords = getNextCoordinate @x, @y, @rotation
     @x = coords.x
     @y = coords.y

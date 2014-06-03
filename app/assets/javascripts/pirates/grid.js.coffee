@@ -34,6 +34,7 @@ class @Grid
     console.log s
     @ship = new Ship s.x, s.y, s.rotation
 
+
     @objects = []
     for o in obj.objects
       switch o.name
@@ -80,21 +81,29 @@ class @Grid
     { x1: x, y1: y, x2: @size, y2: @size }
 
   @onClick = (event) =>
-    mousPos = @getMousePos(event)
-    pos = @getGridCoordinates mousPos
-    if @ship.x == pos.x && @ship.y == pos.y && event.which == 1
-      @mousePressedOnShip = true
-    else
-      if @contains(mousPos) && @isSomethingOnPosition(pos.x, pos.y) == false && !Simulation.isSimulating && event.which == 1
-        @GridControls.creatObjectFromButton(pos.x, pos.y)
-    if event.which == 3 && @isSomethingOnPosition(pos.x,pos.y).name != "PirateShip"
-      @deleteObject (@isSomethingOnPosition(pos.x,pos.y))
+    if !Simulation.isSimulating
+      mousPos = @getMousePos(event)
+      pos = @getGridCoordinates mousPos
+      if @ship.x == pos.x && @ship.y == pos.y && event.which == 1
+        @mousePressedOnShip = true
+      else
+        if @contains(mousPos) && @isSomethingOnPosition(pos.x, pos.y) == false && event.which == 1
+          @GridControls.creatObjectFromButton(pos.x, pos.y)
+
+      if event.which == 3 && @ship.x == pos.x && @ship.y == pos.y
+        if @ship.rotation <= 0
+          @ship.rotation = 3
+        else
+          @ship.rotation--
+      else
+        if event.which == 3 && @isSomethingOnPosition(pos.x,pos.y).name != "PirateShip"
+          @deleteObject (@isSomethingOnPosition(pos.x,pos.y))
 
   @onMouseUp = (event) =>
     coords = @getGridCoordinates @getMousePos(event)
     x = coords.x
     y = coords.y
-    if @mousePressedOnShip
+    if @mousePressedOnShip && Simulation.isSimulating == false
       if !@contains(@getMousePos(event))
         x = coords.x
         y = coords.y
@@ -230,6 +239,12 @@ class @Grid
     if @mousePressedOnShip # drag and drop
       @ctx.translate @mousePosition.x, @mousePosition.y
 
+      @ctx.rotate(@ship.rotation * @ANGLE)
+
+      if @ship.rotation == 2
+        @ctx.scale 1, -1 # flip
+
+
       @ctx.scale @size/@ship.image.width, @size/@ship.image.height
       @ctx.drawImage(@ship.image, -Math.floor(@ship.image.width/2), -Math.floor(@ship.image.height/2))
     else
@@ -248,6 +263,8 @@ class @Grid
         @ctx.scale 1, -1 # flip
       @ctx.drawImage(@ship.image, -Math.floor(@ship.image.width/2), -Math.floor(@ship.image.height/2))
     @ctx.restore()
+
+
 
   @drawLine = (x1, y1, x2, y2, width, strokeStyle) ->
     newX1 = Math.min x1, x2
