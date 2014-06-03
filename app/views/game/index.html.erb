@@ -83,11 +83,11 @@ end
             "ship": {"name": "PirateShip", "x": 2, "y":3, "rotation": 0}
           }
       </div>
-      <canvas width="700" height="400" id="pirateGrid">Your browser is not supported!</canvas>
+      <canvas width="700" height="350" id="pirateGrid">Your browser is not supported!</canvas>
   </div>
 </div>
 
-  <%= t("socketConsole.label") %>:<br />
+  <h3><%= t("game.console.label") %>:</h3>
   <div name="console" id="console"> </div>
 
 <%= javascript_include_tag 'pirates/simulation', 'data-turbolinks-track' => true %>

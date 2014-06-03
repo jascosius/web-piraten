@@ -1,21 +1,20 @@
 class @Utils
+  $console = $ '#console'
 
   @log: (message) ->
-    clientConsole = document.getElementById "console"
-    line = document.createElement "p"
-    line.style.wordWrap = "break-word"
-    line.innerHTML = message
-    clientConsole.appendChild line
+    line = $ '<p></p>'
+    line.html message
+    $console.append line
     console.log message
+    $console.scrollTop($console[0].scrollHeight)
 
   @logError: (message) ->
-    clientConsole = document.getElementById "console"
-    line = document.createElement "p"
-    line.style.wordWrap = "break-word"
-    line.innerHTML = message
-    line.style.color = "red"
-    clientConsole.appendChild line
+    line = $ '<p></p>'
+    line.addClass 'error'
+    line.html message
+    $console.append line
     console.log message
+    $console.scrollTop($console[0].scrollHeight)
 
 
   @requestAnimFrame: (mainLoop) ->

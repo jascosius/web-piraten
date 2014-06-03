@@ -5,17 +5,6 @@
 @CodeMirrorBorderRadius: 5px;
 @CodeMirrorDisabledBg: #2f0707;
 
-#console {
-  border: dotted 1px #222222;
-}
-
-.flying {
-  color: #a6e22e;
-  background-color: #272822;
-  border-radius: 5px;
-  padding: 5px;
-}
-
 .code-wrapper {
 
   .code-controls {
@@ -49,14 +38,15 @@
     }
   }
 }
+.flying {
+  color: #a6e22e;
+  background-color: #272822;
+  border-radius: 5px;
+  padding: 5px;
+}
 
-.gameObject-controls {
-  text-align: center;
-  margin-bottom: 10px;
-}
-.grid-wrapper {
-  text-align: center;
-}
+
+// CodeMirror
 #codeMirror-loading {
   margin: 25px auto;
   text-align: center;
@@ -76,4 +66,35 @@
   .processedLine {
     background-color: rgba(255, 255, 255, 0.1);
   }
+}
+
+// Grid
+.gameObject-controls {
+  text-align: center;
+  margin-bottom: 10px;
+}
+.grid-wrapper {
+  text-align: center;
+}
+
+
+#console {
+  border: solid 1px #272822;
+  background-color: #272822;
+  border-radius: 5px;
+  font-family: "Lucida Console", Monaco, monospace;
+  color: white;
+  padding: 10px 0;
+  height: 200px;
+  margin-bottom: 15px;
+  overflow: auto;
+
+  p {
+    margin: 0;
+    padding: 0 10px;
+    &.error {
+      background-color: #2f0707;
+    }
+  }
+
 }

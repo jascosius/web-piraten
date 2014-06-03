@@ -34,8 +34,9 @@ de:
     login_button: "Anmelden"
   registration:
     heading: Registrierung
-  socketConsole:
-    label: "Serververbindung"
+  game:
+    console:
+      label: "Konsolenausgabe"
   devise: # authentication gem
     sessions:
       signed_in: 'Signed in successfully.'
