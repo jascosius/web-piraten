@@ -49,7 +49,7 @@ loop {
         exec = true
         if compile != ''
           #execute the compilecommand with the right path. add PREFIXstderr_compile to errors
-          IO.popen("(#{compile.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed -unbuffered s/^/#{PREFIX}stderr_compile/ ) 2>&1", 'r+') do |pipe|
+          IO.popen("(#{compile.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed --unbuffered s/^/#{PREFIX}stderr_compile/ ) 2>&1", 'r+') do |pipe|
             line = ''
             loop do
               if pipe.eof?
