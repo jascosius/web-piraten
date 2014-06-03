@@ -203,8 +203,6 @@ class @Grid
 
       if obj.rotation == 2
         @ctx.scale 1, -1 # flip
-      console.log "Image width:" #TODO
-      console.log obj.image.width
       @ctx.scale obj.image.width/@size, obj.image.height/@size
       @ctx.drawImage(obj.image, -Math.floor(obj.image.width/2), -Math.floor(obj.image.height/2))
       @ctx.restore()
