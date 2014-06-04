@@ -85,7 +85,7 @@ class RubyPreprocessor < BasePreprocessor
         "$stdout.sync = true\n" +
         "$stderr.sync = true\n" +
         "def #{$prefix}debug(var, ind)\n" +
-        "  puts \"#{$debugprefix}\#{ind}!\#{var}\" \n" +
+        "  puts \"\n#{$debugprefix}\#{ind}!\#{var}\" \n" +
         "end\n" +
         "def move\n" +
         "  puts \"#{$prefix}move\"\n" +

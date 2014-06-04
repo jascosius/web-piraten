@@ -179,6 +179,7 @@ class SocketController < WebsocketRails::BaseController
 
   def simulation_done_error(msg)
     if !@is_simulation_done
+      remove_prefix! msg
       puts 'done_error'
       WebsocketRails[:operations].trigger(:done_error, "Ausfuehrung beendet: #{msg}")
       @is_simulation_done = true
@@ -195,6 +196,7 @@ class SocketController < WebsocketRails::BaseController
 
   def puts_user_output(line)
     if !@is_simulation_done
+      remove_prefix! line
       puts line
       line = CGI::escapeHTML(line)
       new_line = ''
@@ -213,6 +215,7 @@ class SocketController < WebsocketRails::BaseController
 
   def puts_user_output_error(line)
     if !@is_simulation_done
+      remove_prefix! line
       line = CGI::escapeHTML(line)
       new_line = ''
       line.each_char do |c|
@@ -249,18 +252,22 @@ class SocketController < WebsocketRails::BaseController
     puts 'stop'
   end
 
+  def remove_prefix!(string)
+    string.gsub!($prefix,'')
+    string.gsub!($debugprefix,'')
+    string.gsub!('hallo','moin')
+  end
+
   def receive_code
     @is_simulation_done = false
     read_JSON
-    vars = message[:vars]
-    puts vars
     #WebsocketRails[:debug].trigger :console, message[:code]
     puts '================================='
     puts '===== received operation========='
     puts '================================='
     puts ''
 
-    tracing_vars = ['bla', 'vari','move']
+    tracing_vars = message[:vars]
     language = 'Ruby'
     code = preprocess_code(message[:code], language, tracing_vars)
 
@@ -307,10 +314,11 @@ class SocketController < WebsocketRails::BaseController
             index = line[index_begin...index_end].to_i
             var_name = tracing_vars[index]
             var_value = line[index_end+1..-1]
+            remove_prefix! var_name
+            remove_prefix! var_value
             puts_user_output(var_name + " ist " + var_value) # TODO implement functional and beautiful method!
           elsif line.include? "#{$prefix}end_error"
             line.slice!("#{$prefix}end_error")
-            line.gsub!($prefix,'')
             simulation_done_error line
             break
           elsif line.include? "#{$prefix}end"
@@ -319,13 +327,11 @@ class SocketController < WebsocketRails::BaseController
           elsif line.include? "#{$prefix}stderr_compile"
             line.slice!("#{$prefix}stderr_compile")
             line = postprocess_error_compile(line, code)
-            line.gsub!($prefix,'')
             puts line
             puts_user_output_error line
           elsif line.include? "#{$prefix}stderr"
             line.slice!("#{$prefix}stderr")
             line = postprocess_error(line, code)
-            line.gsub!($prefix,'')
             puts line
             puts_user_output_error line
           elsif line.include? "#{$prefix}line"
@@ -355,7 +361,6 @@ class SocketController < WebsocketRails::BaseController
           elsif line.include? "#{$prefix}put"
             put
           elsif !line.chomp.empty?
-            line.gsub!($prefix,'')
             puts_user_output line
           end
         end
