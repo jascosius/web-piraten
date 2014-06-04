@@ -121,7 +121,7 @@ class @OperationHandler extends ChannelHandler
         when 'put'
           Grid.ship.put()
         when 'take'
-          Grid.ship.take()
+          Grid.ship.take(currentOp.data)
         when 'line'
           CodeGUI.highlightLine currentOp.data
         when 'output'

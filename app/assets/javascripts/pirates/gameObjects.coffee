@@ -64,13 +64,8 @@ class @Ship extends GameObject
     obj.rotation = @rotation
     return obj
 
-  take: () =>
-    obj = Grid.isSomethingOnPosition @x, @y
-    if obj.name == "Treasure"
-      Grid.deleteObject(obj)
-      console.log "Gold eingesammelt"
-    else
-      console.log "hier ist nichts zu holen"
+  take: (index) =>
+    Grid.deleteObjectWithIndex index
 
   put: () =>
    if Grid.isSomethingOnPosition(@x, @y) != false

@@ -45,19 +45,17 @@ class @Grid
   @addObject = (obj) ->
     @objects.push(obj)
 
-  @deleteObject = (obj) ->
-    if obj != false
-      newObjects = []
-      for gameObject in @objects
-        if gameObject != obj
-          newObjects.push(gameObject)
-      @objects = newObjects
+#  @deleteObject = (obj) ->
+#    if obj != false
+#      newObjects = []
+#      for gameObject in @objects
+#        if gameObject != obj
+#          newObjects.push(gameObject)
+#      @objects = newObjects
 
   @deleteObjectWithIndex = (index) ->
     if index != false
-      console.log(@objects)
-      @objects.splice(0, 1)
-      console.log(@objects)
+      @objects.splice index, 1
 
 
   @isInCanvas = (coords) =>

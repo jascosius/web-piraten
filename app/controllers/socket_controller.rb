@@ -64,12 +64,14 @@ class SocketController < WebsocketRails::BaseController
         if  [x, y] == coord
           if obj['name'] == 'Treasure'
             @objects.delete_at index
-            puts @objects.to_s
+            puts index
+            WebsocketRails[:operations].trigger(:take, index)
+            puts 'Take!'
           end
         end
       }
-      puts 'Take!'
-      WebsocketRails[:operations].trigger(:take)
+
+
     end
   end
 
