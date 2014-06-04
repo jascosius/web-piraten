@@ -49,11 +49,23 @@
 <!-- no indentation because CodeMirror would display it -->
 <textarea id="codemirror" style="display: none">
 print "Hallo Welt!"
-
+i = 0
 (1..3).each do
-  move()
+  print "Durchlauf #{i}"
+  move
   turn(:right)
   turn(:left)
+  turn(:back)
+  turn
+  look
+  look(:right)
+  look(:left)
+  look(:back)
+  look(:here)
+  look(:front)
+  put
+  take
+  i += 1
 end
 </textarea>
           <div id="codeMirror-loading">
