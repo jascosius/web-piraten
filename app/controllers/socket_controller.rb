@@ -88,16 +88,18 @@ class SocketController < WebsocketRails::BaseController
               coord[1] -= 1
           end
       end
-      puts coord
-      look_obj = 'nothing'
-      @objects.each { |obj|
-        x = obj['x']
-        y = obj['y']
-        if  [x, y] == coord
-          look_obj = obj['name'].to_s
-          puts obj['name']
-        end
-      }
+      if coords_in_grid(coord) == false
+        look_obj = 'Border'
+      else
+        @objects.each { |obj|
+          x = obj['x']
+          y = obj['y']
+          if  [x, y] == coord
+            look_obj = obj['name'].to_s
+            puts obj['name']
+          end
+        }
+      end
       WebsocketRails[:operations].trigger(:look, coord)
     else
       look_obj='stop'
