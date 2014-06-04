@@ -34,14 +34,6 @@ class @Ship extends GameObject
   name = "PirateShip"
   GameObject.ALL[name] = Ship
 
-  getNextCoordinate = (x, y, rotation) ->
-    switch rotation
-      when 0 then x++ # east
-      when 1 then y++ # south
-      when 2 then x-- # west
-      when 3 then y-- # north
-    return { x: x, y: y }
-
   constructor: () ->
     if arguments.length == 1 # serialized obj
       serialized = arguments[0]
@@ -85,11 +77,9 @@ class @Ship extends GameObject
    else
     Grid.addObject (new Buoy @x, @y)
 
-  move: () =>
-    console.log(@rotation)
-    coords = getNextCoordinate @x, @y, @rotation
-    @x = coords.x
-    @y = coords.y
+  move: (coord) =>
+    @x = coord[0]
+    @y = coord[1]
 
 
 class @Buoy extends GameObject

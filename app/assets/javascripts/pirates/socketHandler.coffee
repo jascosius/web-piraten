@@ -113,7 +113,7 @@ class @OperationHandler extends ChannelHandler
         when 'turn'
           Grid.ship.turn(currentOp.data)
         when 'move'
-          Grid.ship.move()
+          Grid.ship.move(currentOp.data)
         when 'look'
           Grid.ship.look(currentOp.data)
         when 'lookAway'
