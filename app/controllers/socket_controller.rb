@@ -31,8 +31,8 @@ class SocketController < WebsocketRails::BaseController
         when :right
           puts 'Right!'
           @ship['rotation'] = (@ship['rotation'] + 1) % 4
-        when :over
-          puts 'Over!'
+        when :back
+          puts 'Back!'
           @ship['rotation'] = (@ship['rotation'] + 2) % 4
       end
       WebsocketRails[:operations].trigger(:turn, @ship['rotation'])
@@ -46,8 +46,28 @@ class SocketController < WebsocketRails::BaseController
     end
   end
 
+  # @deleteObject = (obj) ->
+  #     if obj != false
+  #       newObjects = []
+  #       for gameObject in @objects
+  #         if gameObject != obj
+  #           newObjects.push(gameObject)
+  #           @objects = newObjects
+
   def take # event: ship.take
     if !@is_simulation_done
+      coord = [@ship['x'], @ship['y']]
+      puts @objects.to_s
+      @objects.each_with_index { |obj, index |
+        x = obj['x']
+        y = obj['y']
+        if  [x, y] == coord
+          if obj['name'] == 'Treasure'
+            @objects.delete_at index
+            puts @objects.to_s
+          end
+        end
+      }
       puts 'Take!'
       WebsocketRails[:operations].trigger(:take)
     end
@@ -89,16 +109,18 @@ class SocketController < WebsocketRails::BaseController
               coord[1] -= 1
           end
       end
-      puts coord
-      look_obj = 'nothing'
-      @objects.each { |obj|
-        x = obj['x']
-        y = obj['y']
-        if  [x, y] == coord
-          look_obj = obj['name'].to_s
-          puts obj['name']
-        end
-      }
+      if coords_in_grid(coord) == false
+        look_obj = 'Border'
+      else
+        @objects.each { |obj|
+          x = obj['x']
+          y = obj['y']
+          if  [x, y] == coord
+            look_obj = obj['name'].to_s
+            puts obj['name']
+          end
+        }
+      end
       WebsocketRails[:operations].trigger(:look, coord)
     else
       look_obj='stop'
@@ -230,6 +252,8 @@ class SocketController < WebsocketRails::BaseController
   def receive_code
     @is_simulation_done = false
     read_JSON
+    vars = message[:vars]
+    puts vars
     #WebsocketRails[:debug].trigger :console, message[:code]
     puts '================================='
     puts '===== received operation========='
@@ -310,8 +334,8 @@ class SocketController < WebsocketRails::BaseController
             rotate_ship(:right)
           elsif line.include? "#{$prefix}turn_left"
             rotate_ship(:left)
-          elsif line.include? "#{$prefix}turn_over"
-            rotate_ship(:over)
+          elsif line.include? "#{$prefix}turn_back"
+            rotate_ship(:back)
           elsif line.include? "#{$prefix}move"
             move_ship
           elsif line.include? "#{$prefix}take"

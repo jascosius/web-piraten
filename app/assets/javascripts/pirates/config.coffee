@@ -6,6 +6,14 @@
   waveImage: "./assets/wave.png"
   treasureImage: "./assets/treasure.png"
   monsterImage: "./assets/monster.png"
+  getImagesToPreload: () ->
+    [
+      @buoyImage
+      @shipImage
+      @monsterImage
+      @waveImage
+      @treasureImage
+    ]
   getWatchListRemoveButtonHTML: (word) ->
     "<li>
       <span class='glyphicon glyphicon-remove watchlist-remove' aria-hidden='true'></span>

@@ -90,11 +90,11 @@ class RubyPreprocessor < BasePreprocessor
         "def move\n" +
         "  puts \"#{$prefix}move\"\n" +
         "end\n" +
-        "def turn(dir = :over)\n" +
+        "def turn(dir = :back)\n" +
         "  case dir\n"+
         "    when :right then puts \"#{$prefix}turn_right\"\n" +
         "    when :left then puts \"#{$prefix}turn_left\"\n" +
-        "    when :over then puts \"#{$prefix}turn_over\"\n" +
+        "    when :back then puts \"#{$prefix}turn_back\"\n" +
         "    else raise(ArgumentError, \"unknown argument\")\n" +
         "  end\n"+
         "end\n" +
@@ -125,6 +125,8 @@ class RubyPreprocessor < BasePreprocessor
         "    return :treasure\n" +
         "  elsif ret.include? \"#{$prefix}!_Wave\"\n" +
         "    return :wave\n" +
+        "  elsif ret.include? \"#{$prefix}!_Border\"\n" +
+        "    return :border\n" +
         "  else\n" +
         "    return :nothing\n" +
         "  end\n" +

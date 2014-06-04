@@ -49,11 +49,23 @@
 <!-- no indentation because CodeMirror would display it -->
 <textarea id="codemirror" style="display: none">
 print "Hallo Welt!"
-
+i = 0
 (1..3).each do
-  move()
+  print "Durchlauf #{i}"
+  move
   turn(:right)
   turn(:left)
+  turn(:back)
+  turn
+  look
+  look(:right)
+  look(:left)
+  look(:back)
+  look(:here)
+  look(:front)
+  put
+  take
+  i += 1
 end
 </textarea>
           <div id="codeMirror-loading">
@@ -78,7 +90,11 @@ end
             "width": 21,
             "height": 10,
             "objects": [
-              {"name": "Bouy", "x": 10, "y":5}
+              {"name": "Buoy", "x": 5, "y":5},
+              {"name": "Monster", "x": 6, "y":5},
+              {"name": "Treasure", "x": 7, "y":4},
+              {"name": "Buoy", "x": 7, "y":5},
+              {"name": "Wave", "x": 7, "y":6}
             ],
             "ship": {"name": "PirateShip", "x": 2, "y":3, "rotation": 0}
           }
@@ -87,8 +103,9 @@ end
   </div>
 </div>
 
-  <h3><%= t("game.console.label") %>:</h3>
-  <div name="console" id="console"> </div>
+<h3><%= t("game.console.label") %>:</h3>
+<div name="console" id="console"> </div>
 
+<div id="imagePreloader" style="display: none" hidden></div>
 <%= javascript_include_tag 'pirates/simulation', 'data-turbolinks-track' => true %>
 <%= stylesheet_link_tag 'game'%>

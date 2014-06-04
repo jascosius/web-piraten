@@ -5,9 +5,8 @@ class @Grid
     @ctx = canvas.getContext "2d"
     @canvasWidth = @ctx.canvas.width
     @canvasHeight = @ctx.canvas.height
-    #TODO load default
-    defaultData = $('#gridData').html()
-    @load $.parseJSON(defaultData)
+
+    @defaultData = $.parseJSON $('#gridData').html()
 
     @activeCell = null
     @look = null
@@ -25,26 +24,23 @@ class @Grid
 
     @mousePressedOnShip = false
 
+  @loadDefault = () =>
+    @load @defaultData
 
   @load = (obj) =>
     @gridWidth = obj.width
     @gridHeight = obj.height
 
     s = obj.ship
-    console.log s
     @ship = new Ship s.x, s.y, s.rotation
 
 
     @objects = []
     for o in obj.objects
-      switch o.name
-        when 'PirateShip' then @objects.push (new Ship obj)
-
-
-    # canvas can be bigger than the grid should be
-    offsetX = @canvasWidth - @gridWidth*@size
-    offsetY = @canvasHeight - @gridHeight*@size
-
+      if GameObject.ALL[o.name]?
+        @addObject new GameObject.ALL[o.name](o)
+      else
+        throw "Invalid GameObject name #{o.name}!"
 
   @addObject = (obj) ->
     @objects.push(obj)
@@ -56,6 +52,13 @@ class @Grid
         if gameObject != obj
           newObjects.push(gameObject)
       @objects = newObjects
+
+  @deleteObjectWithIndex = (index) ->
+    if index != false
+      console.log(@objects)
+      @objects.splice(0, 1)
+      console.log(@objects)
+
 
   @isInCanvas = (coords) =>
     coords.x >= 0 && coords.y >= 0 && coords.x < @canvasWidth && coords.y < @canvasHeight

@@ -1,11 +1,13 @@
 #= require ./utilities
 #= require ./config
 #= require ./socketHandler
-class GameObject # "abstract" because of the missing @
+class @GameObject
+  @ALL = {} # stores a map with the key being the name and the value being the class
   constructor: () ->
     if arguments.length == 2 # (serialized, img)
       serialized = arguments[0]
       @img = arguments[1]
+      @name = serialized.name
       @x = serialized.x
       @y = serialized.y
     else if arguments.length == 4 # (name, img, x, y)
@@ -18,6 +20,7 @@ class GameObject # "abstract" because of the missing @
     @image.src = @img
     @lifeTime = 0
 
+
   serialize: () =>
     {
       name: @name
@@ -29,14 +32,8 @@ class GameObject # "abstract" because of the missing @
     @lifeTime++
 
 class @Ship extends GameObject
-
-  getNextCoordinate = (x, y, rotation) ->
-    switch rotation
-      when 0 then x++ # east
-      when 1 then y++ # south
-      when 2 then x-- # west
-      when 3 then y-- # north
-    return { x: x, y: y }
+  name = "PirateShip"
+  GameObject.ALL[name] = Ship
 
   constructor: () ->
     if arguments.length == 1 # serialized obj
@@ -47,7 +44,7 @@ class @Ship extends GameObject
       @x = arguments[0]
       @y = arguments[1]
       @rotation = arguments[2] || 0 #optional
-      super "PirateShip", Config.shipImage, @x, @y
+      super name, Config.shipImage, @x, @y
     else throw "invalid ship constructor call"
 
   turn: (rotation) =>
@@ -70,7 +67,7 @@ class @Ship extends GameObject
   take: () =>
     obj = Grid.isSomethingOnPosition @x, @y
     if obj.name == "Treasure"
-      Grid.deleteObject obj
+      Grid.deleteObject(obj)
       console.log "Gold eingesammelt"
     else
       console.log "hier ist nichts zu holen"
@@ -81,25 +78,59 @@ class @Ship extends GameObject
    else
     Grid.addObject (new Buoy @x, @y)
 
-  move: () =>
-    console.log(@rotation)
-    coords = getNextCoordinate @x, @y, @rotation
-    @x = coords.x
-    @y = coords.y
+  move: (coord) =>
+    @x = coord[0]
+    @y = coord[1]
 
 
 class @Buoy extends GameObject
-  constructor: (x,y)->
-    super "Buoy", Config.buoyImage, x, y
+  name = "Buoy"
+  GameObject.ALL[name] = Buoy
+  constructor: () ->
+    if arguments.length == 1 # serialized obj
+      serialized = arguments[0]
+      super serialized, Config.buoyImage
+    else if arguments.length <= 2
+      @x = arguments[0]
+      @y = arguments[1]
+      super name, Config.buoyImage, @x, @y
+    else throw "invalid Buoy constructor call"
 
 class @Wave extends GameObject
-  constructor: (x,y)->
-    super "Wave", Config.waveImage, x, y
+  name = "Wave"
+  GameObject.ALL[name] = Wave
+  constructor: () ->
+    if arguments.length == 1 # serialized obj
+      serialized = arguments[0]
+      super serialized, Config.waveImage
+    else if arguments.length <= 2
+      @x = arguments[0]
+      @y = arguments[1]
+      super name, Config.waveImage, @x, @y
+    else throw "invalid Wave constructor call"
 
 class @Treasure extends GameObject
-  constructor: (x,y)->
-    super "Treasure", Config.treasureImage, x, y
+  name = "Treasure"
+  GameObject.ALL[name] = Treasure
+  constructor: () ->
+    if arguments.length == 1 # serialized obj
+      serialized = arguments[0]
+      super serialized, Config.treasureImage
+    else if arguments.length <= 2
+      @x = arguments[0]
+      @y = arguments[1]
+      super name, Config.treasureImage, @x, @y
+    else throw "invalid Treasure constructor call"
 
 class @Monster extends GameObject
-  constructor: (x,y)->
-    super "Monster", Config.monsterImage, x, y
+  name = "Monster"
+  GameObject.ALL[name] = Monster
+  constructor: () ->
+    if arguments.length == 1 # serialized obj
+      serialized = arguments[0]
+      super serialized, Config.monsterImage
+    else if arguments.length <= 2
+      @x = arguments[0]
+      @y = arguments[1]
+      super name, Config.monsterImage, @x, @y
+    else throw "invalid Monster constructor call"

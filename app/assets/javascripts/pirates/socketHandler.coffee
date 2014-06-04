@@ -57,26 +57,27 @@ class @OperationHandler extends ChannelHandler
     #bind operations for the operations channel
     # manual mode, because only Chrome offers the 'event' object
     @channel.bind 'turn', (data) =>
-      @operationQueue.push (new Operation 'turn', data)
+      @operationQueue.push (new Operation 'turn', data) if Simulation.isSimulating
     @channel.bind 'move', (data) =>
-      @operationQueue.push (new Operation 'move', data)
+      @operationQueue.push (new Operation 'move', data) if Simulation.isSimulating
     @channel.bind 'put', (data) =>
-      @operationQueue.push (new Operation 'put', data)
+      @operationQueue.push (new Operation 'put', data) if Simulation.isSimulating
     @channel.bind 'take', (data) =>
-      @operationQueue.push (new Operation 'take', data)
+      @operationQueue.push (new Operation 'take', data) if Simulation.isSimulating
     @channel.bind 'look', (data) =>
-      @operationQueue.push (new Operation 'look', data)
-      @operationQueue.push (new Operation 'lookAway', data)
+      if Simulation.isSimulating
+        @operationQueue.push (new Operation 'look', data)
+        @operationQueue.push (new Operation 'lookAway', data)
     @channel.bind 'line', (data) =>
-      @operationQueue.push (new Operation 'line', data)
+      @operationQueue.push (new Operation 'line', data) if Simulation.isSimulating
     @channel.bind 'output', (data) =>
-      @operationQueue.push (new Operation 'output', data)
+      @operationQueue.push (new Operation 'output', data) if Simulation.isSimulating
     @channel.bind 'output_error', (data) =>
-      @operationQueue.push (new Operation 'output_error', data)
+      @operationQueue.push (new Operation 'output_error', data) if Simulation.isSimulating
     @channel.bind 'done', (data) =>
-      @operationQueue.push (new Operation 'done', data)
+      @operationQueue.push (new Operation 'done', data) if Simulation.isSimulating
     @channel.bind 'done_error', (data) =>
-      @operationQueue.push (new Operation 'done_error', data)
+      @operationQueue.push (new Operation 'done_error', data) if Simulation.isSimulating
     ###for op in @operations
       @channel.bind op, (data) ->
         \#\#\#
@@ -112,7 +113,7 @@ class @OperationHandler extends ChannelHandler
         when 'turn'
           Grid.ship.turn(currentOp.data)
         when 'move'
-          Grid.ship.move()
+          Grid.ship.move(currentOp.data)
         when 'look'
           Grid.ship.look(currentOp.data)
         when 'lookAway'

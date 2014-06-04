@@ -17,10 +17,8 @@ class @Simulation
     @context = @canvas.getContext "2d"
 
     Grid.initialize @canvas, 32
+    Grid.loadDefault()
     CodeGUI.initialize 'codemirror'
-
-    #Grid.addObject (new Buoy 5, 4)
-    #Grid.ship = new Ship 2, 4
 
     @debugHandler = new DebugHandler()
     @operationHandler = new OperationHandler()
@@ -40,7 +38,6 @@ class @Simulation
 
 
   @mainLoop = () =>
-
     @now = new Date().getTime()
     @deltaTime = (@now - @lastRun)/1000
     @lastRun = @now
@@ -63,10 +60,20 @@ class @Simulation
     Grid.update()
     Grid.draw()
 
+  @preloadImages = (callback) =>
+    images = Config.getImagesToPreload()
+    loaded = 0
+    for i in [0...images.length]
+      currentImage = images[i]
+      $('<img />').attr('src', currentImage).load () ->
+        loaded += 1
+        $(this).appendTo '#imagePreloader'
+        if loaded >= images.length
+          callback()
 
 
 jQuery () -> # use jQuery to wait until DOM is ready
-
-  Simulation.initialize()
-  Simulation.mainLoop()
+  Simulation.preloadImages () ->
+    Simulation.initialize()
+    Simulation.mainLoop()
 
