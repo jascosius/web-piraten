@@ -67,7 +67,7 @@ class @Ship extends GameObject
   take: () =>
     obj = Grid.isSomethingOnPosition @x, @y
     if obj.name == "Treasure"
-      Grid.deleteObject obj
+      Grid.deleteObject(obj)
       console.log "Gold eingesammelt"
     else
       console.log "hier ist nichts zu holen"

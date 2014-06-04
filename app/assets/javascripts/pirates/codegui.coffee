@@ -118,6 +118,7 @@ class @CodeGUI
     webSocket.trigger "simulateGrid", {
       code: CodeGUI.getCode()
       grid: Grid.serialize()
+      vars: CodeGUI.WatchList.get()
     }
 
   @stop = () =>

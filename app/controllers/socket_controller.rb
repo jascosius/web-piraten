@@ -45,8 +45,28 @@ class SocketController < WebsocketRails::BaseController
     end
   end
 
+  # @deleteObject = (obj) ->
+  #     if obj != false
+  #       newObjects = []
+  #       for gameObject in @objects
+  #         if gameObject != obj
+  #           newObjects.push(gameObject)
+  #           @objects = newObjects
+
   def take # event: ship.take
     if !@is_simulation_done
+      coord = [@ship['x'], @ship['y']]
+      puts @objects.to_s
+      @objects.each_with_index { |obj, index |
+        x = obj['x']
+        y = obj['y']
+        if  [x, y] == coord
+          if obj['name'] == 'Treasure'
+            @objects.delete_at index
+            puts @objects.to_s
+          end
+        end
+      }
       puts 'Take!'
       WebsocketRails[:operations].trigger(:take)
     end
@@ -231,6 +251,8 @@ class SocketController < WebsocketRails::BaseController
   def receive_code
     @is_simulation_done = false
     read_JSON
+    vars = message[:vars]
+    puts vars
     #WebsocketRails[:debug].trigger :console, message[:code]
     puts '================================='
     puts '===== received operation========='

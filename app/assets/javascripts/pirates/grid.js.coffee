@@ -53,6 +53,13 @@ class @Grid
           newObjects.push(gameObject)
       @objects = newObjects
 
+  @deleteObjectWithIndex = (index) ->
+    if index != false
+      console.log(@objects)
+      @objects.splice(0, 1)
+      console.log(@objects)
+
+
   @isInCanvas = (coords) =>
     coords.x >= 0 && coords.y >= 0 && coords.x < @canvasWidth && coords.y < @canvasHeight
 
