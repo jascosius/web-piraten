@@ -16,12 +16,23 @@ class RubyPreprocessor < BasePreprocessor
     @execute_error = ''
   end
 
-  def process_code(code_msg)
+  # Method that preprocesses the given code and includes the debug information
+  # if the user wants to trace specified variables.
+  def process_code(code_msg, vars)
+    # Array that contains predefined methodnames to be ignored by the debugger
+    predefined_methods = ['move', 'turn', 'put', 'take', 'look']
     i=0
     codes = ''
     code_msg.each_line do |s|
-      #      # remove \n   #add linenumber in commend          #add linefunction for linehighlighting
-      codes += s.chomp + " # #{$prefix}(#{i+1}#{$prefix})\n" + "#{$prefix}line(#{i})\n"
+      codes += s.chomp + " # #{$prefix}(#{i+1}#{$prefix})\n" # add linenumber in comment
+      vars.each_with_index do |variable, index|
+        unless predefined_methods.include? variable
+          codes += "if defined? #{variable} \n" +
+              "  #{$prefix}debug(#{variable}, #{index})\n" +
+              "end\n"
+        end
+      end
+      codes += "#{$prefix}line(#{i})\n" # add linefunction for linehighlighting
       i += 1
     end
     insert_logic + codes + "\n"
@@ -63,19 +74,8 @@ class RubyPreprocessor < BasePreprocessor
     line
   end
 
-  def postprocess_error_compile(lang,code)
+  def postprocess_error_compile(lang, code)
 
-  end
-
-  def debug_code(code_msg, vars)
-    i=0
-    code = ''
-    code_msg << "\n"
-    code_msg.each_line do |s|
-      code += s + "line(#{i})\n" #TODO: add the json object for tracing variables
-      i += 1
-    end
-    insert_logic + code + "\n"
   end
 
   # A method that stores the language- and ship-logic for Ruby that's put in the
@@ -84,6 +84,9 @@ class RubyPreprocessor < BasePreprocessor
     "# -*- encoding : utf-8 -*-\n" +
         "$stdout.sync = true\n" +
         "$stderr.sync = true\n" +
+        "def #{$prefix}debug(var, ind)\n" +
+        "  puts \"#{$debugprefix}\#{ind}!\#{var}\" \n" +
+        "end\n" +
         "def move\n" +
         "  puts \"#{$prefix}move\"\n" +
         "end\n" +

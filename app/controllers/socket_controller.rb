@@ -2,6 +2,7 @@
 
 class SocketController < WebsocketRails::BaseController
   $prefix = 'CkyUHZVL3q_'
+  $debugprefix = 'BvDpuDu4Be_'
   @@timeout = 5 #timeout time for the programm to execute
   @@port = 12340 #port to connect to the vm
   @@host = 'localhost' #host to connect to the vm
@@ -235,7 +236,9 @@ class SocketController < WebsocketRails::BaseController
     puts '================================='
     puts ''
 
-    code = preprocess_code(message[:code])
+    tracing_vars = ['bla', 'vari','move']
+    language = 'Ruby'
+    code = preprocess_code(message[:code], language, tracing_vars)
 
     #add EOF to show Wrapper the end of the code
     code += "\n#{$prefix}EOF\n"
@@ -274,7 +277,14 @@ class SocketController < WebsocketRails::BaseController
         #interact with the tcpserver
         loop do
           line = vm.gets
-          if line.include? "#{$prefix}end_error"
+          if  line.include? "#{$debugprefix}"
+            index_begin = $debugprefix.length
+            index_end = line.index('!')
+            index = line[index_begin...index_end].to_i
+            var_name = tracing_vars[index]
+            var_value = line[index_end+1..-1]
+            puts_user_output(var_name + " ist " + var_value) # TODO implement functional and beautiful method!
+          elsif line.include? "#{$prefix}end_error"
             line.slice!("#{$prefix}end_error")
             line.gsub!($prefix,'')
             simulation_done_error line

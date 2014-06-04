@@ -12,21 +12,21 @@ module Preprocessor
   @lang
 
   # A method that takes the given message aka the code of the user and checks which
-  # programming language is selected as well as if the debug mode is set or not.
+  # programming language is selected as well as if the debug mode is set or not by
+  # checking if there are any variables given the user wants to trace.
   # Default set ist no debug mode and Ruby. The method then commits the code to the
   # specified preprocessor and afterwards returns the modified code.
-  def preprocess_code(msg, language='Ruby', debug=false)
+  def preprocess_code(msg, language='Ruby', tracing_vars=[])
     case language
       when 'Ruby'
         @lang = RubyPreprocessor.new('Ruby')
-        @code = debug ? @lang.debug_code(msg, var=[]) : @lang.process_code(msg)
+        @code = @lang.process_code(msg, tracing_vars)
       when 'Java'
         @lang = JavaPreprocessor.new('Java')
-        @code =debug ? @lang.debug_code(msg, var=[]) : @lang.process_code(msg)
+        @code = @lang.process_code(msg, tracing_vars)
       else
         @code = 'Something went terribly wrong!'
     end
-    @code
   end
 
   def postprocess_error(line,code)

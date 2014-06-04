@@ -16,7 +16,7 @@ class JavaPreprocessor < BasePreprocessor
     @execute_error = 'Could not find or load main class Main' #break, when this is in the first line of the execution error
   end
 
-  def process_code(code_msg)
+  def process_code(code_msg, vars)
     i=0
     codes = ''
     code_msg.each_line do |s|
@@ -88,8 +88,8 @@ class JavaPreprocessor < BasePreprocessor
     "    case \"left\":\n" +
     "      System.out.println(\"#{$prefix}turn_left\");\n" +
     "      break;\n" +
-    "    case \"over\":\n" +
-    "      System.out.println(\"#{$prefix}turn_over\");\n" +
+    "    case \"back\":\n" +
+    "      System.out.println(\"#{$prefix}turn_back\");\n" +
     "      break;\n" +
     "    default:\n" +
     "      throw new RuntimeException(\"unknown argument\");\n" +
