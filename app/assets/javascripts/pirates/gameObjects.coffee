@@ -1,7 +1,8 @@
 #= require ./utilities
 #= require ./config
 #= require ./socketHandler
-class GameObject # "abstract" because of the missing @
+class @GameObject
+  @ALL = {} # stores a map with the key being the name and the value being the class
   constructor: () ->
     if arguments.length == 2 # (serialized, img)
       serialized = arguments[0]
@@ -18,6 +19,7 @@ class GameObject # "abstract" because of the missing @
     @image.src = @img
     @lifeTime = 0
 
+
   serialize: () =>
     {
       name: @name
@@ -29,6 +31,8 @@ class GameObject # "abstract" because of the missing @
     @lifeTime++
 
 class @Ship extends GameObject
+  name = "PirateShip"
+  GameObject.ALL[name] = Ship
 
   getNextCoordinate = (x, y, rotation) ->
     switch rotation
@@ -47,7 +51,7 @@ class @Ship extends GameObject
       @x = arguments[0]
       @y = arguments[1]
       @rotation = arguments[2] || 0 #optional
-      super "PirateShip", Config.shipImage, @x, @y
+      super name, Config.shipImage, @x, @y
     else throw "invalid ship constructor call"
 
   turn: (rotation) =>
@@ -89,17 +93,57 @@ class @Ship extends GameObject
 
 
 class @Buoy extends GameObject
-  constructor: (x,y)->
-    super "Buoy", Config.buoyImage, x, y
+  name = "Buoy"
+  GameObject.ALL[name] = Buoy
+  constructor: () ->
+    if arguments.length == 1 # serialized obj
+      serialized = arguments[0]
+      super serialized, Config.buoyImage
+      @rotation = serialized.rotation
+    else if arguments.length <= 2
+      @x = arguments[0]
+      @y = arguments[1]
+      super name, Config.buoyImage, @x, @y
+    else throw "invalid Buoy constructor call"
 
 class @Wave extends GameObject
-  constructor: (x,y)->
-    super "Wave", Config.waveImage, x, y
+  name = "Wave"
+  GameObject.ALL[name] = Wave
+  constructor: () ->
+    if arguments.length == 1 # serialized obj
+      serialized = arguments[0]
+      super serialized, Config.waveImage
+      @rotation = serialized.rotation
+    else if arguments.length <= 2
+      @x = arguments[0]
+      @y = arguments[1]
+      super name, Config.waveImage, @x, @y
+    else throw "invalid Wave constructor call"
 
 class @Treasure extends GameObject
-  constructor: (x,y)->
-    super "Treasure", Config.treasureImage, x, y
+  name = "Treasure"
+  GameObject.ALL[name] = Treasure
+  constructor: () ->
+    if arguments.length == 1 # serialized obj
+      serialized = arguments[0]
+      super serialized, Config.treasureImage
+      @rotation = serialized.rotation
+    else if arguments.length <= 2
+      @x = arguments[0]
+      @y = arguments[1]
+      super name, Config.treasureImage, @x, @y
+    else throw "invalid Treasure constructor call"
 
 class @Monster extends GameObject
-  constructor: (x,y)->
-    super "Monster", Config.monsterImage, x, y
+  name = "Monster"
+  GameObject.ALL[name] = Monster
+  constructor: () ->
+    if arguments.length == 1 # serialized obj
+      serialized = arguments[0]
+      super serialized, Config.monsterImage
+      @rotation = serialized.rotation
+    else if arguments.length <= 2
+      @x = arguments[0]
+      @y = arguments[1]
+      super name, Config.monsterImage, @x, @y
+    else throw "invalid Monster constructor call"

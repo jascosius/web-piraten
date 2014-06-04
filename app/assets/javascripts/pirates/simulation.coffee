@@ -17,6 +17,7 @@ class @Simulation
     @context = @canvas.getContext "2d"
 
     Grid.initialize @canvas, 32
+    Grid.loadDefault()
     CodeGUI.initialize 'codemirror'
 
     #Grid.addObject (new Buoy 5, 4)
