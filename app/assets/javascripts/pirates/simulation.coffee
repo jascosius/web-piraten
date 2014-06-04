@@ -40,7 +40,6 @@ class @Simulation
 
 
   @mainLoop = () =>
-
     @now = new Date().getTime()
     @deltaTime = (@now - @lastRun)/1000
     @lastRun = @now

@@ -40,13 +40,8 @@ class @Grid
       switch o.name
         when 'PirateShip' then @objects.push (new Ship obj)
 
-
-    # canvas can be bigger than the grid should be
-    offsetX = @canvasWidth - @gridWidth*@size
-    offsetY = @canvasHeight - @gridHeight*@size
-
-
   @addObject = (obj) ->
+    console.log 'Added object', obj
     @objects.push(obj)
 
   @deleteObject = (obj) ->
