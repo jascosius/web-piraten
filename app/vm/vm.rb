@@ -66,9 +66,8 @@ loop {
         end
 
         if exec
-          buf = "stdbuf --output=L --error=L" #command to unbuffer output by the system
           #execute the executecommand with the right path. add PREFIXstderr to errors
-          IO.popen("(#{buf} #{execute.gsub('$PATH$', dir)} 3>&1 #{buf} 1>&2 #{buf} 2>&3 | #{buf} sed --unbuffered s/^/#{PREFIX}stderr/ ) 2>&1", 'r+') do |pipe|
+          IO.popen("(#{execute.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed --unbuffered s/^/#{PREFIX}stderr/ ) 2>&1", 'r+') do |pipe|
             pipe.sync = true
             counter = 0
             loop do

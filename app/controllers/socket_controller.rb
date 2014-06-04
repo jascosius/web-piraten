@@ -276,7 +276,7 @@ class SocketController < WebsocketRails::BaseController
           line = vm.gets
           if line.include? "#{$prefix}end_error"
             line.slice!("#{$prefix}end_error")
-            line.slice!($prefix)
+            line.gsub!($prefix,'')
             simulation_done_error line
             break
           elsif line.include? "#{$prefix}end"
@@ -285,13 +285,13 @@ class SocketController < WebsocketRails::BaseController
           elsif line.include? "#{$prefix}stderr_compile"
             line.slice!("#{$prefix}stderr_compile")
             line = postprocess_error_compile(line, code)
-            line.slice!($prefix)
+            line.gsub!($prefix,'')
             puts line
             puts_user_output_error line
           elsif line.include? "#{$prefix}stderr"
             line.slice!("#{$prefix}stderr")
             line = postprocess_error(line, code)
-            line.slice!($prefix)
+            line.gsub!($prefix,'')
             puts line
             puts_user_output_error line
           elsif line.include? "#{$prefix}line"
@@ -321,7 +321,7 @@ class SocketController < WebsocketRails::BaseController
           elsif line.include? "#{$prefix}put"
             put
           elsif !line.chomp.empty?
-            line.slice!($prefix)
+            line.gsub!($prefix,'')
             puts_user_output line
           end
         end
