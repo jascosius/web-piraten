@@ -30,8 +30,8 @@ class SocketController < WebsocketRails::BaseController
         when :right
           puts 'Right!'
           @ship['rotation'] = (@ship['rotation'] + 1) % 4
-        when :over
-          puts 'Over!'
+        when :back
+          puts 'Back!'
           @ship['rotation'] = (@ship['rotation'] + 2) % 4
       end
       WebsocketRails[:operations].trigger(:turn, @ship['rotation'])
@@ -300,8 +300,8 @@ class SocketController < WebsocketRails::BaseController
             rotate_ship(:right)
           elsif line.include? "#{$prefix}turn_left"
             rotate_ship(:left)
-          elsif line.include? "#{$prefix}turn_over"
-            rotate_ship(:over)
+          elsif line.include? "#{$prefix}turn_back"
+            rotate_ship(:back)
           elsif line.include? "#{$prefix}move"
             move_ship
           elsif line.include? "#{$prefix}take"
