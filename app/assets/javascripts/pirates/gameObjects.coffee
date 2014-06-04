@@ -7,6 +7,7 @@ class @GameObject
     if arguments.length == 2 # (serialized, img)
       serialized = arguments[0]
       @img = arguments[1]
+      @name = serialized.name
       @x = serialized.x
       @y = serialized.y
     else if arguments.length == 4 # (name, img, x, y)
@@ -89,7 +90,6 @@ class @Buoy extends GameObject
     if arguments.length == 1 # serialized obj
       serialized = arguments[0]
       super serialized, Config.buoyImage
-      @rotation = serialized.rotation
     else if arguments.length <= 2
       @x = arguments[0]
       @y = arguments[1]
@@ -103,7 +103,6 @@ class @Wave extends GameObject
     if arguments.length == 1 # serialized obj
       serialized = arguments[0]
       super serialized, Config.waveImage
-      @rotation = serialized.rotation
     else if arguments.length <= 2
       @x = arguments[0]
       @y = arguments[1]
@@ -117,7 +116,6 @@ class @Treasure extends GameObject
     if arguments.length == 1 # serialized obj
       serialized = arguments[0]
       super serialized, Config.treasureImage
-      @rotation = serialized.rotation
     else if arguments.length <= 2
       @x = arguments[0]
       @y = arguments[1]
@@ -131,7 +129,6 @@ class @Monster extends GameObject
     if arguments.length == 1 # serialized obj
       serialized = arguments[0]
       super serialized, Config.monsterImage
-      @rotation = serialized.rotation
     else if arguments.length <= 2
       @x = arguments[0]
       @y = arguments[1]

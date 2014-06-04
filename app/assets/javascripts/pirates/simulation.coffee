@@ -67,7 +67,6 @@ class @Simulation
       currentImage = images[i]
       $('<img />').attr('src', currentImage).load () ->
         loaded += 1
-        console.log "Loaded", @
         $(this).appendTo '#imagePreloader'
         if loaded >= images.length
           callback()
