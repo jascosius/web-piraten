@@ -20,9 +20,6 @@ class @Simulation
     Grid.loadDefault()
     CodeGUI.initialize 'codemirror'
 
-    #Grid.addObject (new Buoy 5, 4)
-    #Grid.ship = new Ship 2, 4
-
     @debugHandler = new DebugHandler()
     @operationHandler = new OperationHandler()
 
@@ -63,10 +60,21 @@ class @Simulation
     Grid.update()
     Grid.draw()
 
+  @preloadImages = (callback) =>
+    images = Config.getImagesToPreload()
+    loaded = 0
+    for i in [0...images.length]
+      currentImage = images[i]
+      $('<img />').attr('src', currentImage).load () ->
+        loaded += 1
+        console.log "Loaded", @
+        $(this).appendTo '#imagePreloader'
+        if loaded >= images.length
+          callback()
 
 
 jQuery () -> # use jQuery to wait until DOM is ready
-
-  Simulation.initialize()
-  Simulation.mainLoop()
+  Simulation.preloadImages () ->
+    Simulation.initialize()
+    Simulation.mainLoop()
 

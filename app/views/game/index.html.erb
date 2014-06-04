@@ -91,8 +91,9 @@ end
   </div>
 </div>
 
-  <h3><%= t("game.console.label") %>:</h3>
-  <div name="console" id="console"> </div>
+<h3><%= t("game.console.label") %>:</h3>
+<div name="console" id="console"> </div>
 
+<div id="imagePreloader" style="display: none" hidden></div>
 <%= javascript_include_tag 'pirates/simulation', 'data-turbolinks-track' => true %>
 <%= stylesheet_link_tag 'game'%>
