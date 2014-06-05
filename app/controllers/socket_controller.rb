@@ -7,6 +7,8 @@ class SocketController < WebsocketRails::BaseController
   @@port = 12340 #port to connect to the vm
   @@host = 'localhost' #host to connect to the vm
 
+  @@id ||= 0
+
   include Preprocessor
 
   def initialize_session
@@ -276,7 +278,7 @@ class SocketController < WebsocketRails::BaseController
 
     packet = Hash.new()
     old_packet = {}
-    id = rand(10000000000)
+    @@id += 1
 
     @is_simulation_done = false
     read_JSON
@@ -350,7 +352,7 @@ class SocketController < WebsocketRails::BaseController
             old_packet = packet.clone
             send_packet!(packet)
             packet.clear
-            packet[:id] = id
+            packet[:id] = @@id
             packet[:line] = line.split('!')[1].to_i #send_line line.split('!')[1].to_i
           elsif line.include? "#{$prefix}turn_right"
             turn!(packet, :right) #rotate_ship(:right)
@@ -381,7 +383,6 @@ class SocketController < WebsocketRails::BaseController
           end
         end
         send_packet!(packet)
-        packet.clear
       end
     end
   end
