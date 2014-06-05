@@ -21,10 +21,10 @@ class RubyPreprocessor < BasePreprocessor
   def process_code(code_msg, vars)
     # Array that contains predefined methodnames to be ignored by the debugger
     predefined_methods = ['move', 'turn', 'put', 'take', 'look']
-    i=0
+    i=1
     codes = ''
     code_msg.each_line do |s|
-      codes += s.chomp + " # #{$prefix}(#{i+1}#{$prefix})\n" # add linenumber in comment
+      codes += "#{$prefix}line(#{i})\n" # add linefunction for linehighlighting
       vars.each_with_index do |variable, index|
         unless predefined_methods.include? variable
           codes += "if defined? #{variable} \n" +
@@ -32,7 +32,7 @@ class RubyPreprocessor < BasePreprocessor
               "end\n"
         end
       end
-      codes += "#{$prefix}line(#{i})\n" # add linefunction for linehighlighting
+      codes += s.chomp + " # #{$prefix}(#{i+1}#{$prefix})\n" # add linenumber in comment
       i += 1
     end
     insert_logic + codes + "\n"
@@ -98,7 +98,7 @@ class RubyPreprocessor < BasePreprocessor
         "    else raise(ArgumentError, \"unknown argument\")\n" +
         "  end\n"+
         "end\n" +
-        "def put(elem = :Buoy)\n" +
+        "def put(elem = :buoy)\n" +
         "  case elem\n"+
         "    when :buoy then puts \"#{$prefix}put_buoy\"\n"+
         "    when :treasure then puts \"#{$prefix}put_treasure\"\n"+

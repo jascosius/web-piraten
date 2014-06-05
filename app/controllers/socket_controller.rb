@@ -22,7 +22,7 @@ class SocketController < WebsocketRails::BaseController
   end
 
   # test events for the remote control buttons
-  def rotate_ship(direction) # event: ship.left
+  def turn!(packet, direction) # event: ship.left
     if !@is_simulation_done
       case direction
         when :left
@@ -35,11 +35,13 @@ class SocketController < WebsocketRails::BaseController
           puts 'Back!'
           @ship['rotation'] = (@ship['rotation'] + 2) % 4
       end
-      WebsocketRails[:operations].trigger(:turn, @ship['rotation'])
+      packet[:operations] ||= []
+      packet[:operations] << {name: 'turn', return: @ship['rotation']}
+      #WebsocketRails[:operations].trigger(:turn, @ship['rotation'])
     end
   end
 
-  def put(elem) # event: ship.put
+  def put!(packet, elem) # event: ship.put
     if !@is_simulation_done
       case elem
         when :buoy
@@ -47,29 +49,34 @@ class SocketController < WebsocketRails::BaseController
         when :treasure
           name = "Treasure"
       end
-      if !@objects.any?{|obj| obj['x'] ==  @ship['x'] && obj['y'] ==  @ship['y']  }
-        @objects.push({"name"=>name, "x"=>@ship['x'], "y"=>@ship['y']})
+      if !@objects.any? { |obj| obj['x'] == @ship['x'] && obj['y'] == @ship['y'] }
+        @objects.push({"name" => name, "x" => @ship['x'], "y" => @ship['y']})
         puts 'Put!'
-        WebsocketRails[:operations].trigger(:put, name)
+        packet[:operations] ||= []
+        packet[:operations] << {name: 'put', return: name}
+        #WebsocketRails[:operations].trigger(:put, name)
       else
-        WebsocketRails[:operations].trigger(:put, false)
+        packet[:operations] << {name: 'put', return: false}
+        #WebsocketRails[:operations].trigger(:put, false)
       end
     end
   end
 
-  def take # event: ship.take
+  def take!(packet) # event: ship.take
     if !@is_simulation_done
       coord = [@ship['x'], @ship['y']]
       puts @objects.to_s
-      @objects.each_with_index { |obj, index |
+      @objects.each_with_index { |obj, index|
         x = obj['x']
         y = obj['y']
         if  [x, y] == coord
           if obj['name'] == 'Treasure'
             @objects.delete_at index
             puts index
-            WebsocketRails[:operations].trigger(:take, index)
+            #WebsocketRails[:operations].trigger(:take, index)
             puts 'Take!'
+            packet[:operations] ||= []
+            packet[:operations] << {name: 'take', return: index}
           end
         end
       }
@@ -78,7 +85,7 @@ class SocketController < WebsocketRails::BaseController
     end
   end
 
-  def look(direction) # event: ship.take
+  def look!(packet, direction) # event: ship.take
     if !@is_simulation_done
       puts 'Look!'
       coord = [@ship['x'], @ship['y']]
@@ -126,24 +133,32 @@ class SocketController < WebsocketRails::BaseController
           end
         }
       end
-      WebsocketRails[:operations].trigger(:look, coord)
+      packet[:operations] ||= []
+      packet[:operations] << {name: 'look', return: coord}
+      #WebsocketRails[:operations].trigger(:look, coord)
     else
       look_obj='stop'
     end
     look_obj
   end
 
-  def move_ship # event: ship.move
+  def move!(packet) # event: ship.move
     if !@is_simulation_done
       puts 'Move!'
       coord = get_next_position
       if coords_in_grid(coord)
         @ship['x'] = coord[0]
         @ship['y'] = coord[1]
-        WebsocketRails[:operations].trigger(:move, coord)
+        #WebsocketRails[:operations].trigger(:move, coord)
+        packet[:operations] ||= []
+        packet[:operations] << {name: 'move', return: coord}
       else
         @is_simulation_done = true
-        WebsocketRails[:operations].trigger(:done_error, 'Spielfeld verlassen')
+        packet[:operations] ||= []
+        packet[:operations] << {name: 'move'}
+        packet[:messages] ||= []
+        packet[:messages] << {type: 'warning', message: 'Spielfeld verlassen'}
+        #WebsocketRails[:operations].trigger(:done_error, 'Spielfeld verlassen')
       end
     end
 
@@ -173,33 +188,16 @@ class SocketController < WebsocketRails::BaseController
     [x, y]
   end
 
-  def simulation_done
+  def done!(packet)
     if !@is_simulation_done
-      puts 'done'
-      WebsocketRails[:operations].trigger(:done)
+      packet[:operations] ||= []
+      packet[:operations] << {name: 'done'}
       @is_simulation_done = true
     end
 
   end
 
-  def simulation_done_error(msg)
-    if !@is_simulation_done
-      remove_prefix! msg
-      puts 'done_error'
-      WebsocketRails[:operations].trigger(:done_error, "Ausfuehrung beendet: #{msg}")
-      @is_simulation_done = true
-    end
-
-  end
-
-  def send_line(line)
-    if !@is_simulation_done
-      WebsocketRails[:operations].trigger(:line, line)
-    end
-
-  end
-
-  def puts_user_output(line)
+  def print!(packet, line, type)
     if !@is_simulation_done
       remove_prefix! line
       puts line
@@ -214,25 +212,9 @@ class SocketController < WebsocketRails::BaseController
           new_line += c
         end
       end
-      WebsocketRails[:operations].trigger(:output, new_line)
-    end
-  end
-
-  def puts_user_output_error(line)
-    if !@is_simulation_done
-      remove_prefix! line
-      line = CGI::escapeHTML(line)
-      new_line = ''
-      line.each_char do |c|
-        if c == ' '
-          new_line += '&nbsp;'
-        elsif c == "\t"
-          new_line += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
-        else
-          new_line += c
-        end
-      end
-      WebsocketRails[:operations].trigger(:output_error, new_line)
+      packet[:messages] ||= []
+      packet[:messages] << {type: type, message: line}
+      #WebsocketRails[:operations].trigger(:output, new_line)
     end
   end
 
@@ -258,12 +240,23 @@ class SocketController < WebsocketRails::BaseController
   end
 
   def remove_prefix!(string)
-    string.gsub!($prefix,'')
-    string.gsub!($debugprefix,'')
-    string.gsub!('hallo','moin')
+    string.gsub!($prefix, '')
+    string.gsub!($debugprefix, '')
+  end
+
+  def send_packet(packet)
+    if packet != []
+      puts packet
+      WebsocketRails[:simulation_step].trigger(:packet, packet)
+      packet.clear
+    end
   end
 
   def receive_code
+
+    packet = Hash.new()
+    id = rand(10000000000)
+
     @is_simulation_done = false
     read_JSON
     #WebsocketRails[:debug].trigger :console, message[:code]
@@ -321,56 +314,57 @@ class SocketController < WebsocketRails::BaseController
             var_value = line[index_end+1..-1]
             remove_prefix! var_name
             remove_prefix! var_value
-            puts_user_output(var_name + " ist " + var_value) # TODO implement functional and beautiful method!
+            print!(packet, var_name + " ist " + var_value, :log) # TODO implement functional and beautiful method!
           elsif line.include? "#{$prefix}end_error"
             line.slice!("#{$prefix}end_error")
-            simulation_done_error line
+            print!(packet, line, :error)
             break
           elsif line.include? "#{$prefix}end"
-            simulation_done
+            done!(packet)
             break
           elsif line.include? "#{$prefix}stderr_compile"
             line.slice!("#{$prefix}stderr_compile")
             line = postprocess_error_compile(line, code)
             puts line
-            puts_user_output_error line
+            print!(packet, line, :error)
           elsif line.include? "#{$prefix}stderr"
             line.slice!("#{$prefix}stderr")
             line = postprocess_error(line, code)
             puts line
-            puts_user_output_error line
+            print!(packet, line, :error)
           elsif line.include? "#{$prefix}line"
-            send_line line.split('!')[1].to_i
+            send_packet(packet)
+            packet[:id] = id
+            packet[:line] = line.split('!')[1].to_i #send_line line.split('!')[1].to_i
           elsif line.include? "#{$prefix}turn_right"
-            rotate_ship(:right)
+            turn!(packet, :right) #rotate_ship(:right)
           elsif line.include? "#{$prefix}turn_left"
-            rotate_ship(:left)
+            turn!(packet, :left)
           elsif line.include? "#{$prefix}turn_back"
-            rotate_ship(:back)
+            turn!(packet, :back)
           elsif line.include? "#{$prefix}move"
-            move_ship
+            move!(packet)
           elsif line.include? "#{$prefix}take"
-            take
+            take!(packet)
           elsif line.include? "#{$prefix}?_look_right"
-            vm.puts "#{$prefix}!_#{look(:right)}"
+            vm.puts "#{$prefix}!_#{look!(packet, :right)}" # vm.puts "#{$prefix}!_#{look(:right)}"
           elsif line.include? "#{$prefix}?_look_left"
-            vm.puts "#{$prefix}!_#{look(:left)}"
+            vm.puts "#{$prefix}!_#{look!(packet, :left)}"
           elsif line.include? "#{$prefix}?_look_back"
-            vm.puts "#{$prefix}!_#{look(:back)}"
+            vm.puts "#{$prefix}!_#{look!(packet, :back)}"
           elsif line.include? "#{$prefix}?_look_front"
-            vm.puts "#{$prefix}!_#{look(:front)}"
+            vm.puts "#{$prefix}!_#{look!(packet, :front)}"
           elsif line.include? "#{$prefix}?_look_here"
-            test = "#{$prefix}!_#{look(:here)}"
-            puts test
-            vm.puts test
-          elsif line.include? "#{$prefix}put_buoy"
-            put(:buoy)
+            vm.puts "#{$prefix}!_#{look!(packet, :here)}"
           elsif line.include? "#{$prefix}put_treasure"
-            put(:treasure)
+            put!(packet, :treasure)
+          elsif line.include? "#{$prefix}put_buoy"
+            put!(packet, :buoy)
           elsif !line.chomp.empty?
-            puts_user_output line
+            print!(packet, line, :log)
           end
         end
+        send_packet(packet)
       end
     end
   end
