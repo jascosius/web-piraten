@@ -119,7 +119,7 @@ class @OperationHandler extends ChannelHandler
         when 'lookAway'
           Grid.ship.lookAway()
         when 'put'
-          Grid.ship.put()
+          Grid.ship.put(currentOp.data)
         when 'take'
           Grid.ship.take(currentOp.data)
         when 'line'

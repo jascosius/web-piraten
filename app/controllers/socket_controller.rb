@@ -39,20 +39,23 @@ class SocketController < WebsocketRails::BaseController
     end
   end
 
-  def put # event: ship.put
+  def put(elem) # event: ship.put
     if !@is_simulation_done
-      puts 'Put!'
-      WebsocketRails[:operations].trigger(:put)
+      case elem
+        when :buoy
+          name = "Buoy"
+        when :treasure
+          name = "Treasure"
+      end
+      if !@objects.any?{|obj| obj['x'] ==  @ship['x'] && obj['y'] ==  @ship['y']  }
+        @objects.push({"name"=>name, "x"=>@ship['x'], "y"=>@ship['y']})
+        puts 'Put!'
+        WebsocketRails[:operations].trigger(:put, name)
+      else
+        WebsocketRails[:operations].trigger(:put, false)
+      end
     end
   end
-
-  # @deleteObject = (obj) ->
-  #     if obj != false
-  #       newObjects = []
-  #       for gameObject in @objects
-  #         if gameObject != obj
-  #           newObjects.push(gameObject)
-  #           @objects = newObjects
 
   def take # event: ship.take
     if !@is_simulation_done
@@ -360,8 +363,10 @@ class SocketController < WebsocketRails::BaseController
             test = "#{$prefix}!_#{look(:here)}"
             puts test
             vm.puts test
-          elsif line.include? "#{$prefix}put"
-            put
+          elsif line.include? "#{$prefix}put_buoy"
+            put(:buoy)
+          elsif line.include? "#{$prefix}put_treasure"
+            put(:treasure)
           elsif !line.chomp.empty?
             puts_user_output line
           end

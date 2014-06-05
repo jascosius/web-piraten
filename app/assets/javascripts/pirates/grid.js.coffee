@@ -83,22 +83,22 @@ class @Grid
 
   @onClick = (event) =>
     if !Simulation.isSimulating
-      mousPos = @getMousePos(event)
+      mousPos = @getMousePos event
       pos = @getGridCoordinates mousPos
+      objOnPos = @isSomethingOnPosition pos.x, pos.y
       if @ship.x == pos.x && @ship.y == pos.y && event.which == 1
         @mousePressedOnShip = true
       else
-        if @contains(mousPos) && @isSomethingOnPosition(pos.x, pos.y) == false && event.which == 1
-          @GridControls.creatObjectFromButton(pos.x, pos.y)
+        if @contains(mousPos) && objOnPos == false && event.which == 1
+          @GridControls.creatObjectFromButton pos.x, pos.y
 
       if event.which == 3 && @ship.x == pos.x && @ship.y == pos.y
         if @ship.rotation <= 0
           @ship.rotation = 3
         else
           @ship.rotation--
-      else
-        if event.which == 3 && @isSomethingOnPosition(pos.x,pos.y).name != "PirateShip"
-          @deleteObject (@isSomethingOnPosition(pos.x,pos.y))
+      else if event.which == 3 && objOnPos != false
+        @deleteObjectWithIndex @objects.indexOf(objOnPos)
 
   @onMouseUp = (event) =>
     coords = @getGridCoordinates @getMousePos(event)

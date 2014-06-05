@@ -67,11 +67,13 @@ class @Ship extends GameObject
   take: (index) =>
     Grid.deleteObjectWithIndex index
 
-  put: () =>
-   if Grid.isSomethingOnPosition(@x, @y) != false
-    Utils.logError "hier ist kein Platz mehr für eine Boje"
-   else
+  put: (data) =>
+   if data == "Buoy"
     Grid.addObject (new Buoy @x, @y)
+   else if data == "Treasure"
+     Grid.addObject (new Treasure @x, @y)
+   else if !data
+    Utils.logError 'hier ist kein Platz mehr für eine Boje'
 
   move: (coord) =>
     @x = coord[0]

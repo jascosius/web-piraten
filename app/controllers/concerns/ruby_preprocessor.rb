@@ -98,8 +98,12 @@ class RubyPreprocessor < BasePreprocessor
         "    else raise(ArgumentError, \"unknown argument\")\n" +
         "  end\n"+
         "end\n" +
-        "def put\n" +
-        "  puts \"#{$prefix}put\"\n" +
+        "def put(elem = :Buoy)\n" +
+        "  case elem\n"+
+        "    when :buoy then puts \"#{$prefix}put_buoy\"\n"+
+        "    when :treasure then puts \"#{$prefix}put_treasure\"\n"+
+        "    else raise(ArgumentError, \"unknown argument\")\n" +
+        "  end\n"+
         "end\n" +
         "def take\n" +
         "  puts \"#{$prefix}take\"\n" +
