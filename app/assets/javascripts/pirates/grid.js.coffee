@@ -208,7 +208,7 @@ class @Grid
         @ctx.scale 1, -1 # flip
 
       @ctx.scale @size/obj.image.width, @size/obj.image.height
-      @ctx.drawImage(obj.image, -Math.floor(obj.image.width/2), -Math.floor(obj.image.height/2))
+      @ctx.drawImage obj.image, -Math.floor(obj.image.width/2), -Math.floor(obj.image.height/2)
       @ctx.restore()
 
 
