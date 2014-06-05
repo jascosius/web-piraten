@@ -50,10 +50,11 @@ class SocketController < WebsocketRails::BaseController
           name = "Treasure"
       end
       if !@objects.any? { |obj| obj['x'] == @ship['x'] && obj['y'] == @ship['y'] }
-        @objects.push({"name" => name, "x" => @ship['x'], "y" => @ship['y']})
+        object = {"name" => name, "x" => @ship['x'], "y" => @ship['y']}
+        @objects.push(object)
         puts 'Put!'
         packet[:operations] ||= []
-        packet[:operations] << {name: 'put', return: name}
+        packet[:operations] << {name: 'put', return: object}
         #WebsocketRails[:operations].trigger(:put, name)
       else
         packet[:operations] << {name: 'put', return: false}
@@ -218,6 +219,26 @@ class SocketController < WebsocketRails::BaseController
     end
   end
 
+  def debug!(packet, line, tracing_vars, old_packet)
+    index_begin = $debugprefix.length
+    index_end = line.index('!')
+    index = line[index_begin...index_end].to_i
+    var_name = tracing_vars[index].chomp
+    var_value = line[index_end+1..-1].chomp
+    remove_prefix! var_name
+    remove_prefix! var_value
+    if old_packet[:allocations] and old_packet[:allocations][var_name]
+      if old_packet[:allocations][var_name] != var_value
+        packet[:allocations] ||= {}
+        packet[:allocations][var_name] = var_value
+      end
+    else
+      packet[:allocations] ||= {}
+      packet[:allocations][var_name] = var_value
+    end
+    #print!(packet, var_name + " ist " + var_value, :log) # TODO implement functional and beautiful method!
+  end
+
   def read_JSON
     grid = message[:grid]
     puts grid
@@ -244,17 +265,17 @@ class SocketController < WebsocketRails::BaseController
     string.gsub!($debugprefix, '')
   end
 
-  def send_packet(packet)
-    if packet != []
+  def send_packet!(packet)
+    if packet != {}
       puts packet
       WebsocketRails[:simulation_step].trigger(:packet, packet)
-      packet.clear
     end
   end
 
   def receive_code
 
     packet = Hash.new()
+    old_packet = {}
     id = rand(10000000000)
 
     @is_simulation_done = false
@@ -307,14 +328,7 @@ class SocketController < WebsocketRails::BaseController
         loop do
           line = vm.gets
           if  line.include? "#{$debugprefix}"
-            index_begin = $debugprefix.length
-            index_end = line.index('!')
-            index = line[index_begin...index_end].to_i
-            var_name = tracing_vars[index]
-            var_value = line[index_end+1..-1]
-            remove_prefix! var_name
-            remove_prefix! var_value
-            print!(packet, var_name + " ist " + var_value, :log) # TODO implement functional and beautiful method!
+            debug!(packet, line, tracing_vars, old_packet)
           elsif line.include? "#{$prefix}end_error"
             line.slice!("#{$prefix}end_error")
             print!(packet, line, :error)
@@ -333,7 +347,9 @@ class SocketController < WebsocketRails::BaseController
             puts line
             print!(packet, line, :error)
           elsif line.include? "#{$prefix}line"
-            send_packet(packet)
+            old_packet = packet.clone
+            send_packet!(packet)
+            packet.clear
             packet[:id] = id
             packet[:line] = line.split('!')[1].to_i #send_line line.split('!')[1].to_i
           elsif line.include? "#{$prefix}turn_right"
@@ -364,7 +380,8 @@ class SocketController < WebsocketRails::BaseController
             print!(packet, line, :log)
           end
         end
-        send_packet(packet)
+        send_packet!(packet)
+        packet.clear
       end
     end
   end
