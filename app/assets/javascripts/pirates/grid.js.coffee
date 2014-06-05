@@ -28,8 +28,9 @@ class @Grid
     @load @defaultData
 
   @load = (obj) =>
-    @gridWidth = obj.width
-    @gridHeight = obj.height
+    @gridWidth = obj.width || 21
+    @gridHeight = obj.height || 10
+    @size = obj.size || 32
 
     s = obj.ship
     @ship = new Ship s.x, s.y, s.rotation
@@ -173,6 +174,7 @@ class @Grid
       gameObject.update(Simulation.deltaTime)
 
   @draw = () =>
+    @ctx.save()
     count = 0
     strokeStyle = "#999"
 
@@ -204,7 +206,8 @@ class @Grid
 
       if obj.rotation == 2
         @ctx.scale 1, -1 # flip
-      @ctx.scale obj.image.width/@size, obj.image.height/@size
+
+      @ctx.scale @size/obj.image.width, @size/obj.image.height
       @ctx.drawImage(obj.image, -Math.floor(obj.image.width/2), -Math.floor(obj.image.height/2))
       @ctx.restore()
 
@@ -261,6 +264,7 @@ class @Grid
       if @ship.rotation == 2
         @ctx.scale 1, -1 # flip
       @ctx.drawImage(@ship.image, -Math.floor(@ship.image.width/2), -Math.floor(@ship.image.height/2))
+
     @ctx.restore()
 
 
