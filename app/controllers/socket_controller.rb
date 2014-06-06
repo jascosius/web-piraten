@@ -10,7 +10,7 @@ class SocketController < WebsocketRails::BaseController
   @@id ||= 0
 
   include Preprocessor
-  include Gridsimulation
+  include GridSimulation
 
   def initialize_session
     puts 'new_event was called'
