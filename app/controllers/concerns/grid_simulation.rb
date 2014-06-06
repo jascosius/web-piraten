@@ -47,13 +47,13 @@ module GridSimulation
         @ship['y'] = coord[1]
         #WebsocketRails[:operations].trigger(:move, coord)
         packet[:operations] ||= []
-        packet[:operations] << {name: 'move', return: coord}
+        packet[:operations] << {:name => 'move', :return => coord}
       else
         @is_simulation_done = true
         packet[:operations] ||= []
-        packet[:operations] << {name: 'move'}
+        packet[:operations] << {:name => 'move'}
         packet[:messages] ||= []
-        packet[:messages] << {type: 'warning', message: 'Spielfeld verlassen'}
+        packet[:messages] << {:type => 'warning', :message => 'Spielfeld verlassen'}
         #WebsocketRails[:operations].trigger(:done_error, 'Spielfeld verlassen')
       end
     end
@@ -73,7 +73,7 @@ module GridSimulation
           @ship['rotation'] = (@ship['rotation'] + 2) % 4
       end
       packet[:operations] ||= []
-      packet[:operations] << {name: 'turn', return: @ship['rotation']}
+      packet[:operations] << {:name => 'turn', :return => @ship['rotation']}
       #WebsocketRails[:operations].trigger(:turn, @ship['rotation'])
     end
   end
@@ -91,10 +91,10 @@ module GridSimulation
         @objects.push(object)
         puts 'Put!'
         packet[:operations] ||= []
-        packet[:operations] << {name: 'put', return: object}
+        packet[:operations] << {:name => 'put', :return => object}
         #WebsocketRails[:operations].trigger(:put, name)
       else
-        packet[:operations] << {name: 'put', return: false}
+        packet[:operations] << {:name => 'put', :return => false}
         #WebsocketRails[:operations].trigger(:put, false)
       end
     end
@@ -114,7 +114,7 @@ module GridSimulation
             #WebsocketRails[:operations].trigger(:take, index)
             puts 'Take!'
             packet[:operations] ||= []
-            packet[:operations] << {name: 'take', return: index}
+            packet[:operations] << {:name => 'take', :return => index}
           end
         end
       }
@@ -170,7 +170,7 @@ module GridSimulation
         }
       end
       packet[:operations] ||= []
-      packet[:operations] << {name: 'look', return: coord}
+      packet[:operations] << {:name => 'look', :return => coord}
       #WebsocketRails[:operations].trigger(:look, coord)
     else
       look_obj='stop'
