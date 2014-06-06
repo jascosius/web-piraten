@@ -149,3 +149,115 @@ class @DebugHandler extends ChannelHandler
   constructor: () ->
     super "debug"
     @channel.bind "console", logToConsole
+
+class @PacketHandler extends ChannelHandler
+
+  # can't be stored directly because the Grid does not exist at loading  _mapping = null
+  operationMapping = () ->
+    return _mapping if _mapping? && _mapping not null
+    _mapping = {
+      put: Grid.ship.put
+      take: Grid.ship.take
+      move: Grid.ship.move
+      turn: Grid.ship.turn
+      look: Grid.ship.look
+      exit: Simulation.stop
+    }
+    return _mapping
+
+  addToQueue = (packet) =>
+    console.log 'received packet', packet
+    @packetQueue.push packet
+
+  @initialize = () ->
+    @channel = webSocket.subscribe 'simulation', @onSubscribe, @onSubscribeFail
+    @channel.bind 'step', addToQueue
+    @lifeTime = 0
+    @packetQueue = []
+    @usedIDs = []
+    @currentId = -1
+
+  onSubscribe: (event) =>
+    console.log "Subscribed to channel '#{@channelName}'"
+
+  onSubscribeFail: (event) =>
+    Utils.logError "Fehler bei der Kommunikation, bitte lade die Seite neu!"
+    console.log event
+
+  @clear = () =>
+    @packetQueue = []
+    CodeGUI.clearHighlighting()
+
+  @update = () =>
+    if !Simulation.isSimulating then return
+    if (Config.simulationSpeed > 0 && (@lifeTime % Config.simulationSpeed) != 0) || @packetQueue.length < 1
+      @lifeTime++
+      return
+    simulatePacket()
+    @lifeTime++
+
+  validateArray = (name, arr) ->
+    throw "#{name} in packet are not an array" unless Array.isArray arr
+    throw "#{name} is empty" if arr.length <= 0
+
+  simulateOperation = (packet) =>
+    operations = packet.operations
+    validateArray "operations", operations
+
+    for op in operations
+      if operationMapping()[op.name]?
+        operationMapping()[op.name](op.return)
+      else
+        throw "Packet error: Invalid operation!"
+        console.log "received invalid operation", op
+
+  simulateLine = (packet) ->
+    line = packet.line || 0
+    throw "Packet error: line '#{line}' is not a valid line" unless line > 0
+    CodeGUI.highlightLine line
+
+  simulateAllocations = (packet) ->
+    allocations = packet.allocations
+
+    validateArray "allocations", allocations
+
+    #TODO Debugger GUI
+    for variable in allocations
+      for name of variable
+        Utils.log "#{name} ist belegt mit #{variable[name]}"
+
+  simulateMessages = (packet) ->
+    messages = packet.messages
+    validateArray "messages", messages
+
+    for messageObj in messages
+      switch messageObj.type
+        when 'log' then Utils.log messageObj.message
+        when 'warning' then Utils.logWarning messageObj.message
+        when 'error' then Utils.logError messageObj.message
+
+  simulatePacket = () =>
+    return if @packetQueue.isEmpty
+
+    CodeGUI.clearHighlighting()
+    Grid.look = null
+
+    currentPacket = @packetQueue.shift()
+
+    if not currentPacket.id?
+      console.log 'Missing Id', currentPacket
+      throw 'Packet does not have an id!'
+
+    id = currentPacket.id
+    if @currentId < 0
+      @currentId = id
+    else if id > @currentId
+      @usedIDs.push id
+    else if id in @usedIDs
+      simulatePacket() # ignore packet
+      return
+
+    simulateOperation currentPacket if currentPacket.operations?
+    simulateLine currentPacket if currentPacket.line
+    simulateAllocations currentPacket if currentPacket.allocations?
+    simulateMessages currentPacket if currentPacket.messages?

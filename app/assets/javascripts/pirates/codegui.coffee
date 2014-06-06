@@ -104,6 +104,7 @@ class @CodeGUI
     @codeMirror.getValue()
 
   @highlightLine: (line) ->
+    line -= 1
     if @lastLine?
       @codeMirror.removeLineClass @lastLine, 'background', 'processedLine'
 

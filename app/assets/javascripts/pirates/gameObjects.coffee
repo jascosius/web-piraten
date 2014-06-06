@@ -72,7 +72,7 @@ class @Ship extends GameObject
     Grid.addObject (new Buoy @x, @y)
    else if data == "Treasure"
      Grid.addObject (new Treasure @x, @y)
-   else if !data
+   else if !data #TODO
     Utils.logError 'hier ist kein Platz mehr für eine Boje'
 
   move: (coord) =>

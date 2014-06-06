@@ -1,21 +1,21 @@
 class @Utils
   $console = $ '#console'
+  printToConsole = (message, type) ->
+    line = $ '<p></p>'
+    line.addClass type
+    line.html message
+    $console.append line
+    console.log message
+    $console.scrollTop($console[0].scrollHeight)
 
   @log: (message) ->
-    line = $ '<p></p>'
-    line.html message
-    $console.append line
-    console.log message
-    $console.scrollTop($console[0].scrollHeight)
+    printToConsole message, 'log'
+
+  @logWarning: (message) ->
+    printToConsole message, 'warning'
 
   @logError: (message) ->
-    line = $ '<p></p>'
-    line.addClass 'error'
-    line.html message
-    $console.append line
-    console.log message
-    $console.scrollTop($console[0].scrollHeight)
-
+    printToConsole message, 'error'
 
   @requestAnimFrame: (mainLoop) ->
     window.requestAnimationFrame(mainLoop)       ||

@@ -19,6 +19,7 @@ class @Simulation
     Grid.initialize @canvas, 32
     Grid.loadDefault()
     CodeGUI.initialize 'codemirror'
+    PacketHandler.initialize()
 
     @debugHandler = new DebugHandler()
     @operationHandler = new OperationHandler()
@@ -56,7 +57,8 @@ class @Simulation
       @context.font      = "normal 12pt Arial"
       @context.fillText Math.round(@fps)+" fps", 10, 20
 
-    @operationHandler.update();
+    #@operationHandler.update();
+    PacketHandler.update()
     Grid.update()
     Grid.draw()
 
@@ -71,6 +73,13 @@ class @Simulation
         if loaded >= images.length
           callback()
 
+
+  @stop = () =>
+    return unless @isSimulating
+    CodeGUI.toggleCodeEditing()
+    @isSimulating = !@isSimulating
+    PacketHandler.clear()
+    Utils.log 'Ausführung beendet!'
 
 jQuery () -> # use jQuery to wait until DOM is ready
   Simulation.preloadImages () ->
