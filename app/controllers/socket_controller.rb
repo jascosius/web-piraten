@@ -29,21 +29,17 @@ class SocketController < WebsocketRails::BaseController
 
   # test events for the remote control buttons
 
-  def read_JSON
+  def read_json
     grid = message[:grid]
     puts grid
     x = grid['width']
     y = grid['height']
     @grid_size = [x, y]
-    @objects = grid['objects'].to_a
-    @ship = grid['ship']
-    @grid2 = Grid.new(x, y, @objects, @ship)
-    #puts obja.to_s
-    #@objects.each{ |obj|
-    #  if  obj['name'] == 'Monster'
-    #    puts obj
-    #  end
-    #}
+    objects = grid['objects'].to_a
+    ship = grid['ship']
+    @grid = Grid.new(x, y, objects)
+    @ship = Ship.new(ship['x'], ship['y'], ship['rotation'], @grid)
+
   end
 
 
@@ -74,7 +70,7 @@ class SocketController < WebsocketRails::BaseController
     Thread.start do
 
       set_id
-      read_JSON
+      read_json
 
       packet = Hash.new()
       packet[:id] = @@id
@@ -171,29 +167,29 @@ class SocketController < WebsocketRails::BaseController
         packet[:id] = @@id
         packet[:line] = line.split('!')[1].to_i #send_line line.split('!')[1].to_i
       elsif line.include? "#{$prefix}turn_right"
-        turn!(packet, :right) #rotate_ship(:right)
+        @ship.turn!(packet, :right) #rotate_ship(:right)
       elsif line.include? "#{$prefix}turn_left"
-        turn!(packet, :left)
+        @ship.turn!(packet, :left)
       elsif line.include? "#{$prefix}turn_back"
-        turn!(packet, :back)
+        @ship.turn!(packet, :back)
       elsif line.include? "#{$prefix}move"
-        move!(packet)
+        @ship.move!(packet)
       elsif line.include? "#{$prefix}take"
-        take!(packet)
+        @ship.take!(packet)
       elsif line.include? "#{$prefix}?_look_right"
-        vm.puts "#{$prefix}!_#{look!(packet, :right)}" # vm.puts "#{$prefix}!_#{look(:right)}"
+        vm.puts "#{$prefix}!_#{@ship.look!(packet, :right)}" # vm.puts "#{$prefix}!_#{look(:right)}"
       elsif line.include? "#{$prefix}?_look_left"
-        vm.puts "#{$prefix}!_#{look!(packet, :left)}"
+        vm.puts "#{$prefix}!_#{@ship.look!(packet, :left)}"
       elsif line.include? "#{$prefix}?_look_back"
-        vm.puts "#{$prefix}!_#{look!(packet, :back)}"
+        vm.puts "#{$prefix}!_#{@ship.look!(packet, :back)}"
       elsif line.include? "#{$prefix}?_look_front"
-        vm.puts "#{$prefix}!_#{look!(packet, :front)}"
+        vm.puts "#{$prefix}!_#{@ship.look!(packet, :front)}"
       elsif line.include? "#{$prefix}?_look_here"
-        vm.puts "#{$prefix}!_#{look!(packet, :here)}"
+        vm.puts "#{$prefix}!_#{@ship.look!(packet, :here)}"
       elsif line.include? "#{$prefix}put_treasure"
-        put!(packet, :treasure)
+        @ship.put!(packet, :treasure)
       elsif line.include? "#{$prefix}put_buoy"
-        put!(packet, :buoy)
+        @ship.put!(packet, :buoy)
       elsif !line.chomp.empty?
         print!(packet, :log, line)
       end

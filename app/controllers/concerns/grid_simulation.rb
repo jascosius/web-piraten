@@ -2,23 +2,12 @@
 
 module GridSimulation
 
-
-  class Ship
-    attr_accessor :x, :y, :rotation
-    def initialize(x, y, rotation)
-      @x = x
-      @y = y
-      @rotation = rotation
-    end
-  end
-
-
   class  Grid
-    def initialize(height, length, objects, ship)
-      @grid= Hash.new(:nothing)
+    attr_accessor  :height, :width, :grid
+    def initialize(height, width, objects)
+      @grid = Hash.new(:nothing)
       @height = height
-      @length = length
-      @ship = Ship.new(ship['x'], ship['y'], ship['rotation'])
+      @width = width
       objects.each{ |obj|
         x = obj['x']
         y = obj['y']
@@ -33,174 +22,158 @@ module GridSimulation
             @grid[[x, y]] = :wave
         end
       }
-      puts @grid
-      puts 'ich bin das grid'
     end
   end
 
-  def move!(packet) # event: ship.move
-    if !@is_simulation_done
-      puts 'Move!'
-      coord = get_next_position
-      if coords_in_grid(coord)
-        @ship['x'] = coord[0]
-        @ship['y'] = coord[1]
-        #WebsocketRails[:operations].trigger(:move, coord)
-        packet[:operations] ||= []
-        packet[:operations] << {:name => 'move', :return => coord}
-      else
-        @is_simulation_done = true
-        packet[:operations] ||= []
-        packet[:operations] << {:name => 'move'}
-        packet[:messages] ||= []
-        packet[:messages] << {:type => 'warning', :message => 'Spielfeld verlassen'}
-        #WebsocketRails[:operations].trigger(:done_error, 'Spielfeld verlassen')
-      end
-    end
-  end
 
-  def turn!(packet, direction) # event: ship.left
-    if !@is_simulation_done
-      case direction
-        when :left
-          puts 'Left!'
-          @ship['rotation'] = (@ship['rotation'] - 1) % 4
-        when :right
-          puts 'Right!'
-          @ship['rotation'] = (@ship['rotation'] + 1) % 4
-        when :back
-          puts 'Back!'
-          @ship['rotation'] = (@ship['rotation'] + 2) % 4
-      end
-      packet[:operations] ||= []
-      packet[:operations] << {:name => 'turn', :return => @ship['rotation']}
-      #WebsocketRails[:operations].trigger(:turn, @ship['rotation'])
+  class Ship
+    attr_accessor :x, :y, :rotation
+    def initialize(x, y, rotation, grid)
+      @x = x
+      @y = y
+      @rotation = rotation
+      @grid = grid
     end
-  end
 
-  def put!(packet, elem) # event: ship.put
-    if !@is_simulation_done
-      case elem
-        when :buoy
-          name = "Buoy"
-        when :treasure
-          name = "Treasure"
-      end
-      if !@objects.any? { |obj| obj['x'] == @ship['x'] && obj['y'] == @ship['y'] }
-        object = {"name" => name, "x" => @ship['x'], "y" => @ship['y']}
-        @objects.push(object)
-        puts 'Put!'
-        packet[:operations] ||= []
-        packet[:operations] << {:name => 'put', :return => object}
-        #WebsocketRails[:operations].trigger(:put, name)
-      else
-        packet[:operations] << {:name => 'put', :return => false}
-        #WebsocketRails[:operations].trigger(:put, false)
-      end
-    end
-  end
-
-  def take!(packet) # event: ship.take
-    if !@is_simulation_done
-      coord = [@ship['x'], @ship['y']]
-      puts @objects.to_s
-      @objects.each_with_index { |obj, index|
-        x = obj['x']
-        y = obj['y']
-        if  [x, y] == coord
-          if obj['name'] == 'Treasure'
-            @objects.delete_at index
-            puts index
-            #WebsocketRails[:operations].trigger(:take, index)
-            puts 'Take!'
-            packet[:operations] ||= []
-            packet[:operations] << {:name => 'take', :return => index}
-          end
+    def turn!(packet, direction) # event: ship.left
+      if !@is_simulation_done
+        case direction
+          when :left
+            @rotation = (@rotation - 1) % 4
+          when :right
+            @rotation = (@rotation + 1) % 4
+          when :back
+            @rotation = (@rotation + 2) % 4
         end
-      }
-    end
-  end
-
-  def look!(packet, direction) # event: ship.take
-    if !@is_simulation_done
-      puts 'Look!'
-      coord = [@ship['x'], @ship['y']]
-      next_coord = get_next_position
-      rotate = @ship['rotation']
-      puts rotate
-      case direction
-        when :front
-          coord = next_coord
-        when :back
-          coord[0] -= next_coord[0] - coord[0]
-          coord[1] -= next_coord[1] - coord[1]
-        when :left
-          case rotate
-            when 3
-              coord[0] += 1
-            when 1
-              coord[0] -= 1
-            when 0
-              coord[1] -= 1
-            when 2
-              coord[1] += 1
-          end
-        when :right
-          case rotate
-            when 3
-              coord[0] -= 1
-            when 1
-              coord[0] += 1
-            when 0
-              coord[1] += 1
-            when 2
-              coord[1] -= 1
-          end
+        packet[:operations] ||= []
+        packet[:operations] << {:name => 'turn', :return => @rotation}
+        #WebsocketRails[:operations].trigger(:turn, @ship['rotation'])
       end
-      if coords_in_grid(coord) == false
-        look_obj = 'Border'
+    end
+
+    def put!(packet, elem) # event: ship.put
+      if !@is_simulation_done
+        if @grid.grid[[@x, @y]] == :nothing
+          @grid.grid[[@x, @y]] = elem
+          packet[:operations] ||= []
+          packet[:operations] << {:name => 'put', :return => {:name => elem, :x => @x, :y=>@y}}
+        else
+          packet[:operations] ||= []
+          packet[:operations] << {:name => 'put'}
+          packet[:messages] ||= []
+          packet[:messages] << {:type => 'warning', :message => 'Es ist kein Platz für ein weiteres Element'}
+
+        end
+      end
+    end
+
+    def take!(packet) # event: ship.take
+      if !@is_simulation_done
+        elem = @grid.grid[[@x, @y]]
+        if elem == :buoy || elem == :treasure
+          @grid.grid[[@x, @y]] = :nothing
+          packet[:operations] ||= []
+          packet[:operations] << {:name => 'take', :return => {:name => elem, :x => @x, :y => @y}}
+        else
+          packet[:operations] ||= []
+          packet[:operations] << {:name => 'take'}
+          packet[:messages] ||= []
+          packet[:messages] << {:type => 'warning', :message => 'Kein Objekt zum aufnehmen'}
+        end
+
+      end
+    end
+
+    def look!(packet, direction) # event: ship.take
+      if !@is_simulation_done
+        coord = [@x, @y]
+        next_coord = get_next_position
+        rotate = @rotation
+        puts rotate
+        case direction
+          when :front
+            coord = next_coord
+          when :back
+            coord[0] -= next_coord[0] - @x
+            coord[1] -= next_coord[1] - @y
+          when :left
+            case @rotation
+              when 3
+                coord[0] += 1
+              when 1
+                coord[0] -= 1
+              when 0
+                coord[1] -= 1
+              when 2
+                coord[1] += 1
+            end
+          when :right
+            case @rotation
+              when 3
+                coord[0] -= 1
+              when 1
+                coord[0] += 1
+              when 0
+                coord[1] += 1
+              when 2
+                coord[1] -= 1
+            end
+        end
+        if coords_in_grid(coord) == false
+          look_obj = :border
+        else
+          look_obj = @grid.grid[[@x, @y]]
+        end
+        packet[:operations] ||= []
+        packet[:operations] << {:name => 'look', :return => {:x => coord[0], :y => coord[1]}}
       else
-        @objects.each { |obj|
-          x = obj['x']
-          y = obj['y']
-          if  [x, y] == coord
-            look_obj = obj['name'].to_s
-            puts obj['name']
-          end
-        }
+        look_obj = :stop
       end
-      packet[:operations] ||= []
-      packet[:operations] << {:name => 'look', :return => coord}
-      #WebsocketRails[:operations].trigger(:look, coord)
-    else
-      look_obj='stop'
+      look_obj
     end
-    look_obj
-  end
 
-  def coords_in_grid(coord)
-    if coord[0] >= 0 && coord[0] < @grid_size[0] && coord[1] >= 0 && coord[1]< @grid_size[1]
-      true
-    else
-      false
+    def move!(packet) # event: ship.move
+      if !@is_simulation_done
+        coord = get_next_position
+        if coords_in_grid(coord)
+          @x = coord[0]
+          @y = coord[1]
+          packet[:operations] ||= []
+          packet[:operations] << {:name => 'move', :return => coord}
+        else
+          packet[:operations] ||= []
+          packet[:operations] << {:name => 'move'}
+          packet[:messages] ||= []
+          packet[:messages] << {:type => 'warning', :message => 'Du bist an das Ende der Welt gestoßen'}
+        end
+      end
+    end #TODO Move testet auf Objekte
+
+    def coords_in_grid(coord)
+
+      if coord[0] >= 0 && coord[0] < @grid.width && coord[1] >= 0 && coord[1]< @grid.height
+        true
+      else
+        false
+      end
     end
-  end
 
-  def get_next_position
-    x = @ship['x']
-    y = @ship['y']
-    case @ship['rotation']
-      when 0
-        x += 1
-      when 1
-        y += 1
-      when 2
-        x -= 1
-      when 3
-        y -= 1
+    def get_next_position
+      x = @x
+      y = @y
+      case @rotation
+        when 0
+          x += 1
+        when 1
+          y += 1
+        when 2
+          x -= 1
+        when 3
+          y -= 1
+      end
+      [x, y]
     end
-    [x, y]
-  end
 
+  end
 
 end
