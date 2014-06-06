@@ -11,6 +11,7 @@ class SocketController < WebsocketRails::BaseController
 
   include Preprocessor
   include GridSimulation
+  include ControlSimulation
 
   def initialize_session
     puts 'new_event was called'
@@ -25,58 +26,6 @@ class SocketController < WebsocketRails::BaseController
   end
 
   # test events for the remote control buttons
-
-
-  def exit!(packet, type, line='')
-    if !@is_simulation_done
-      packet[:operations] ||= []
-      packet[:operations] << {:name => 'exit', :return => type}
-      if line != ''
-        print!(packet, type, line) #add errormessages
-      end
-      @is_simulation_done = true
-    end
-
-  end
-
-  def print!(packet, type, line)
-    if !@is_simulation_done
-      remove_prefix! line
-      puts line
-      line = CGI::escapeHTML(line)
-      new_line = ''
-      line.each_char do |c|
-        if c == ' '
-          new_line += '&nbsp;'
-        elsif c == "\t"
-          new_line += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
-        else
-          new_line += c
-        end
-      end
-      packet[:messages] ||= []
-      packet[:messages] << {:type => type, :message => line}
-    end
-  end
-
-  def debug!(packet, line, tracing_vars, old_packet)
-    index_begin = $debugprefix.length
-    index_end = line.index('!')
-    index = line[index_begin...index_end].to_i
-    var_name = tracing_vars[index].chomp
-    var_value = line[index_end+1..-1].chomp
-    remove_prefix! var_name
-    remove_prefix! var_value
-    if old_packet[:allocations] and old_packet[:allocations][var_name]
-      if old_packet[:allocations][var_name] != var_value
-        packet[:allocations] ||= {}
-        packet[:allocations][var_name] = var_value
-      end
-    else
-      packet[:allocations] ||= {}
-      packet[:allocations][var_name] = var_value
-    end
-  end
 
   def read_JSON
     grid = message[:grid]
@@ -105,7 +54,7 @@ class SocketController < WebsocketRails::BaseController
     string.gsub!($debugprefix, '')
   end
 
-  def send_packet!(packet)
+  def send_packet(packet)
     if packet != {}
       puts packet
       WebsocketRails[:simulation_step].trigger(:packet, packet)
@@ -117,10 +66,12 @@ class SocketController < WebsocketRails::BaseController
     packet = Hash.new()
     old_packet = {}
     @@id += 1
+    if @@id > 100000
+      @@id = 0
+    end
 
     @is_simulation_done = false
     read_JSON
-    #WebsocketRails[:debug].trigger :console, message[:code]
     puts '================================='
     puts '===== received operation========='
     puts '================================='
@@ -140,7 +91,7 @@ class SocketController < WebsocketRails::BaseController
         sleep(@@timeout)
         if thread.alive?
           puts 'kill'
-          simulation_done_error 'Ausführungszeit wurde überschritten.'
+          exit!(packet,'Ausführungszeit wurde überschritten.')
           thread.kill
         end
       end
@@ -150,7 +101,7 @@ class SocketController < WebsocketRails::BaseController
         vm = TCPSocket.open(@@host, @@port)
       rescue
         puts 'Could not connect to TCPSocket. Start ruby app/vm/vm.rb'
-        simulation_done_error 'Ein interner Fehler ist aufgetreten.'
+        exit!(packet,'Ein interner Fehler ist aufgetreten.')
       else
 
         #send commands to the server
@@ -171,24 +122,23 @@ class SocketController < WebsocketRails::BaseController
             debug!(packet, line, tracing_vars, old_packet)
           elsif line.include? "#{$prefix}end_error"
             line.slice!("#{$prefix}end_error")
-            exit!(packet, :error, line)
+            exit!(packet, line)
             break
           elsif line.include? "#{$prefix}end"
-            exit!(packet, :successful)
+            exit!(packet)
             break
           elsif line.include? "#{$prefix}stderr_compile"
             line.slice!("#{$prefix}stderr_compile")
             line = postprocess_error_compile(line, code)
-            puts line
-            exit!(packet, :error, line)
+            print!(packet, :error, line)
           elsif line.include? "#{$prefix}stderr"
             line.slice!("#{$prefix}stderr")
             line = postprocess_error(line, code)
             puts line
-            exit!(packet, :error, line)
+            print!(packet, :error, line)
           elsif line.include? "#{$prefix}line"
             old_packet = packet.clone
-            send_packet!(packet)
+            send_packet(packet)
             packet.clear
             packet[:id] = @@id
             packet[:line] = line.split('!')[1].to_i #send_line line.split('!')[1].to_i
@@ -220,7 +170,7 @@ class SocketController < WebsocketRails::BaseController
             print!(packet, :log, line)
           end
         end
-        send_packet!(packet)
+        send_packet(packet)
       end
     end
   end
