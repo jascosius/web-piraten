@@ -5,6 +5,7 @@
 #= require codemirror/keymaps/sublime
 #= require ./config
 #= require ./utilities
+#= require ./console
 #= require ./socketHandler
 #= require ./gameObjects
 #= require ./codegui
@@ -20,9 +21,6 @@ class @Simulation
     Grid.loadDefault()
     CodeGUI.initialize 'codemirror'
     PacketHandler.initialize()
-
-    @debugHandler = new DebugHandler()
-    @operationHandler = new OperationHandler()
 
     @isSimulating = false
 
@@ -74,14 +72,35 @@ class @Simulation
           callback()
 
 
+  @start = () =>
+    throw 'already started' if @isSimulating
+    clear()
+    CodeGUI.toggleCodeEditing()
+    @isSimulating = true
+
+    webSocket.trigger "simulateGrid", {
+      code: CodeGUI.getCode()
+      grid: Grid.serialize()
+      vars: CodeGUI.WatchList.get()
+    }
+
   @stop = () =>
     return unless @isSimulating
+    @isSimulating = false
+    clear()
     CodeGUI.toggleCodeEditing()
-    @isSimulating = !@isSimulating
+    webSocket.trigger 'stop'
+
+  clear = () ->
+    CodeGUI.clearHighlighting()
     PacketHandler.clear()
+    Grid.look = null
+    Console.clear()
+
+
 
 jQuery () -> # use jQuery to wait until DOM is ready
-  Simulation.preloadImages () ->
+  Simulation.preloadImages () -> # firefox won't draw without
     Simulation.initialize()
     Simulation.mainLoop()
 

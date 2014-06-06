@@ -97,8 +97,7 @@ class @CodeGUI
     @toggleSetting 'readOnly', true, false
     @toggleSetting 'styleActiveLine', false, true
     @_$CodeMirror.toggleClass 'editing-disabled'
-    Simulation.isSimulating = !Simulation.isSimulating
-    @clearHighlighting() if !Simulation.isSimulating
+    @clearHighlighting()
 
   @getCode = () ->
     @codeMirror.getValue()
@@ -115,18 +114,11 @@ class @CodeGUI
     @codeMirror.removeLineClass(i, 'background', 'processedLine') for i in [0..@codeMirror.lineCount()]
 
   @start = () =>
-    @toggleCodeEditing()
-    webSocket.trigger "simulateGrid", {
-      code: CodeGUI.getCode()
-      grid: Grid.serialize()
-      vars: CodeGUI.WatchList.get()
-    }
+    Simulation.start()
 
   @stop = () =>
-    Simulation.operationHandler.clear()
-    @toggleCodeEditing()
-    Grid.look = null
-    webSocket.trigger "stopSimulation"
+    console.log "Stop!"
+    Simulation.stop()
 
 
 

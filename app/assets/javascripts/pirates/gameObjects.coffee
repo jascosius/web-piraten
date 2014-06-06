@@ -32,7 +32,7 @@ class @GameObject
     @lifeTime++
 
 class @Ship extends GameObject
-  name = "PirateShip"
+  name = "ship"
   GameObject.ALL[name] = Ship
 
   constructor: () ->
@@ -67,13 +67,14 @@ class @Ship extends GameObject
   take: (index) =>
     Grid.deleteObjectWithIndex index
 
-  put: (data) =>
-   if data == "Buoy"
-    Grid.addObject (new Buoy @x, @y)
-   else if data == "Treasure"
-     Grid.addObject (new Treasure @x, @y)
-   else if !data #TODO
-    Utils.logError 'hier ist kein Platz mehr für eine Boje'
+  put: (obj) =>
+   if obj.name == "buoy"
+    Grid.addObject (new Buoy obj)
+   else if obj.name == "treasure"
+     Grid.addObject (new Treasure obj)
+   else
+     console.log obj
+     throw 'invalid object to put'
 
   move: (coord) =>
     @x = coord[0]
@@ -81,7 +82,7 @@ class @Ship extends GameObject
 
 
 class @Buoy extends GameObject
-  name = "Buoy"
+  name = "buoy"
   GameObject.ALL[name] = Buoy
   constructor: () ->
     if arguments.length == 1 # serialized obj
@@ -94,7 +95,7 @@ class @Buoy extends GameObject
     else throw "invalid Buoy constructor call"
 
 class @Wave extends GameObject
-  name = "Wave"
+  name = "wave"
   GameObject.ALL[name] = Wave
   constructor: () ->
     if arguments.length == 1 # serialized obj
@@ -107,7 +108,7 @@ class @Wave extends GameObject
     else throw "invalid Wave constructor call"
 
 class @Treasure extends GameObject
-  name = "Treasure"
+  name = "treasure"
   GameObject.ALL[name] = Treasure
   constructor: () ->
     if arguments.length == 1 # serialized obj
@@ -120,7 +121,7 @@ class @Treasure extends GameObject
     else throw "invalid Treasure constructor call"
 
 class @Monster extends GameObject
-  name = "Monster"
+  name = "monster"
   GameObject.ALL[name] = Monster
   constructor: () ->
     if arguments.length == 1 # serialized obj
