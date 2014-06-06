@@ -10,6 +10,8 @@ class SocketController < WebsocketRails::BaseController
   @@id ||= 0
 
   include Preprocessor
+  include InitializeCommunication
+  include Communication
   include GridSimulation
   include ControlSimulation
 
@@ -44,22 +46,8 @@ class SocketController < WebsocketRails::BaseController
     #}
   end
 
-  def stopSimulation
-    @is_simulation_done = true
-    puts 'stop'
-  end
 
-  def remove_prefix!(string)
-    string.gsub!($prefix, '')
-    string.gsub!($debugprefix, '')
-  end
-
-  def send_packet(packet)
-    if packet != {}
-      puts packet
-      WebsocketRails[:simulation].trigger(:step, packet)
-    end
-  end
+  #####initalize_communication TODO: move to initalize_communication.rb
 
   def set_id
     @@id += 1
@@ -93,7 +81,7 @@ class SocketController < WebsocketRails::BaseController
 
       initialize_timeout(Thread.current, packet)
       vm = initialize_vm(code, packet)
-      communicate_with_vm(vm,packet,code,tracing_vars)
+      communicate_with_vm(vm, packet, code, tracing_vars)
 
     end
   end
@@ -117,7 +105,7 @@ class SocketController < WebsocketRails::BaseController
       vm = TCPSocket.open(@@host, @@port)
     rescue
       puts 'Could not connect to TCPSocket. Start ruby app/vm/vm.rb'
-      exit!(packet, 'Ein interner Fehler ist aufgetreten.')
+        exit!(packet, 'Ein interner Fehler ist aufgetreten.')
     else
 
       #send commands to the server
@@ -132,10 +120,25 @@ class SocketController < WebsocketRails::BaseController
 
       vm
     end
-
   end
 
-  def communicate_with_vm(vm,packet,code,tracing_vars)
+
+  ###communication TODO: move to communication.rb
+
+
+  def remove_prefix!(string)
+    string.gsub!($prefix, '')
+    string.gsub!($debugprefix, '')
+  end
+
+  def send_packet(packet)
+    if packet != {}
+      puts packet
+      WebsocketRails[:simulation].trigger(:step, packet)
+    end
+  end
+
+  def communicate_with_vm(vm, packet, code, tracing_vars)
     old_packet = {}
     loop do
       line = vm.gets

@@ -1,5 +1,10 @@
 module ControlSimulation
 
+  def stopSimulation
+    @is_simulation_done = true
+    puts 'stop'
+  end
+
   def exit!(packet, line='')
     if !@is_simulation_done
       packet[:operations] ||= []
