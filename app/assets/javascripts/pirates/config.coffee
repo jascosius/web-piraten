@@ -4,7 +4,7 @@
   buoyImage: "./assets/buoy.png"
   shipImage: "./assets/ship.png"
   waveImage: "./assets/wave.png"
-  treasureImage: "./assets/treasure.png"
+  treasureImage: "./assets/coins.png"
   monsterImage: "./assets/monster.png"
   getImagesToPreload: () ->
     [

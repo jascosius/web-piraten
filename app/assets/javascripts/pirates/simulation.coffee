@@ -79,7 +79,6 @@ class @Simulation
     CodeGUI.toggleCodeEditing()
     @isSimulating = !@isSimulating
     PacketHandler.clear()
-    Utils.log 'Ausführung beendet!'
 
 jQuery () -> # use jQuery to wait until DOM is ready
   Simulation.preloadImages () ->
