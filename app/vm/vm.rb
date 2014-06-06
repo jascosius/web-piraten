@@ -94,9 +94,9 @@ loop {
               #wait for an answer, when read a question
               if line.include?("#{PREFIX}?")
                 msg = client.gets
-                puts msg
+                puts "Response: #{msg}"
                 #check, if programm is stopped
-                if msg.include?("#{PREFIX}!_stop")
+                if msg.include?('stop')
                   puts 'Ausführung beendet'
                   break
                 else

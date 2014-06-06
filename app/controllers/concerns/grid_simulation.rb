@@ -36,7 +36,7 @@ module GridSimulation
     end
 
     def turn!(packet, direction) # event: ship.left
-      if !@is_simulation_done
+      #todo if !@SocketController.is_simulation_done
         case direction
           when :left
             @rotation = (@rotation - 1) % 4
@@ -47,12 +47,11 @@ module GridSimulation
         end
         packet[:operations] ||= []
         packet[:operations] << {:name => 'turn', :return => @rotation}
-        #WebsocketRails[:operations].trigger(:turn, @ship['rotation'])
-      end
+      #end
     end
 
     def put!(packet, elem) # event: ship.put
-      if !@is_simulation_done
+      #todo if !@SocketController.is_simulation_done
         if @grid.grid[[@x, @y]] == :nothing
           @grid.grid[[@x, @y]] = elem
           packet[:operations] ||= []
@@ -64,11 +63,11 @@ module GridSimulation
           packet[:messages] << {:type => 'warning', :message => 'Es ist kein Platz für ein weiteres Element'}
 
         end
-      end
+      #end
     end
 
     def take!(packet) # event: ship.take
-      if !@is_simulation_done
+      #todo if !@SocketController.is_simulation_done
         elem = @grid.grid[[@x, @y]]
         if elem == :buoy || elem == :treasure
           @grid.grid[[@x, @y]] = :nothing
@@ -81,11 +80,12 @@ module GridSimulation
           packet[:messages] << {:type => 'warning', :message => 'Kein Objekt zum aufnehmen'}
         end
 
-      end
+      #end
     end
 
     def look!(packet, direction) # event: ship.take
-      if !@is_simulation_done
+      puts "#{Thread.current} is_simulation_done #{@is_simulation_done}"
+      #todo if !@SocketController.is_simulation_done
         coord = [@x, @y]
         next_coord = get_next_position
         rotate = @rotation
@@ -126,14 +126,14 @@ module GridSimulation
         end
         packet[:operations] ||= []
         packet[:operations] << {:name => 'look', :return => {:x => coord[0], :y => coord[1]}}
-      else
-        look_obj = :stop
-      end
+      #else
+      #  look_obj = :stop
+      #end
       look_obj
     end
 
     def move!(packet) # event: ship.move
-      if !@is_simulation_done
+      #todo if !@SocketController.is_simulation_done
         coord = get_next_position
         if coords_in_grid(coord)
           @x = coord[0]
@@ -146,7 +146,7 @@ module GridSimulation
           packet[:messages] ||= []
           packet[:messages] << {:type => 'warning', :message => 'Du bist an das Ende der Welt gestoßen'}
         end
-      end
+      #end
     end #TODO Move testet auf Objekte
 
     def coords_in_grid(coord)

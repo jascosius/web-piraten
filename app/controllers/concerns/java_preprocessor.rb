@@ -129,14 +129,16 @@ class JavaPreprocessor < BasePreprocessor
     "      throw new RuntimeException(\"unknown argument\");\n" +
     "    }\n" +
     "    String ret = #{$prefix}readLine();\n" +
-    "    if (ret.contains(\"#{$prefix}!_Buoy\")) {\n" +
+    "    if (ret.contains(\"buoy\")) {\n" +
     "      return \"buoy\";\n" +
-    "    } else if (ret.contains(\"#{$prefix}!_Monster\")) {\n" +
+    "    } else if (ret.contains(\"monster\")) {\n" +
     "      return \"monster\";\n" +
-    "    } else if (ret.contains(\"#{$prefix}!_Treasure\")) {\n" +
+    "    } else if (ret.contains(\"treasure\")) {\n" +
     "      return \"treasure\";\n" +
-    "    } else if (ret.contains(\"#{$prefix}!_Wave\")) {\n" +
+    "    } else if (ret.contains(\"wave\")) {\n" +
     "      return \"wave\";\n" +
+    "    } else if (ret.contains(\"border\")) {\n" +
+    "      return \"border\";\n" +
     "    } else {\n" +
     "      return \"nothing\";\n" +
     "    }\n" +

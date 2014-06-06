@@ -1,24 +1,24 @@
 module ControlSimulation
 
   def stopSimulation
-    @is_simulation_done = true
+    # Todo @SocketController.is_simulation_done = true
     puts 'stop'
   end
 
   def exit!(packet, line='')
-    if !@is_simulation_done
+    #todo if !@SocketController.is_simulation_done
       packet[:operations] ||= []
       packet[:operations] << {:name => 'exit'}
       if line != ''
         print!(packet, :error, line) #add errormessages
       end
       @is_simulation_done = true
-    end
+    #end
 
   end
 
   def print!(packet, type, line)
-    if !@is_simulation_done
+    #todo if !@SocketController.is_simulation_done
       remove_prefix! line
       puts line
       line = CGI::escapeHTML(line)
@@ -34,7 +34,7 @@ module ControlSimulation
       end
       packet[:messages] ||= []
       packet[:messages] << {:type => type, :message => line}
-    end
+    #end
   end
 
   def debug!(packet, line, tracing_vars, old_packet)

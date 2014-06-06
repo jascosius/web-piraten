@@ -9,6 +9,8 @@ class SocketController < WebsocketRails::BaseController
 
   @@id ||= 0
 
+  attr_accessor :is_simulation_done
+
   include Preprocessor
   include InitializeCommunication
   include Communication
@@ -177,15 +179,15 @@ class SocketController < WebsocketRails::BaseController
       elsif line.include? "#{$prefix}take"
         @ship.take!(packet)
       elsif line.include? "#{$prefix}?_look_right"
-        vm.puts "#{$prefix}!_#{@ship.look!(packet, :right)}" # vm.puts "#{$prefix}!_#{look(:right)}"
+        vm.puts @ship.look!(packet, :right) # vm.puts "#{$prefix}!_#{look(:right)}"
       elsif line.include? "#{$prefix}?_look_left"
-        vm.puts "#{$prefix}!_#{@ship.look!(packet, :left)}"
+        vm.puts @ship.look!(packet, :left)
       elsif line.include? "#{$prefix}?_look_back"
-        vm.puts "#{$prefix}!_#{@ship.look!(packet, :back)}"
+        vm.puts @ship.look!(packet, :back)
       elsif line.include? "#{$prefix}?_look_front"
-        vm.puts "#{$prefix}!_#{@ship.look!(packet, :front)}"
+        vm.puts @ship.look!(packet, :front)
       elsif line.include? "#{$prefix}?_look_here"
-        vm.puts "#{$prefix}!_#{@ship.look!(packet, :here)}"
+        vm.puts @ship.look!(packet, :here)
       elsif line.include? "#{$prefix}put_treasure"
         @ship.put!(packet, :treasure)
       elsif line.include? "#{$prefix}put_buoy"

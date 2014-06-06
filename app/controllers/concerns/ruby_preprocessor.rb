@@ -121,15 +121,15 @@ class RubyPreprocessor < BasePreprocessor
         "    else raise(ArgumentError, \"unknown argument\")\n" +
         "  end\n" +
         "  ret = gets\n" +
-        "  if ret.include? \"#{$prefix}!_buoy\"\n" +
+        "  if ret.include? \"buoy\"\n" +
         "    return :buoy\n" +
-        "  elsif ret.include? \"#{$prefix}!_monster\"\n" +
+        "  elsif ret.include? \"monster\"\n" +
         "    return :monster\n" +
-        "  elsif ret.include? \"#{$prefix}!_treasure\"\n" +
+        "  elsif ret.include? \"treasure\"\n" +
         "    return :treasure\n" +
-        "  elsif ret.include? \"#{$prefix}!_wave\"\n" +
+        "  elsif ret.include? \"wave\"\n" +
         "    return :wave\n" +
-        "  elsif ret.include? \"#{$prefix}!_border\"\n" +
+        "  elsif ret.include? \"border\"\n" +
         "    return :border\n" +
         "  else\n" +
         "    return :nothing\n" +
