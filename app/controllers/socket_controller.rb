@@ -77,6 +77,8 @@ class SocketController < WebsocketRails::BaseController
       read_JSON
 
       packet = Hash.new()
+      packet[:id] = @@id
+
       @is_simulation_done = false
 
       initialize_timeout(Thread.current, packet)
@@ -92,8 +94,9 @@ class SocketController < WebsocketRails::BaseController
       sleep(@@timeout)
       if thr.alive?
         puts 'kill'
-        exit!(packet, 'Ausführungszeit wurde überschritten.')
         thr.kill
+        exit!(packet, 'Ausführungszeit wurde überschritten.')
+        send_packet(packet)
       end
     end
   end
@@ -105,7 +108,8 @@ class SocketController < WebsocketRails::BaseController
       vm = TCPSocket.open(@@host, @@port)
     rescue
       puts 'Could not connect to TCPSocket. Start ruby app/vm/vm.rb'
-        exit!(packet, 'Ein interner Fehler ist aufgetreten.')
+      exit!(packet, 'Ein interner Fehler ist aufgetreten.')
+      send_packet(packet)
     else
 
       #send commands to the server
