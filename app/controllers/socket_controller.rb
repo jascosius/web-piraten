@@ -27,16 +27,19 @@ class SocketController < WebsocketRails::BaseController
   # test events for the remote control buttons
 
 
-  def done!(packet)
+  def exit!(packet, type, line='')
     if !@is_simulation_done
       packet[:operations] ||= []
-      packet[:operations] << {name: 'done'}
+      packet[:operations] << {:name => 'exit', :return => type}
+      if line != ''
+        print!(packet, type, line) #add errormessages
+      end
       @is_simulation_done = true
     end
 
   end
 
-  def print!(packet, line, type)
+  def print!(packet, type, line)
     if !@is_simulation_done
       remove_prefix! line
       puts line
@@ -52,8 +55,7 @@ class SocketController < WebsocketRails::BaseController
         end
       end
       packet[:messages] ||= []
-      packet[:messages] << {type: type, message: line}
-      #WebsocketRails[:operations].trigger(:output, new_line)
+      packet[:messages] << {:type => type, :message => line}
     end
   end
 
@@ -74,7 +76,6 @@ class SocketController < WebsocketRails::BaseController
       packet[:allocations] ||= {}
       packet[:allocations][var_name] = var_value
     end
-    #print!(packet, var_name + " ist " + var_value, :log) # TODO implement functional and beautiful method!
   end
 
   def read_JSON
@@ -170,21 +171,21 @@ class SocketController < WebsocketRails::BaseController
             debug!(packet, line, tracing_vars, old_packet)
           elsif line.include? "#{$prefix}end_error"
             line.slice!("#{$prefix}end_error")
-            print!(packet, line, :error)
+            exit!(packet, :error, line)
             break
           elsif line.include? "#{$prefix}end"
-            done!(packet)
+            exit!(packet, :successful)
             break
           elsif line.include? "#{$prefix}stderr_compile"
             line.slice!("#{$prefix}stderr_compile")
             line = postprocess_error_compile(line, code)
             puts line
-            print!(packet, line, :error)
+            exit!(packet, :error, line)
           elsif line.include? "#{$prefix}stderr"
             line.slice!("#{$prefix}stderr")
             line = postprocess_error(line, code)
             puts line
-            print!(packet, line, :error)
+            exit!(packet, :error, line)
           elsif line.include? "#{$prefix}line"
             old_packet = packet.clone
             send_packet!(packet)
@@ -216,7 +217,7 @@ class SocketController < WebsocketRails::BaseController
           elsif line.include? "#{$prefix}put_buoy"
             put!(packet, :buoy)
           elsif !line.chomp.empty?
-            print!(packet, line, :log)
+            print!(packet, :log, line)
           end
         end
         send_packet!(packet)
