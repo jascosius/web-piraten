@@ -15,24 +15,24 @@ loop {
     Thread.start(Thread.current) do |thread|
       sleep(TIMEOUT)
       if thread.alive?
-        puts 'kill'
+        puts msg =  "#{PREFIX}_end_errorDas Programm hat zu lange gebraucht."
+        client.puts msg
         thread.kill
       end
     end
 
     #get commands from client
-    filename = client.gets.chomp #filename for the code
-    compile = client.gets.chomp #command to compile the code
-    execute = client.gets.chomp #command to execute the code
-    compile_error = client.gets.chomp #string to find an compile error in the output of the compiler
-    execute_error = client.gets.chomp #string to find an compile error in the output of the execution (can't find compiled file)
+    puts filename = client.gets.chomp #filename for the code
+    puts compile = client.gets.chomp #command to compile the code
+    puts execute = client.gets.chomp #command to execute the code
+    puts compile_error = client.gets.chomp #string to find an compile error in the output of the compiler
+    puts execute_error = client.gets.chomp #string to find an compile error in the output of the execution (can't find compiled file)
 
 
     #get programmcode from client
     code = ''
     loop do
-      msg = client.gets
-      puts msg
+      puts msg = client.gets
       if msg.include?("#{PREFIX}_EOF") #end of programmcode
         break
       end
@@ -54,12 +54,13 @@ loop {
             loop do
               if pipe.eof?
                 if  compile_error != '' and line.include? compile_error #check if there is a compileerror
-                  client.puts "#{PREFIX}_end_errorFehler beim Compilieren. (Beim Compilieren bemerkt)"
+                  puts msg = "#{PREFIX}_end_errorBeim Compilieren ist ein Fehler aufgetreten."
+                  client.puts msg
                   exec = false
                 end
                 break
               end
-              line = pipe.readline
+              puts line = pipe.readline
               client.puts line
             end
           end
@@ -73,31 +74,32 @@ loop {
             loop do
               if pipe.eof?
                 #tell the client that the execution has finished successful
-                client.puts "#{PREFIX}_end"
+                puts msg = "#{PREFIX}_end"
+                client.puts msg
                 break
               elsif counter > MAX_OPS
                 #tell the client that the execution has finished with errors
-                client.puts "#{PREFIX}_end_errorMaximale Anzahl der Operationen erreicht."
-                puts 'max_ops reached'
+                puts msg = "#{PREFIX}_end_errorDie maximale Anzahl an Operationen wurde erreicht."
+                client.puts msg
                 break
               end
               counter += 1
               line = pipe.readline
-              puts line
               if execute_error != '' and line.include? execute_error #check if the compiled file is found. Maybe not in case of a compileerror
-                client.puts "#{PREFIX}_end_errorFehler beim Compilieren. (Beim Ausführen bemerkt)"
+                puts msg = "#{PREFIX}_end_errorBeim Compilieren ist ein Fehler aufgetreten."
+                client.puts msg
                 break
               end
 
+              puts line
               client.puts line
 
               #wait for an answer, when read a question
               if line.include?("#{PREFIX}_?")
                 msg = client.gets
-                puts "Response: #{msg}"
+                puts msg
                 #check, if programm is stopped
                 if msg.include?('stop')
-                  puts 'Ausführung beendet'
                   break
                 else
                   pipe.write msg

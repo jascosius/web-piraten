@@ -86,7 +86,7 @@ class SocketController < WebsocketRails::BaseController
   def initialize_timeout(thread, packet)
     #Thread to stop the execution after timeout time
     Thread.start(thread) do |thr|
-      sleep(@@timeout)
+      sleep(@@timeout + 3) #add a little because normaly vm triggers timeout
       if thr.alive?
         puts 'kill'
         thr.kill
