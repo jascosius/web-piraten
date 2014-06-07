@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'socket'
 require 'tmpdir'
+require 'open3'
 
 PREFIX = 'CkyUHZVL3q' #have to be the same as in the socket_controller
 TIMEOUT = 5 #have to be the same as in the socket_controller
@@ -15,7 +16,7 @@ loop {
     Thread.start(Thread.current) do |thread|
       sleep(TIMEOUT)
       if thread.alive?
-        puts msg =  "#{PREFIX}_end_errorDas Programm hat zu lange gebraucht."
+        puts msg = "#{PREFIX}_end_errorDas Programm hat zu lange gebraucht."
         client.puts msg
         thread.kill
       end
@@ -49,10 +50,10 @@ loop {
         exec = true
         if compile != ''
           #execute the compilecommand with the right path. add PREFIXstderr_compile to errors
-          IO.popen("(#{compile.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed --unbuffered s/^/#{PREFIX}_stderr_compile/ ) 2>&1", 'r+') do |pipe|
+          Open3.popen2("(#{compile.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed --unbuffered s/^/#{PREFIX}_stderr_compile/ ) 2>&1", 'r+') do |stdin, stdout|
             line = ''
             loop do
-              if pipe.eof?
+              if stdout.eof?
                 if  compile_error != '' and line.include? compile_error #check if there is a compileerror
                   puts msg = "#{PREFIX}_end_errorBeim Compilieren ist ein Fehler aufgetreten."
                   client.puts msg
@@ -60,7 +61,7 @@ loop {
                 end
                 break
               end
-              puts line = pipe.readline
+              puts line = stdout.readline
               client.puts line
             end
           end
@@ -68,11 +69,30 @@ loop {
 
         if exec
           #execute the executecommand with the right path. add PREFIXstderr to errors
-          IO.popen("(#{execute.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed --unbuffered s/^/#{PREFIX}_stderr/ ) 2>&1", 'r+') do |pipe|
-            pipe.sync = true
+          Open3.popen2("(#{execute.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed --unbuffered s/^/#{PREFIX}_stderr/ ) 2>&1") do |stdin, stdout|
+            stdout.sync = true
+
+            # Thread to handel incomming messages
+            Thread.start(Thread.current) do |thread|
+              while thread.alive? do
+                msg = client.gets.chomp
+                puts "Erhalten: #{msg}"
+                if msg.include?('command')
+                  if msg.include?('stop')
+                    thread.kill
+                    break
+                  end
+                elsif msg.include?('response')
+                  stdin.puts msg.slice('response_')
+                else
+                  puts 'Unknown message: no command or response'
+                end
+              end
+            end
+
             counter = 0
             loop do
-              if pipe.eof?
+              if stdout.eof?
                 #tell the client that the execution has finished successful
                 puts msg = "#{PREFIX}_end"
                 client.puts msg
@@ -84,7 +104,7 @@ loop {
                 break
               end
               counter += 1
-              line = pipe.readline
+              line = stdout.readline
               if execute_error != '' and line.include? execute_error #check if the compiled file is found. Maybe not in case of a compileerror
                 puts msg = "#{PREFIX}_end_errorBeim Compilieren ist ein Fehler aufgetreten."
                 client.puts msg
@@ -94,17 +114,6 @@ loop {
               puts line
               client.puts line
 
-              #wait for an answer, when read a question
-              if line.include?("#{PREFIX}_?")
-                msg = client.gets
-                puts msg
-                #check, if programm is stopped
-                if msg.include?('stop')
-                  break
-                else
-                  pipe.write msg
-                end
-              end
             end
           end
         end

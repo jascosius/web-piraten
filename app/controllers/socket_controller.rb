@@ -131,7 +131,7 @@ class SocketController < WebsocketRails::BaseController
   end
 
   def send_packet(packet)
-    if packet != {}
+    if packet.length > 1 #if the packet contains more then a id
       if connection_store[:is_simulation_done]
         puts 'Verbindung beendet'
       else
@@ -180,21 +180,24 @@ class SocketController < WebsocketRails::BaseController
       elsif line.include? "#{$prefix}_take"
         @ship.take!(packet)
       elsif line.include? "#{$prefix}_?_look_right"
-        vm.puts @ship.look!(packet, :right) # vm.puts "#{$prefix}!_#{look(:right)}"
+        vm.puts "response_#{@ship.look!(packet, :right)}" # vm.puts "#{$prefix}!_#{look(:right)}"
       elsif line.include? "#{$prefix}_?_look_left"
-        vm.puts @ship.look!(packet, :left)
+        vm.puts "response_#{@ship.look!(packet, :left)}"
       elsif line.include? "#{$prefix}_?_look_back"
-        vm.puts @ship.look!(packet, :back)
+        vm.puts "response_#{@ship.look!(packet, :back)}"
       elsif line.include? "#{$prefix}_?_look_front"
-        vm.puts @ship.look!(packet, :front)
+        vm.puts "response_#{@ship.look!(packet, :front)}"
       elsif line.include? "#{$prefix}_?_look_here"
-        vm.puts @ship.look!(packet, :here)
+        vm.puts "response_#{@ship.look!(packet, :here)}"
       elsif line.include? "#{$prefix}_put_treasure"
         @ship.put!(packet, :treasure)
       elsif line.include? "#{$prefix}_put_buoy"
         @ship.put!(packet, :buoy)
       elsif !line.chomp.empty?
         print!(packet, :log, line)
+      end
+      if connection_store[:is_simulation_done]
+        vm.puts 'command_stop'
       end
     end
     send_packet(packet)
