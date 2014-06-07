@@ -198,6 +198,7 @@ class SocketController < WebsocketRails::BaseController
       end
       if connection_store[:is_simulation_done]
         vm.puts 'command_stop'
+        break
       end
     end
     send_packet(packet)
