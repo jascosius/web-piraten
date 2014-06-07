@@ -2,7 +2,7 @@
 require 'socket'
 require 'tmpdir'
 
-PREFIX = 'CkyUHZVL3q_' #have to be the same as in the socket_controller
+PREFIX = 'CkyUHZVL3q' #have to be the same as in the socket_controller
 TIMEOUT = 5 #have to be the same as in the socket_controller
 MAX_OPS = 1000 #the maximal counter of ops to execute
 PORT = 12340 #have to be the same as in the socket_controller
@@ -33,7 +33,7 @@ loop {
     loop do
       msg = client.gets
       puts msg
-      if msg.include?("#{PREFIX}EOF") #end of programmcode
+      if msg.include?("#{PREFIX}_EOF") #end of programmcode
         break
       end
       code += msg
@@ -49,12 +49,12 @@ loop {
         exec = true
         if compile != ''
           #execute the compilecommand with the right path. add PREFIXstderr_compile to errors
-          IO.popen("(#{compile.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed --unbuffered s/^/#{PREFIX}stderr_compile/ ) 2>&1", 'r+') do |pipe|
+          IO.popen("(#{compile.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed --unbuffered s/^/#{PREFIX}_stderr_compile/ ) 2>&1", 'r+') do |pipe|
             line = ''
             loop do
               if pipe.eof?
                 if  compile_error != '' and line.include? compile_error #check if there is a compileerror
-                  client.puts "#{PREFIX}end_errorFehler beim Compilieren. (Beim Compilieren bemerkt)"
+                  client.puts "#{PREFIX}_end_errorFehler beim Compilieren. (Beim Compilieren bemerkt)"
                   exec = false
                 end
                 break
@@ -67,17 +67,17 @@ loop {
 
         if exec
           #execute the executecommand with the right path. add PREFIXstderr to errors
-          IO.popen("(#{execute.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed --unbuffered s/^/#{PREFIX}stderr/ ) 2>&1", 'r+') do |pipe|
+          IO.popen("(#{execute.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed --unbuffered s/^/#{PREFIX}_stderr/ ) 2>&1", 'r+') do |pipe|
             pipe.sync = true
             counter = 0
             loop do
               if pipe.eof?
                 #tell the client that the execution has finished successful
-                client.puts "#{PREFIX}end"
+                client.puts "#{PREFIX}_end"
                 break
               elsif counter > MAX_OPS
                 #tell the client that the execution has finished with errors
-                client.puts "#{PREFIX}end_errorMaximale Anzahl der Operationen erreicht."
+                client.puts "#{PREFIX}_end_errorMaximale Anzahl der Operationen erreicht."
                 puts 'max_ops reached'
                 break
               end
@@ -85,14 +85,14 @@ loop {
               line = pipe.readline
               puts line
               if execute_error != '' and line.include? execute_error #check if the compiled file is found. Maybe not in case of a compileerror
-                client.puts "#{PREFIX}end_errorFehler beim Compilieren. (Beim Ausführen bemerkt)"
+                client.puts "#{PREFIX}_end_errorFehler beim Compilieren. (Beim Ausführen bemerkt)"
                 break
               end
 
               client.puts line
 
               #wait for an answer, when read a question
-              if line.include?("#{PREFIX}?")
+              if line.include?("#{PREFIX}_?")
                 msg = client.gets
                 puts "Response: #{msg}"
                 #check, if programm is stopped

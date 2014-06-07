@@ -38,7 +38,7 @@ module ControlSimulation
   end
 
   def debug!(packet, line, tracing_vars, old_packet)
-    index_begin = $debugprefix.length
+    index_begin = "#{$prefix}_debug".length + 1
     index_end = line.index('!')
     index = line[index_begin...index_end].to_i
     var_name = tracing_vars[index].chomp

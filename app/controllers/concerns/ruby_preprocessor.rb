@@ -9,9 +9,9 @@ class RubyPreprocessor < BasePreprocessor
 
   def initialize(attribut)
     super(attribut)
-    @filename = "#{$prefix}code.rb"
+    @filename = "#{$prefix}_code.rb"
     @compile = ''
-    @execute = "ruby $PATH$/#{$prefix}code.rb" #$PATH$ will be replaced
+    @execute = "ruby $PATH$/#{$prefix}_code.rb" #$PATH$ will be replaced
     @compile_error = ''
     @execute_error = ''
   end
@@ -24,15 +24,15 @@ class RubyPreprocessor < BasePreprocessor
     i=1
     codes = ''
     code_msg.each_line do |s|
-      codes += "#{$prefix}line(#{i})\n" # add linefunction for linehighlighting
+      codes += "#{$prefix}_line(#{i})\n" # add linefunction for linehighlighting
       vars.each_with_index do |variable, index|
         unless predefined_methods.include? variable
           codes += "if defined? #{variable} \n" +
-              "  #{$prefix}debug(#{variable}, #{index})\n" +
+              "  #{$prefix}_debug(#{variable}, #{index})\n" +
               "end\n"
         end
       end
-      codes += s.chomp + " # #{$prefix}(#{i+1}#{$prefix})\n" # add linenumber in comment
+      codes += s.chomp + " # #{$prefix}_(#{i+1}#{$prefix}_)\n" # add linenumber in comment
       i += 1
     end
     insert_logic + codes + "\n"
@@ -54,10 +54,10 @@ class RubyPreprocessor < BasePreprocessor
       new_line = '' #Set a result string
       code.each_line() do |l| #search in the executed code for the right line. In every line is a comment with the original linenumber
         if i == line_number.to_i #find the line from the errormessage
-          line_begin=l.index("#{$prefix}(") #find the begin of the original linenumber in the comment
-          line_end=l.index("#{$prefix})") #find the end of the original linenumber in the comment
+          line_begin=l.index("#{$prefix}_(") #find the begin of the original linenumber in the comment
+          line_end=l.index("#{$prefix}_)") #find the end of the original linenumber in the comment
           if line_begin and line_end #found something?
-            new_line = l[line_begin+"#{$prefix}(".length...line_end] #Set the new linenumber to the number in the comment
+            new_line = l[line_begin+"#{$prefix}_(".length...line_end] #Set the new linenumber to the number in the comment
           end
         end
         i += 1
@@ -84,40 +84,40 @@ class RubyPreprocessor < BasePreprocessor
     "# -*- encoding : utf-8 -*-\n" +
         "$stdout.sync = true\n" +
         "$stderr.sync = true\n" +
-        "def #{$prefix}debug(var, ind)\n" +
-        "  puts \"\n#{$debugprefix}\#{ind}!\#{var}\" \n" +
+        "def #{$prefix}_debug(var, ind)\n" +
+        "  puts \"\n#{$prefix}_debug_\#{ind}!\#{var}\" \n" +
         "end\n" +
         "def move\n" +
-        "  puts \"#{$prefix}move\"\n" +
+        "  puts \"#{$prefix}_move\"\n" +
         "end\n" +
         "def turn(dir = :back)\n" +
         "  case dir\n"+
-        "    when :right then puts \"#{$prefix}turn_right\"\n" +
-        "    when :left then puts \"#{$prefix}turn_left\"\n" +
-        "    when :back then puts \"#{$prefix}turn_back\"\n" +
+        "    when :right then puts \"#{$prefix}_turn_right\"\n" +
+        "    when :left then puts \"#{$prefix}_turn_left\"\n" +
+        "    when :back then puts \"#{$prefix}_turn_back\"\n" +
         "    else raise(ArgumentError, \"unknown argument\")\n" +
         "  end\n"+
         "end\n" +
         "def put(elem = :buoy)\n" +
         "  case elem\n"+
-        "    when :buoy then puts \"#{$prefix}put_buoy\"\n"+
-        "    when :treasure then puts \"#{$prefix}put_treasure\"\n"+
+        "    when :buoy then puts \"#{$prefix}_put_buoy\"\n"+
+        "    when :treasure then puts \"#{$prefix}_put_treasure\"\n"+
         "    else raise(ArgumentError, \"unknown argument\")\n" +
         "  end\n"+
         "end\n" +
         "def take\n" +
-        "  puts \"#{$prefix}take\"\n" +
+        "  puts \"#{$prefix}_take\"\n" +
         "end\n" +
-        "def #{$prefix}line(i)\n" +
-        "  puts \"\\n#{$prefix}line!\#{i}\"\n" +
+        "def #{$prefix}_line(i)\n" +
+        "  puts \"\\n#{$prefix}_line!\#{i}\"\n" +
         "end\n" +
         "def look(dir = :here)\n" +
         "  case dir\n" +
-        "    when :right then puts \"#{$prefix}?_look_right\"\n" +
-        "    when :left then puts \"#{$prefix}?_look_left\"\n" +
-        "    when :here then puts \"#{$prefix}?_look_here\"\n" +
-        "    when :back then puts \"#{$prefix}?_look_back\"\n" +
-        "    when :front then puts \"#{$prefix}?_look_front\"\n"+
+        "    when :right then puts \"#{$prefix}_?_look_right\"\n" +
+        "    when :left then puts \"#{$prefix}_?_look_left\"\n" +
+        "    when :here then puts \"#{$prefix}_?_look_here\"\n" +
+        "    when :back then puts \"#{$prefix}_?_look_back\"\n" +
+        "    when :front then puts \"#{$prefix}_?_look_front\"\n"+
         "    else raise(ArgumentError, \"unknown argument\")\n" +
         "  end\n" +
         "  ret = gets\n" +

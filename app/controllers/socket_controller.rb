@@ -1,8 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 class SocketController < WebsocketRails::BaseController
-  $prefix = 'CkyUHZVL3q_'
-  $debugprefix = 'BvDpuDu4Be_'
+  $prefix = 'CkyUHZVL3q'
   @@timeout = 5 #timeout time for the programm to execute
   @@port = 12340 #port to connect to the vm
   @@host = 'localhost' #host to connect to the vm
@@ -61,7 +60,7 @@ class SocketController < WebsocketRails::BaseController
     code = preprocess_code(message[:code], language, tracing_vars)
 
     #add EOF to show Wrapper the end of the code
-    code += "\n#{$prefix}EOF\n"
+    code += "\n#{$prefix}_EOF\n"
 
     start_simulation(code, tracing_vars)
 
@@ -129,8 +128,8 @@ class SocketController < WebsocketRails::BaseController
 
 
   def remove_prefix!(string)
+    string.gsub!("#{$prefix}_", '')
     string.gsub!($prefix, '')
-    string.gsub!($debugprefix, '')
   end
 
   def send_packet(packet)
@@ -144,53 +143,53 @@ class SocketController < WebsocketRails::BaseController
     old_packet = {}
     loop do
       line = vm.gets
-      if  line.include? "#{$debugprefix}"
+      if  line.include? "#{$prefix}_debug"
         debug!(packet, line, tracing_vars, old_packet)
-      elsif line.include? "#{$prefix}end_error"
-        line.slice!("#{$prefix}end_error")
+      elsif line.include? "#{$prefix}_end_error"
+        line.slice!("#{$prefix}_end_error")
         exit!(packet, line)
         break
-      elsif line.include? "#{$prefix}end"
+      elsif line.include? "#{$prefix}_end"
         exit!(packet)
         break
-      elsif line.include? "#{$prefix}stderr_compile"
-        line.slice!("#{$prefix}stderr_compile")
+      elsif line.include? "#{$prefix}_stderr_compile"
+        line.slice!("#{$prefix}_stderr_compile")
         line = postprocess_error_compile(line, code)
         print!(packet, :error, line)
-      elsif line.include? "#{$prefix}stderr"
-        line.slice!("#{$prefix}stderr")
+      elsif line.include? "#{$prefix}_stderr"
+        line.slice!("#{$prefix}_stderr")
         line = postprocess_error(line, code)
         puts line
         print!(packet, :error, line)
-      elsif line.include? "#{$prefix}line"
+      elsif line.include? "#{$prefix}_line"
         old_packet = packet.clone
         send_packet(packet)
         packet.clear
         packet[:id] = @@id
         packet[:line] = line.split('!')[1].to_i #send_line line.split('!')[1].to_i
-      elsif line.include? "#{$prefix}turn_right"
+      elsif line.include? "#{$prefix}_turn_right"
         @ship.turn!(packet, :right) #rotate_ship(:right)
-      elsif line.include? "#{$prefix}turn_left"
+      elsif line.include? "#{$prefix}_turn_left"
         @ship.turn!(packet, :left)
-      elsif line.include? "#{$prefix}turn_back"
+      elsif line.include? "#{$prefix}_turn_back"
         @ship.turn!(packet, :back)
-      elsif line.include? "#{$prefix}move"
+      elsif line.include? "#{$prefix}_move"
         @ship.move!(packet)
-      elsif line.include? "#{$prefix}take"
+      elsif line.include? "#{$prefix}_take"
         @ship.take!(packet)
-      elsif line.include? "#{$prefix}?_look_right"
+      elsif line.include? "#{$prefix}_?_look_right"
         vm.puts @ship.look!(packet, :right) # vm.puts "#{$prefix}!_#{look(:right)}"
-      elsif line.include? "#{$prefix}?_look_left"
+      elsif line.include? "#{$prefix}_?_look_left"
         vm.puts @ship.look!(packet, :left)
-      elsif line.include? "#{$prefix}?_look_back"
+      elsif line.include? "#{$prefix}_?_look_back"
         vm.puts @ship.look!(packet, :back)
-      elsif line.include? "#{$prefix}?_look_front"
+      elsif line.include? "#{$prefix}_?_look_front"
         vm.puts @ship.look!(packet, :front)
-      elsif line.include? "#{$prefix}?_look_here"
+      elsif line.include? "#{$prefix}_?_look_here"
         vm.puts @ship.look!(packet, :here)
-      elsif line.include? "#{$prefix}put_treasure"
+      elsif line.include? "#{$prefix}_put_treasure"
         @ship.put!(packet, :treasure)
-      elsif line.include? "#{$prefix}put_buoy"
+      elsif line.include? "#{$prefix}_put_buoy"
         @ship.put!(packet, :buoy)
       elsif !line.chomp.empty?
         print!(packet, :log, line)
