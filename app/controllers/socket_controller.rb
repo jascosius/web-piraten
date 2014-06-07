@@ -8,8 +8,6 @@ class SocketController < WebsocketRails::BaseController
 
   @@id ||= 0
 
-  attr_accessor :is_simulation_done
-
   include Preprocessor
   include InitializeCommunication
   include Communication
@@ -76,7 +74,7 @@ class SocketController < WebsocketRails::BaseController
       packet = Hash.new()
       packet[:id] = @@id
 
-      @is_simulation_done = false
+      connection_store[:is_simulation_done] = false
 
       initialize_timeout(Thread.current, packet)
       vm = initialize_vm(code, packet)
@@ -134,8 +132,12 @@ class SocketController < WebsocketRails::BaseController
 
   def send_packet(packet)
     if packet != {}
-      puts packet
-      WebsocketRails[:simulation].trigger(:step, packet)
+      if connection_store[:is_simulation_done]
+        puts 'Verbindung beendet'
+      else
+        puts packet
+        WebsocketRails[:simulation].trigger(:step, packet)
+      end
     end
   end
 
