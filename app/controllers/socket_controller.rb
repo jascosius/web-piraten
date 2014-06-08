@@ -149,8 +149,6 @@ class SocketController < WebsocketRails::BaseController
   end
 
   def search_and_execute_function(functions, array)
-
-
     functions.each do |key, value|
       if key.to_s == array[0]
         value.call(*array[1..-1])
