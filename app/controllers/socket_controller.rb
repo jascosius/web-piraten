@@ -148,7 +148,19 @@ class SocketController < WebsocketRails::BaseController
     packet[:line] = number #line.split('!')[1].to_i
   end
 
-  def search_and_execute_function(array)
+  def search_and_execute_function(functions, array)
+
+
+    functions.each do |key, value|
+      if key.to_s == array[0]
+        value.call(*array[1..-1])
+      end
+    end
+  end
+
+  def communicate_with_vm(vm, packet, code, tracing_vars)
+    old_allocations = {}
+
     functions = {:move => lambda { @ship.move!(packet) },
                  :turn => lambda { |dir| @ship.turn!(packet, dir.to_sym) },
                  :put => lambda { |obj| @ship.put!(packet, obj.to_sym) },
@@ -161,27 +173,15 @@ class SocketController < WebsocketRails::BaseController
                  :stderrcompile => lambda { |*msg| print!(packet, :error, postprocess_error_compile(msg.join('_'), code)) },
                  :stderr => lambda { |*msg| print!(packet, :error, postprocess_error(msg.join('_'), code)) }}
 
-    functions.each do |key, value|
-      if key.to_s == array[0]
-        value.call(*array[1..-1])
-      end
-    end
-  end
-
-  def communicate_with_vm(vm, packet, code, tracing_vars)
-    old_allocations = {}
-
-
-
     loop do
       line = vm.gets.chomp
       unless line.empty?
         if line[0...$prefix.length] == $prefix
           array = line.split('_') #a command looks like $prefix_function_params or $prefix_?_function_params
           if array[1] == '?' #is the command a question?
-            vm.puts "response_#{search_and_execute_function(array[2..-1])}" #when there is a ?, the vm expects a response
+            vm.puts "response_#{search_and_execute_function(functions, array[2..-1])}" #when there is a ?, the vm expects a response
           else
-            search_and_execute_function(array[1..-1])
+            search_and_execute_function(functions, array[1..-1])
           end
         else
           print!(packet, :log, line) #without $prefix this must be a print from the user
