@@ -152,6 +152,7 @@ class SocketController < WebsocketRails::BaseController
     functions.each do |key, value|
       if key.to_s == array[0]
         value.call(*array[1..-1])
+        break
       end
     end
   end
@@ -159,17 +160,18 @@ class SocketController < WebsocketRails::BaseController
   def communicate_with_vm(vm, packet, code, tracing_vars)
     old_allocations = {}
 
-    functions = {:move => lambda { @ship.move!(packet) },
+    functions = {:line => lambda { |number| new_line(packet, number) },
+                 :debug => lambda { |name_index, *value| debug!(packet, tracing_vars, old_allocations, name_index.to_i, value.join('_')) }, #the value can contain _, with must be joint again
+                 :move => lambda { @ship.move!(packet) },
                  :turn => lambda { |dir| @ship.turn!(packet, dir.to_sym) },
                  :put => lambda { |obj| @ship.put!(packet, obj.to_sym) },
                  :take => lambda { @ship.take!(packet) },
                  :look => lambda { |dir| @ship.look!(packet, dir.to_sym) },
-                 :debug => lambda { |name_index, *value| debug!(packet, tracing_vars, old_allocations, name_index.to_i, value.join('_')) }, #the value can contain _, with must be joint again
-                 :line => lambda { |number| new_line(packet, number) },
-                 :enderror => lambda { |*msg| exit!(packet, msg.join('_')) },
-                 :end => lambda { exit!(packet) },
+                 :stderr => lambda { |*msg| print!(packet, :error, postprocess_error(msg.join('_'), code)) },
                  :stderrcompile => lambda { |*msg| print!(packet, :error, postprocess_error_compile(msg.join('_'), code)) },
-                 :stderr => lambda { |*msg| print!(packet, :error, postprocess_error(msg.join('_'), code)) }}
+                 :end => lambda { exit!(packet) },
+                 :enderror => lambda { |*msg| exit!(packet, msg.join('_')) }}
+
 
     loop do
       line = vm.gets.chomp
