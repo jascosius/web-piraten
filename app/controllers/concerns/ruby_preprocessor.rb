@@ -52,7 +52,7 @@ class RubyPreprocessor < BasePreprocessor
       line_number = line[index_begin+1...index_line_end] #get the linenumber between the two :
       i = 1 #Set a counter
       new_line = '' #Set a result string
-      code.each_line() do |l| #search in the executed code for the right line. In every line is a comment with the original linenumber
+      code.each_line do |l| #search in the executed code for the right line. In every line is a comment with the original linenumber
         if i == line_number.to_i #find the line from the errormessage
           line_begin=l.index("#{$prefix}_(") #find the begin of the original linenumber in the comment
           line_end=l.index("#{$prefix}_)") #find the end of the original linenumber in the comment
@@ -85,7 +85,7 @@ class RubyPreprocessor < BasePreprocessor
         "$stdout.sync = true\n" +
         "$stderr.sync = true\n" +
         "def #{$prefix}_debug(var, ind)\n" +
-        "  puts \"\n#{$prefix}_debug_\#{ind}!\#{var}\" \n" +
+        "  puts \"\n#{$prefix}_debug_\#{ind}_\#{var}\" \n" +
         "end\n" +
         "def move\n" +
         "  puts \"#{$prefix}_move\"\n" +
@@ -109,7 +109,7 @@ class RubyPreprocessor < BasePreprocessor
         "  puts \"#{$prefix}_take\"\n" +
         "end\n" +
         "def #{$prefix}_line(i)\n" +
-        "  puts \"\\n#{$prefix}_line!\#{i}\"\n" +
+        "  puts \"\\n#{$prefix}_line_\#{i}\"\n" +
         "end\n" +
         "def look(dir = :here)\n" +
         "  case dir\n" +

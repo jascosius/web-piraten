@@ -105,7 +105,7 @@ class JavaPreprocessor < BasePreprocessor
     "  }\n" +
 
     "  public void #{$prefix}_line(int i) {\n" +
-    "    System.out.println(\"#{$prefix}_line!\" + i);\n" +
+    "    System.out.println(\"#{$prefix}_line_\" + i);\n" +
     "  }\n" +
 
     "  public String look(String dir) {\n" +

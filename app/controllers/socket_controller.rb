@@ -141,67 +141,54 @@ class SocketController < WebsocketRails::BaseController
     end
   end
 
+  def new_line(packet, number)
+    send_packet(packet)
+    packet.clear
+    packet[:id] = @@id
+    packet[:line] = number #line.split('!')[1].to_i
+  end
+
+  def search_and_execute_function(functions, array)
+    functions.each do |key, value|
+      if key.to_s == array[0]
+        value.call(*array[1..-1])
+      end
+    end
+  end
+
   def communicate_with_vm(vm, packet, code, tracing_vars)
-    old_packet = {}
+    old_allocations = {}
+
+    functions = {:move => lambda { @ship.move!(packet) },
+                 :turn => lambda { |dir| @ship.turn!(packet, dir.to_sym) },
+                 :put => lambda { |obj| @ship.put!(packet, obj.to_sym) },
+                 :take => lambda { @ship.take!(packet) },
+                 :look => lambda { |dir| @ship.look!(packet, dir.to_sym) },
+                 :debug => lambda { |name_index, *value| debug!(packet, tracing_vars, old_allocations, name_index.to_i, value.join('_')) }, #the value can contain _, with must be joint again
+                 :line => lambda { |number| new_line(packet, number) },
+                 :enderror => lambda { |*msg| exit!(packet, msg.join('_')) },
+                 :end => lambda { exit!(packet) },
+                 :stderrcompile => lambda { |*msg| print!(packet, :error, postprocess_error_compile(msg.join('_'), code)) },
+                 :stderr => lambda { |*msg| print!(packet, :error, postprocess_error(msg.join('_'), code)) }}
+
     loop do
-      line = vm.gets
-      if  line.include? "#{$prefix}_debug"
-        debug!(packet, line, tracing_vars, old_packet)
-      elsif line.include? "#{$prefix}_end_error"
-        line.slice!("#{$prefix}_end_error")
-        exit!(packet, line)
-        break
-      elsif line.include? "#{$prefix}_end"
-        exit!(packet)
-        break
-      elsif line.include? "#{$prefix}_stderr_compile"
-        line.slice!("#{$prefix}_stderr_compile")
-        line = postprocess_error_compile(line, code)
-        print!(packet, :error, line)
-      elsif line.include? "#{$prefix}_stderr"
-        line.slice!("#{$prefix}_stderr")
-        line = postprocess_error(line, code)
-        puts line
-        print!(packet, :error, line)
-      elsif line.include? "#{$prefix}_line"
-        old_packet = packet.clone
-        send_packet(packet)
-        packet.clear
-        packet[:id] = @@id
-        packet[:line] = line.split('!')[1].to_i #send_line line.split('!')[1].to_i
-      elsif line.include? "#{$prefix}_turn_right"
-        @ship.turn!(packet, :right) #rotate_ship(:right)
-      elsif line.include? "#{$prefix}_turn_left"
-        @ship.turn!(packet, :left)
-      elsif line.include? "#{$prefix}_turn_back"
-        @ship.turn!(packet, :back)
-      elsif line.include? "#{$prefix}_move"
-        @ship.move!(packet)
-      elsif line.include? "#{$prefix}_take"
-        @ship.take!(packet)
-      elsif line.include? "#{$prefix}_?_look_right"
-        vm.puts "response_#{@ship.look!(packet, :right)}" # vm.puts "#{$prefix}!_#{look(:right)}"
-      elsif line.include? "#{$prefix}_?_look_left"
-        vm.puts "response_#{@ship.look!(packet, :left)}"
-      elsif line.include? "#{$prefix}_?_look_back"
-        vm.puts "response_#{@ship.look!(packet, :back)}"
-      elsif line.include? "#{$prefix}_?_look_front"
-        vm.puts "response_#{@ship.look!(packet, :front)}"
-      elsif line.include? "#{$prefix}_?_look_here"
-        vm.puts "response_#{@ship.look!(packet, :here)}"
-      elsif line.include? "#{$prefix}_put_treasure"
-        @ship.put!(packet, :treasure)
-      elsif line.include? "#{$prefix}_put_buoy"
-        @ship.put!(packet, :buoy)
-      elsif !line.chomp.empty?
-        print!(packet, :log, line)
+      line = vm.gets.chomp
+      unless line.empty?
+        if line[0...$prefix.length] == $prefix
+          array = line.split('_') #a command looks like $prefix_function_params or $prefix_?_function_params
+          if array[1] == '?' #is the command a question?
+            vm.puts "response_#{search_and_execute_function(functions, array[2..-1])}" #when there is a ?, the vm expects a response
+          else
+            search_and_execute_function(functions, array[1..-1])
+          end
+        else
+          print!(packet, :log, line) #without $prefix this must be a print from the user
+        end
       end
       if connection_store[:is_simulation_done]
         vm.puts 'command_stop'
         break
       end
     end
-    send_packet(packet)
   end
-
 end

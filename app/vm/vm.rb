@@ -16,7 +16,7 @@ loop {
     Thread.start(Thread.current) do |thread|
       sleep(TIMEOUT)
       if thread.alive?
-        puts msg = "#{PREFIX}_end_errorDas Programm hat zu lange gebraucht."
+        puts msg = "#{PREFIX}_enderror_Das Programm hat zu lange gebraucht."
         client.puts msg
         thread.kill
       end
@@ -50,12 +50,12 @@ loop {
         exec = true
         if compile != ''
           #execute the compilecommand with the right path. add PREFIXstderr_compile to errors
-          Open3.popen2("(#{compile.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed --unbuffered s/^/#{PREFIX}_stderr_compile/ ) 2>&1", 'r+') do |stdin, stdout|
+          Open3.popen2("(#{compile.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed --unbuffered s/^/#{PREFIX}_stderrcompile_/ ) 2>&1", 'r+') do |stdin, stdout|
             line = ''
             loop do
               if stdout.eof?
                 if  compile_error != '' and line.include? compile_error #check if there is a compileerror
-                  puts msg = "#{PREFIX}_end_errorBeim Compilieren ist ein Fehler aufgetreten."
+                  puts msg = "#{PREFIX}_enderror_Beim Compilieren ist ein Fehler aufgetreten."
                   client.puts msg
                   exec = false
                 end
@@ -69,7 +69,7 @@ loop {
 
         if exec
           #execute the executecommand with the right path. add PREFIXstderr to errors
-          Open3.popen2("(#{execute.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed --unbuffered s/^/#{PREFIX}_stderr/ ) 2>&1") do |stdin, stdout|
+          Open3.popen2("(#{execute.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed --unbuffered s/^/#{PREFIX}_stderr_/ ) 2>&1") do |stdin, stdout|
             stdout.sync = true
 
             # Thread to handel incomming messages
@@ -99,14 +99,14 @@ loop {
                 break
               elsif counter > MAX_OPS
                 #tell the client that the execution has finished with errors
-                puts msg = "#{PREFIX}_end_errorDie maximale Anzahl an Operationen wurde erreicht."
+                puts msg = "#{PREFIX}_enderror_Die maximale Anzahl an Operationen wurde erreicht."
                 client.puts msg
                 break
               end
               counter += 1
               line = stdout.readline
               if execute_error != '' and line.include? execute_error #check if the compiled file is found. Maybe not in case of a compileerror
-                puts msg = "#{PREFIX}_end_errorBeim Compilieren ist ein Fehler aufgetreten."
+                puts msg = "#{PREFIX}_enderror_Beim Compilieren ist ein Fehler aufgetreten."
                 client.puts msg
                 break
               end
