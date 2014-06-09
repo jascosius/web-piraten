@@ -173,11 +173,11 @@ class SocketController < WebsocketRails::BaseController
                  :enderror => lambda { |*msg| exit!(packet, msg.join('_')) }}
 
 
-    loop do
+    until connection_store[:is_simulation_done]
       line = vm.gets.chomp
       unless line.empty?
-        if line[0...$prefix.length] == $prefix
-          array = line.split('_') #a command looks like $prefix_function_params or $prefix_?_function_params
+        array = line.split('_') #a command looks like $prefix_function_params or $prefix_?_function_params
+        if array[0] == $prefix #is the line a command?
           if array[1] == '?' #is the command a question?
             vm.puts "response_#{search_and_execute_function(functions, array[2..-1])}" #when there is a ?, the vm expects a response
           else
@@ -187,10 +187,7 @@ class SocketController < WebsocketRails::BaseController
           print!(packet, :log, line) #without $prefix this must be a print from the user
         end
       end
-      if connection_store[:is_simulation_done]
-        vm.puts 'command_stop'
-        break
-      end
     end
+    vm.puts 'command_stop'
   end
 end
