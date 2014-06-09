@@ -13,13 +13,13 @@ module GridSimulation
         x = obj['x']
         y = obj['y']
         case obj['name']
-          when 'Monster'
+          when 'monster'
             @grid[[x, y]] = :monster
-          when 'Buoy'
+          when 'buoy'
             @grid[[x, y]] = :buoy
-          when 'Treasure'
+          when 'treasure'
             @grid[[x, y]] = :treasure
-          when 'Wave'
+          when 'wave'
             @grid[[x, y]] = :wave
         end
       }
