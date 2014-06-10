@@ -132,7 +132,7 @@ module GridSimulation
             packet[:messages] << {:type => 'warning', :message => 'Du wolltest in unruhige Gewässer fahren'}
           when :monster
             packet[:operations] ||= []
-            packet[:operations] << {:name => 'move'}
+            packet[:operations] << {:name => 'exit'}
             packet[:messages] ||= []
             packet[:messages] << {:type => 'error', :message => 'Du bist auf einen Kraken gefahren'}
           else
