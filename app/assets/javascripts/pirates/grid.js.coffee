@@ -46,18 +46,25 @@ class @Grid
   @addObject = (obj) ->
     @objects.push(obj)
 
-#  @deleteObject = (obj) ->
-#    if obj != false
-#      newObjects = []
-#      for gameObject in @objects
-#        if gameObject != obj
-#          newObjects.push(gameObject)
-#      @objects = newObjects
-
   @deleteObjectWithIndex = (index) ->
     if index != false
       @objects.splice index, 1
 
+  @deleteObject = (obj) =>
+    if !obj?
+      throw 'object to delete is undefined!'
+    found = false
+    newObjects = []
+    for i in [0...@objects.length]
+      current = @objects[i]
+      unless current.isEqual obj
+        newObjects.push current
+      else
+        found = true
+    @objects = newObjects
+    if not found
+      console.log 'unknown object', obj
+      throw 'could not delete object from grid'
 
   @isInCanvas = (coords) =>
     coords.x >= 0 && coords.y >= 0 && coords.x < @canvasWidth && coords.y < @canvasHeight

@@ -77,7 +77,6 @@ class @Simulation
     clear()
     CodeGUI.toggleCodeEditing()
     @isSimulating = true
-
     webSocket.trigger "simulateGrid", {
       code: CodeGUI.getCode()
       grid: Grid.serialize()
@@ -95,7 +94,7 @@ class @Simulation
     CodeGUI.clearHighlighting()
     PacketHandler.clear()
     Grid.look = null
-    Console.clear()
+    #Console.clear() #TODO
 
 
 

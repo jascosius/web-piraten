@@ -25,8 +25,9 @@ class @CodeGUI
     @codeMirror.on  "focus", () => @isInEditor = true
     @codeMirror.on 'dblclick', @onDoubleClick
 
-    $("#runBtn").click @start
-    $("#stopBtn").click @stop
+    $('#runBtn').click @start
+    $('#stopBtn').click @stop
+    $('#clearConsoleBtn').click () -> Console.clear()
 
     $('#codeMirror-loading').hide()
 

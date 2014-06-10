@@ -126,7 +126,7 @@ class @PacketHandler extends ChannelHandler
   simulateMessages = (packet) ->
     messages = packet.messages
     validateArray "messages", messages
-
+    console.log packet
     for messageObj in messages
       switch messageObj.type
         when 'log' then Console.log messageObj.message
@@ -140,11 +140,14 @@ class @PacketHandler extends ChannelHandler
     Grid.look = null
 
     currentPacket = @packetQueue.shift()
-
+    console.log currentPacket
     if @currentId is not currentPacket.id
       console.log 'skipped packet that seems to be old', currentPacket
       return
-    simulateOperation currentPacket if currentPacket.operations?
+
     simulateLine currentPacket if currentPacket.line
     simulateAllocations currentPacket if currentPacket.allocations?
     simulateMessages currentPacket if currentPacket.messages?
+
+    # simulate operations last so that errors in there do not interfere with messages
+    simulateOperation currentPacket if currentPacket.operations?

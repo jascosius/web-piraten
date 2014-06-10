@@ -21,6 +21,17 @@ class @GameObject
     @lifeTime = 0
 
 
+  isEqual: (other) =>
+    if !other?
+      return false
+    if !other.name? || other.name != @name
+      return false
+    if !other.x? || other.x != @x
+      return false
+    if !other.y? || other.y != @y
+      return false
+    return true
+
   serialize: () =>
     {
       name: @name
@@ -64,8 +75,9 @@ class @Ship extends GameObject
     obj.rotation = @rotation
     return obj
 
-  take: (index) =>
-    Grid.deleteObjectWithIndex index
+  take: (takenObj) =>
+    if takenObj? and takeObj.name in ['treasure', 'buoy']
+      Grid.deleteObject takenObj
 
   put: (obj) =>
    if obj.name == "buoy"
@@ -80,6 +92,11 @@ class @Ship extends GameObject
     @x = coord[0]
     @y = coord[1]
 
+
+  isEqual: (other) =>
+    if !super.isEqual(other) || !other.rotation? || other.rotation == @rotation
+      return false
+    return true
 
 class @Buoy extends GameObject
   name = "buoy"
