@@ -123,10 +123,25 @@ module GridSimulation
     def move!(packet) # event: ship.move
       coord = get_next_position
       if coords_in_grid(coord)
-        @x = coord[0]
-        @y = coord[1]
-        packet[:operations] ||= []
-        packet[:operations] << {:name => 'move', :return => coord}
+        elem = @grid.grid[[coord[0], coord[1]]]
+        case elem
+          when :wave
+            packet[:operations] ||= []
+            packet[:operations] << {:name => 'move'}
+            packet[:messages] ||= []
+            packet[:messages] << {:type => 'warning', :message => 'Du wolltest in unruhige Gewässer fahren'}
+          when :monster
+            packet[:operations] ||= []
+            packet[:operations] << {:name => 'move'}
+            packet[:messages] ||= []
+            packet[:messages] << {:type => 'error', :message => 'Du bist auf einen Kraken gefahren'}
+          else
+            @x = coord[0]
+            @y = coord[1]
+            packet[:operations] ||= []
+            packet[:operations] << {:name => 'move', :return => {:x => coord[0], :y => coord[1]}}
+        end
+
       else
         packet[:operations] ||= []
         packet[:operations] << {:name => 'move'}
