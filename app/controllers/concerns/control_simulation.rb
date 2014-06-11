@@ -1,11 +1,7 @@
 module ControlSimulation
 
-  def stop
-    puts 'stop'
-    connection_store[:is_simulation_done] = true
-  end
-
-  def exit!(packet, line='')
+  def exit_simulation!(packet, line='')
+    send_packet(packet)
     packet[:operations] ||= []
     packet[:operations] << {:name => 'exit'}
     if line != ''
