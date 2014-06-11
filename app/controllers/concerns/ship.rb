@@ -85,7 +85,7 @@ class Ship
     if coords_in_grid(coord) == false
       look_obj = :border
     else
-      look_obj = @grid.grid[[@x, @y]]
+      look_obj = @grid.grid[coord]
     end
     packet[:operations] ||= []
     packet[:operations] << {:name => 'look', :return => {:x => coord[0], :y => coord[1]}}

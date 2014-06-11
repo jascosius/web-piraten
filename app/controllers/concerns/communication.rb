@@ -25,10 +25,8 @@ module Communication
 
   def search_and_execute_function(functions, array)
     functions.each do |key, value|
-
       if key.to_s == array[0]
-        value.call(*array[1..-1])
-        break
+        return value.call(*array[1..-1])
       end
     end
   end
@@ -42,7 +40,7 @@ module Communication
                  :turn => lambda { |dir| @ship.turn!(packet, dir.to_sym) },
                  :put => lambda { |obj| @ship.put!(packet, obj.to_sym) },
                  :take => lambda { @ship.take!(packet) },
-                 :look => lambda { |dir| @ship.look!(packet, dir.to_sym) },
+                 :look => lambda { |dir| @ship.look!(packet, dir.to_sym)},
                  :stderr => lambda { |*msg| print!(packet, :error, postprocess_error(msg.join('_'), code)) },
                  :stderrcompile => lambda { |*msg| print!(packet, :error, postprocess_error_compile(msg.join('_'), code)) },
                  :end => lambda { exit_simulation!(packet) },
