@@ -3,6 +3,7 @@
 #= require codemirror/addons/selection/active-line
 #= require codemirror/modes/ruby
 #= require codemirror/keymaps/sublime
+#= require jquery.ui.effect.js
 #= require ./config
 #= require ./utilities
 #= require ./console
@@ -77,6 +78,7 @@ class @Simulation
     clear()
     CodeGUI.toggleCodeEditing()
     @isSimulating = true
+    Console.clear()
     webSocket.trigger "simulateGrid", {
       code: CodeGUI.getCode()
       grid: Grid.serialize()
@@ -84,7 +86,7 @@ class @Simulation
     }
 
   @stop = () =>
-    return unless @isSimulating
+    throw 'already stopped' unless @isSimulating
     @isSimulating = false
     clear()
     CodeGUI.toggleCodeEditing()
@@ -94,7 +96,6 @@ class @Simulation
     CodeGUI.clearHighlighting()
     PacketHandler.clear()
     Grid.look = null
-    #Console.clear() #TODO
 
 
 

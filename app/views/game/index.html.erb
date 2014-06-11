@@ -103,12 +103,28 @@ end
       <canvas width="700" height="350" id="pirateGrid">Your browser is not supported!</canvas>
   </div>
 </div>
-
-<h3>
-    <%= t("game.console.label") %>:
-    <span class="pull-right glyphicon glyphicon-trash" id="clearConsoleBtn" title="Konsole leeren"></span>
-</h3>
-<div name="console" id="console"> </div>
+<div class="row">
+    <div class="col-md-4">
+        <h4>Beobachtete Variablen</h4>
+        <div id="watchlistDebugger">
+            <table class="table table-hover table-condensed table-striped table-responsive">
+                <tbody> <%# Required to properly set allocations the first time %>
+                <tr>
+                    <th>Variable</th>
+                    <th>Belegung</th>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <h4>
+            <%= t("game.console.label") %>:
+            <span class="pull-right glyphicon glyphicon-trash" id="clearConsoleBtn" title="Konsole leeren"></span>
+        </h4>
+        <div name="console" id="console"> </div>
+    </div>
+</div>
 
 <div id="imagePreloader" style="display: none" hidden></div>
 <%= javascript_include_tag 'pirates/simulation', 'data-turbolinks-track' => true %>

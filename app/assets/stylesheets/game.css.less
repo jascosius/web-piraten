@@ -4,6 +4,7 @@
 
 @CodeMirrorBorderRadius: 5px;
 @CodeMirrorDisabledBg: #2f0707;
+@DebuggerRowHeight: 200px;
 
 .code-wrapper {
 
@@ -81,6 +82,14 @@
   cursor: pointer;
 }
 
+#watchlistDebugger {
+  height: @DebuggerRowHeight;
+  overflow: auto;
+  .highlight {
+    background-color: #ffcf97;
+  }
+}
+
 #console {
   border: solid 1px #272822;
   background-color: #272822;
@@ -88,7 +97,7 @@
   font-family: "Lucida Console", Monaco, monospace;
   color: white;
   padding: 10px 0;
-  height: 200px;
+  height: @DebuggerRowHeight;
   margin-bottom: 15px;
   overflow: auto;
 

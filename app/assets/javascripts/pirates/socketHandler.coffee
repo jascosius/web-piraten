@@ -115,18 +115,15 @@ class @PacketHandler extends ChannelHandler
 
   simulateAllocations = (packet) ->
     allocations = packet.allocations
-
-    validateArray "allocations", allocations
-
-    #TODO Debugger GUI
-    for variable in allocations
-      for name of variable
-        Console.log "#{name} ist belegt mit #{variable[name]}"
+    console.log allocations
+    for name of allocations
+      CodeGUI.WatchList.setAllocation name, allocations[name]
+      Console.log "#{name} ist belegt mit #{allocations[name]}"
 
   simulateMessages = (packet) ->
     messages = packet.messages
     validateArray "messages", messages
-    console.log packet
+
     for messageObj in messages
       switch messageObj.type
         when 'log' then Console.log messageObj.message
@@ -140,7 +137,7 @@ class @PacketHandler extends ChannelHandler
     Grid.look = null
 
     currentPacket = @packetQueue.shift()
-    console.log currentPacket
+
     if @currentId is not currentPacket.id
       console.log 'skipped packet that seems to be old', currentPacket
       return

@@ -35,13 +35,13 @@ class @CodeGUI
     @_$CodeMirror = $('.code-wrapper .CodeMirror')
 
   @onDoubleClick = (event) =>
+    return if Simulation.isSimulating
     selection = event.getSelection().trim() # selected word
     cursor = event.getCursor()
     type = event.getTokenTypeAt(cursor)
 
     # only variables and single words allowed
     if !type? || type != 'variable' || selection.length < 1 || /\s/.test(selection)
-      console.log 'Das geklickte Wort kann keine Variable sein'
       return
 
     if @WatchList.contains selection
@@ -132,6 +132,8 @@ class CodeGUI.WatchList
     @_$default = $ '#watchlist-default'
     @_$size = $ '#watchlist-size'
     @_$watchlist.on 'click','.watchlist-remove', @onClick
+    @_$watchlistDebugger = $ '#watchlistDebugger'
+    @_$watchlistDebuggerTbody = @_$watchlistDebugger.find 'table tbody'
 
   @addVariable = (word) ->
     @_$default.hide()
@@ -152,6 +154,18 @@ class CodeGUI.WatchList
 
   @contains = (word) ->
     @_$watchlist.children("li:contains('#{word}')").length > 0
+
+  @setAllocation = (variable, allocation) ->
+    $row = @_$watchlistDebuggerTbody.children("tr").filter(() ->
+      return $(this).find('td:first').text() is variable
+    )
+
+    if $row.length < 1 # new row
+      $row = $ "<tr><td>#{variable}</td><td>#{allocation}</td></tr>"
+      @_$watchlistDebuggerTbody.append $row
+
+    $row.children('td:last').html allocation
+    $row.addClass('highlight').delay(250).removeClass 'highlight', 1500, 'easeOutQuart'
 
   @onClick = (event) =>
     # avoid that bootstrap closes the dropdown
@@ -175,3 +189,4 @@ class CodeGUI.WatchList
           .slideDown slideDuration
     })
     .slideUp slideDuration
+
