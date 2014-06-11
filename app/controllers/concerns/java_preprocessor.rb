@@ -29,16 +29,14 @@ class JavaPreprocessor < BasePreprocessor
     insert_logic + codes + insert_logic_end + "\n"
   end
 
-  def postprocess_error(line, code)
+  def postprocess_error(line, _)
     line
   end
 
-  def postprocess_error_compile(line,code)
+  def postprocess_error_compile(line, _)
     line
   end
 
-  def debug_code(code_msg, vars)
-  end
 
   # A method that stores the language- and ship-logic for Ruby that's put in the
   # code of the user to get the ship moving and so on.

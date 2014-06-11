@@ -1,10 +1,11 @@
 # -*- encoding : utf-8 -*-
+
 class Ship
-  attr_accessor :x, :y, :rotation
+  attr_accessor :x_position, :y_position, :rotation
 
   def initialize(x, y, rotation, grid)
-    @x = x
-    @y = y
+    @x_position = x
+    @y_position = y
     @rotation = rotation
     @grid = grid
   end
@@ -15,7 +16,7 @@ class Ship
         @rotation = (@rotation - 1) % 4
       when :right
         @rotation = (@rotation + 1) % 4
-      when :back
+      else
         @rotation = (@rotation + 2) % 4
     end
     packet[:operations] ||= []
@@ -23,10 +24,10 @@ class Ship
   end
 
   def put!(packet, elem) # event: ship.put
-    if @grid.grid[[@x, @y]] == :nothing
-      @grid.grid[[@x, @y]] = elem
+    if @grid.grid[[@x_position, @y_position]] == :nothing
+      @grid.grid[[@x_position, @y_position]] = elem
       packet[:operations] ||= []
-      packet[:operations] << {:name => 'put', :return => {:name => elem, :x => @x, :y => @y}}
+      packet[:operations] << {:name => 'put', :return => {:name => elem, :x => @x_position, :y => @y_position}}
     else
       packet[:operations] ||= []
       packet[:operations] << {:name => 'put'}
@@ -37,11 +38,11 @@ class Ship
   end
 
   def take!(packet) # event: ship.take
-    elem = @grid.grid[[@x, @y]]
+    elem = @grid.grid[[@x_position, @y_position]]
     if elem == :buoy || elem == :treasure
-      @grid.grid[[@x, @y]] = :nothing
+      @grid.grid[[@x_position, @y_position]] = :nothing
       packet[:operations] ||= []
-      packet[:operations] << {:name => 'take', :return => {:name => elem, :x => @x, :y => @y}}
+      packet[:operations] << {:name => 'take', :return => {:name => elem, :x => @x_position, :y => @y_position}}
     else
       packet[:operations] ||= []
       packet[:operations] << {:name => 'take'}
@@ -50,15 +51,15 @@ class Ship
     end
   end
 
-  def look!(packet, direction) # event: ship.take
-    coord = [@x, @y]
+  def look!(packet, direction)
+    coord = [@x_position, @y_position]
     next_coord = get_next_position
     case direction
       when :front
         coord = next_coord
       when :back
-        coord[0] -= next_coord[0] - @x
-        coord[1] -= next_coord[1] - @y
+        coord[0] -= next_coord[0] - @x_position
+        coord[1] -= next_coord[1] - @y_position
       when :left
         case @rotation
           when 3
@@ -67,7 +68,7 @@ class Ship
             coord[0] -= 1
           when 0
             coord[1] -= 1
-          when 2
+          else
             coord[1] += 1
         end
       when :right
@@ -78,14 +79,15 @@ class Ship
             coord[0] += 1
           when 0
             coord[1] += 1
-          when 2
+          else
             coord[1] -= 1
         end
+      else
     end
-    if coords_in_grid(coord) == false
-      look_obj = :border
-    else
+    if coords_in_grid(coord)
       look_obj = @grid.grid[coord]
+    else
+      look_obj = :border
     end
     packet[:operations] ||= []
     packet[:operations] << {:name => 'look', :return => {:x => coord[0], :y => coord[1]}}
@@ -108,8 +110,8 @@ class Ship
           packet[:messages] ||= []
           packet[:messages] << {:type => 'error', :message => 'Du bist auf einen Kraken gefahren'}
         else
-          @x = coord[0]
-          @y = coord[1]
+          @x_position = coord[0]
+          @y_position = coord[1]
           packet[:operations] ||= []
           packet[:operations] << {:name => 'move', :return => {:x => coord[0], :y => coord[1]}}
       end
@@ -134,8 +136,8 @@ class Ship
   end
 
   def get_next_position
-    x = @x
-    y = @y
+    x = @x_position
+    y = @y_position
     case @rotation
       when 0
         x += 1
@@ -143,7 +145,7 @@ class Ship
         y += 1
       when 2
         x -= 1
-      when 3
+      else
         y -= 1
     end
     [x, y]

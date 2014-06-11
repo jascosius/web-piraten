@@ -17,8 +17,9 @@ class Grid
           @grid[[x, y]] = :buoy
         when 'treasure'
           @grid[[x, y]] = :treasure
-        when 'wave'
+        else
           @grid[[x, y]] = :wave
+
       end
     }
   end

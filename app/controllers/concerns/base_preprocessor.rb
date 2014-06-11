@@ -9,7 +9,7 @@ class BasePreprocessor
   end
 
   # Abstract base method for processing the code into the right logic for a
-  # programming-language, needs to be overwritten.
+  # programming-language, needs to be overwritten. TODO change description
   def process_code(msg)
     crash_for_abstract_violation('process_code')
   end
@@ -36,12 +36,6 @@ class BasePreprocessor
 
   def preprocess_execute_error
     crash_for_abstract_violation('preprocess execute error')
-  end
-
-  # Same as process_code but with the exception that there has to be a special
-  # treatment for the debugging mode.
-  def debug_code(msg, var_array)
-    crash_for_abstract_violation('debug_code')
   end
 
   # If there is someone who wants to use the base class methods it raises an error,
