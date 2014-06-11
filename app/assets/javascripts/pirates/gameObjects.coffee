@@ -63,8 +63,8 @@ class @Ship extends GameObject
 
   look: (coord) =>
     coord2 = new Coordinate()
-    coord2.x = coord[0]
-    coord2.y = coord[1]
+    coord2.x = coord['x']
+    coord2.y = coord['y']
     Grid.look = coord2
 
   lookAway: () =>
@@ -76,7 +76,7 @@ class @Ship extends GameObject
     return obj
 
   take: (takenObj) =>
-    if takenObj? and takeObj.name in ['treasure', 'buoy']
+    if takenObj? and takenObj.name in ['treasure', 'buoy']
       Grid.deleteObject takenObj
 
   put: (obj) =>
@@ -89,8 +89,8 @@ class @Ship extends GameObject
      throw 'invalid object to put'
 
   move: (coord) =>
-    @x = coord[0]
-    @y = coord[1]
+    @x = coord.x
+    @y = coord.y
 
 
   isEqual: (other) =>
