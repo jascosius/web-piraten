@@ -2,8 +2,6 @@ module ControlSimulation
 
   def exit_simulation!(packet, line='')
     send_packet(packet)
-    packet.clear
-    packet[:id] = 7 #@@id  TODO here is the little nasty bug
     packet[:operations] ||= []
     packet[:operations] << {:name => 'exit'}
     if line != ''

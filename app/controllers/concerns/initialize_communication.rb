@@ -3,14 +3,6 @@ module InitializeCommunication
   @@timeout = 5 #timeout time for the programm to execute
   @@port = 12340 #port to connect to the vm
   @@host = 'localhost' #host to connect to the vm
-  @@id ||= 0  # Due to 'inheritance' through module including the class variable moved in this module.
-
-  def set_id
-    @@id += 1
-    if @@id > 100000
-      @@id = 0
-    end
-  end
 
 
   def start_simulation(code, tracing_vars)
@@ -20,8 +12,7 @@ module InitializeCommunication
       set_id
       read_json
 
-      packet = Hash.new()
-      packet[:id] = @@id
+      packet = {}
 
       connection_store[:is_simulation_done] = false
       initialize_timeout(Thread.current, packet)

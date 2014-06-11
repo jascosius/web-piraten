@@ -1,25 +1,34 @@
 module Communication
 
+  @@id ||= 0  # Due to 'inheritance' through module including the class variable moved in this module.
+
+  def set_id
+    @@id += 1
+    if @@id > 100000
+      @@id = 0
+    end
+  end
+
   def remove_prefix!(string)
     string.gsub!("#{$prefix}_", '')
     string.gsub!($prefix, '')
   end
 
   def send_packet(packet)
-    if packet.length > 1 #if the packet contains more then a id
+    if packet.length > 0 #if the packet contains more then a id
       if connection_store[:is_simulation_done]
         puts 'Verbindung beendet'
       else
+        packet[:id] = @@id
         puts packet
         WebsocketRails[:simulation].trigger(:step, packet)
       end
     end
+    packet.clear
   end
 
   def new_line(packet, number)
     send_packet(packet)
-    packet.clear
-    packet[:id] = 7 #@@id  TODO here is the little nasty bug
     packet[:line] = number.to_i #line.split('!')[1].to_i
   end
 
@@ -62,7 +71,6 @@ module Communication
         end
       end
     end
-
     vm.puts 'command_stop'
   end
 end
