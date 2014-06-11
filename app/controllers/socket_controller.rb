@@ -145,7 +145,7 @@ class SocketController < WebsocketRails::BaseController
     send_packet(packet)
     packet.clear
     packet[:id] = @@id
-    packet[:line] = number #line.split('!')[1].to_i
+    packet[:line] = number.to_i #line.split('!')[1].to_i
   end
 
   def search_and_execute_function(functions, array)
