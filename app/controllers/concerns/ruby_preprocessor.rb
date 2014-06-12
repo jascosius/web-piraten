@@ -81,60 +81,62 @@ class RubyPreprocessor < BasePreprocessor
   # A method that stores the language- and ship-logic for Ruby that's put in the
   # code of the user to get the ship moving and so on.
   def insert_logic
-    "# -*- encoding : utf-8 -*-\n" +
-        "$stdout.sync = true\n" +
-        "$stderr.sync = true\n" +
-        "def #{$prefix}_debug(var, ind)\n" +
-        "  puts \"\n#{$prefix}_debug_\#{ind}_\#{var}\" \n" +
-        "end\n" +
-        "def move\n" +
-        "  puts \"#{$prefix}_move\"\n" +
-        "end\n" +
-        "def turn(dir = :back)\n" +
-        "  case dir\n"+
-        "    when :right then puts \"#{$prefix}_turn_right\"\n" +
-        "    when :left then puts \"#{$prefix}_turn_left\"\n" +
-        "    when :back then puts \"#{$prefix}_turn_back\"\n" +
-        "    else raise(ArgumentError, \"unknown argument\")\n" +
-        "  end\n"+
-        "end\n" +
-        "def put(elem = :buoy)\n" +
-        "  case elem\n"+
-        "    when :buoy then puts \"#{$prefix}_put_buoy\"\n"+
-        "    when :treasure then puts \"#{$prefix}_put_treasure\"\n"+
-        "    else raise(ArgumentError, \"unknown argument\")\n" +
-        "  end\n"+
-        "end\n" +
-        "def take\n" +
-        "  puts \"#{$prefix}_take\"\n" +
-        "end\n" +
-        "def #{$prefix}_line(i)\n" +
-        "  puts \"\\n#{$prefix}_line_\#{i}\"\n" +
-        "end\n" +
-        "def look(dir = :here)\n" +
-        "  case dir\n" +
-        "    when :right then puts \"#{$prefix}_?_look_right\"\n" +
-        "    when :left then puts \"#{$prefix}_?_look_left\"\n" +
-        "    when :here then puts \"#{$prefix}_?_look_here\"\n" +
-        "    when :back then puts \"#{$prefix}_?_look_back\"\n" +
-        "    when :front then puts \"#{$prefix}_?_look_front\"\n"+
-        "    else raise(ArgumentError, \"unknown argument\")\n" +
-        "  end\n" +
-        "  ret = gets\n" +
-        "  if ret.include? \"buoy\"\n" +
-        "    return :buoy\n" +
-        "  elsif ret.include? \"monster\"\n" +
-        "    return :monster\n" +
-        "  elsif ret.include? \"treasure\"\n" +
-        "    return :treasure\n" +
-        "  elsif ret.include? \"wave\"\n" +
-        "    return :wave\n" +
-        "  elsif ret.include? \"border\"\n" +
-        "    return :border\n" +
-        "  else\n" +
-        "    return :nothing\n" +
-        "  end\n" +
-        "end\n\n"
+    %Q[
+# -*- encoding : utf-8 -*-
+$stdout.sync = true
+$stderr.sync = true
+def #{$prefix}_debug(var, ind)
+  puts "\n#{$prefix}_debug_\#{ind}_\#{var}"
+end
+def move
+  puts "#{$prefix}_move"
+end
+def turn(dir = :back)
+  case dir
+    when :right then puts "#{$prefix}_turn_right"
+    when :left then puts "#{$prefix}_turn_left"
+    when :back then puts "#{$prefix}_turn_back"
+    else raise(ArgumentError, "unknown argument")
+  end
+end
+def put(elem = :buoy)
+  case elem
+    when :buoy then puts "#{$prefix}_put_buoy"
+    when :treasure then puts "#{$prefix}_put_treasure"
+    else raise(ArgumentError, "unknown argument")
+  end
+end
+def take
+  puts "#{$prefix}_take"
+end
+def #{$prefix}_line(i)
+  puts "\n#{$prefix}_line_\#{i}"
+end
+def look(dir = :here)
+  case dir
+    when :right then puts "#{$prefix}_?_look_right"
+    when :left then puts "#{$prefix}_?_look_left"
+    when :here then puts "#{$prefix}_?_look_here"
+    when :back then puts "#{$prefix}_?_look_back"
+    when :front then puts "#{$prefix}_?_look_front"
+    else raise(ArgumentError, "unknown argument")
+  end
+  ret = gets
+  if ret.include? "buoy"
+    return :buoy
+  elsif ret.include? "monster"
+    return :monster
+  elsif ret.include? "treasure"
+    return :treasure
+  elsif ret.include? "wave"
+    return :wave
+  elsif ret.include? "border"
+    return :border
+  else
+    return :nothing
+  end
+end
+]
   end
 
 end

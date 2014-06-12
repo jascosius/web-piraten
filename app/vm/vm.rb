@@ -25,7 +25,7 @@ def compile(client, dir, compile, compile_error)
   exec = true
   if compile != ''
     #execute the compilecommand with the right path. add PREFIXstderr_compile to errors
-    Open3.popen2("(#{compile.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed --unbuffered s/^/#{PREFIX}_stderrcompile_/ ) 2>&1", 'r+') do |_, stdout|
+    Open3.popen2("(#{compile.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed --unbuffered s/^/#{PREFIX}_stderrcompile_/ ) 2>&1") do |_, stdout|
       line = ''
       unless stdout.eof?
         puts line = stdout.readline
