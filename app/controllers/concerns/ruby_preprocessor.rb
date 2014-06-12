@@ -20,7 +20,7 @@ class RubyPreprocessor < BasePreprocessor
   # if the user wants to trace specified variables.
   def process_code(code_msg, vars)
     # Array that contains predefined methodnames to be ignored by the debugger
-    predefined_methods = ['move', 'turn', 'put', 'take', 'look']
+    predefined_methods = %w(move turn put take look)
     i=1
     codes = ''
     code_msg.each_line do |s|
