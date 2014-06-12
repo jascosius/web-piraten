@@ -4,8 +4,8 @@ require 'tmpdir'
 require 'open3'
 
 PREFIX = 'CkyUHZVL3q' #have to be the same as in the socket_controller
-TIMEOUT = 5 #have to be the same as in the socket_controller
-MAX_OPS = 1000 #the maximal counter of ops to execute
+TIMEOUT = 20 #have to be the same as in the socket_controller
+MAX_OPS = 10000 #the maximal counter of ops to execute
 PORT = 12340 #have to be the same as in the socket_controller
 
 #thread to kill the execution after a while

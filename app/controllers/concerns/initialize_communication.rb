@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 module InitializeCommunication
 
-  @@timeout = 5 #timeout time for the programm to execute
+  @@timeout = 20 #timeout time for the programm to execute
   @@port = 12340 #port to connect to the vm
   @@host = 'localhost' #host to connect to the vm
 

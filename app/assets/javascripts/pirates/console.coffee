@@ -19,4 +19,4 @@ class @Console
 
   @clear = () ->
     $console.children('p').fadeOut 400, () ->
-      $console.html('')
+      $(@).remove()

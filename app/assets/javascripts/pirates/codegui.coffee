@@ -13,21 +13,15 @@ class @CodeGUI
       styleActiveLine: true,
     }
 
-    # just for a nicer visualization, from jQuery UI
-    $.extend($.easing,
-      {
-        easeOutCubic: (x, t, b, c, d) ->
-          c * ((t = t / d - 1) * t * t + 1) + b
-      }
-    )
-
     @codeMirror.on  "blur", () => @isInEditor = false
     @codeMirror.on  "focus", () => @isInEditor = true
     @codeMirror.on 'dblclick', @onDoubleClick
 
     $('#runBtn').click @start
     $('#stopBtn').click @stop
-    $('#clearConsoleBtn').click () -> Console.clear()
+    $('#clearConsoleBtn').click () =>
+      Console.clear()
+      @WatchList.clearAllocations()
 
     $('#codeMirror-loading').hide()
 
@@ -165,7 +159,13 @@ class CodeGUI.WatchList
       @_$watchlistDebuggerTbody.append $row
 
     $row.children('td:last').html allocation
-    $row.addClass('highlight').delay(250).removeClass 'highlight', 1500, 'easeOutQuart'
+    $row.children().addClass('highlight').delay(250).removeClass 'highlight', 1000, 'linear'
+
+  @clearAllocations = () ->
+    @_$watchlistDebuggerTbody.children().each () ->
+      $(@).fadeOut 1000, () ->
+        $(@).remove()
+
 
   @onClick = (event) =>
     # avoid that bootstrap closes the dropdown
@@ -189,4 +189,3 @@ class CodeGUI.WatchList
           .slideDown slideDuration
     })
     .slideUp slideDuration
-

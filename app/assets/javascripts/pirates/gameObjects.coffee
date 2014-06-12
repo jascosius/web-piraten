@@ -67,9 +67,6 @@ class @Ship extends GameObject
     coord2.y = coord['y']
     Grid.look = coord2
 
-  lookAway: () =>
-    Grid.look = null
-
   serialize: () =>
     obj = super()
     obj.rotation = @rotation
@@ -89,6 +86,7 @@ class @Ship extends GameObject
      throw 'invalid object to put'
 
   move: (coord) =>
+    return unless coord?
     @x = coord.x
     @y = coord.y
 

@@ -62,9 +62,9 @@ class Ship
         coord[1] -= next_coord[1] - @y_position
       when :left
         case @rotation
-          when 3
-            coord[0] += 1
           when 1
+            coord[0] += 1
+          when 3
             coord[0] -= 1
           when 0
             coord[1] -= 1
@@ -73,9 +73,9 @@ class Ship
         end
       when :right
         case @rotation
-          when 3
-            coord[0] -= 1
           when 1
+            coord[0] -= 1
+          when 3
             coord[0] += 1
           when 0
             coord[1] += 1

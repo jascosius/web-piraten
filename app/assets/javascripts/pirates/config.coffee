@@ -1,10 +1,10 @@
 @Config =
-  simulationSpeed: 60 # time in ticks between each action
-  buoyImage: "./assets/buoy.png"
-  shipImage: "./assets/ship.png"
-  waveImage: "./assets/wave.png"
-  treasureImage: "./assets/coins.png"
-  monsterImage: "./assets/monster.png"
+  simulationSpeed: 0 # time in ticks between each action
+  buoyImage: "./assets/frank/buoy.gif"
+  shipImage: "./assets/frank/ship.gif"
+  waveImage: "./assets/frank/wave.gif"
+  treasureImage: "./assets/frank/treasure.gif"
+  monsterImage: "./assets/frank/monster.gif"
   getImagesToPreload: () ->
     [
       @buoyImage

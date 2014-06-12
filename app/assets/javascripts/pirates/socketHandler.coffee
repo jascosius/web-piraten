@@ -118,7 +118,6 @@ class @PacketHandler extends ChannelHandler
     console.log allocations
     for name of allocations
       CodeGUI.WatchList.setAllocation name, allocations[name]
-      Console.log "#{name} ist belegt mit #{allocations[name]}"
 
   simulateMessages = (packet) ->
     messages = packet.messages

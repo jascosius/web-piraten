@@ -28,7 +28,7 @@ class @Simulation
     #main loop
     @lastRun = 0
     @stopRedrawing = false
-    @showFps = true
+    @showFps = false
 
     $(document).on 'mousemove', (event) =>
       if !@mouse?
@@ -79,6 +79,8 @@ class @Simulation
     CodeGUI.toggleCodeEditing()
     @isSimulating = true
     Console.clear()
+    CodeGUI.WatchList.clearAllocations()
+
     webSocket.trigger "simulateGrid", {
       code: CodeGUI.getCode()
       grid: Grid.serialize()
