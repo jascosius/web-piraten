@@ -110,8 +110,7 @@ class Ship
           packet[:messages] ||= []
           packet[:messages] << {:type => 'error', :message => 'Du bist auf einen Kraken gefahren'}
         else
-          @x_position = coord[0]
-          @y_position = coord[1]
+          @x_position, @y_position = coord
           packet[:operations] ||= []
           packet[:operations] << {:name => 'move', :return => {:x => coord[0], :y => coord[1]}}
       end

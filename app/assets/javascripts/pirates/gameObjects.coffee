@@ -54,6 +54,7 @@ class @Ship extends GameObject
     else if arguments.length <= 3
       @x = arguments[0]
       @y = arguments[1]
+      @isMove = false
       @rotation = arguments[2] || 0 #optional
       super name, Config.shipImage, @x, @y
     else throw "invalid ship constructor call"
@@ -89,6 +90,7 @@ class @Ship extends GameObject
     return unless coord?
     @x = coord.x
     @y = coord.y
+    @isMove = true
 
 
   isEqual: (other) =>

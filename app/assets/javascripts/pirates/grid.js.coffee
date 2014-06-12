@@ -1,3 +1,5 @@
+
+#= require ./socketHandler
 class @Grid
   @initialize = (@canvas) ->
     Grid.GridControls._initialize()
@@ -23,6 +25,7 @@ class @Grid
     @ANGLE = 90*(Math.PI/180)
 
     @mousePressedOnShip = false
+    @mousePressed = false
 
   @loadDefault = () =>
     @load @defaultData
@@ -94,12 +97,13 @@ class @Grid
       mousPos = @getMousePos event
       pos = @getGridCoordinates mousPos
       objOnPos = @isSomethingOnPosition pos.x, pos.y
+      if !(@ship.x == pos.x && @ship.y == pos.y)
+        @mousePressed = event.which
       if @ship.x == pos.x && @ship.y == pos.y && event.which == 1
         @mousePressedOnShip = true
       else
         if @contains(mousPos) && objOnPos == false && event.which == 1
           @GridControls.creatObjectFromButton pos.x, pos.y
-
       if event.which == 3 && @ship.x == pos.x && @ship.y == pos.y
         if @ship.rotation <= 0
           @ship.rotation = 3
@@ -109,6 +113,7 @@ class @Grid
         @deleteObjectWithIndex @objects.indexOf(objOnPos)
 
   @onMouseUp = (event) =>
+    @mousePressed = false
     coords = @getGridCoordinates @getMousePos(event)
     x = coords.x
     y = coords.y
@@ -135,8 +140,17 @@ class @Grid
     if @contains(pos)
       pos = @getGridCoordinates pos
       @activeCell = pos
+    mousPos = @getMousePos event
+    pos = @getGridCoordinates mousPos
+    objOnPos = @isSomethingOnPosition pos.x, pos.y
+    if !Simulation.isSimulating && objOnPos == false && @mousePressed == 1
+      @GridControls.creatObjectFromButton pos.x, pos.y
+    else if @mousePressed == 3 && objOnPos != false
+      @deleteObjectWithIndex @objects.indexOf(objOnPos)
+
 
   @onMouseOut = (event) =>
+    @mousePressed = false
     @activeCell = null
     if @mousePressedOnShip
       coords = @getGridCoordinates(@getMousePos(event))
@@ -261,8 +275,27 @@ class @Grid
       heightFactor = @size/@ship.image.height
       newWidth = widthFactor*@ship.image.width
       newHeight = heightFactor*@ship.image.height
-      cellCenterX = @ship.x*@size + Math.floor(newWidth/2)
+
+      cellCenterX = @ship.x*@size + (Math.floor(newWidth/2))
       cellCenterY = @ship.y*@size + Math.floor(newHeight/2)
+
+
+      if Simulation.isSimulating && @ship.isMove
+        if PacketHandler.lifeTime % Config.simulationSpeed == 0
+          @ship.isMove = false
+        else
+          switch @ship.rotation
+            when 0
+              cellCenterX = @ship.x*@size - (Math.floor(newWidth/2)) + (Math.floor(newWidth)/Config.simulationSpeed)*(PacketHandler.lifeTime % Config.simulationSpeed)
+            when 2
+              cellCenterX = @ship.x*@size + (Math.floor(newWidth*1.5)) - (Math.floor(newWidth)/Config.simulationSpeed)*(PacketHandler.lifeTime % Config.simulationSpeed)
+            when 1
+              cellCenterY = @ship.y*@size - (Math.floor(newWidth/2)) + (Math.floor(newWidth)/Config.simulationSpeed)*(PacketHandler.lifeTime % Config.simulationSpeed)
+            when 3
+              cellCenterY = @ship.y*@size + (Math.floor(newWidth*1.5)) - (Math.floor(newWidth)/Config.simulationSpeed)*(PacketHandler.lifeTime % Config.simulationSpeed)
+
+      else
+
 
       @ctx.translate cellCenterX, cellCenterY
       @ctx.rotate @ship.rotation*@ANGLE
