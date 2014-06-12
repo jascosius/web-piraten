@@ -57,6 +57,7 @@ module Communication
 
     until connection_store[:is_simulation_done]
       line = vm.gets.chomp
+      line = line.force_encoding('utf-8')
 
       unless line.empty?
         array = line.split('_') #a command looks like $prefix_function_params or $prefix_?_function_params
@@ -67,7 +68,7 @@ module Communication
             search_and_execute_function(functions, array[1..-1])
           end
         else
-          print!(packet, :log, line) #without $prefix this must be a print from the user
+          print!(packet, :log, line)#line) #without $prefix this must be a print from the user
         end
       end
     end
