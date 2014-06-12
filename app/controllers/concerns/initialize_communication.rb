@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module InitializeCommunication
 
   @@timeout = 5 #timeout time for the programm to execute
