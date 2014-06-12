@@ -124,8 +124,6 @@ class Ship
     end
   end
 
-  #TODO Move testet auf Objekte
-
   def coords_in_grid(coord)
 
     if coord[0] >= 0 && coord[0] < @grid.width && coord[1] >= 0 && coord[1]< @grid.height

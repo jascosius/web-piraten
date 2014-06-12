@@ -3,7 +3,7 @@
 class Grid
   attr_accessor :height, :width, :grid
 
-  def initialize(height, width, objects)
+  def initialize(width, height, objects)
     @grid = Hash.new(:nothing)
     @height = height
     @width = width
