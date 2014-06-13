@@ -55,17 +55,20 @@ class @Ship extends GameObject
       @x = arguments[0]
       @y = arguments[1]
       @isMove = false
+      @isRotate = false
       @rotation = arguments[2] || 0 #optional
       super name, Config.shipImage, @x, @y
     else throw "invalid ship constructor call"
 
   turn: (rotation) =>
+    @isRotate = @rotation
     @rotation = rotation
+
 
   look: (coord) =>
     coord2 = new Coordinate()
-    coord2.x = coord['x']
-    coord2.y = coord['y']
+    coord2.x = coord.x
+    coord2.y = coord.y
     Grid.look = coord2
 
   serialize: () =>

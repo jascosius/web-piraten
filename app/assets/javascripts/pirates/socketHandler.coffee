@@ -87,7 +87,8 @@ class @PacketHandler extends ChannelHandler
 
   @update = () =>
     if !Simulation.isSimulating then return
-    if (Config.simulationSpeed > 0 && (@lifeTime % Config.simulationSpeed) != 0) || @packetQueue.length < 1
+    speed = Simulation.speed
+    if (speed > 0 && (@lifeTime % speed) != 0) || @packetQueue.length < 1
       @lifeTime++
       return
     simulatePacket()

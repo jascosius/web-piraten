@@ -30,6 +30,7 @@ class @Simulation
     @lastRun = 0
     @stopRedrawing = false
     @showFps = false
+    @speed = 0 # overriden by Grid.GridControls
 
     $(document).on 'mousemove', (event) =>
       if !@mouse?

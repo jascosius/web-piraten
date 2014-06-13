@@ -192,7 +192,8 @@ class @Grid
 
   @update = () ->
     for gameObject in @objects
-      gameObject.update(Simulation.deltaTime)
+      gameObject.update()
+    @ship.update()
 
   @draw = () =>
     @ctx.save()
@@ -280,26 +281,61 @@ class @Grid
       cellCenterY = @ship.y*@size + Math.floor(newHeight/2)
 
 
-      if Simulation.isSimulating && @ship.isMove
-        if PacketHandler.lifeTime % Config.simulationSpeed == 0
+      speed = Simulation.speed
+      if Simulation.isSimulating && @ship.isMove && speed != 0
+        if @ship.lifeTime % speed == 0
           @ship.isMove = false
         else
+          # the ship is already at the destination cell,
+          # but to smooth the animation we have to simulate
+          # that it has not yet reached the cell, therefore the offset
+          currentOffset = (Grid.size / speed) * (@ship.lifeTime % speed)
           switch @ship.rotation
-            when 0
-              cellCenterX = @ship.x*@size - (Math.floor(newWidth/2)) + (Math.floor(newWidth)/Config.simulationSpeed)*(PacketHandler.lifeTime % Config.simulationSpeed)
-            when 2
-              cellCenterX = @ship.x*@size + (Math.floor(newWidth*1.5)) - (Math.floor(newWidth)/Config.simulationSpeed)*(PacketHandler.lifeTime % Config.simulationSpeed)
-            when 1
-              cellCenterY = @ship.y*@size - (Math.floor(newWidth/2)) + (Math.floor(newWidth)/Config.simulationSpeed)*(PacketHandler.lifeTime % Config.simulationSpeed)
-            when 3
-              cellCenterY = @ship.y*@size + (Math.floor(newWidth*1.5)) - (Math.floor(newWidth)/Config.simulationSpeed)*(PacketHandler.lifeTime % Config.simulationSpeed)
-
-      else
+            when 0 # east
+              cellCenterX = @ship.x*@size - Grid.size/2 + currentOffset
+            when 1 # north
+              cellCenterY = @ship.y*@size - Grid.size/2 + currentOffset
+            when 2 # west
+              cellCenterX = @ship.x*@size + Grid.size*1.5 - currentOffset
+            when 3 # south
+              cellCenterY = @ship.y*@size + Grid.size*1.5 - currentOffset
 
 
       @ctx.translate cellCenterX, cellCenterY
-      @ctx.rotate @ship.rotation*@ANGLE
       @ctx.scale widthFactor, heightFactor
+
+      if @ship.isRotate != false
+        if PacketHandler.lifeTime % speed == 0
+          @ship.isRotate = false
+        else
+          if (@ship.rotation == 0 && @ship.isRotate == 3)
+            newRotation = ((@ship.rotation+1)*@ANGLE/speed)*((PacketHandler.lifeTime % speed))
+            oldRotation = @ship.isRotate*@ANGLE
+          else if (@ship.rotation == 3 && @ship.isRotate == 0)
+            newRotation = ((@ship.isRotate+1)*@ANGLE/speed)*(speed - (PacketHandler.lifeTime % speed))
+            oldRotation = @ship.rotation*@ANGLE
+          else
+
+            newRotation = (@ship.rotation*@ANGLE/speed)*((PacketHandler.lifeTime % speed))
+            oldRotation = (@ship.isRotate*@ANGLE/speed)*(speed - (PacketHandler.lifeTime % speed))
+          @ctx.rotate  newRotation + oldRotation
+#          switch mathe1
+#            when 1
+#              if @ship.rotation == 0 && @ship.isRotate == 3
+#                #console.log('right')
+#              else
+#            when -1
+#              if @ship.rotation == 3 && @ship.isRotate == 0
+#                #console.log('left')
+#              else
+#               # console.log('right')
+#            else
+#              #console.log('turn')
+#          #console.log(@ship.isRotate + ' = ' + @ship.rotation + ' ' + mathe1)
+      else
+        @ctx.rotate @ship.rotation*@ANGLE
+
+
 
       if @ship.rotation == 2
         @ctx.scale 1, -1 # flip
@@ -362,14 +398,12 @@ class Grid.GridControls
     }
 
   @setSpeed = (speed) =>
-    @speed = Config.maxSimulationSpeed - speed
-
     percentage = (speed/Config.maxSimulationSpeed)*100
     percentage = Math.round percentage
     percentage = Math.max percentage, 1
     @_$speed.html "#{percentage} %"
 
-    Config.simulationSpeed = Grid.GridControls.speed #TODO temporary
+    Simulation.speed = Config.maxSimulationSpeed - speed #TODO temporary
 
 
   # switch between gameobject selection with number keys

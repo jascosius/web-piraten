@@ -1,6 +1,5 @@
 @Config =
-  simulationSpeed: 0 # time in ticks between each action
-  maxSimulationSpeed: 120
+  maxSimulationSpeed: 120 # time in ticks between each action
   buoyImage: "./assets/frank/buoy.gif"
   shipImage: "./assets/frank/ship.gif"
   waveImage: "./assets/frank/wave.gif"

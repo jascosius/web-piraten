@@ -114,8 +114,8 @@ class @CodeGUI
   @stop = () =>
     console.log "Stop!"
     Simulation.stop()
-
-
+    Grid.ship.isMove = false
+    Grid.ship.isRotate = false
 
 
 # storing of variables to watch in execution time
