@@ -73,6 +73,7 @@ class @PacketHandler extends ChannelHandler
     @packetQueue = []
     @usedIDs = []
     @currentId = -1
+    @packetCounter = 0
 
   onSubscribe: (event) =>
     console.log "Subscribed to channel '#{@channelName}'"
@@ -84,6 +85,7 @@ class @PacketHandler extends ChannelHandler
   @clear = () =>
     @packetQueue = []
     @usedIDs.push @currentId
+    #@packetCounter = 0
 
   @update = () =>
     if !Simulation.isSimulating then return
@@ -141,6 +143,7 @@ class @PacketHandler extends ChannelHandler
     if @currentId is not currentPacket.id
       console.log 'skipped packet that seems to be old', currentPacket
       return
+    @packetCounter++
 
     simulateLine currentPacket if currentPacket.line
     simulateAllocations currentPacket if currentPacket.allocations?

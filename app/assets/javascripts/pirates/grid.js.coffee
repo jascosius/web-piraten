@@ -26,6 +26,7 @@ class @Grid
 
     @mousePressedOnShip = false
     @mousePressed = false
+    @_movementCounter = 0 #TODO
 
   @loadDefault = () =>
     @load @defaultData
@@ -282,6 +283,33 @@ class @Grid
 
 
       speed = Simulation.speed
+      if !@_lastPacket?
+        @_lastPacket = PacketHandler.packetCounter
+
+      if @_lastPacket != PacketHandler.packetCounter
+        @_lastPacket = PacketHandler.packetCounter
+        @_movementCounter = 0
+        console.log 'altes paket'
+      if @ship.isMoving
+          # only to east
+          #t: current time, b: begInnIng value, c: change In value, d: duration
+          pxPerFrame = Grid.size/Simulation.speed
+#          movementOffset = maxOffset - @_movementCounter
+#          movementOffset *= pxPerFrame
+
+
+          lastX = (@ship.x - 1)*Grid.size+(Grid.size*0.5)
+          lastX += (pxPerFrame*@_movementCounter)
+          @_movementCounter++
+          if @_movementCounter >= Simulation.speed-1
+            console.log "Hallo!", @ship.isMoving
+            @ship.isMoving = false
+            #@_movementCounter = 0
+          cellCenterX = lastX
+      else  # not moving
+        @_movementCounter = 0
+
+      ###
       if Simulation.isSimulating && @ship.isMove && speed != 0
         if @ship.lifeTime % speed == 0
           @ship.isMove = false
@@ -299,7 +327,7 @@ class @Grid
               cellCenterX = @ship.x*@size + Grid.size*1.5 - currentOffset
             when 3 # south
               cellCenterY = @ship.y*@size + Grid.size*1.5 - currentOffset
-
+      ###
 
       @ctx.translate cellCenterX, cellCenterY
       @ctx.scale widthFactor, heightFactor
@@ -319,19 +347,6 @@ class @Grid
             newRotation = (@ship.rotation*@ANGLE/speed)*((PacketHandler.lifeTime % speed))
             oldRotation = (@ship.isRotate*@ANGLE/speed)*(speed - (PacketHandler.lifeTime % speed))
           @ctx.rotate  newRotation + oldRotation
-#          switch mathe1
-#            when 1
-#              if @ship.rotation == 0 && @ship.isRotate == 3
-#                #console.log('right')
-#              else
-#            when -1
-#              if @ship.rotation == 3 && @ship.isRotate == 0
-#                #console.log('left')
-#              else
-#               # console.log('right')
-#            else
-#              #console.log('turn')
-#          #console.log(@ship.isRotate + ' = ' + @ship.rotation + ' ' + mathe1)
       else
         @ctx.rotate @ship.rotation*@ANGLE
 
@@ -385,8 +400,7 @@ class Grid.GridControls
 
     @_$speed = $ '#simulationSpeed'
     defaultSpeed = Math.round(Config.maxSimulationSpeed/2)
-    @setSpeed defaultSpeed
-
+    console.log defaultSpeed
     $("#speedSlider").slider {
       range: 'min'
       value: defaultSpeed
@@ -396,14 +410,15 @@ class Grid.GridControls
       slide: (event, ui) =>
         @setSpeed(ui.value)
     }
+    @setSpeed defaultSpeed
 
   @setSpeed = (speed) =>
     percentage = (speed/Config.maxSimulationSpeed)*100
     percentage = Math.round percentage
     percentage = Math.max percentage, 1
     @_$speed.html "#{percentage} %"
+    Simulation.speed = Config.maxSimulationSpeed-speed
 
-    Simulation.speed = Config.maxSimulationSpeed - speed #TODO temporary
 
 
   # switch between gameobject selection with number keys
@@ -437,5 +452,3 @@ class Grid.GridControls
         Grid.addObject (new Treasure x, y)
       when 'addMonster'
         Grid.addObject (new Monster x, y)
-
-

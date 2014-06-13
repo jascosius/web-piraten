@@ -19,6 +19,7 @@ class @Simulation
     @canvas = document.getElementById "pirateGrid"
     @context = @canvas.getContext "2d"
 
+    @speed = 0 # overriden by Grid.GridControls
     Grid.initialize @canvas, 32
     Grid.loadDefault()
     CodeGUI.initialize 'codemirror'
@@ -30,7 +31,6 @@ class @Simulation
     @lastRun = 0
     @stopRedrawing = false
     @showFps = false
-    @speed = 0 # overriden by Grid.GridControls
 
     $(document).on 'mousemove', (event) =>
       if !@mouse?
