@@ -78,6 +78,7 @@ class @Ship extends GameObject
       Grid.deleteObject takenObj
 
   put: (obj) =>
+   return unless obj?
    if obj.name == "buoy"
     Grid.addObject (new Buoy obj)
    else if obj.name == "treasure"
