@@ -347,6 +347,31 @@ class Grid.GridControls
     @_$monsterButton = $ "#addMonster"
     @_$waveButton = $ "#addWave"
 
+    @_$speed = $ '#simulationSpeed'
+    defaultSpeed = Math.round(Config.maxSimulationSpeed/2)
+    @setSpeed defaultSpeed
+
+    $("#speedSlider").slider {
+      range: 'min'
+      value: defaultSpeed
+      min: 0
+      max: Config.maxSimulationSpeed
+      step: 1
+      slide: (event, ui) =>
+        @setSpeed(ui.value)
+    }
+
+  @setSpeed = (speed) =>
+    @speed = Config.maxSimulationSpeed - speed
+
+    percentage = (speed/Config.maxSimulationSpeed)*100
+    percentage = Math.round percentage
+    percentage = Math.max percentage, 1
+    @_$speed.html "#{percentage} %"
+
+    Config.simulationSpeed = Grid.GridControls.speed #TODO temporary
+
+
   # switch between gameobject selection with number keys
   @onKeyDown = (event) =>
     return if CodeGUI.isInEditor

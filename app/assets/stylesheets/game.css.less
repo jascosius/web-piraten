@@ -1,5 +1,6 @@
 //= require codemirror
 //= require codemirror/themes/monokai
+//= require jquery.ui.all
 //@import "custom_bootstrap/custom_bootstrap";
 
 @CodeMirrorBorderRadius: 5px;
@@ -70,6 +71,39 @@
 }
 
 // Grid
+.speed-controls {
+  float: left;
+  margin-left: 25px;
+  width: 200px;
+  text-align: left;
+  #simulationSpeed {
+    border: none;
+    color: #ccc;
+  }
+  #speedSlider {
+    &.ui-slider {
+      border-color: #4cae4c;
+    }
+    .ui-state-default, .ui-widget-content {
+      border-color: #4cae4c;
+    }
+    .ui-slider-handle{
+      background: #5cb85c;
+      border-color: #4cae4c;
+
+      &.ui-state-focus,
+      &.ui-state-active,
+      &.ui-state-hover {
+        border: solid 1px #398439 !important;
+        box-shadow: none;
+      }
+    }
+    .ui-slider-range {
+      background: #5cb85c;
+    }
+  }
+}
+
 .gameObject-controls {
   text-align: center;
   margin-bottom: 10px;

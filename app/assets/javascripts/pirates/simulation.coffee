@@ -4,6 +4,7 @@
 #= require codemirror/modes/ruby
 #= require codemirror/keymaps/sublime
 #= require jquery.ui.effect.js
+#= require jquery.ui.slider
 #= require ./config
 #= require ./utilities
 #= require ./console

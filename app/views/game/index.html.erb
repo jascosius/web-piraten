@@ -18,15 +18,12 @@
               <button type="button" class="btn btn-success" id="runBtn">
                   <span class="glyphicon glyphicon-play"> </span> Ausführen
               </button>
-              <!--<button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
-                  <span class="caret"></span>
+              <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                  <span class="glyphicon glyphicon-wrench"></span>
                   <span class="sr-only">Toggle Dropdown</span>
               </button>
-              <ul class="dropdown-menu" role="menu">
-                  <li><a id="debugBtn" style="cursor: pointer">
-                      <span class="glyphicon glyphicon-search"> </span> Debug
-                  </a></li>
-              </ul>-->
+              <div class="dropdown-menu" role="menu">
+              </div>
           </div>
       </div>
       <div class="row code-controls pull-right hidden" id="disabled-state-controls">
@@ -36,12 +33,12 @@
           <button class="btn btn-default" id="stopBtn">
               <span class="glyphicon glyphicon-stop"> </span> Stop
           </button>
-          <button class="btn btn-default" id="pauseBtn">
-              <span class="glyphicon glyphicon-pause"> </span> Pause
-          </button>
-          <button class="btn btn-default" id="stepBtn">
-              <span class="glyphicon glyphicon-step-forward"> </span> Schritt
-          </button>
+          <!--<button class="btn btn-default" id="pauseBtn">-->
+              <!--<span class="glyphicon glyphicon-pause"> </span> Pause-->
+          <!--</button>-->
+          <!--<button class="btn btn-default" id="stepBtn">-->
+              <!--<span class="glyphicon glyphicon-step-forward"> </span> Schritt-->
+          <!--</button>-->
       </div>
       <div class="clearfix"></div>
       <div class="row">
@@ -74,6 +71,13 @@ end
         </div>
   </div>
   <div class="col-md-8 grid-wrapper">
+      <div class="speed-controls">
+          Geschwindigkeit:
+          <span id="simulationSpeed"></span>
+          <div id="speedSlider" style="width: 200px"></div>
+      </div>
+
+
       <div class="btn-group gameObject-controls">
           <button class=" btn btn-default" id="addTreasure">
               <span class="glyphicon glyphicon-arrow-left"> </span> Schatz
