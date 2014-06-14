@@ -25,7 +25,7 @@ class RubyPreprocessor < BasePreprocessor
     codes = ''
     code_msg.each_line do |s|
       codes += "#{$prefix}_line(#{i})\n" # add linefunction for linehighlighting
-      codes += s.chomp + " # #{$prefix}_(#{i+1}#{$prefix}_)\n" # add linenumber in comment
+      codes += s.chomp + " # #{$prefix}_(#{i}#{$prefix}_)\n" # add linenumber in comment
       vars.each_with_index do |variable, index|
         unless predefined_methods.include? variable
           codes += "if defined? #{variable} \n" +
