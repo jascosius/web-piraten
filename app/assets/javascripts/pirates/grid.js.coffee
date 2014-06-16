@@ -205,7 +205,7 @@ class @Grid
 
     # draw horizontal lines
     while(@contains(coords))
-      @drawLine 0, coords.y, @gridWidth*@size, coords.y, 1, strokeStyle
+      @_drawLine 0, coords.y, @gridWidth*@size, coords.y, 1, strokeStyle
       coords.y += @size
       count++
 
@@ -214,7 +214,7 @@ class @Grid
 
     # draw vertical
     while(@contains(coords))
-      this.drawLine coords.x, 0, coords.x, @gridHeight*@size, 1, strokeStyle
+      @_drawLine coords.x, 0, coords.x, @gridHeight*@size, 1, strokeStyle
       coords.x += @size
       count++
 
@@ -290,61 +290,12 @@ class @Grid
         @_lastPacket = PacketHandler.packetCounter
         @_smoothingStep = 0
 
-      # smooth moving
-      if @ship.isMoving
-
-        axis = -1 #vertical
-        direction = -1 # increase ship coordinate
-
-        if @ship.rotation % 2 is 0 # 0 or 2
-          axis = 1 #horizontal
-        if @ship.rotation in [0,1] # 1 or 3
-          direction = 1 # decrease ship coordinate
-
-        pxPerFrame = @size/Simulation.speed
-
-        shipAxis = 'x' #horizontal
-        if axis < 0
-          shipAxis = 'y' # vertical
-
-        cellCenter[shipAxis] = (@ship[shipAxis] - direction)*@size+(@size*0.5)
-        cellCenter[shipAxis] += (pxPerFrame*@_smoothingStep)*direction
-
-        @_smoothingStep++
-        # check if smoothing is/should be done
-        if @_smoothingStep >= Simulation.speed-1
-          @ship.isMoving = false
-
-      else  # not moving
-        @_smoothingStep = 0
-
-      if !@_smoothingRotationStep?
-        @_smoothingRotationStep = 0
+      cellCenter = @_smoothShipMovement(cellCenter)
 
       @ctx.translate cellCenter.x, cellCenter.y
       @ctx.scale widthFactor, heightFactor
 
-      # smooth rotation
-      if @ship.isRotating and @ship.rotation != @ship.lastRotation
-        @ctx.rotate @ship.lastRotation*90*@ANGLE
-        diff = @ship.rotation-@ship.lastRotation
-
-        console.log diff
-
-        # pseudo mudulo to avoid 270° rotations at overflows
-        if diff > 2 then diff = -1
-        else if diff < -2 then diff = 1
-
-        step = (diff*90*@ANGLE)/Simulation.speed
-
-        @ctx.rotate @_smoothingRotationStep*step
-        @_smoothingRotationStep++
-        if @_smoothingRotationStep >= Simulation.speed-1
-          @ship.isRotating = false
-      else # static ship
-        @ctx.rotate @ship.rotation*90*@ANGLE
-        @ship.isRotating = false
-        @_smoothingRotationStep = 0
+      @_smoothShipRotation()
 
       # uncomment if the ship image does not show a clear rotation
       #if @ship.rotation == 2
@@ -360,8 +311,61 @@ class @Grid
     @ctx.restore()
 
 
+  @_smoothShipMovement = (cellCenter) ->
+    if @ship.isMoving
 
-  @drawLine = (x1, y1, x2, y2, width, strokeStyle) ->
+      axis = -1 #vertical
+      direction = -1 # increase ship coordinate
+
+      if @ship.rotation % 2 is 0 # 0 or 2
+        axis = 1 #horizontal
+      if @ship.rotation in [0,1] # 1 or 3
+        direction = 1 # decrease ship coordinate
+
+      pxPerFrame = @size/Simulation.speed
+
+      shipAxis = 'x' #horizontal
+      if axis < 0
+        shipAxis = 'y' # vertical
+
+      cellCenter[shipAxis] = (@ship[shipAxis] - direction)*@size+(@size*0.5)
+      cellCenter[shipAxis] += pxPerFrame*@_smoothingStep*direction
+
+      @_smoothingStep++
+      # check if smoothing is/should be done
+      if @_smoothingStep >= Simulation.speed-1
+        @ship.isMoving = false
+    else  # not moving
+      @_smoothingStep = 0
+
+    return cellCenter
+
+  @_smoothShipRotation = () ->
+    if !@_smoothingRotationStep?
+      @_smoothingRotationStep = 0
+
+    # smooth rotation
+    if @ship.isRotating and @ship.rotation != @ship.lastRotation
+      @ctx.rotate @ship.lastRotation*90*@ANGLE
+      diff = @ship.rotation-@ship.lastRotation
+
+      # pseudo mudulo to avoid 270° rotations at overflows
+      if diff > 2 then diff = -1
+      else if diff < -2 then diff = 1
+
+      @ctx.rotate @_smoothingRotationStep * diff * 90 * @ANGLE / Simulation.speed
+      @_smoothingRotationStep++
+
+      # animation should be done
+      if @_smoothingRotationStep >= Simulation.speed-1
+        @ship.isRotating = false
+
+    else # static ship
+      @ctx.rotate @ship.rotation*90*@ANGLE
+      @ship.isRotating = false
+      @_smoothingRotationStep = 0
+
+  @_drawLine = (x1, y1, x2, y2, width, strokeStyle) ->
     newX1 = Math.min x1, x2
     newY1 = Math.min y1, y2
     newX2 = Math.max x1, x2
