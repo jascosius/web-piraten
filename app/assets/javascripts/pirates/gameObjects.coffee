@@ -54,21 +54,20 @@ class @Ship extends GameObject
     else if arguments.length <= 3
       @x = arguments[0]
       @y = arguments[1]
-      @isRotate = false
+      @isRotating = false
       @rotation = arguments[2] || 0 #optional
+      @lastRotation = @rotation
       super name, Config.shipImage, @x, @y
     else throw "invalid ship constructor call"
 
   turn: (rotation) =>
-    @isRotate = @rotation
+    @isRotating = true
+    @lastRotation = @rotation
     @rotation = rotation
 
 
   look: (coord) =>
-    coord2 = new Coordinate()
-    coord2.x = coord.x
-    coord2.y = coord.y
-    Grid.look = coord2
+    Grid.look = new Coordinate(coord.x, coord.y)
 
   serialize: () =>
     obj = super()

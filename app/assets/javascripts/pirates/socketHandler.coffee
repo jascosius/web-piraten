@@ -85,7 +85,6 @@ class @PacketHandler extends ChannelHandler
   @clear = () =>
     @packetQueue = []
     @usedIDs.push @currentId
-    #@packetCounter = 0
 
   @update = () =>
     if !Simulation.isSimulating then return

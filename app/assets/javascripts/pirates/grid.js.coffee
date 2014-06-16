@@ -22,11 +22,11 @@ class @Grid
     $canvas.on 'mouseup', this.onMouseUp
     $canvas.on 'selectstart', () -> return false
 
-    @ANGLE = 90*(Math.PI/180)
+    @ANGLE = (Math.PI/180)
 
     @mousePressedOnShip = false
     @mousePressed = false
-    @_movementCounter = 0 #TODO
+    @_smoothingStep = 0 #TODO
 
   @loadDefault = () =>
     @load @defaultData
@@ -225,7 +225,7 @@ class @Grid
       posy = obj.y*@size + Math.floor(obj.image.height/2)
       @ctx.translate(posx, posy)
 
-      @ctx.rotate(obj.rotation * @ANGLE)
+      @ctx.rotate(obj.rotation * 90*@ANGLE)
 
       if obj.rotation == 2
         @ctx.scale 1, -1 # flip
@@ -264,7 +264,7 @@ class @Grid
     if @mousePressedOnShip # drag and drop
       @ctx.translate @mousePosition.x, @mousePosition.y
 
-      @ctx.rotate(@ship.rotation * @ANGLE)
+      @ctx.rotate(@ship.rotation * 90 * @ANGLE)
 
       if @ship.rotation == 2
         @ctx.scale 1, -1 # flip
@@ -283,14 +283,12 @@ class @Grid
         y: @ship.y*@size + Math.floor(newHeight/2)
       }
 
-
-      speed = Simulation.speed
       if !@_lastPacket?
         @_lastPacket = PacketHandler.packetCounter
 
       if @_lastPacket != PacketHandler.packetCounter # old packet we are working on
         @_lastPacket = PacketHandler.packetCounter
-        @_movementCounter = 0
+        @_smoothingStep = 0
 
       # smooth moving
       if @ship.isMoving
@@ -310,42 +308,54 @@ class @Grid
           shipAxis = 'y' # vertical
 
         cellCenter[shipAxis] = (@ship[shipAxis] - direction)*@size+(@size*0.5)
-        cellCenter[shipAxis] += (pxPerFrame*@_movementCounter)*direction
+        cellCenter[shipAxis] += (pxPerFrame*@_smoothingStep)*direction
 
-        @_movementCounter++
+        @_smoothingStep++
         # check if smoothing is/should be done
-        if @_movementCounter >= Simulation.speed-1
+        if @_smoothingStep >= Simulation.speed-1
           @ship.isMoving = false
 
       else  # not moving
-        @_movementCounter = 0
+        @_smoothingStep = 0
+
+      if !@_smoothingRotationStep?
+        @_smoothingRotationStep = 0
 
       @ctx.translate cellCenter.x, cellCenter.y
       @ctx.scale widthFactor, heightFactor
 
-      if not @ship.isRotate
-        if PacketHandler.lifeTime % speed == 0
-          @ship.isRotate = false
-        else
-          if (@ship.rotation == 0 && @ship.isRotate == 3)
-            newRotation = ((@ship.rotation+1)*@ANGLE/speed)*((PacketHandler.lifeTime % speed))
-            oldRotation = @ship.isRotate*@ANGLE
-          else if (@ship.rotation == 3 && @ship.isRotate == 0)
-            newRotation = ((@ship.isRotate+1)*@ANGLE/speed)*(speed - (PacketHandler.lifeTime % speed))
-            oldRotation = @ship.rotation*@ANGLE
-          else
+      # smooth rotation
+      if @ship.isRotating and @ship.rotation != @ship.lastRotation
+        @ctx.rotate @ship.lastRotation*90*@ANGLE
+        diff = @ship.rotation-@ship.lastRotation
 
-            newRotation = (@ship.rotation*@ANGLE/speed)*((PacketHandler.lifeTime % speed))
-            oldRotation = (@ship.isRotate*@ANGLE/speed)*(speed - (PacketHandler.lifeTime % speed))
-          @ctx.rotate  newRotation + oldRotation
-      else
-        @ctx.rotate @ship.rotation*@ANGLE
+        console.log diff
 
+        # pseudo mudulo to avoid 270° rotations at overflows
+        if diff > 2 then diff = -1
+        else if diff < -2 then diff = 1
 
+        step = (diff*90*@ANGLE)/Simulation.speed
 
-      if @ship.rotation == 2
-        @ctx.scale 1, -1 # flip
-      @ctx.drawImage(@ship.image, -Math.floor(@ship.image.width/2), -Math.floor(@ship.image.height/2))
+        @ctx.rotate @_smoothingRotationStep*step
+        @_smoothingRotationStep++
+        if @_smoothingRotationStep >= Simulation.speed-1
+          @ship.isRotating = false
+      else # static ship
+        @ctx.rotate @ship.rotation*90*@ANGLE
+        @ship.isRotating = false
+        @_smoothingRotationStep = 0
+
+      # uncomment if the ship image does not show a clear rotation
+      #if @ship.rotation == 2
+      #  @ctx.scale 1, -1 # flip
+
+      # the context is in the center of the image
+      @ctx.drawImage(
+        @ship.image,
+        -Math.floor(@ship.image.width/2),
+        -Math.floor(@ship.image.height/2)
+      )
 
     @ctx.restore()
 
