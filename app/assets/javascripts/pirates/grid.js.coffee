@@ -278,61 +278,52 @@ class @Grid
       newWidth = widthFactor*@ship.image.width
       newHeight = heightFactor*@ship.image.height
 
-      cellCenterX = @ship.x*@size + (Math.floor(newWidth/2))
-      cellCenterY = @ship.y*@size + Math.floor(newHeight/2)
+      cellCenter = {
+        x: @ship.x*@size + (Math.floor(newWidth/2))
+        y: @ship.y*@size + Math.floor(newHeight/2)
+      }
 
 
       speed = Simulation.speed
       if !@_lastPacket?
         @_lastPacket = PacketHandler.packetCounter
 
-      if @_lastPacket != PacketHandler.packetCounter
+      if @_lastPacket != PacketHandler.packetCounter # old packet we are working on
         @_lastPacket = PacketHandler.packetCounter
         @_movementCounter = 0
-        console.log 'altes paket'
+
+      # smooth moving
       if @ship.isMoving
-          # only to east
-          #t: current time, b: begInnIng value, c: change In value, d: duration
-          pxPerFrame = Grid.size/Simulation.speed
-#          movementOffset = maxOffset - @_movementCounter
-#          movementOffset *= pxPerFrame
 
+        axis = -1 #vertical
+        direction = -1 # increase ship coordinate
 
-          lastX = (@ship.x - 1)*Grid.size+(Grid.size*0.5)
-          lastX += (pxPerFrame*@_movementCounter)
-          @_movementCounter++
-          if @_movementCounter >= Simulation.speed-1
-            console.log "Hallo!", @ship.isMoving
-            @ship.isMoving = false
-            #@_movementCounter = 0
-          cellCenterX = lastX
+        if @ship.rotation % 2 is 0 # 0 or 2
+          axis = 1 #horizontal
+        if @ship.rotation in [0,1] # 1 or 3
+          direction = 1 # decrease ship coordinate
+
+        pxPerFrame = @size/Simulation.speed
+
+        shipAxis = 'x' #horizontal
+        if axis < 0
+          shipAxis = 'y' # vertical
+
+        cellCenter[shipAxis] = (@ship[shipAxis] - direction)*@size+(@size*0.5)
+        cellCenter[shipAxis] += (pxPerFrame*@_movementCounter)*direction
+
+        @_movementCounter++
+        # check if smoothing is/should be done
+        if @_movementCounter >= Simulation.speed-1
+          @ship.isMoving = false
+
       else  # not moving
         @_movementCounter = 0
 
-      ###
-      if Simulation.isSimulating && @ship.isMove && speed != 0
-        if @ship.lifeTime % speed == 0
-          @ship.isMove = false
-        else
-          # the ship is already at the destination cell,
-          # but to smooth the animation we have to simulate
-          # that it has not yet reached the cell, therefore the offset
-          currentOffset = (Grid.size / speed) * (@ship.lifeTime % speed)
-          switch @ship.rotation
-            when 0 # east
-              cellCenterX = @ship.x*@size - Grid.size/2 + currentOffset
-            when 1 # north
-              cellCenterY = @ship.y*@size - Grid.size/2 + currentOffset
-            when 2 # west
-              cellCenterX = @ship.x*@size + Grid.size*1.5 - currentOffset
-            when 3 # south
-              cellCenterY = @ship.y*@size + Grid.size*1.5 - currentOffset
-      ###
-
-      @ctx.translate cellCenterX, cellCenterY
+      @ctx.translate cellCenter.x, cellCenter.y
       @ctx.scale widthFactor, heightFactor
 
-      if @ship.isRotate != false
+      if not @ship.isRotate
         if PacketHandler.lifeTime % speed == 0
           @ship.isRotate = false
         else
