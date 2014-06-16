@@ -5,6 +5,11 @@
   waveImage: "./assets/frank/wave.gif"
   treasureImage: "./assets/frank/treasure.gif"
   monsterImage: "./assets/frank/monster.gif"
+  lineColor: '#999'
+  cellHightlighting:
+    hovered: 'rgba(0,0,0,0.1)'
+    look: 'rgba(255,0,0,0.2)'
+
   getImagesToPreload: () ->
     [
       @buoyImage

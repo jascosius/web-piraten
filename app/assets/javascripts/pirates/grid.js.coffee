@@ -198,68 +198,55 @@ class @Grid
 
   @draw = () =>
     @ctx.save()
-    count = 0
-    strokeStyle = "#999"
 
+    # draw horizontal and vertical lines
+    @_drawCells Config.lineColor
+    @_drawCells Config.lineColor, true
+
+    @_drawObjects()
+    @_drawShip()
+
+    @_highlightCell @activeCell, Config.cellHightlighting.hovered if @activeCell
+    @_highlightCell @look, Config.cellHightlighting.look if @look
+
+  @_drawCells = (strokeStyle, vertical) ->
+    @ctx.save()
+    vertical ||= false
     coords = new Coordinate 0,0 # in pixel
 
-    # draw horizontal lines
-    while(@contains(coords))
-      @_drawLine 0, coords.y, @gridWidth*@size, coords.y, 1, strokeStyle
-      coords.y += @size
-      count++
+    if vertical
+      while(@contains(coords))
+        @_drawLine coords.x, 0, coords.x, @gridHeight*@size, 1, strokeStyle
+        coords.x += @size
+    else
+      while(@contains(coords))
+        @_drawLine 0, coords.y, @gridWidth*@size, coords.y, 1, strokeStyle
+        coords.y += @size
 
-    count = 0
-    coords = new Coordinate 0, 0
+    @ctx.restore()
 
-    # draw vertical
-    while(@contains(coords))
-      @_drawLine coords.x, 0, coords.x, @gridHeight*@size, 1, strokeStyle
-      coords.x += @size
-      count++
+  @_highlightCell = (cell, fillStyle) ->
+    @ctx.save()
+    rect = @getCellRect cell
 
-    # draw objects
+    @ctx.beginPath()
+    @ctx.rect rect.x1, rect.y1, rect.x2, rect.y2
+    @ctx.fillStyle = fillStyle
+    @ctx.fill()
+    @ctx.restore()
+
+  @_drawObjects = () ->
     for obj in @objects
       @ctx.save()
       posx = obj.x*@size + Math.floor(obj.image.width/2)
       posy = obj.y*@size + Math.floor(obj.image.height/2)
       @ctx.translate(posx, posy)
 
-      @ctx.rotate(obj.rotation * 90*@ANGLE)
-
-      if obj.rotation == 2
-        @ctx.scale 1, -1 # flip
-
       @ctx.scale @size/obj.image.width, @size/obj.image.height
       @ctx.drawImage obj.image, -Math.floor(obj.image.width/2), -Math.floor(obj.image.height/2)
       @ctx.restore()
 
-
-    #draw activeCell
-    if @activeCell
-      @ctx.save()
-      rect = @getCellRect @activeCell
-
-      @ctx.beginPath()
-      @ctx.rect rect.x1, rect.y1, rect.x2, rect.y2
-      @ctx.fillStyle = 'rgba(0,0,0,0.1)'
-      @ctx.fill()
-
-      @ctx.restore()
-
-    #draw look
-    if @look
-      @ctx.save()
-      rect = @getCellRect @look
-
-      @ctx.beginPath()
-      @ctx.rect rect.x1, rect.y1, rect.x2, rect.y2
-      @ctx.fillStyle = 'rgba(255,0,0,0.2)'
-      @ctx.fill()
-
-      @ctx.restore()
-
-    #draw ship
+  @_drawShip = () ->
     @ctx.save()
     if @mousePressedOnShip # drag and drop
       @ctx.translate @mousePosition.x, @mousePosition.y
@@ -309,7 +296,6 @@ class @Grid
       )
 
     @ctx.restore()
-
 
   @_smoothShipMovement = (cellCenter) ->
     if @ship.isMoving
