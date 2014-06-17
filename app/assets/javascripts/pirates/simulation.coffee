@@ -19,7 +19,7 @@ class @Simulation
     @canvas = document.getElementById "pirateGrid"
     @context = @canvas.getContext "2d"
 
-    @speed = 0 # overriden by Grid.GridControls
+    @speed = Math.round Config.maxSimulationSpeed/2 # overriden by load
     Grid.initialize @canvas, 32
     Grid.loadDefault()
     CodeGUI.initialize 'codemirror'
@@ -83,11 +83,7 @@ class @Simulation
     Console.clear()
     CodeGUI.WatchList.clearAllocations()
 
-    webSocket.trigger "simulateGrid", {
-      code: CodeGUI.getCode()
-      grid: Grid.serialize()
-      vars: CodeGUI.WatchList.get()
-    }
+    webSocket.trigger "simulateGrid", @serialize()
 
   @stop = () =>
     throw 'already stopped' unless @isSimulating
@@ -101,6 +97,27 @@ class @Simulation
     PacketHandler.clear()
     Grid.look = null
 
+  @serialize = () ->
+    {
+      code: CodeGUI.getCode()
+      grid: Grid.serialize()
+      vars: CodeGUI.WatchList.get()
+      speed: @speed
+    }
+
+  @load = (obj) ->
+    clear()
+    CodeGUI.setCode obj.code if obj.code?
+
+    Grid.load obj.grid if obj.grid?
+    if obj.vars?
+      CodeGUI.WatchList.clear()
+      for key of obj.vars
+        CodeGUI.WatchList.addVariable obj.vars[key]
+
+    console.log 'speed'
+    Grid.GridControls.setSpeed obj.speed if obj.speed?
+    console.log 'speed2'
 
 
 jQuery () -> # use jQuery to wait until DOM is ready

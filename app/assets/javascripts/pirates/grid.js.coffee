@@ -390,25 +390,26 @@ class Grid.GridControls
     @_$waveButton = $ "#addWave"
 
     @_$speed = $ '#simulationSpeed'
-    defaultSpeed = Math.round(Config.maxSimulationSpeed/2)
-    console.log defaultSpeed
+
     $("#speedSlider").slider {
       range: 'min'
-      value: defaultSpeed
+      value: Simulation.speed
       min: 0
       max: Config.maxSimulationSpeed
       step: 1
       slide: (event, ui) =>
-        @setSpeed(ui.value)
+        @setSpeed(Config.maxSimulationSpeed-ui.value)
     }
-    @setSpeed defaultSpeed
+    @setSpeed Simulation.speed
 
   @setSpeed = (speed) =>
-    percentage = (speed/Config.maxSimulationSpeed)*100
+    percentage = (Config.maxSimulationSpeed-speed)/Config.maxSimulationSpeed
+    percentage *= 100
     percentage = Math.round percentage
-    percentage = Math.max percentage, 1
+    percentage = Math.max percentage, 1 # no 0%
+    $("#speedSlider").slider 'value', Config.maxSimulationSpeed-speed
     @_$speed.html "#{percentage} %"
-    Simulation.speed = Config.maxSimulationSpeed-speed
+    Simulation.speed = speed #Config.maxSimulationSpeed-speed
 
 
 

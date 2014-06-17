@@ -97,6 +97,9 @@ class @CodeGUI
   @getCode = () ->
     @codeMirror.getValue()
 
+  @setCode = (code) ->
+    @codeMirror.setValue code
+
   @highlightLine: (line) ->
     line -= 1
     if @lastLine?
@@ -132,6 +135,25 @@ class CodeGUI.WatchList
   @addVariable = (word) ->
     @_$default.hide()
     @_$watchlist.append Config.getWatchListRemoveButtonHTML(word)
+
+  @remove = (word) ->
+    slideDuration = 300
+
+    @_$watchlist.children("li:contains('#{word}')").remove()
+    @updateQueueSize()
+    # show the default message if the watchlist is empty
+    if @_$size.html() < 1 && @_$default.is ':hidden'
+      @_$default.fadeIn({
+        duration: slideDuration
+        queue: false
+      })
+      .css('display', 'none')
+      .slideDown slideDuration
+
+  @clear = () ->
+    list = @get()
+    for word in list
+      @remove word
 
   @updateQueueSize = () ->
     watchlist = @get()
