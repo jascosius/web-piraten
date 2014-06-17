@@ -39,6 +39,18 @@ class @Simulation
       @mouse.y = event.clientY || event.pageY
 
 
+    $(window).on 'beforeunload', (event) =>
+      event ||= window.event
+      if localStorage?
+        serialized = JSON.stringify @serialize()
+        localStorage.setItem 'simulation', serialized
+
+    if localStorage?
+      data = localStorage.getItem 'simulation'
+      if data?
+        @load JSON.parse(data)
+
+
   @mainLoop = () =>
     @now = new Date().getTime()
     @deltaTime = (@now - @lastRun)/1000
@@ -107,6 +119,7 @@ class @Simulation
 
   @load = (obj) ->
     clear()
+    throw 'obj null' unless obj?
     CodeGUI.setCode obj.code if obj.code?
 
     Grid.load obj.grid if obj.grid?
@@ -115,9 +128,7 @@ class @Simulation
       for key of obj.vars
         CodeGUI.WatchList.addVariable obj.vars[key]
 
-    console.log 'speed'
     Grid.GridControls.setSpeed obj.speed if obj.speed?
-    console.log 'speed2'
 
 
 jQuery () -> # use jQuery to wait until DOM is ready
