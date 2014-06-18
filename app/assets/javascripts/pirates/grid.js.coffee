@@ -298,31 +298,32 @@ class @Grid
     @ctx.restore()
 
   @_smoothShipMovement = (cellCenter) ->
-    if @ship.isMoving
-
-      axis = -1 #vertical
-      direction = -1 # increase ship coordinate
-
-      if @ship.rotation % 2 is 0 # 0 or 2
-        axis = 1 #horizontal
-      if @ship.rotation in [0,1] # 1 or 3
-        direction = 1 # decrease ship coordinate
-
-      pxPerFrame = @size/Simulation.speed
-
-      shipAxis = 'x' #horizontal
-      if axis < 0
-        shipAxis = 'y' # vertical
-
-      cellCenter[shipAxis] = (@ship[shipAxis] - direction)*@size+(@size*0.5)
-      cellCenter[shipAxis] += pxPerFrame*@_smoothingStep*direction
-
-      @_smoothingStep++
-      # check if smoothing is/should be done
-      if @_smoothingStep >= Simulation.speed-1
-        @ship.isMoving = false
-    else  # not moving
+    unless @ship.isMoving
       @_smoothingStep = 0
+      return cellCenter
+
+    axis = -1 #vertical
+    direction = -1 # increase ship coordinate
+
+    if @ship.rotation % 2 is 0 # 0 or 2
+      axis = 1 #horizontal
+    if @ship.rotation in [0,1] # 1 or 3
+      direction = 1 # decrease ship coordinate
+    speed = Simulation.speed
+    speed = Math.max speed, 0.00001
+    pxPerFrame = @size/speed
+
+    shipAxis = 'x' #horizontal
+    if axis < 0
+      shipAxis = 'y' # vertical
+
+    cellCenter[shipAxis] = (@ship[shipAxis] - direction)*@size+(@size*0.5)
+    cellCenter[shipAxis] += pxPerFrame*@_smoothingStep*direction
+
+    @_smoothingStep++
+    # check if smoothing is/should be done
+    if @_smoothingStep >= speed-1
+      @ship.isMoving = false
 
     return cellCenter
 
@@ -338,8 +339,9 @@ class @Grid
       # pseudo mudulo to avoid 270° rotations at overflows
       if diff > 2 then diff = -1
       else if diff < -2 then diff = 1
-
-      @ctx.rotate @_smoothingRotationStep * diff * 90 * @ANGLE / Simulation.speed
+      speed = Simulation.speed
+      speed = Math.max speed, 0.00001
+      @ctx.rotate @_smoothingRotationStep * diff * 90 * @ANGLE / speed
       @_smoothingRotationStep++
 
       # animation should be done
