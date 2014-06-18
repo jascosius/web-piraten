@@ -238,11 +238,13 @@ class @Grid
   @_drawObjects = () ->
     for obj in @objects
       @ctx.save()
-      posx = obj.x*@size + Math.floor(obj.image.width/2)
-      posy = obj.y*@size + Math.floor(obj.image.height/2)
+      scaleX = @size/obj.image.width
+      scaleY = @size/obj.image.height
+      posx = obj.x*@size + Math.floor(obj.image.width*scaleX/2)
+      posy = obj.y*@size + Math.floor(obj.image.height*scaleY/2)
       @ctx.translate(posx, posy)
 
-      @ctx.scale @size/obj.image.width, @size/obj.image.height
+      @ctx.scale scaleX, scaleY
       @ctx.drawImage obj.image, -Math.floor(obj.image.width/2), -Math.floor(obj.image.height/2)
       @ctx.restore()
 
@@ -250,12 +252,7 @@ class @Grid
     @ctx.save()
     if @mousePressedOnShip # drag and drop
       @ctx.translate @mousePosition.x, @mousePosition.y
-
       @ctx.rotate(@ship.rotation * 90 * @ANGLE)
-
-      if @ship.rotation == 2
-        @ctx.scale 1, -1 # flip
-
 
       @ctx.scale @size/@ship.image.width, @size/@ship.image.height
       @ctx.drawImage(@ship.image, -Math.floor(@ship.image.width/2), -Math.floor(@ship.image.height/2))

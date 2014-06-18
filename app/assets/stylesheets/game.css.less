@@ -71,45 +71,59 @@
 }
 
 // Grid
-.speed-controls {
-  float: left;
-  margin-left: 25px;
-  width: 200px;
-  text-align: left;
-  #simulationSpeed {
-    border: none;
-    color: #ccc;
-  }
-  #speedSlider {
-    &.ui-slider {
-      border-color: #4cae4c;
-    }
-    .ui-state-default, .ui-widget-content {
-      border-color: #4cae4c;
-    }
-    .ui-slider-handle{
-      background: #5cb85c;
-      border-color: #4cae4c;
 
-      &.ui-state-focus,
-      &.ui-state-active,
-      &.ui-state-hover {
-        border: solid 1px #398439 !important;
-        box-shadow: none;
-      }
-    }
-    .ui-slider-range {
-      background: #5cb85c;
-    }
-  }
-}
-
-.gameObject-controls {
-  text-align: center;
-  margin-bottom: 10px;
-}
 .grid-wrapper {
   text-align: center;
+  .grid-controls {
+
+
+    .speed-controls {
+      float: left;
+      margin-left: 25px;
+      width: 200px;
+      text-align: left;
+
+      #simulationSpeed {
+        border: none;
+        color: #ccc;
+      }
+
+      #speedSlider {
+        &.ui-slider {
+          border-color: #4cae4c;
+        }
+        .ui-state-default, .ui-widget-content {
+          border-color: #4cae4c;
+        }
+        .ui-slider-handle {
+          background: #5cb85c;
+          border-color: #4cae4c;
+
+          &.ui-state-focus,
+          &.ui-state-active,
+          &.ui-state-hover {
+            border: solid 1px #398439 !important;
+            box-shadow: none;
+          }
+        }
+        .ui-slider-range {
+          background: #5cb85c;
+        }
+      }
+    }
+
+    .grid-resetter{
+      float: left;
+      max-width: 110px;
+      margin-left: 10px;
+    }
+    .gameObject-controls {
+      text-align: center;
+      margin-bottom: 10px;
+      float: right;
+      margin-right: 50px;
+    }
+  }
 }
 
 #clearConsoleBtn {
