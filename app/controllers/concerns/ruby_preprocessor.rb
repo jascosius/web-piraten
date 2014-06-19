@@ -17,25 +17,74 @@ class RubyPreprocessor < BasePreprocessor
   end
 
   # Method that preprocesses the given code and includes the debug information
-  # if the user wants to trace specified variables.
+  # if the user wants to trace specified variables. Furthermore it handles the
+  # given code differently, when there is a correct case-statement by checking
+  # the user's code of a valid one with a regular expression.
   def process_code(code_msg, vars)
-    # Array that contains predefined methodnames to be ignored by the debugger
-    predefined_methods = %w(move turn put take look)
     i=1
     codes = ''
-    code_msg.each_line do |s|
-      codes += "#{$prefix}_line(#{i})\n" # add linefunction for linehighlighting
-      codes += s.chomp + " # #{$prefix}_(#{i}#{$prefix}_)\n" # add linenumber in comment
-      vars.each_with_index do |variable, index|
-        unless predefined_methods.include? variable
-          codes += "if defined? #{variable} \n" +
-              "  #{$prefix}_debug(#{variable}, #{index})\n" +
-              "end\n"
+    if code_msg =~ regex_verify_case_statement
+      dont_skip_line = true
+      code_msg.each_line do |s|
+        if dont_skip_line
+          codes += insert_line_number(i)
+          codes += add_user_code(s, i)
+          # match 'case casevariable # comment'
+          if s =~ /^\s*case\s+(\w+|'\w*'|"\w*")\s*((#+.*\s*)*)?$/
+            dont_skip_line = false
+          else
+            codes = insert_debug_information(codes, vars)
+          end
+          # match 'when case # comment'
+        elsif s =~ /^\s*when\s+(\w+|'\w*'|"\w*")\s*(#+.*)?$/
+          codes += add_user_code(s, i)
+          dont_skip_line = true
+        else
+          codes += add_user_code(s, i)
         end
+        i += 1
       end
-      i += 1
+    else # If there is no case-statement in the user's code, process code normally.
+      code_msg.each_line do |s|
+        codes += insert_line_number(i)
+        codes += add_user_code(s, i)
+        codes = insert_debug_information(codes, vars)
+        i += 1
+      end
     end
     insert_logic + codes + "\n"
+  end
+
+
+  # Regularexpression for validating case-statements, even those that have
+  # comments and line breaks between them.
+  def regex_verify_case_statement
+    /^\s*case\s+(\w+|'\w*'|"\w*")\s*((#+.*\s*)*)?\s*when\s+(\w+|'\w*'|"\w*")\s*(#+.*)?$/
+  end
+
+  # Method to add the linenumber for linehighlighting in codemirror previous
+  # to the user's line fo code.
+  def insert_line_number(i)
+    "#{$prefix}_line(#{i})\n"
+  end
+
+  # Adds the line of the user's code and a commment with the linenumber.
+  def add_user_code(s, i)
+    s.chomp + " # #{$prefix}_(#{i}#{$prefix}_)\n"
+  end
+
+  # Inserts the debug information for tracing the variables during simulation.
+  # Also prohibits tracing of our predefined methods.
+  def insert_debug_information(codes, vars)
+    predefined_methods = %w(move turn put take look)
+    vars.each_with_index do |variable, index|
+      unless predefined_methods.include? variable
+        codes += "if defined? #{variable} \n" +
+            "  #{$prefix}_debug(#{variable}, #{index})\n" +
+            "end\n"
+      end
+    end
+    codes
   end
 
   def postprocess_error(line, code)
@@ -47,7 +96,7 @@ class RubyPreprocessor < BasePreprocessor
       index_end += "#{@filename}".length #add the lenght of the filename to the end
       line.slice!(index_begin...index_end) #remove the filepath
 
-      #chance the linenumber
+      #change the linenumber
       index_line_end = line.index(':', index_begin+1) #find the : after the linenumber
       line_number = line[index_begin+1...index_line_end] #get the linenumber between the two :
       i = 1 #Set a counter
