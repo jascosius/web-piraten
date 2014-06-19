@@ -1,10 +1,10 @@
 @Config =
   maxSimulationSpeed: 120 # time in ticks between each action
-  buoyImage: "./assets/frank/buoy.gif"
-  shipImage: "./assets/frank/ship.gif"
-  waveImage: "./assets/frank/wave.gif"
-  treasureImage: "./assets/frank/treasure.gif"
-  monsterImage: "./assets/frank/monster.gif"
+  buoyImage: "<%= asset_path 'frank/buoy.gif' %>"
+  shipImage: "<%= asset_path 'frank/ship.gif' %>"
+  waveImage: "<%= asset_path 'frank/wave.gif' %>"
+  treasureImage: "<%= asset_path 'frank/treasure.gif' %>"
+  monsterImage: "<%= asset_path 'frank/monster.gif' %>"
   lineColor: '#999'
   cellHightlighting:
     hovered: 'rgba(0,0,0,0.1)'
