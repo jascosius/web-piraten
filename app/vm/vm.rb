@@ -8,6 +8,8 @@ TIMEOUT = 20 #have to be the same as in the socket_controller
 MAX_OPS = 10000 #the maximal counter of ops to execute
 PORT = 12340 #have to be the same as in the socket_controller
 
+DEVELOPMENT = true
+
 #thread to kill the execution after a while
 def initialize_timeout(client)
   Thread.start(Thread.current) do |thread|
@@ -93,8 +95,13 @@ def send_commands(client, stdout, execute_error)
 end
 
 def execute(client, dir, execute, execute_error)
+  changeuser = 'sudo -u sailor'
+  if DEVELOPMENT
+    changeuser = ''
+  end
+
   #execute the executecommand with the right path. add PREFIXstderr to errors
-  Open3.popen2("(#{execute.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed --unbuffered s/^/#{PREFIX}_stderr_/ ) 2>&1") do |stdin, stdout|
+  Open3.popen2("(#{changeuser} #{execute.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed --unbuffered s/^/#{PREFIX}_stderr_/ ) 2>&1") do |stdin, stdout|
     stdout.sync = true
     get_commands(client, stdin)
     send_commands(client, stdout, execute_error)
@@ -126,9 +133,11 @@ loop {
 
     # create temporally file for execution of ruby code
     Dir.mktmpdir('session_') do |dir|
+      File.chmod(0755, dir)
       # use the directory...
       open("#{dir}/#{filename}", 'w+') do |file|
         File.write file, code
+        File.chmod(0744, file)
 
         exec = compile(client, dir, compile, compile_error)
 
