@@ -22,4 +22,6 @@
 #= require turbolinks
 #= require_directory .
 #= require websocket_rails/main
+#= require jquery.ui.effect.js
+#= require jquery.ui.slider
 

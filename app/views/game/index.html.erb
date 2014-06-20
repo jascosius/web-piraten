@@ -1,3 +1,4 @@
+<% content_for :body_tag, 'data-no-turbolink' %>
 <div class="row">
 
   <div class="col-md-4 code-wrapper">
@@ -183,5 +184,5 @@ end
 </div>
 
 <div id="imagePreloader" style="display: none" hidden></div>
-<%= javascript_include_tag 'pirates/simulation', 'data-turbolinks-track' => true %>
+<% content_for :html_header, javascript_include_tag('pirates/simulation', 'data-turbolinks-track' => false) %>
 <%= stylesheet_link_tag 'game'%>

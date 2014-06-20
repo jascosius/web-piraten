@@ -1,3 +1,7 @@
+#= require codemirror
+#= require codemirror/addons/selection/active-line
+#= require codemirror/modes/ruby
+#= require codemirror/keymaps/sublime
 
 class @Simulation
   @initialize = () ->
@@ -93,13 +97,6 @@ class @Simulation
   @preload = (callback) =>
     loaded = 0
     dependencies = [
-      "<%= javascript_path 'websocket_rails/main' %>"
-      "<%= javascript_path 'codemirror' %>"
-      "<%= javascript_path 'codemirror/addons/selection/active-line' %>"
-      "<%= javascript_path 'codemirror/modes/ruby' %>"
-      "<%= javascript_path 'codemirror/keymaps/sublime' %>"
-      "<%= javascript_path 'jquery.ui.effect.js' %>"
-      "<%= javascript_path 'jquery.ui.slider' %>"
       "<%= javascript_path 'pirates/config' %>"
       "<%= javascript_path 'pirates/utilities' %>"
       "<%= javascript_path 'pirates/console' %>"
@@ -174,7 +171,7 @@ class @Simulation
     Grid.GridControls.setSpeed obj.speed if obj.speed?
 
 
-jQuery () -> # use jQuery to wait until DOM is ready
+window.onload = () -> # use jQuery to wait until DOM is ready
 
   Simulation.preload () -> # firefox won't draw without
     Simulation.initialize()
