@@ -1,6 +1,4 @@
-#= require ./utilities
-#= require ./config
-#= require ./socketHandler
+
 class @GameObject
   @ALL = {} # stores a map with the key being the name and the value being the class
   constructor: () ->

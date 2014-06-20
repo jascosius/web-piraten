@@ -1,17 +1,3 @@
-#= require websocket_rails/main
-#= require codemirror
-#= require codemirror/addons/selection/active-line
-#= require codemirror/modes/ruby
-#= require codemirror/keymaps/sublime
-#= require jquery.ui.effect.js
-#= require jquery.ui.slider
-#= require ./config
-#= require ./utilities
-#= require ./console
-#= require ./socketHandler
-#= require ./gameObjects
-#= require ./codegui
-#= require ./grid
 
 class @Simulation
   @initialize = () ->
@@ -75,9 +61,39 @@ class @Simulation
     Grid.update()
     Grid.draw()
 
-  @preloadImages = (callback) =>
-    images = Config.getImagesToPreload()
+
+  @getLinksToPreload = () ->
+    [
+      "<%= javascript_path 'websocket_rails/main' %>"
+      "<%= javascript_path 'codemirror' %>"
+      "<%= javascript_path 'codemirror/addons/selection/active-line' %>"
+      "<%= javascript_path 'codemirror/modes/ruby' %>"
+      "<%= javascript_path 'codemirror/keymaps/sublime' %>"
+      "<%= javascript_path 'jquery.ui.effect.js' %>"
+      "<%= javascript_path 'jquery.ui.slider' %>"
+      "<%= javascript_path 'pirates/config' %>"
+      "<%= javascript_path 'pirates/utilities' %>"
+      "<%= javascript_path 'pirates/console' %>"
+      "<%= javascript_path 'pirates/socketHandler' %>"
+      "<%= javascript_path 'pirates/gameObjects' %>"
+      "<%= javascript_path 'pirates/codegui' %>"
+      "<%= javascript_path 'pirates/grid' %>"
+    ]
+
+
+  @preload = (callback) =>
     loaded = 0
+    links = @getLinksToPreload()
+    for i in [0...links.length]
+      currentLink = links[i]
+      $.getScript currentLink , () =>
+        loaded += 1
+        if loaded >= links.length
+           @preloadImage callback
+
+  @preloadImage = (callback) =>
+    loaded = 0
+    images = Config.getImagesToPreload()
     for i in [0...images.length]
       currentImage = images[i]
       $('<img />').attr('src', currentImage).load () ->
@@ -132,7 +148,8 @@ class @Simulation
 
 
 jQuery () -> # use jQuery to wait until DOM is ready
-  Simulation.preloadImages () -> # firefox won't draw without
+
+  Simulation.preload () -> # firefox won't draw without
     Simulation.initialize()
     Simulation.mainLoop()
 

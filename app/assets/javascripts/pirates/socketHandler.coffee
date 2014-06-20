@@ -1,5 +1,3 @@
-#= require ./utilities
-#= require websocket_rails/main
 
 onOpen = (event) =>
   console.log 'Socket connection ready!'

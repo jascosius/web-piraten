@@ -1,5 +1,4 @@
 
-#= require ./socketHandler
 class @Grid
   @initialize = (@canvas) ->
     Grid.GridControls._initialize()
