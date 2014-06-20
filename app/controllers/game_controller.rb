@@ -3,4 +3,7 @@ class GameController < ApplicationController
   def index
 
   end
+  def language
+
+  end
 end

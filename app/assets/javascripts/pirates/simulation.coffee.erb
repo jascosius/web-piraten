@@ -24,9 +24,38 @@ class @Simulation
       @mouse.x = event.clientX || event.pageX
       @mouse.y = event.clientY || event.pageY
 
+    $('#save-code').click (event) ->
+      @href = 'data:text/plain;charset=UTF-8,'
+      @href += encodeURIComponent CodeGUI.getCode()
+    $('#save-grid').click (event) ->
+      @href = 'data:text/plain;charset=UTF-8,'
+      @href += encodeURIComponent JSON.stringify(Grid.serialize())
+
+    $('#load-code').click () ->
+      Utils.createFileUpload {
+          fileExtension: 'rb'
+          onSuccess: (fileContent) ->
+            CodeGUI.setCode fileContent
+            # close modal
+            $('#serialization-modal').modal('hide')
+          onInvalidFile: () ->
+            alert 'Keine .rb Datei!'
+      }
+
+    $('#load-grid').click () ->
+      Utils.createFileUpload {
+        fileExtension: 'world'
+        onSuccess: (fileContent) ->
+          serialized = JSON.parse fileContent
+          Grid.load serialized
+          # close modal
+          $('#serialization-modal').modal('hide')
+        onInvalidFile: () ->
+          alert 'Keine .world Datei!'
+      }
 
     $(window).on 'beforeunload', (event) =>
-      event ||= window.event
+      event = event || window.event
       if localStorage?
         serialized = JSON.stringify @serialize()
         localStorage.setItem 'simulation', serialized
@@ -35,7 +64,6 @@ class @Simulation
       data = localStorage.getItem 'simulation'
       if data?
         @load JSON.parse(data)
-
 
   @mainLoop = () =>
     @now = new Date().getTime()

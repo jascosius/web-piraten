@@ -7,6 +7,12 @@
 @CodeMirrorDisabledBg: #2f0707;
 @DebuggerRowHeight: 200px;
 
+.divider {
+  border-top: solid 1px #e5e5e5;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
 .code-wrapper {
 
   .code-controls {
@@ -71,11 +77,10 @@
 }
 
 // Grid
-
 .grid-wrapper {
   text-align: center;
   .grid-controls {
-
+    margin-right: 50px;
 
     .speed-controls {
       float: left;
@@ -121,7 +126,10 @@
       text-align: center;
       margin-bottom: 10px;
       float: right;
-      margin-right: 50px;
+    }
+    .serialization-controls {
+      float: right;
+      margin-left: 10px;
     }
   }
 }
@@ -159,5 +167,21 @@
       background-color: #808B00;
     }
   }
+}
 
+#serialization-modal {
+  .modal-body {
+    padding: 10px 25px 0 25px;
+    .row {
+      margin-bottom: 10px;
+    }
+    .serialize-load {
+
+    }
+    .serialize-single {
+      text-align: center;
+    }
+  }
+  .serialize-all>div {
+  }
 }
