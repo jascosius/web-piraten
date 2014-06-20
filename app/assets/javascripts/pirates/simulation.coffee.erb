@@ -24,12 +24,13 @@ class @Simulation
       @mouse.x = event.clientX || event.pageX
       @mouse.y = event.clientY || event.pageY
 
-    $('#save-code').click (event) ->
-      @href = 'data:text/plain;charset=UTF-8,'
-      @href += encodeURIComponent CodeGUI.getCode()
-    $('#save-grid').click (event) ->
-      @href = 'data:text/plain;charset=UTF-8,'
-      @href += encodeURIComponent JSON.stringify(Grid.serialize())
+    $saveCode = $ '#save-code'
+    Utils.createSaveDialog $saveCode, 'code', 'rb', () ->
+      return CodeGUI.getCode()
+
+    $saveGrid = $ '#save-grid'
+    Utils.createSaveDialog $saveGrid, 'world', 'world', () ->
+      return JSON.stringify Grid.serialize()
 
     $('#load-code').click () ->
       Utils.createFileUpload {
@@ -89,9 +90,9 @@ class @Simulation
     Grid.update()
     Grid.draw()
 
-
-  @getLinksToPreload = () ->
-    [
+  @preload = (callback) =>
+    loaded = 0
+    dependencies = [
       "<%= javascript_path 'websocket_rails/main' %>"
       "<%= javascript_path 'codemirror' %>"
       "<%= javascript_path 'codemirror/addons/selection/active-line' %>"
@@ -107,19 +108,17 @@ class @Simulation
       "<%= javascript_path 'pirates/codegui' %>"
       "<%= javascript_path 'pirates/grid' %>"
     ]
-
-
-  @preload = (callback) =>
-    loaded = 0
-    links = @getLinksToPreload()
-    for i in [0...links.length]
-      currentLink = links[i]
-      $.getScript currentLink , () =>
+    for i in [0...dependencies.length]
+      script = dependencies[i]
+      $.getScript(script).done(() =>
         loaded += 1
-        if loaded >= links.length
-           @preloadImage callback
+        if loaded >= dependencies.length
+           @preloadImages callback
+      ).fail (jqxhr, settings, exception) ->
+        console.log 'failed to load: ', script
+        console.log exception
 
-  @preloadImage = (callback) =>
+  @preloadImages = (callback) =>
     loaded = 0
     images = Config.getImagesToPreload()
     for i in [0...images.length]

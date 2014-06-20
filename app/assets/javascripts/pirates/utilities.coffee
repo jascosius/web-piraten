@@ -44,6 +44,52 @@ class @Utils
     # trigger the file picker
     $uploader.click()
 
+  @createSaveDialog = ($selection, id, extension, contentGenerator) ->
+    defaultFileName = "webpiraten-#{id}"
+    formId = "saveFileName-#{id}"
+    $selection.popover {
+      placement: 'bottom'
+      trigger: 'click'
+      title: 'Dateiname wählen'
+      html: true
+      content: "
+               <form action='#' id='#{formId}' class='saveDialog form-inline'>
+                 <input type='text' value='#{defaultFileName}' class='filename form-control' required /> .#{extension}<br />
+                 <a download='#{defaultFileName}' class='btn btn-success btn-block'>Speichern</a>
+               </form>"
+      container: '.modal-body'
+    }
+    # wait for the popover to exist
+    $selection.on 'shown.bs.popover', () ->
+      $form = $ "\##{formId}"
+      console.log $form
+      $submitButton = $form.find 'a.btn'
+      console.log $submitButton
+      # hitting enter in the input field
+      $form.off 'submit'
+      $form.submit (event) =>
+        event.preventDefault()
+        event.stopPropagation()
+        return false
+
+      # start download
+      $submitButton.off 'click'
+      $submitButton.click () =>
+        console.log 'clicked save', id
+        # create a data URL that will trigger a download
+        data = 'data:text/plain;charset=UTF-8,'
+        data += encodeURIComponent contentGenerator()
+        btn = $submitButton.get 0
+        btn.href = data
+        console.log btn
+        # chrome will set the file name
+        fileName = $form.find('.filename').val()
+        fileName = defaultFileName if !fileName? or fileName.length < 1
+        fileName += ".#{extension}"
+        $(btn).attr 'download', fileName
+        $selection.popover 'hide'
+
+
 class @Coordinate
   constructor: (@x,@y) ->
     # everything is done thanks to @
