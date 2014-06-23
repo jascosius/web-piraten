@@ -28,6 +28,10 @@ class @CodeGUI
     @_$codeControls = $('.code-controls')
     @_$CodeMirror = $('.code-wrapper .CodeMirror')
 
+    # github.com/marijnh/CodeMirror/issues/821#issuecomment-36967065
+    @codeMirror.setOption "maxLength", Config.maxCodeLength
+    @codeMirror.on "beforeChange", @enforceMaxLength
+
   @onDoubleClick = (event) =>
     return if Simulation.isSimulating
     selection = event.getSelection().trim() # selected word
@@ -93,6 +97,20 @@ class @CodeGUI
     @toggleSetting 'styleActiveLine', false, true
     @_$CodeMirror.toggleClass 'editing-disabled'
     @clearHighlighting()
+
+  @enforceMaxLength = (cm, change) ->
+    maxLength = cm.getOption "maxLength"
+    if maxLength and change.update
+      str = change.text.join "\n"
+      delta = str.length-(cm.indexFromPos(change.to) - cm.indexFromPos(change.from))
+      return true if (delta <= 0)
+      delta = cm.getValue().length+delta-maxLength
+      if delta > 0
+        Console.logError 'Maximale Zeichenanzahl erreicht.'
+        str = str.substr 0, str.length-delta
+        change.update change.from, change.to, str.split("\n")
+    return true
+
 
   @getCode = () ->
     @codeMirror.getValue()
