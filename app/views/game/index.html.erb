@@ -26,12 +26,15 @@
           <button class="btn btn-default" id="stopBtn">
               <span class="glyphicon glyphicon-stop"> </span> Stop
           </button>
-          <!--<button class="btn btn-default" id="pauseBtn">-->
-              <!--<span class="glyphicon glyphicon-pause"> </span> Pause-->
-          <!--</button>-->
-          <!--<button class="btn btn-default" id="stepBtn">-->
-              <!--<span class="glyphicon glyphicon-step-forward"> </span> Schritt-->
-          <!--</button>-->
+          <button class="btn btn-default" id="pauseBtn">
+              <span class="glyphicon glyphicon-pause"> </span> Pause
+          </button>
+          <button class="btn btn-default" id="resumeBtn" style="display: none">
+              <span class="glyphicon glyphicon-play"> </span> Resume
+          </button>
+          <button class="btn btn-default" id="stepBtn" disabled>
+              <span class="glyphicon glyphicon-step-forward"> </span> Schritt
+          </button>
       </div>
       <div class="clearfix"></div>
       <div class="row">
@@ -78,9 +81,9 @@ end
 
 
           <div class="btn-group serialization-controls">
-              <div class="btn btn-default" data-toggle="modal" data-target="#serialization-modal">
+              <btn class="btn btn-default" id="serialization-trigger" data-toggle="modal" data-target="#serialization-modal">
                   <span class="glyphicon glyphicon-floppy-disk"> </span>
-              </div>
+              </btn>
               <!--<div class="btn btn-default" data-toggle="modal" data-target="#serialization-modal">-->
                   <!--<span class="glyphicon glyphicon-floppy-open"> </span>-->
               <!--</div>-->
@@ -152,7 +155,7 @@ end
                     <div class="col-md-6">
                         <h4>Code</h4>
                         <div class="btn-group">
-                          <a class="btn btn-success" download="webpiraten-code.rb" id="save-code">
+                          <a class="btn btn-success" id="save-code">
                               <span class="glyphicon glyphicon-floppy-save"> speichern</span>
                           </a>
 
@@ -164,7 +167,7 @@ end
                     <div class="col-md-6">
                         <h4>Spielwelt</h4>
                         <div class="btn-group">
-                          <a class="btn btn-success" download="webpiraten-welt.world" id="save-grid">
+                          <a class="btn btn-success" id="save-grid">
                               <span class="glyphicon glyphicon-floppy-save"> speichern</span>
                           </a>
 

@@ -17,9 +17,19 @@ class @CodeGUI
     @codeMirror.on  "focus", () => @isInEditor = true
     @codeMirror.on 'dblclick', @onDoubleClick
 
-    $('#runBtn').click @start
-    $('#stopBtn').click @stop
-    $('#clearConsoleBtn').click () =>
+    @_$runBtn = $('#runBtn')
+    @_$runBtn.click @start
+    @_$stopBtn = $('#stopBtn')
+    @_$stopBtn.click @stop
+    @_$pauseBtn = $('#pauseBtn')
+    @_$pauseBtn.click @pause
+    @_$resumeBtn = $('#resumeBtn')
+    @_$resumeBtn.click @resume
+    @_$stepBtn = $('#stepBtn')
+    @_$stepBtn.click () ->
+      Simulation.step()
+    @_$clearConsoleBtn = $('#clearConsoleBtn')
+    @_$clearConsoleBtn.click () =>
       Console.clear()
       @WatchList.clearAllocations()
 
@@ -132,11 +142,34 @@ class @CodeGUI
   @start = () =>
     Simulation.start()
 
-  @stop = () =>
-    console.log "Stop!"
+  @stop = () => #TODO reset pause/resume/step buttons
     Simulation.stop()
-    Grid.ship.isMove = false
-    Grid.ship.isRotate = false
+
+  @resetButtons = () =>
+    #reset buttons
+    @_$resumeBtn.hide()
+    @_$pauseBtn.show()
+    @_$stepBtn.attr 'disabled', 'disabled'
+
+
+  toggleStepper = () =>
+    if @_$stepBtn.attr 'disabled'
+      @_$stepBtn.removeAttr 'disabled'
+    else
+      @_$stepBtn.attr 'disabled', 'disabled'
+
+
+  @pause = () =>
+    @_$pauseBtn.hide()
+    @_$resumeBtn.show()
+    Simulation.pause()
+    toggleStepper()
+
+  @resume = () =>
+    @_$resumeBtn.hide()
+    @_$pauseBtn.show()
+    toggleStepper()
+    Simulation.resume()
 
 
 # storing of variables to watch in execution time
@@ -153,6 +186,7 @@ class CodeGUI.WatchList
   @addVariable = (word) ->
     @_$default.hide()
     @_$watchlist.append Config.getWatchListRemoveButtonHTML(word)
+    @updateQueueSize()
 
   @remove = (word) ->
     slideDuration = 300

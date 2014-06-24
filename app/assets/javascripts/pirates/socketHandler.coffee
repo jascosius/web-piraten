@@ -87,10 +87,10 @@ class @PacketHandler extends ChannelHandler
   @update = () =>
     if !Simulation.isSimulating then return
     speed = Simulation.speed
-    if (speed > 0 && (@lifeTime % speed) != 0) || @packetQueue.length < 1
+    if Simulation.isPaused or (speed > 0 && (@lifeTime % speed) != 0) or @packetQueue.length < 1
       @lifeTime++
       return
-    simulatePacket()
+    @simulatePacket()
     @lifeTime++
 
   validateArray = (name, arr) ->
@@ -115,7 +115,6 @@ class @PacketHandler extends ChannelHandler
 
   simulateAllocations = (packet) ->
     allocations = packet.allocations
-    console.log allocations
     for name of allocations
       CodeGUI.WatchList.setAllocation name, allocations[name]
 
@@ -129,7 +128,7 @@ class @PacketHandler extends ChannelHandler
         when 'warning' then Console.logWarning messageObj.message
         when 'error' then Console.logError messageObj.message
 
-  simulatePacket = () =>
+  @simulatePacket = () =>
     return if @packetQueue.isEmpty
 
     CodeGUI.clearHighlighting()

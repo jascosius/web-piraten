@@ -1,4 +1,3 @@
-
 class @Grid
   @initialize = (@canvas) ->
     Grid.GridControls._initialize()
@@ -45,6 +44,8 @@ class @Grid
         @addObject new GameObject.ALL[o.name](o)
       else
         throw "Invalid GameObject name #{o.name}!"
+
+
 
   @addObject = (obj) ->
     @objects.push(obj)

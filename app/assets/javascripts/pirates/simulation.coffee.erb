@@ -16,6 +16,7 @@ class @Simulation
     PacketHandler.initialize()
 
     @isSimulating = false
+    @isPaused = false
 
     #main loop
     @lastRun = 0
@@ -134,15 +135,39 @@ class @Simulation
     @isSimulating = true
     Console.clear()
     CodeGUI.WatchList.clearAllocations()
+    $('#serialization-trigger').attr 'disabled', 'disabled'
 
     webSocket.trigger "simulateGrid", @serialize()
+
+  @pause = () =>
+    throw 'already paused' if @isPaused
+    throw 'already stopped' unless @isSimulating
+    @isPaused = true
+
+  @step = () =>
+    throw 'can\'t step through a stopped simulation' unless @isSimulating
+    PacketHandler.simulatePacket()
+
+  @resume = () =>
+    throw 'Simulation is not paused' unless @isPaused
+    @isPaused = false
 
   @stop = () =>
     throw 'already stopped' unless @isSimulating
     @isSimulating = false
     clear()
     CodeGUI.toggleCodeEditing()
+    CodeGUI.resetButtons()
     webSocket.trigger 'stop'
+    @isPaused = false
+    $serialization_trigger = $ '#serialization-trigger'
+    $serialization_trigger.removeAttr 'disabled'
+
+    # does not work because 'disabled' does not trigger hover
+#    $serialization_trigger.tooltip {
+#      placement: 'bottom'
+#      title: 'Erst Ausführung stoppen'
+#    }
 
   clear = () ->
     CodeGUI.clearHighlighting()
