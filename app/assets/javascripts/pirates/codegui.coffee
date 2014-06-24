@@ -17,18 +17,20 @@ class @CodeGUI
     @codeMirror.on  "focus", () => @isInEditor = true
     @codeMirror.on 'dblclick', @onDoubleClick
 
-    @_$runBtn = $('#runBtn')
-    @_$runBtn.click @start
-    @_$stopBtn = $('#stopBtn')
-    @_$stopBtn.click @stop
-    @_$pauseBtn = $('#pauseBtn')
-    @_$pauseBtn.click @pause
-    @_$resumeBtn = $('#resumeBtn')
-    @_$resumeBtn.click @resume
-    @_$stepBtn = $('#stepBtn')
+    @_$runBtn = $ '#runBtn'
+    @_$runBtn.click Simulation.start
+#    @_$stopBtn = $ '#stopBtn'
+#    @_$stopBtn.click @stop
+    @_$resetBtn = $ '#resetBtn'
+    @_$resetBtn.click Simulation.reset
+    @_$stopBtn = $ '#stopBtn'
+    @_$stopBtn.click Simulation.stop
+    @_$resumeBtn = $ '#resumeBtn'
+    @_$resumeBtn.click Simulation.resume
+    @_$stepBtn = $ '#stepBtn'
     @_$stepBtn.click () ->
       Simulation.step()
-    @_$clearConsoleBtn = $('#clearConsoleBtn')
+    @_$clearConsoleBtn = $ '#clearConsoleBtn'
     @_$clearConsoleBtn.click () =>
       Console.clear()
       @WatchList.clearAllocations()
@@ -89,7 +91,7 @@ class @CodeGUI
         easing: 'easeOutCubic'
         complete: () =>
           hoveringSelection.remove()
-          @WatchList.increment()
+          @WatchList.updateQueueSize()
       }
     )
 
@@ -140,15 +142,15 @@ class @CodeGUI
     @codeMirror.removeLineClass(i, 'background', 'processedLine') for i in [0..@codeMirror.lineCount()]
 
   @start = () =>
-    Simulation.start()
+#    Simulation.start()
 
-  @stop = () => #TODO reset pause/resume/step buttons
-    Simulation.stop()
+  @reset = () => #TODO reset pause/resume/step buttons
+#    Simulation.reset()
 
   @resetButtons = () =>
     #reset buttons
     @_$resumeBtn.hide()
-    @_$pauseBtn.show()
+    @_$stopBtn.show()
     @_$stepBtn.attr 'disabled', 'disabled'
 
 
@@ -159,17 +161,16 @@ class @CodeGUI
       @_$stepBtn.attr 'disabled', 'disabled'
 
 
-  @pause = () =>
-    @_$pauseBtn.hide()
+  @stop = () =>
+    @_$stopBtn.hide()
     @_$resumeBtn.show()
-    Simulation.pause()
     toggleStepper()
 
   @resume = () =>
     @_$resumeBtn.hide()
-    @_$pauseBtn.show()
+    @_$stopBtn.show()
     toggleStepper()
-    Simulation.resume()
+#    Simulation.resume()
 
 
 # storing of variables to watch in execution time
@@ -211,13 +212,10 @@ class CodeGUI.WatchList
     watchlist = @get()
     @_$size.html watchlist.length
 
-  @increment = () ->
-    @_$size.html parseInt(@_$size.html())+1
-
   @get = () ->
     watchlist = []
     @_$watchlist.children('li').each () ->
-      watchlist.push $(this).text().trim()
+      watchlist.push $(@).text().trim()
     return watchlist
 
   @contains = (word) ->

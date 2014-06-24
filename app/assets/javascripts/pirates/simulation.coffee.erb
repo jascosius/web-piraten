@@ -139,10 +139,11 @@ class @Simulation
 
     webSocket.trigger "simulateGrid", @serialize()
 
-  @pause = () =>
+  @stop = () =>
     throw 'already paused' if @isPaused
     throw 'already stopped' unless @isSimulating
     @isPaused = true
+    CodeGUI.stop()
 
   @step = () =>
     throw 'can\'t step through a stopped simulation' unless @isSimulating
@@ -151,8 +152,9 @@ class @Simulation
   @resume = () =>
     throw 'Simulation is not paused' unless @isPaused
     @isPaused = false
+    CodeGUI.resume()
 
-  @stop = () =>
+  @reset = () =>
     throw 'already stopped' unless @isSimulating
     @isSimulating = false
     clear()
@@ -162,6 +164,7 @@ class @Simulation
     @isPaused = false
     $serialization_trigger = $ '#serialization-trigger'
     $serialization_trigger.removeAttr 'disabled'
+    CodeGUI.reset()
 
     # does not work because 'disabled' does not trigger hover
 #    $serialization_trigger.tooltip {
