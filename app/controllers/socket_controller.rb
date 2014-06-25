@@ -26,12 +26,24 @@ class SocketController < WebsocketRails::BaseController
 
     tracing_vars = message[:vars]
     language = 'Ruby'
-    code = preprocess_code(message[:code], language, tracing_vars)
+    code = message[:code]
 
-    #add EOF to show Wrapper the end of the code
-    code += "\n#{$prefix}_EOF\n"
+    if code.length < 1000 and language.length < 50 and tracing_vars.length < 100 #TODO: shoud be the same as in the client
 
-    start_simulation(code, tracing_vars)
+      tracing_vars.each do |e|
+        if e.length > 100
+          return
+        end
+      end
+
+      code = preprocess_code(code, language, tracing_vars)
+
+      #add EOF to show Wrapper the end of the code
+      code += "\n#{$prefix}_EOF\n"
+
+      start_simulation(code, tracing_vars)
+
+    end
 
   end
 

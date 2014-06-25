@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 require 'socket'
-require 'tmpdir'
 require 'open3'
 
 PREFIX = 'CkyUHZVL3q' #have to be the same as in the socket_controller
@@ -8,7 +7,16 @@ TIMEOUT = 20 #have to be the same as in the socket_controller
 MAX_OPS = 10000 #the maximal counter of ops to execute
 PORT = 12340 #have to be the same as in the socket_controller
 
-DEVELOPMENT = true
+if ARGV[0] == 'development' or ARGV[0] == 'test'
+  puts 'Starting VM in development-mode.'
+  DEVELOPMENT = true
+elsif ARGV[0] == 'production'
+  puts 'Starting VM in production-mode.'
+  DEVELOPMENT = false
+else
+  puts 'Use parameter development or production to start VM.'
+  exit
+end
 
 #thread to kill the execution after a while
 def initialize_timeout(client)
@@ -131,20 +139,27 @@ loop {
       code += msg
     end
 
-    # create temporally file for execution of ruby code
-    Dir.mktmpdir('session_') do |dir|
-      File.chmod(0755, dir)
-      # use the directory...
-      open("#{dir}/#{filename}", 'w+') do |file|
-        File.write file, code
-        File.chmod(0744, file)
+    temp = '/codetemp'
+    if DEVELOPMENT
+      temp = '/tmp'
+    end
 
-        exec = compile(client, dir, compile, compile_error)
+    dir = "#{temp}/session_#{Time.now.nsec}_#{rand(1000000)}"
+    Dir.mkdir(dir, 0755)
 
-        if exec
-          execute(client, dir, execute, execute_error)
-        end
+    open("#{dir}/#{filename}", 'w+') do |file|
+      File.write file, code
+      File.chmod(0744, file)
+
+      exec = compile(client, dir, compile, compile_error)
+
+      if exec
+        execute(client, dir, execute, execute_error)
       end
     end
+
+    File.delete("#{dir}/#{filename}")
+    Dir.rmdir(dir)
+
   end
 }.join

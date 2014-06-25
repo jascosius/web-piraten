@@ -6,6 +6,8 @@ module ControlSimulation
     packet[:operations] << {:name => 'exit'}
     if line != ''
       print!(packet, :error, line) #add errormessages
+    else
+      print!(packet, :log, 'Ausführung beendet!') #add endmessage
     end
     send_packet(packet)
     connection_store[:is_simulation_done] = true
