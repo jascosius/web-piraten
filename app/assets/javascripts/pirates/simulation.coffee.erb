@@ -127,7 +127,7 @@ class @Simulation
         if loaded >= images.length
           callback()
 
-
+  tempStorage = null
   @start = () =>
     throw 'already started' if @isSimulating
     clear()
@@ -136,8 +136,11 @@ class @Simulation
     Console.clear()
     CodeGUI.WatchList.clearAllocations()
     $('#serialization-trigger').attr 'disabled', 'disabled'
+    tempStorage = @serialize()
+    webSocket.trigger "simulateGrid", tempStorage
+    if localStorage?
+      localStorage.setItem 'simulation', JSON.stringify(tempStorage)
 
-    webSocket.trigger "simulateGrid", @serialize()
 
   @stop = () =>
     throw 'already paused' if @isPaused
@@ -165,6 +168,9 @@ class @Simulation
     $serialization_trigger = $ '#serialization-trigger'
     $serialization_trigger.removeAttr 'disabled'
     CodeGUI.reset()
+    delete tempStorage.speed # usability
+    @load tempStorage
+    tempStorage = null
 
     # does not work because 'disabled' does not trigger hover
 #    $serialization_trigger.tooltip {
