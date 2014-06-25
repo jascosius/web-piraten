@@ -94,7 +94,7 @@ class @Grid
     { x1: x, y1: y, x2: @size, y2: @size }
 
   @onClick = (event) =>
-    if !Simulation.isSimulating
+    if !Simulation.isInExecutionMode
       mousPos = @getMousePos event
       pos = @getGridCoordinates mousPos
       objOnPos = @isSomethingOnPosition pos.x, pos.y
@@ -119,7 +119,7 @@ class @Grid
     coords = @getGridCoordinates @getMousePos(event)
     x = coords.x
     y = coords.y
-    if @mousePressedOnShip && Simulation.isSimulating == false
+    if @mousePressedOnShip && Simulation.isInExecutionMode == false
       if !@contains(@getMousePos(event))
         x = coords.x
         y = coords.y
@@ -145,7 +145,7 @@ class @Grid
     mousPos = @getMousePos event
     pos = @getGridCoordinates mousPos
     objOnPos = @isSomethingOnPosition pos.x, pos.y
-    if !Simulation.isSimulating && objOnPos == false && @mousePressed == 1 && @contains(@getMousePos(event))
+    if !Simulation.isInExecutionMode && objOnPos == false && @mousePressed == 1 && @contains(@getMousePos(event))
       @GridControls.creatObjectFromButton pos.x, pos.y
     else if @mousePressed == 3 && objOnPos != false
       @deleteObjectWithIndex @objects.indexOf(objOnPos)

@@ -19,8 +19,6 @@ class @CodeGUI
 
     @_$runBtn = $ '#runBtn'
     @_$runBtn.click Simulation.start
-#    @_$stopBtn = $ '#stopBtn'
-#    @_$stopBtn.click @stop
     @_$resetBtn = $ '#resetBtn'
     @_$resetBtn.click Simulation.reset
     @_$stopBtn = $ '#stopBtn'
@@ -45,7 +43,7 @@ class @CodeGUI
     @codeMirror.on "beforeChange", @enforceMaxLength
 
   @onDoubleClick = (event) =>
-    return if Simulation.isSimulating
+    return if Simulation.isInExecutionMode
     selection = event.getSelection().trim() # selected word
     cursor = event.getCursor()
     type = event.getTokenTypeAt(cursor)
@@ -146,12 +144,15 @@ class @CodeGUI
 
   @reset = () => #TODO reset pause/resume/step buttons
 #    Simulation.reset()
+    @resetButtons()
+    @toggleCodeEditing()
 
   @resetButtons = () =>
     #reset buttons
     @_$resumeBtn.hide()
     @_$stopBtn.show()
     @_$stepBtn.attr 'disabled', 'disabled'
+    @_$resumeBtn.attr 'disabled'
 
 
   toggleStepper = () =>
@@ -164,7 +165,11 @@ class @CodeGUI
   @stop = () =>
     @_$stopBtn.hide()
     @_$resumeBtn.show()
-    toggleStepper()
+
+    if Simulation.isFinished
+      @_$resumeBtn.attr 'disabled', 'disabled'
+    else
+      toggleStepper()
 
   @resume = () =>
     @_$resumeBtn.hide()
