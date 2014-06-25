@@ -15,8 +15,9 @@ class @Simulation
     CodeGUI.initialize 'codemirror'
     PacketHandler.initialize()
 
-    @isSimulating = false
-    @isPaused = false
+    @isInExecutionMode = false
+    @isStopped = true
+    @isFinished = true
 
     #main loop
     @lastRun = 0
@@ -129,42 +130,47 @@ class @Simulation
 
   tempStorage = null
   @start = () =>
-    throw 'already started' if @isSimulating
+    throw 'already started' if @isInExecutionMode
     clear()
     CodeGUI.toggleCodeEditing()
-    @isSimulating = true
+    @isInExecutionMode = true
+    @isStopped = false
+    @isFinished = false
+
     Console.clear()
     CodeGUI.WatchList.clearAllocations()
     $('#serialization-trigger').attr 'disabled', 'disabled'
+
+    # store state of the grid
     tempStorage = @serialize()
     webSocket.trigger "simulateGrid", tempStorage
     if localStorage?
       localStorage.setItem 'simulation', JSON.stringify(tempStorage)
 
-
   @stop = () =>
-    throw 'already paused' if @isPaused
-    throw 'already stopped' unless @isSimulating
-    @isPaused = true
+    throw 'already stopped' if @isStopped
+    throw 'not in simulation mode' unless @isInExecutionMode
+    @isStopped = true
     CodeGUI.stop()
 
   @step = () =>
-    throw 'can\'t step through a stopped simulation' unless @isSimulating
+    throw 'can\'t step through a stopped simulation' unless @isInExecutionMode
     PacketHandler.simulatePacket()
 
   @resume = () =>
-    throw 'Simulation is not paused' unless @isPaused
-    @isPaused = false
+    throw 'Simulation is not paused' unless @isStopped
+    @isStopped = false
     CodeGUI.resume()
 
   @reset = () =>
-    throw 'already stopped' unless @isSimulating
-    @isSimulating = false
+    throw 'not in simulation mode' unless @isInExecutionMode
+    @isInExecutionMode = false
     clear()
     CodeGUI.toggleCodeEditing()
     CodeGUI.resetButtons()
     webSocket.trigger 'stop'
-    @isPaused = false
+    @isStopped = true
+    @isFinished = true
     $serialization_trigger = $ '#serialization-trigger'
     $serialization_trigger.removeAttr 'disabled'
     CodeGUI.reset()

@@ -41,12 +41,14 @@ class @PacketHandler extends ChannelHandler
       move: Grid.ship.move
       turn: Grid.ship.turn
       look: Grid.ship.look
-      exit: Simulation.stop
+      exit: () ->
+        Simulation.isFinished = true
+        Simulation.stop()
     }
     return _mapping
 
   addToQueue = (packet) =>
-    return if not Simulation.isSimulating
+    return if not Simulation.isInExecutionMode
 
     if not packet.id?
       console.log 'Missing Id', packet
@@ -85,9 +87,9 @@ class @PacketHandler extends ChannelHandler
     @usedIDs.push @currentId
 
   @update = () =>
-    if !Simulation.isSimulating then return
+    if !Simulation.isInExecutionMode then return
     speed = Simulation.speed
-    if Simulation.isPaused or (speed > 0 && (@lifeTime % speed) != 0) or @packetQueue.length < 1
+    if Simulation.isStopped or (speed > 0 && (@lifeTime % speed) != 0) or @packetQueue.length < 1
       @lifeTime++
       return
     @simulatePacket()
