@@ -64,8 +64,9 @@ class @Simulation
     $(window).on 'beforeunload', (event) =>
       event = event || window.event
       if localStorage?
-        serialized = JSON.stringify @serialize()
-        localStorage.setItem 'simulation', serialized
+        serialized = @serialize()
+        delete serialized.vars # don't store watchlist
+        localStorage.setItem 'simulation', JSON.stringify serialized
 
     if localStorage?
       data = localStorage.getItem 'simulation'
@@ -136,9 +137,6 @@ class @Simulation
     @isInExecutionMode = true
     @isStopped = false
     @isFinished = false
-
-    Console.clear()
-    CodeGUI.WatchList.clearAllocations()
     $('#serialization-trigger').attr 'disabled', 'disabled'
 
     # store state of the grid
@@ -166,14 +164,15 @@ class @Simulation
     throw 'not in simulation mode' unless @isInExecutionMode
     @isInExecutionMode = false
     clear()
-    CodeGUI.toggleCodeEditing()
-    CodeGUI.resetButtons()
     webSocket.trigger 'stop'
     @isStopped = true
     @isFinished = true
     $serialization_trigger = $ '#serialization-trigger'
     $serialization_trigger.removeAttr 'disabled'
     CodeGUI.reset()
+    Console.clear()
+    CodeGUI.WatchList.clearAllocations()
+
     delete tempStorage.speed # usability
     @load tempStorage
     tempStorage = null

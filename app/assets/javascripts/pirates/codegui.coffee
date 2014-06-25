@@ -144,6 +144,8 @@ class @CodeGUI
 
   @reset = () => #TODO reset pause/resume/step buttons
 #    Simulation.reset()
+    @resetButtons()
+    @toggleCodeEditing()
 
   @resetButtons = () =>
     #reset buttons
