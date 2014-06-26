@@ -30,7 +30,7 @@ class @Grid
     @load @defaultData
 
   @load = (obj) =>
-    @gridWidth = obj.width || 21
+    @gridWidth = obj.width || 22
     @gridHeight = obj.height || 10
     @size = obj.size || 32
 
