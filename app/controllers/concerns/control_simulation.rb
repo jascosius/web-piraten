@@ -16,18 +16,8 @@ module ControlSimulation
   def print!(packet, type, line)
     remove_prefix! line
     line = CGI::escapeHTML(line)
-    new_line = ''
-    line.each_char do |c|
-      if c == ' '
-        new_line += '&nbsp;'
-      elsif c == "\t"
-        new_line += '&nbsp;&nbsp;&nbsp;&nbsp;'
-      else
-        new_line += c
-      end
-    end
     packet[:messages] ||= []
-    packet[:messages] << {:type => type, :message => new_line}
+    packet[:messages] << {:type => type, :message => line}
   end
 
   def debug!(packet, tracing_vars, old_allocations, name_index, value)
