@@ -10,8 +10,8 @@ class JavaPreprocessor < BasePreprocessor
   def initialize(attribut)
     super(attribut)
     @filename = 'Pirate.java'
-    @compile = 'javac -cp java $PATH$/Pirate.java' #$PATH$ will be replaced
-    @execute = 'java -cp $PATH$:java Pirate'
+    @compile = 'javac -cp lib/java $PATH$/Pirate.java' #$PATH$ will be replaced
+    @execute = 'java -cp $PATH$:lib/java Pirate'
     @compile_error = 'error' #break, when this is in the last line of compiler error
     @execute_error = 'Could not find or load main class' #break, when this is in the first line of the execution error
   end
