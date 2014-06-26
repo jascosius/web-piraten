@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'socket'
 require 'open3'
+require 'fileutils'
 
 PREFIX = 'CkyUHZVL3q' #have to be the same as in the socket_controller
 TIMEOUT = 20 #have to be the same as in the socket_controller
@@ -120,46 +121,50 @@ server = TCPServer.new PORT
 loop {
   Thread.start(server.accept) do |client| #spawn new process for a new client
 
-    initialize_timeout(client)
-
-    #get commands from client
-    puts filename = client.gets.chomp #filename for the code
-    puts compile = client.gets.chomp #command to compile the code
-    puts execute = client.gets.chomp #command to execute the code
-    puts compile_error = client.gets.chomp #string to find an compile error in the output of the compiler
-    puts execute_error = client.gets.chomp #string to find an compile error in the output of the execution (can't find compiled file)
-
-    #get programmcode from client
-    code = ''
-    loop do
-      puts msg = client.gets
-      if msg.include?("#{PREFIX}_EOF") #end of programmcode
-        break
-      end
-      code += msg
-    end
-
     temp = '/codetemp'
     if DEVELOPMENT
       temp = '/tmp'
     end
 
     dir = "#{temp}/session_#{Time.now.nsec}_#{rand(1000000)}"
-    Dir.mkdir(dir, 0755)
 
-    open("#{dir}/#{filename}", 'w+') do |file|
-      File.write file, code
-      File.chmod(0744, file)
+    thr = Thread.start {
+      initialize_timeout(client)
 
-      exec = compile(client, dir, compile, compile_error)
+      #get commands from client
+      puts filename = client.gets.chomp #filename for the code
+      puts compile = client.gets.chomp #command to compile the code
+      puts execute = client.gets.chomp #command to execute the code
+      puts compile_error = client.gets.chomp #string to find an compile error in the output of the compiler
+      puts execute_error = client.gets.chomp #string to find an compile error in the output of the execution (can't find compiled file)
 
-      if exec
-        execute(client, dir, execute, execute_error)
+      #get programmcode from client
+      code = ''
+      loop do
+        puts msg = client.gets
+        if msg.include?("#{PREFIX}_EOF") #end of programmcode
+          break
+        end
+        code += msg
       end
-    end
 
-    File.delete("#{dir}/#{filename}")
-    Dir.rmdir(dir)
+      Dir.mkdir(dir, 0755)
+
+      open("#{dir}/#{filename}", 'w+') do |file|
+        File.write file, code
+        File.chmod(0744, file)
+
+        exec = compile(client, dir, compile, compile_error)
+
+        if exec
+          execute(client, dir, execute, execute_error)
+        end
+      end
+    }
+
+    thr.join
+
+    FileUtils.rm_r dir
 
   end
 }.join
