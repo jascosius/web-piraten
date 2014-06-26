@@ -142,7 +142,7 @@ class @CodeGUI
   @start = () =>
 #    Simulation.start()
 
-  @reset = () => #TODO reset pause/resume/step buttons
+  @reset = () =>
 #    Simulation.reset()
     @resetButtons()
     @toggleCodeEditing()

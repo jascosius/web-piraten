@@ -102,7 +102,8 @@ class @PacketHandler extends ChannelHandler
   simulateOperation = (packet) =>
     operations = packet.operations
     validateArray "operations", operations
-
+    # TODO animate or not?
+    #Grid.blockAnimation = (operations.length > 1)
     for op in operations
       if operationMapping()[op.name]?
         operationMapping()[op.name](op.return)

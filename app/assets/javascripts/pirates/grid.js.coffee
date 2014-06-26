@@ -21,6 +21,7 @@ class @Grid
     $canvas.on 'selectstart', () -> return false
 
     @ANGLE = (Math.PI/180)
+    @blockAnimation = false
 
     @mousePressedOnShip = false
     @mousePressed = false
@@ -296,8 +297,9 @@ class @Grid
     @ctx.restore()
 
   @_smoothShipMovement = (cellCenter) ->
-    unless @ship.isMoving
+    if !@ship.isMoving or @blockAnimation
       @_smoothingStep = 0
+      @ship.isMoving = false
       return cellCenter
 
     axis = -1 #vertical
@@ -328,6 +330,10 @@ class @Grid
   @_smoothShipRotation = () ->
     if !@_smoothingRotationStep?
       @_smoothingRotationStep = 0
+
+    if @blockAnimation
+      @ship.isRotating = false
+      return
 
     # smooth rotation
     if @ship.isRotating and @ship.rotation != @ship.lastRotation
