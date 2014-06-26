@@ -165,6 +165,7 @@ class @CodeGUI
   @stop = () =>
     @_$stopBtn.hide()
     @_$resumeBtn.show()
+    @_$stepBtn.removeAttr 'disabled'
 
     if Simulation.isFinished
       @_$resumeBtn.attr 'disabled', 'disabled'
