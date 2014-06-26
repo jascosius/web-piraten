@@ -142,7 +142,7 @@ class @CodeGUI
   @start = () =>
 #    Simulation.start()
 
-  @reset = () => #TODO reset pause/resume/step buttons
+  @reset = () =>
 #    Simulation.reset()
     @resetButtons()
     @toggleCodeEditing()
@@ -165,6 +165,7 @@ class @CodeGUI
   @stop = () =>
     @_$stopBtn.hide()
     @_$resumeBtn.show()
+    @_$stepBtn.removeAttr 'disabled'
 
     if Simulation.isFinished
       @_$resumeBtn.attr 'disabled', 'disabled'

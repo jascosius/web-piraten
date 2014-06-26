@@ -102,7 +102,8 @@ class @PacketHandler extends ChannelHandler
   simulateOperation = (packet) =>
     operations = packet.operations
     validateArray "operations", operations
-
+    # TODO animate or not?
+    #Grid.blockAnimation = (operations.length > 1)
     for op in operations
       if operationMapping()[op.name]?
         operationMapping()[op.name](op.return)
@@ -125,10 +126,13 @@ class @PacketHandler extends ChannelHandler
     validateArray "messages", messages
 
     for messageObj in messages
+      msg = messageObj.message
+      msg = msg.replace /\t/g, '    ' # 4 whitespaces
+      msg = msg.replace /\ /g, '&nbsp;'
       switch messageObj.type
-        when 'log' then Console.log messageObj.message
-        when 'warning' then Console.logWarning messageObj.message
-        when 'error' then Console.logError messageObj.message
+        when 'log' then Console.log msg
+        when 'warning' then Console.logWarning msg
+        when 'error' then Console.logError msg
 
   @simulatePacket = () =>
     return if @packetQueue.isEmpty

@@ -10,6 +10,8 @@ RailsPrototype::Application.routes.draw do
   root 'main#index'
 
   get 'learn' => 'game#index', as: :learn # creates learn_path and learn_url
+  get 'learn/:name' => 'game#learn' # creates learn_path and learn_url
+  get 'learn/new' => 'game#new' # creates learn_path and learn_url
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
