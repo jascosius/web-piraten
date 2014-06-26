@@ -4,8 +4,7 @@ if Rails.env.development?
   Thread.start do
     puts 'Started virtual machine for simulation (development only)'
     # blocking the thread
-    system('ruby -C vm/vm vm.rb development')
-    puts 'Stopped virtual machine for simulation'
+    Thread.new {system('ruby -C vm/vm vm.rb development')}
   end
 elsif Rails.env.production?
   Thread.start do

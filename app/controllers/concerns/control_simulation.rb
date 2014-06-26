@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module ControlSimulation
 
   def exit_simulation!(packet, line='')
