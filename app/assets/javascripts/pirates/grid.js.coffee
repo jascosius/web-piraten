@@ -202,8 +202,21 @@ class @Grid
     @ctx.save()
 
     # draw horizontal and vertical lines
-    @_drawCells Config.lineColor
-    @_drawCells Config.lineColor, true
+    if not @_cache? or @_cachedData.size != @size or
+      @_cachedData.gridWidth != @gridWidth or
+      @_cachedData.gridHeight != @gridHeight
+
+        @_drawCells Config.lineColor
+        @_drawCells Config.lineColor, true
+        @_cache = @ctx.getImageData 0, 0, @canvasWidth, @canvasHeight
+        @_cachedData = {
+          size: @size
+          gridWidth: @gridWidth
+          gridHeight: @gridHeight
+        }
+    else
+      @ctx.putImageData @_cache, 0, 0
+
 
     @_drawObjects()
     @_drawShip()
