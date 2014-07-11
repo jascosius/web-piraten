@@ -1,9 +1,15 @@
 # -*- encoding : utf-8 -*-
 module InitializeCommunication
 
-  @@timeout = 20 #timeout time for the programm to execute
-  @@port = 12340 #port to connect to the vm
-  @@host = 'localhost' #host to connect to the vm
+  if Rails.env.production?
+    @@timeout = 20 #timeout time for the programm to execute
+    @@port = 12340 #port to connect to the vm
+    @@host = 'chevalblanc' #host to connect to the vm
+  else
+    @@timeout = 20 #timeout time for the programm to execute
+    @@port = 12340 #port to connect to the vm
+    @@host = 'localhost' #host to connect to the vm
+  end
 
 
   def start_simulation(code, tracing_vars)
@@ -60,6 +66,7 @@ module InitializeCommunication
       vm
     end
   end
+
   def read_json
     grid = message[:grid]
     puts grid
