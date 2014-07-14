@@ -52,9 +52,9 @@ gem 'therubyracer'
 gem 'less-rails-bootstrap'
 
 # devise authentication
-gem 'devise'
+# gem 'devise'
 
-gem 'simple_form', '~> 3.1.0.rc1' # latest rc for bootstrap 3 support
+# gem 'simple_form', '~> 3.1.0.rc1' # latest rc for bootstrap 3 support
 gem 'codemirror-rails' # MIT License
 
 gem 'opal' # ruby2javascript compiler
