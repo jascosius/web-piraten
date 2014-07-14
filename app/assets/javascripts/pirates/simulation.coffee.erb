@@ -63,7 +63,7 @@ class @Simulation
 
     $(window).on 'beforeunload', (event) =>
       event = event || window.event
-      if localStorage?
+      if localStorage? and not @isInExecutionMode
         serialized = @serialize()
         delete serialized.vars # don't store watchlist
         localStorage.setItem 'simulation', JSON.stringify serialized
