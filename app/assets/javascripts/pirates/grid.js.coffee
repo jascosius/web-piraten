@@ -191,6 +191,7 @@ class @Grid
       height: @height
       objects: sendObjects
       ship: sendShip
+      size: @size
     }
 
   @update = () ->

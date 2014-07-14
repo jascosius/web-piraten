@@ -86,16 +86,17 @@ class @Simulation
     # clear screen
     @context.clearRect 0, 0, @context.canvas.width, @context.canvas.height
 
+    #@operationHandler.update();
+    PacketHandler.update()
+    Grid.update()
+    Grid.draw()
+
     if(@showFps)
       @fps = 1/@deltaTime
       @context.fillStyle = "Black"
       @context.font      = "normal 12pt Arial"
       @context.fillText Math.round(@fps)+" fps", 10, 20
 
-    #@operationHandler.update();
-    PacketHandler.update()
-    Grid.update()
-    Grid.draw()
 
   @preload = (callback) =>
     loaded = 0
