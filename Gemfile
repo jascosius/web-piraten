@@ -57,8 +57,8 @@ gem 'less-rails-bootstrap'
 # gem 'simple_form', '~> 3.1.0.rc1' # latest rc for bootstrap 3 support
 gem 'codemirror-rails' # MIT License
 
-gem 'opal' # ruby2javascript compiler
-gem 'opal-rails'
+# gem 'opal' # ruby2javascript compiler
+# gem 'opal-rails'
 
 gem 'magic_encoding' #every file as UTF - 8
 gem 'jquery-ui-rails' # visual jquery plugins
