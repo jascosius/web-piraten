@@ -235,7 +235,7 @@ class CodeGUI.WatchList
     if $row.length < 1 # new row
       $row = $ "<tr><td>#{variable}</td><td>#{allocation}</td></tr>"
       @_$watchlistDebuggerTbody.append $row
-
+    allocation = allocation.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     $row.children('td:last').html allocation
     $row.children().addClass('highlight').delay(250).removeClass 'highlight', 1000, 'linear'
 
