@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.0.4'
+gem 'rails', '4.0.7'
 
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3'
@@ -39,7 +39,12 @@ end
 # gem 'unicorn'
 
 # Use Capistrano for deployment
-# gem 'capistrano', group: :development
+group :development do
+  gem 'capistrano'        , '~> 3.0', require: false
+  gem 'capistrano-rvm'    , '~> 0.1', require: false
+  gem 'capistrano-rails'  , '~> 1.1', require: false
+  gem 'capistrano-bundler', '~> 1.1', require: false
+end
 
 # Use debugger
 # gem 'debugger', group: [:development, :test]
