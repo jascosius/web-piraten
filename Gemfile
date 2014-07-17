@@ -67,3 +67,7 @@ gem 'codemirror-rails' # MIT License
 
 gem 'magic_encoding' #every file as UTF - 8
 gem 'jquery-ui-rails' # visual jquery plugins
+
+# monitoring
+gem 'airbrake'
+
