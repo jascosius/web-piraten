@@ -6,4 +6,10 @@ if Rails.env.development?
     # blocking the thread
     Thread.new {system('ruby -C vm/vm vm.rb development')}
   end
+else
+  Thread.start do
+    puts 'Started virtual machine for simulation (production)'
+    # blocking the thread
+    Thread.new {system('ruby -C vm/vm vm.rb production')}
+  end
 end
