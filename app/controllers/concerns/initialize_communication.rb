@@ -14,51 +14,16 @@ module InitializeCommunication
 
   def start_simulation(code, tracing_vars)
 
-    packet2 = {}
-    packet2[:id] = 3
-    packet2[:messages] ||= []
-    packet2[:messages] << {:type => :log, :message => 'Bin in start_simulation angekommen.'}
-    WebsocketRails[:simulation].trigger(:step, packet2)
-
     Thread.start do
-
-      packet2 = {}
-      packet2[:id] = 3
-      packet2[:messages] ||= []
-      packet2[:messages] << {:type => :log, :message => 'Habe Thread gestartet.'}
-      WebsocketRails[:simulation].trigger(:step, packet2)
 
       set_id
       read_json
 
       packet = {}
 
-      packet2 = {}
-      packet2[:id] = 3
-      packet2[:messages] ||= []
-      packet2[:messages] << {:type => :log, :message => 'connection_store'}
-      WebsocketRails[:simulation].trigger(:step, packet2)
       connection_store[:is_simulation_done] = false
-
-      packet2 = {}
-      packet2[:id] = 3
-      packet2[:messages] ||= []
-      packet2[:messages] << {:type => :log, :message => 'initialize_timeout'}
-      WebsocketRails[:simulation].trigger(:step, packet2)
       initialize_timeout(Thread.current, packet)
-
-      packet2 = {}
-      packet2[:id] = 3
-      packet2[:messages] ||= []
-      packet2[:messages] << {:type => :log, :message => 'initialize_vm'}
-      WebsocketRails[:simulation].trigger(:step, packet2)
       vm = initialize_vm(code, packet)
-
-      packet2 = {}
-      packet2[:id] = 3
-      packet2[:messages] ||= []
-      packet2[:messages] << {:type => :log, :message => 'communicate_with_vm'}
-      WebsocketRails[:simulation].trigger(:step, packet2)
       communicate_with_vm(vm, packet, code, tracing_vars)
 
     end
@@ -82,11 +47,6 @@ module InitializeCommunication
     begin
       #connect to TCPServer to execute the programm
       vm = TCPSocket.open(@@host, @@port)
-      packet2 = {}
-      packet2[:id] = 3
-      packet2[:messages] ||= []
-      packet2[:messages] << {:type => :log, :message => 'Verbindung zur VM'}
-      WebsocketRails[:simulation].trigger(:step, packet2)
     rescue
       puts 'Could not connect to TCPSocket. Start ruby app/vm/vm.rb'
       exit_simulation!(packet, 'Ein interner Fehler ist aufgetreten.')
