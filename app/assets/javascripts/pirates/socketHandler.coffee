@@ -12,7 +12,7 @@ onError = (event) ->
 
 # establish connection
 #window.webSocket = new WebSocketRails 'localhost:3000/websocket'
-window.webSocket = new WebSocketRails 'www-ps.informatik.uni-kiel.de/web-piraten/websocket'
+window.webSocket = new WebSocketRails('www-ps.informatik.uni-kiel.de/web-piraten/websocket', false)
 webSocket.on_open = onOpen
 webSocket.on_close = onClose
 webSocket.on_error = onError
