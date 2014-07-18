@@ -24,6 +24,9 @@ module Preprocessor
       when 'Java'
         @lang = JavaPreprocessor.new('Java')
         @code = @lang.process_code(msg, tracing_vars)
+      when 'Erlang'
+        @lang = ErlangPreprocessor.new('Erlang')
+        @code = @lang.process_code(msg, tracing_vars)
       else
         @code = 'Something went terribly wrong!'
     end
