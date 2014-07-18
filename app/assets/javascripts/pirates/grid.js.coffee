@@ -1,6 +1,6 @@
 class @Grid
   @initialize = (@canvas) ->
-    Grid.GridControls._initialize()
+    Grid.GridControls.initialize()
     @size = 32 # pixel per cell
     @ctx = canvas.getContext "2d"
     @canvasWidth = @ctx.canvas.width
@@ -12,7 +12,7 @@ class @Grid
     @look = null
     @mousePosition = null
 
-    $canvas = $(@canvas)
+    $canvas = $ @canvas
     $canvas.on 'mousedown', this.onClick
     $canvas.on 'mousemove', this.onMouseMove
     $canvas.on 'mouseout', this.onMouseOut
@@ -31,8 +31,8 @@ class @Grid
     @load @defaultData
 
   @load = (obj) =>
-    @gridWidth = obj.width || 22
-    @gridHeight = obj.height || 10
+    @width = obj.width || 22
+    @height = obj.height || 10
     @size = obj.size || 32
 
     s = obj.ship
@@ -75,8 +75,8 @@ class @Grid
     coords.x >= 0 && coords.y >= 0 && coords.x < @canvasWidth && coords.y < @canvasHeight
 
   @contains = (coords) => # is in grid, pixel
-    @isInCanvas(coords) && coords.x <= @gridWidth*@size &&
-      coords.y <= @gridHeight*@size
+    @isInCanvas(coords) && coords.x <= @width*@size &&
+      coords.y <= @height*@size
 
   @getGridCoordinates = (coords) ->
     new Coordinate Math.floor(coords.x/@size), Math.floor((coords.y-2)/@size) #because the two pix thick line -2
@@ -124,10 +124,10 @@ class @Grid
       if !@contains(@getMousePos(event))
         x = coords.x
         y = coords.y
-        if x >= @gridWidth
-          x = @gridWidth - 1
-        if y >= @gridHeight
-          y = @gridHeight-1
+        if x >= @width
+          x = @width - 1
+        if y >= @height
+          y = @height-1
       @ship.x = x
       @ship.y = y
 
@@ -161,13 +161,13 @@ class @Grid
       y = coords.y
       if x < 0
         x = 0
-      else if x >= @gridWidth
-        x = @gridWidth - 1
+      else if x >= @width
+        x = @width - 1
 
       if y < 0
         y = 0
-      else if y >= @gridHeight
-        y = @gridHeight-1
+      else if y >= @height
+        y = @height-1
 
       @ship.x = x
       @ship.y = y
@@ -187,10 +187,11 @@ class @Grid
     sendShip =  @ship.serialize()
 
     {
-      width: @gridWidth
-      height: @gridHeight
+      width: @width
+      height: @height
       objects: sendObjects
       ship: sendShip
+      size: @size
     }
 
   @update = () ->
@@ -202,8 +203,21 @@ class @Grid
     @ctx.save()
 
     # draw horizontal and vertical lines
-    @_drawCells Config.lineColor
-    @_drawCells Config.lineColor, true
+    if not @_cache? or @_cachedData.size != @size or
+      @_cachedData.width != @width or
+      @_cachedData.height != @height
+
+        @_drawCells Config.lineColor
+        @_drawCells Config.lineColor, true
+        @_cache = @ctx.getImageData 0, 0, @canvasWidth, @canvasHeight
+        @_cachedData = {
+          size: @size
+          width: @width
+          height: @height
+        }
+    else
+      @ctx.putImageData @_cache, 0, 0
+
 
     @_drawObjects()
     @_drawShip()
@@ -218,11 +232,11 @@ class @Grid
 
     if vertical
       while(@contains(coords))
-        @_drawLine coords.x, 0, coords.x, @gridHeight*@size, 1, strokeStyle
+        @_drawLine coords.x, 0, coords.x, @height*@size, 1, strokeStyle
         coords.x += @size
     else
       while(@contains(coords))
-        @_drawLine 0, coords.y, @gridWidth*@size, coords.y, 1, strokeStyle
+        @_drawLine 0, coords.y, @width*@size, coords.y, 1, strokeStyle
         coords.y += @size
 
     @ctx.restore()
@@ -385,7 +399,7 @@ class @Grid
 
 # Controls the buttons above the grid
 class Grid.GridControls
-  @_initialize = () ->
+  @initialize = () ->
     $(document).on "keydown", @onKeyDown
 
     #preload queries for optimization

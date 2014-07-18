@@ -24,9 +24,22 @@ class SocketController < WebsocketRails::BaseController
 
   def receive_code
 
+    packet2 = {}
+    packet2[:id] = 3
+    packet2[:messages] ||= []
+    packet2[:messages] << {:type => :log, :message => 'receive_code'}
+    WebsocketRails[:simulation].trigger(:step, packet2)
+
     tracing_vars = message[:vars]
     language = 'Ruby'
     code = message[:code]
+
+    packet2 = {}
+    packet2[:id] = 3
+    packet2[:messages] ||= []
+    packet2[:messages] << {:type => :log, :message => 'message[:vars]'}
+    WebsocketRails[:simulation].trigger(:step, packet2)
+
 
     if code.length < 1000 and language.length < 50 and tracing_vars.length < 100 #TODO: shoud be the same as in the client
 
@@ -35,6 +48,12 @@ class SocketController < WebsocketRails::BaseController
           return
         end
       end
+      packet2 = {}
+      packet2[:id] = 3
+      packet2[:messages] ||= []
+      packet2[:messages] << {:type => :log, :message => 'preprocess_code'}
+      WebsocketRails[:simulation].trigger(:step, packet2)
+
 
       code = preprocess_code(code, language, tracing_vars)
 

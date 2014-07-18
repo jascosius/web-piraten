@@ -1,5 +1,3 @@
-PATH_TO_VMSCRIPT= '/home/marius/VMs/qemu/control.sh'
-
 if Rails.env.development?
   Thread.start do
     puts 'Started virtual machine for simulation (development only)'
