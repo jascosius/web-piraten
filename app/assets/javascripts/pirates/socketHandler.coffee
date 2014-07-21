@@ -1,6 +1,7 @@
 
 onOpen = (event) =>
   console.log 'Socket connection ready!'
+  console.log event
 
 onClose = (event) =>
   Console.logError "Verbindung zum Server verloren, bitte lade die Seite neu!"
@@ -11,7 +12,7 @@ onError = (event) ->
   console.log event
 
 # establish connection
-window.webSocket = new WebSocketRails 'www-ps.informatik.uni-kiel.de:3001/websocket'
+window.webSocket = new WebSocketRails 'localhost:3000/websocket'
 webSocket.on_open = onOpen
 webSocket.on_close = onClose
 webSocket.on_error = onError
