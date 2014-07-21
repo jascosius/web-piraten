@@ -66,10 +66,12 @@ namespace :deploy do
 
   after :restart, :clear_cache do
     on roles(:app), in: :sequence, wait: 5 do
-      within release_path do
-        execute :rake, 'websocket_rails:stop_server'
-        execute :rake, 'websocket_rails:start_server'
-      end
+#       within release_path do
+#         if test("[ -e ./tmp/pids/websocket_rails.pid ]")
+#           execute :rake, 'websocket_rails:stop_server'
+#         end
+#         execute :rake, 'websocket_rails:start_server'
+#       end
     end
   end
 
