@@ -77,4 +77,6 @@ namespace :deploy do
 # Task integration
 # ----------------------------------------------------------------------------
 
+after 'deploy:restart', 'airbrake:deploy'
+
 end
