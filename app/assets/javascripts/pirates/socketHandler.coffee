@@ -11,26 +11,16 @@ onError = (event) ->
   console.log event
 
 # establish connection
-window.webSocket = new WebSocketRails 'localhost:3000/websocket'
+window.webSocket = new WebSocketRails 'localhost:3001/websocket'
 webSocket.on_open = onOpen
 webSocket.on_close = onClose
 webSocket.on_error = onError
-
+webSocket._conn.on_close = onClose
+webSocket._conn.on_error = onError
+webSocket._conn.on_open = onOpen
 
 # allows to subscribe to several channels
-class ChannelHandler
-
-  constructor: (@channelName) ->
-    @channel = webSocket.subscribe channelName, @onSubscribe, @onSubscribeFail
-
-  onSubscribe: (event) =>
-    console.log "Subscribed to channel '#{@channelName}'"
-
-  onSubscribeFail: (event) =>
-    Console.logError "Fehler bei der Kommunikation, bitte lade die Seite neu!"
-    console.log event
-
-class @PacketHandler extends ChannelHandler
+class @PacketHandler
 
   # can't be stored directly because the Grid does not exist at loading  _mapping = null
   operationMapping = () ->
@@ -66,6 +56,14 @@ class @PacketHandler extends ChannelHandler
       @currentId = id
     @packetQueue.push packet
 
+  onSubscribe = (event) =>
+    console.log "Subscribed to channel '#{@channelName}'"
+
+  onSubscribeFail = (event) =>
+    Console.logError "Fehler bei der Kommunikation, bitte lade die Seite neu!"
+    console.log event
+
+
   @initialize = () ->
     @channel = webSocket.subscribe 'simulation', @onSubscribe, @onSubscribeFail
     @channel.bind 'step', addToQueue
@@ -74,13 +72,6 @@ class @PacketHandler extends ChannelHandler
     @usedIDs = []
     @currentId = -1
     @packetCounter = 0
-
-  onSubscribe: (event) =>
-    console.log "Subscribed to channel '#{@channelName}'"
-
-  onSubscribeFail: (event) =>
-    Console.logError "Fehler bei der Kommunikation, bitte lade die Seite neu!"
-    console.log event
 
   @clear = () =>
     @packetQueue = []

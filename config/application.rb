@@ -21,5 +21,15 @@ module RailsPrototype
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
     config.i18n.default_locale = :de
+    config.assets.precompile += [
+        'twitter/bootstrap/glyphicons-halflings-regular.woff',
+        'twitter/bootstrap/glyphicons-halflings-regular.ttf',
+        'twitter/bootstrap/glyphicons-halflings-regular.eot',
+        'twitter/bootstrap/glyphicons-halflings-regular.svg',
+        'glyphicons-halflings-regular.woff',
+        'glyphicons-halflings-regular.ttf',
+        'glyphicons-halflings-regular.eot',
+        'glyphicons-halflings.svg'
+    ]
   end
 end
