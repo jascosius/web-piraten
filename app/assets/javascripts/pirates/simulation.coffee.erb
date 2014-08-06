@@ -4,10 +4,13 @@
 #= require codemirror/keymaps/sublime
 
 class @Simulation
+
   @initialize = () ->
     # load elements
     @canvas = document.getElementById "pirateGrid"
     @context = @canvas.getContext "2d"
+
+    @language = $('#languageData').html()
 
     @speed = Math.round Config.maxSimulationSpeed/2 # overriden by load
     Grid.initialize @canvas, 32
@@ -189,13 +192,17 @@ class @Simulation
     PacketHandler.clear()
     Grid.look = null
 
+  @language
+
   @serialize = () ->
     {
       code: CodeGUI.getCode()
       grid: Grid.serialize()
       vars: CodeGUI.WatchList.get()
       speed: @speed
+      language: @language
     }
+
 
   @load = (obj) ->
     clear()
