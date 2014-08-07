@@ -32,9 +32,16 @@
             <button class="btn btn-default" id="resumeBtn" style="display: none">
                 <span class="glyphicon glyphicon-play"> </span> Weiter
             </button>
-            <button class="btn btn-default" id="stepBtn" disabled>
-                <span class="glyphicon glyphicon-step-forward"> </span> Schritt
-            </button>
+            <div class="btn-group" >
+                <button id="stepBtn" type="button" class="btn btn-default" disabled><span class="glyphicon glyphicon-step-forward"> </span>Schritt</button>
+                <button id="jumpDropdown" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" disabled>
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="#" id="jumpBtn">überspringen</a></li>
+                </ul>
+            </div>
         </div>
         <div class="clearfix"></div>
         <div class="row">
