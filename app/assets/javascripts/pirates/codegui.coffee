@@ -26,8 +26,13 @@ class @CodeGUI
     @_$resumeBtn = $ '#resumeBtn'
     @_$resumeBtn.click Simulation.resume
     @_$stepBtn = $ '#stepBtn'
-    @_$stepBtn.click () ->
-      Simulation.step()
+    @_$stepBtn.click () =>
+      try
+        Simulation.step()
+      catch
+        if Simulation.isFinished
+          @toggleStepper()
+          @_$resumeBtn.attr 'disabled', 'disabled'
     @_$clearConsoleBtn = $ '#clearConsoleBtn'
     @_$clearConsoleBtn.click () =>
       Console.clear()
@@ -141,6 +146,8 @@ class @CodeGUI
 
   @start = () =>
 #    Simulation.start()
+    if @_$stepBtn.attr 'disabled'
+      @toggleStepper()
 
   @reset = () =>
 #    Simulation.reset()
@@ -152,10 +159,10 @@ class @CodeGUI
     @_$resumeBtn.hide()
     @_$stopBtn.show()
     @_$stepBtn.attr 'disabled', 'disabled'
-    @_$resumeBtn.attr 'disabled'
+    @_$resumeBtn.attr 'disabled', 'disabled'
 
 
-  toggleStepper = () =>
+  @toggleStepper = () =>
     if @_$stepBtn.attr 'disabled'
       @_$stepBtn.removeAttr 'disabled'
     else
@@ -165,17 +172,18 @@ class @CodeGUI
   @stop = () =>
     @_$stopBtn.hide()
     @_$resumeBtn.show()
-    @_$stepBtn.removeAttr 'disabled'
+#    @_$stepBtn.removeAttr 'disabled'
+    @toggleStepper()
 
     if Simulation.isFinished
+      console.log "Finish!"
       @_$resumeBtn.attr 'disabled', 'disabled'
-    else
-      toggleStepper()
+      @toggleStepper()
 
   @resume = () =>
     @_$resumeBtn.hide()
     @_$stopBtn.show()
-    toggleStepper()
+    @toggleStepper()
 #    Simulation.resume()
 
 
