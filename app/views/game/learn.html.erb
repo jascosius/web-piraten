@@ -15,9 +15,19 @@
                 <div id="watchlist-size">0</div>
             </div>
 
-            <button type="button" class="btn btn-success" id="runBtn">
-                <span class="glyphicon glyphicon-play"> </span> Ausführen
-            </button>
+
+
+            <div class="btn-group" >
+                <button id="runBtn" type="button" class="btn btn-success"><span class="glyphicon glyphicon-play"> </span> Ausführen</button>
+                <button id="runDropdown" type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="#" id="runNStopBtn"><span class="glyphicon glyphicon-step-forward"> </span>Schritt</a></li>
+                </ul>
+            </div>
+
         </div>
         <div class="row code-controls pull-right hidden" id="disabled-state-controls">
             <button class="btn btn-default" id="resetBtn">

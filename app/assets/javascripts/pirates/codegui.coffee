@@ -25,21 +25,30 @@ class @CodeGUI
     @_$stopBtn.click Simulation.stop
     @_$resumeBtn = $ '#resumeBtn'
     @_$resumeBtn.click Simulation.resume
+    @_$runNStopBtn = $ '#runNStopBtn'
+    @_$runNStopBtn.click () =>
+      Simulation.start()
+      Simulation.stop()
     @_$jumpDropdown = $ '#jumpDropdown'
+    @_$jumpDropdown.attr 'disabled', 'disabled'
     @_$jumpBtn = $ '#jumpBtn'
+    @_$jumpBtn.attr 'disabled', 'disabled'
     @_$jumpBtn.click () =>
       try
         Simulation.step()
       catch
         if Simulation.isFinished
+          console.log 'nein'
           @toggleStepper()
           @_$resumeBtn.attr 'disabled', 'disabled'
     @_$stepBtn = $ '#stepBtn'
+    @_$stepBtn.attr 'disabled', 'disabled'
     @_$stepBtn.click () =>
       try
         Simulation.step()
       catch
         if Simulation.isFinished
+          console.log 'nein2'
           @toggleStepper()
           @_$resumeBtn.attr 'disabled', 'disabled'
     @_$clearConsoleBtn = $ '#clearConsoleBtn'
@@ -168,16 +177,18 @@ class @CodeGUI
     @_$resumeBtn.hide()
     @_$stopBtn.show()
     @_$stepBtn.attr 'disabled', 'disabled'
-    @_$resumeBtn.attr 'disabled', 'disabled'
+#    @_$resumeBtn.attr 'disabled', 'disabled'
 
 
   @toggleStepper = () =>
     if @_$stepBtn.attr 'disabled'
       @_$stepBtn.removeAttr 'disabled'
       @_$jumpDropdown.removeAttr 'disabled'
+      @_$resumeBtn.removeAttr 'disabled'
     else
       @_$stepBtn.attr 'disabled', 'disabled'
       @_$jumpDropdown.attr 'disabled', 'disabled'
+      @_$resumeBtn.attr 'disabled', 'disabled'
 
 
   @stop = () =>
