@@ -16,7 +16,7 @@ class RubyPreprocessor < BasePreprocessor
     @execute_error = ''
   end
 
-  # Method that processes the given code and includes the debug information
+  # Method that processes the given code and includes the debug information 
   # if the user wants to trace specified variables. Furthermore it handles the
   # given code differently, when there are multline strings or correct case-
   # statements. This'll be verified by checking the user's code with regular
