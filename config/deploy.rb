@@ -60,7 +60,7 @@ task :deploy => :environment do
     invoke :'git:clone'
     invoke :'deploy:link_shared_paths'
     invoke :'bundle:install'
-    invoke :'rails:db_migrate' # we don't use a database, but just in case
+    # invoke :'rails:db_migrate' # we don't use a database
     invoke :'rails:assets_precompile'
 
     to :launch do
