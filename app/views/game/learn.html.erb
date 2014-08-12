@@ -15,9 +15,19 @@
                 <div id="watchlist-size">0</div>
             </div>
 
-            <button type="button" class="btn btn-success" id="runBtn">
-                <span class="glyphicon glyphicon-play"> </span> Ausführen
-            </button>
+
+
+            <div class="btn-group" >
+                <button id="runBtn" type="button" class="btn btn-success"><span class="glyphicon glyphicon-play"> </span> Ausführen</button>
+                <button id="runDropdown" type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="#" id="runNStopBtn"><span class="glyphicon glyphicon-step-forward"> </span>Schritt</a></li>
+                </ul>
+            </div>
+
         </div>
         <div class="row code-controls pull-right hidden" id="disabled-state-controls">
             <button class="btn btn-default" id="resetBtn">
@@ -32,9 +42,16 @@
             <button class="btn btn-default" id="resumeBtn" style="display: none">
                 <span class="glyphicon glyphicon-play"> </span> Weiter
             </button>
-            <button class="btn btn-default" id="stepBtn" disabled>
-                <span class="glyphicon glyphicon-step-forward"> </span> Schritt
-            </button>
+            <div class="btn-group" >
+                <button id="stepBtn" type="button" class="btn btn-default" disabled><span class="glyphicon glyphicon-step-forward"> </span>Schritt</button>
+                <button id="jumpDropdown" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" disabled>
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="#" id="jumpBtn">überspringen</a></li>
+                </ul>
+            </div>
         </div>
         <div class="clearfix"></div>
         <div class="row">
@@ -179,6 +196,12 @@
     </div>
 </div>
 
+
+
 <div id="imagePreloader" style="display: none" hidden></div>
+
+<div id="languageData" style="display: none" hidden><%= @language%></div>
+
+
 <% content_for :html_header, javascript_include_tag('pirates/simulation', 'data-turbolinks-track' => false) %>
 <%= stylesheet_link_tag 'game'%>

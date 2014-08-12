@@ -134,8 +134,8 @@ class @PacketHandler
 
     currentPacket = @packetQueue.shift()
 
-    if @currentId is not currentPacket.id
-      console.log 'skipped packet that seems to be old', currentPacket
+    if !currentPacket or @currentId is not currentPacket.id
+      console.log 'skipped packet that seems to be old or null', currentPacket
       return
     @packetCounter++
 
