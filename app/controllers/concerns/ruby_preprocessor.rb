@@ -420,6 +420,13 @@ end
 def take
   puts "\n#{$prefix}_take"
 end
+def break_point(dir = :point)
+  case dir
+    when :point then puts "\n#{$prefix}_break_point"
+    when :up then puts "\n#{$prefix}_break_up"
+    when :down then puts "\n#{$prefix}_break_down"
+  end
+end
 def #{$prefix}_line(i)
   puts "\n#{$prefix}_line_\#{i}"
 end

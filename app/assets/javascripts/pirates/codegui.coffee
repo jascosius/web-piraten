@@ -34,13 +34,22 @@ class @CodeGUI
     @_$jumpBtn = $ '#jumpBtn'
     @_$jumpBtn.attr 'disabled', 'disabled'
     @_$jumpBtn.click () =>
-      try
-        Simulation.step()
-      catch
-        if Simulation.isFinished
-          console.log 'nein'
-          @toggleStepper()
-          @_$resumeBtn.attr 'disabled', 'disabled'
+      acDeep = PacketHandler.stackDeep
+      if acDeep <= 0
+        try
+          Simulation.step()
+        catch
+          if Simulation.isFinished
+            console.log 'nein'
+            @toggleStepper()
+            @_$resumeBtn.attr 'disabled', 'disabled'
+      else while PacketHandler.stackDeep >= acDeep && !Simulation.isFinished
+        try
+          Simulation.step()
+        catch
+          if Simulation.isFinished
+            @toggleStepper()
+            @_$resumeBtn.attr 'disabled', 'disabled'
     @_$stepBtn = $ '#stepBtn'
     @_$stepBtn.attr 'disabled', 'disabled'
     @_$stepBtn.click () =>
@@ -48,7 +57,6 @@ class @CodeGUI
         Simulation.step()
       catch
         if Simulation.isFinished
-          console.log 'nein2'
           @toggleStepper()
           @_$resumeBtn.attr 'disabled', 'disabled'
     @_$clearConsoleBtn = $ '#clearConsoleBtn'

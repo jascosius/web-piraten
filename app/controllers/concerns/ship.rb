@@ -39,6 +39,7 @@ class Ship
 
   def take!(packet) # event: ship.take
     elem = @grid.grid[[@x_position, @y_position]]
+    puts 'take'
     if elem == :buoy || elem == :treasure
       @grid.grid[[@x_position, @y_position]] = :nothing
       packet[:operations] ||= []
