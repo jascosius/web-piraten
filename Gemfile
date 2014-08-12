@@ -72,3 +72,4 @@ gem 'jquery-ui-rails' # visual jquery plugins
 gem 'airbrake'
 
 gem 'mina'
+gem 'thin'

@@ -65,7 +65,8 @@ task :deploy => :environment do
 
     to :launch do
       queue "pkill ruby"
-      queue "cd #{deploy_to}/current/ && ./bin/rails s -d -e production"
+      queue "thin start -e production"
+      # queue "cd #{deploy_to}/current/ && ./bin/rails s -d -e production"
     end
   end
 end

@@ -169,6 +169,7 @@ DEPENDENCIES
   sass-rails (~> 4.0.2)
   sdoc
   therubyracer
+  thin
   turbolinks
   uglifier (>= 1.3.0)
   websocket-rails
