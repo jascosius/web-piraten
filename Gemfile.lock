@@ -93,6 +93,7 @@ GEM
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (2.9.1)
+    newrelic_rpm (3.9.1.236)
     polyglot (0.3.5)
     rack (1.5.2)
     rack-test (0.6.2)
@@ -117,6 +118,7 @@ GEM
     redis-objects (0.9.1)
       redis (>= 3.0.2)
     ref (1.0.5)
+    rubyperf (1.5.0)
     sass (3.2.18)
     sass-rails (4.0.2)
       railties (>= 4.0.0, < 5.0)
@@ -186,7 +188,9 @@ DEPENDENCIES
   jquery-ui-rails
   less-rails-bootstrap
   magic_encoding
+  newrelic_rpm
   rails (= 4.0.7)
+  rubyperf
   sass-rails (~> 4.0.2)
   sdoc
   sqlite3

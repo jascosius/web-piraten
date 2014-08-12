@@ -71,3 +71,6 @@ gem 'jquery-ui-rails' # visual jquery plugins
 # monitoring
 gem 'airbrake'
 
+gem 'rubyperf'
+gem 'newrelic_rpm'
+
