@@ -64,8 +64,9 @@ task :deploy => :environment do
     invoke :'rails:assets_precompile'
 
     to :launch do
+      queue "bundle exec thin stop"
       queue "pkill ruby"
-      queue "bundle exec thin start -e production -p 3000"
+      queue "bundle exec thin start -e production -p 3000 -d"
       # queue "cd #{deploy_to}/current/ && ./bin/rails s -d -e production"
     end
   end
