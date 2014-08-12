@@ -66,7 +66,7 @@ task :deploy => :environment do
     to :launch do
       # queue "pwd"
       queue "pkill ruby"
-      queue "bundle exec thin start -e production -p 3000 &"
+      queue "bundle exec thin start -e production -p 3000"
       # queue "cd #{deploy_to}/current/ && ./bin/rails s -d -e production"
     end
   end
