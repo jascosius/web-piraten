@@ -68,8 +68,7 @@ task :deploy => :environment do
       queue "echo 'Hallo1!'"
       # queue "pkill ruby"
       queue "echo 'Hallo2!'"
-      exe
-      queue "bundle exec thin start -e production -p 3000"
+      queue "bundle exec thin start -d -e production -p 3000"
       queue "echo 'Hallo3!'"
       # queue "cd #{deploy_to}/current/ && ./bin/rails s -d -e production"
     end
