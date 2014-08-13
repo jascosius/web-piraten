@@ -7,6 +7,8 @@ class JavaPreprocessor < BasePreprocessor
   attr :compile_error
   attr :execute_error
 
+  attr :line_first
+
   def initialize(attribut)
     super(attribut)
     @filename = 'Pirate.java'
@@ -14,6 +16,8 @@ class JavaPreprocessor < BasePreprocessor
     @execute = 'java -cp $PATH$:lib/java Pirate'
     @compile_error = 'error' #break, when this is in the last line of compiler error
     @execute_error = 'Could not find or load main class' #break, when this is in the first line of the execution error
+
+    @line_first = true
   end
 
   def process_code(code_msg, vars)
