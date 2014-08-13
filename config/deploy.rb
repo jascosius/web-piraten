@@ -64,7 +64,7 @@ task :deploy => :environment do
     invoke :'rails:assets_precompile'
 
     to :launch do
-      queue "touch #{deploy_to}/tmp/restart.txt"
+      queue "touch tmp/restart.txt"
       # queue "bundle exec thin start -d -e production -p 3000"
       # queue "echo 'Hallo3!'"
       # queue "cd #{deploy_to}/current/ && ./bin/rails s -d -e production"
