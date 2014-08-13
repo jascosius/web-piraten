@@ -6,6 +6,7 @@ class ErlangPreprocessor < BasePreprocessor
   attr :execute
   attr :compile_error
   attr :execute_error
+  attr :line_first
 
   def initialize(attribut)
     super(attribut)
@@ -14,15 +15,35 @@ class ErlangPreprocessor < BasePreprocessor
     @execute = 'cd $PATH$ && erl -s webpiraten main' #'echo "" && cd $PATH$ && sudo -u sailor erl -run webpiraten' #'cd $PATH$ && erl -run webpiraten'
     @compile_error = ''
     @execute_error = ''
+    @line_first = false
   end
 
   def process_code(code_msg, vars)
     codes = ''
-    i = 1
-    # code_msg.each_line do |line|
-    #   codes += "#{$prefix}_line(#{i})\n" + line.chomp
-    # end
-    insert_start_logic + code_msg
+    i = 2
+    code_msg.each_line do |line|
+
+      puts "line number #{i}"
+      index_end = line.index('.')
+      index_sem = line.index(';')
+      index_com = line.rindex(',')
+      index_sta = line.index('->')
+      if index_sta
+        index_sta += 2
+        line = line.insert(index_sta, " a#{$prefix}_line(#{i}),")
+      elsif index_end
+        line = line.insert(index_end, ", a#{$prefix}_line(#{i})")
+      elsif index_com
+        line = line.insert(index_com, ", a#{$prefix}_line(#{i})")
+      elsif index_sem
+        line = line.insert(index_sem, ", a#{$prefix}_line(#{i})")
+      end
+      codes += line
+      #codes += "#{$prefix}_line(#{i})\n" + line.chomp
+      puts line
+      i += 1
+    end
+    insert_start_logic + codes
   end
 
   def postprocess_error(line, _)
@@ -33,6 +54,7 @@ class ErlangPreprocessor < BasePreprocessor
     line
   end
 
+#{$prefix}_line(i) -> io:fwrite('#{$prefix}_line_\#{i}\n').
   #{$prefix}_line(i) -> io:fwrite('CkyUHZVL3q_line_\#{i}\n').
   def insert_start_logic
     %Q[
@@ -41,7 +63,7 @@ class ErlangPreprocessor < BasePreprocessor
 
     main() -> start(), halt().
 
-    #{$prefix}_line(i) -> io:fwrite('#{$prefix}_line_\#{i}\n').
+    a#{$prefix}_line(I) -> io:fwrite("\n#{$prefix}_line_" ++ integer_to_list(I)).
 
     move() -> io:fwrite('\n#{$prefix}_move\n').
 
