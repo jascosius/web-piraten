@@ -321,10 +321,23 @@ class RubyPreprocessor < BasePreprocessor
     dont_skip_line ? "#{$prefix}_line(#{i})\n" : ''
   end
 
+
+
+
+
   # Adds the line of the user's code and a commment with the linenumber, doesn't add
   # a comment if it's processing a multiline string.
   def add_user_codeline(s, i, no_multiline_string)
-    no_multiline_string ? s.chomp + " # #{$prefix}_(#{i}#{$prefix}_)\n" : s
+    if s=~ /def\n/ || s=~ /class\n/
+      no_multiline_string ?  s.chomp + "; break_point(:down)" + " # #{$prefix}_(#{i}#{$prefix}_)\n" : s
+    elsif s=~ /do\n/ || s=~ /while\n/ || s=~ /if\n/
+      no_multiline_string ? "break_point(:down); " + s.chomp +  " # #{$prefix}_(#{i}#{$prefix}_)\n" : s
+    elsif s=~ /end\n/
+      no_multiline_string ? s.chomp + " ; break_point(:up)" + " # #{$prefix}_(#{i}#{$prefix}_)\n" : s
+    else
+      no_multiline_string ? s.chomp + " # #{$prefix}_(#{i}#{$prefix}_)\n" : s
+    end
+
   end
 
   # Inserts the debug information for tracing the variables during simulation.

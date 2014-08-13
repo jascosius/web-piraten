@@ -166,6 +166,5 @@ class @PacketHandler
           @stackDeep += 1
 
       console.log @stackDeep
-      console.log
 
 
