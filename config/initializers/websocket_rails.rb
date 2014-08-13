@@ -17,15 +17,15 @@ WebsocketRails.setup do |config|
   # Start the standalone server with rake websocket_rails:start_server
   # * Requires Redis
   # if Rails.env.production?
-     config.standalone = true
+  #    config.standalone = true
 
   # Change to true to enable channel synchronization between
   # multiple server instances.
   # * Requires Redis.
-     config.synchronize = false
+  #    config.synchronize = false
   # end
   # Prevent Thin from daemonizing (default is true)
-  # config.daemonize = false
+  config.daemonize = false
 
   # Uncomment and edit to point to a different redis instance.
   # Will not be used unless standalone or synchronization mode
