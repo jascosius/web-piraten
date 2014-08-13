@@ -7,6 +7,8 @@ class RubyPreprocessor < BasePreprocessor
   attr :compile_error
   attr :execute_error
 
+  attr :line_first
+
   def initialize(attribut)
     super(attribut)
     @filename = "#{$prefix}_code.rb"
@@ -14,6 +16,8 @@ class RubyPreprocessor < BasePreprocessor
     @execute = "ruby $PATH$/#{$prefix}_code.rb" #$PATH$ will be replaced
     @compile_error = ''
     @execute_error = ''
+
+    @line_first = true
   end
 
   # Method that processes the given code and includes the debug information
