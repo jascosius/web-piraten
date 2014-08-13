@@ -73,3 +73,4 @@ gem 'airbrake'
 
 gem 'mina'
 gem 'thin'
+gem 'passenger'
