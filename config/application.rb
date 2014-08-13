@@ -1,7 +1,11 @@
 # -*- encoding : utf-8 -*-
 require File.expand_path('../boot', __FILE__)
 
-require 'rails/all'
+# require 'rails/all'
+require "action_controller/railtie"
+require "action_mailer/railtie"
+require "sprockets/railtie"
+require "rails/test_unit/railtie"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -21,6 +25,7 @@ module RailsPrototype
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
     config.i18n.default_locale = :de
+    config.assets.initialize_on_precompile = false
     config.assets.precompile += [
         'twitter/bootstrap/glyphicons-halflings-regular.woff',
         'twitter/bootstrap/glyphicons-halflings-regular.ttf',

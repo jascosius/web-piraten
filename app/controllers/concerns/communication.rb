@@ -28,8 +28,13 @@ module Communication
   end
 
   def new_line(packet, number)
-    send_packet(packet)
-    packet[:line] = number.to_i
+    if line_first
+      send_packet(packet)
+      packet[:line] = number.to_i
+    else
+      packet[:line] = number.to_i
+      send_packet(packet)
+    end
   end
 
   def search_and_execute_function(functions, array)
@@ -69,7 +74,7 @@ module Communication
             search_and_execute_function(functions, array[1..-1])
           end
         else
-          print!(packet, :log, line)#line) #without $prefix this must be a print from the user
+          print!(packet, :log, line) #line) #without $prefix this must be a print from the user
         end
       end
     end
