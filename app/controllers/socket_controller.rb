@@ -24,8 +24,6 @@ class SocketController < WebsocketRails::BaseController
 
   def receive_code
 
-    puts 8
-
     tracing_vars = message[:vars]
     language = message[:language].downcase
     code = message[:code]

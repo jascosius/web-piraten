@@ -17,7 +17,6 @@ module Preprocessor
   # Default set ist no debug mode and Ruby. The method then commits the code to the
   # specified preprocessor and afterwards returns the modified code.
   def preprocess_code(msg, language='ruby', tracing_vars=[])
-    puts "lang: #{language}"
     case language
       when 'ruby'
         @lang = RubyPreprocessor.new('Ruby')
@@ -30,7 +29,6 @@ module Preprocessor
         @code = @lang.process_code(msg, tracing_vars)
       else
         puts 'Something went terribly wrong!'
-        @code = 'Something went terribly wrong!'
     end
   end
 
