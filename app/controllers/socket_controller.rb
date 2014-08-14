@@ -20,11 +20,9 @@ class SocketController < WebsocketRails::BaseController
     puts 'client disconnected!'
   end
 
-  # test events for the remo te control buttons
+  # test events for the remote control buttons
 
   def receive_code
-
-    return
 
     tracing_vars = message[:vars]
     language = message[:language]
