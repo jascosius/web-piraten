@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 gem 'rails', '4.0.7'
 
 # Use sqlite3 as the database for Active Record
-gem 'sqlite3'
+# gem 'sqlite3'
 
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.2'
@@ -39,18 +39,18 @@ end
 # gem 'unicorn'
 
 # Use Capistrano for deployment
-group :development do
-  gem 'capistrano'        , '~> 3.0', require: false
-  gem 'capistrano-rvm'    , '~> 0.1', require: false
-  gem 'capistrano-rails'  , '~> 1.1', require: false
-  gem 'capistrano-bundler', '~> 1.1', require: false
-end
+# group :development do
+#   gem 'capistrano'        , '~> 3.0', require: false
+#   gem 'capistrano-rvm'    , '~> 0.1', require: false
+#   gem 'capistrano-rails'  , '~> 1.1', require: false
+#   gem 'capistrano-bundler', '~> 1.1', require: false
+# end
 
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 
 # Websocket Rails - https://github.com/websocket-rails/websocket-rails
-gem 'websocket-rails'
+gem 'websocket-rails', :git => 'git://github.com/websocket-rails/websocket-rails.git', :ref => 'db6a714'
 
 # https://github.com/metaskills/less-rails-bootstrap, MIT License
 gem 'therubyracer'
@@ -71,6 +71,6 @@ gem 'jquery-ui-rails' # visual jquery plugins
 # monitoring
 gem 'airbrake'
 
-gem 'rubyperf'
-gem 'newrelic_rpm'
-
+gem 'mina'
+gem 'thin'
+# gem 'passenger'
