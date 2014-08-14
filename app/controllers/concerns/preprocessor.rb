@@ -16,18 +16,20 @@ module Preprocessor
   # checking if there are any variables given the user wants to trace.
   # Default set ist no debug mode and Ruby. The method then commits the code to the
   # specified preprocessor and afterwards returns the modified code.
-  def preprocess_code(msg, language='Ruby', tracing_vars=[])
+  def preprocess_code(msg, language='ruby', tracing_vars=[])
+    puts "lang: #{language}"
     case language
-      when 'Ruby'
+      when 'ruby'
         @lang = RubyPreprocessor.new('Ruby')
         @code = @lang.process_code(msg, tracing_vars)
-      when 'Java'
+      when 'java'
         @lang = JavaPreprocessor.new('Java')
         @code = @lang.process_code(msg, tracing_vars)
-      when 'Erlang'
+      when 'erlang'
         @lang = ErlangPreprocessor.new('Erlang')
         @code = @lang.process_code(msg, tracing_vars)
       else
+        puts 'Something went terribly wrong!'
         @code = 'Something went terribly wrong!'
     end
   end

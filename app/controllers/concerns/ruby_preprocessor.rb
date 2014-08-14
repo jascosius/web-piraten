@@ -53,7 +53,7 @@ class RubyPreprocessor < BasePreprocessor
     end
     insert_logic + codes + "\n"
 =end
-    insert_logic + code_msg + "\n"
+    insert_logic + code_msg +  "\n#{$prefix}_line(1)\n" + "\n"
   end
 
   # Method that processes the code, if there is a case block in the user's code.
