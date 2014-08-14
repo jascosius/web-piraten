@@ -22,6 +22,7 @@ class RubyPreprocessor < BasePreprocessor
   # statements. This'll be verified by checking the user's code with regular
   # expressions.
   def process_code(code_msg, vars)
+=begin
     i=1
     codes = ''
     bools = {}
@@ -51,6 +52,8 @@ class RubyPreprocessor < BasePreprocessor
       end
     end
     insert_logic + codes + "\n"
+=end
+    insert_logic + code_msg + "\n"
   end
 
   # Method that processes the code, if there is a case block in the user's code.
