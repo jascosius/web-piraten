@@ -27,7 +27,7 @@ class SocketController < WebsocketRails::BaseController
     puts 8
 
     tracing_vars = message[:vars]
-    language = message[:language]
+    language = message[:language].downcase
     code = message[:code]
 
     if code.length < 1000 and language.length < 50 and tracing_vars.length < 100 #TODO: shoud be the same as in the client
