@@ -21,10 +21,15 @@ module InitializeCommunication
 
       packet = {}
 
+      puts 1
       connection_store[:is_simulation_done] = false
+      puts 2
       initialize_timeout(Thread.current, packet)
+      puts 3
       vm = initialize_vm(code, packet)
+      puts 4
       communicate_with_vm(vm, packet, code, tracing_vars)
+      puts 5
 
     end
   end
@@ -44,9 +49,11 @@ module InitializeCommunication
 
   def initialize_vm(code, packet)
 
+    puts 6
     begin
       #connect to TCPServer to execute the programm
       vm = TCPSocket.open(@@host, @@port)
+      puts 7
     rescue
       puts 'Could not connect to TCPSocket. Start ruby app/vm/vm.rb'
       exit_simulation!(packet, 'Ein interner Fehler ist aufgetreten.')
