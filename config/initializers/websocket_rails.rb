@@ -18,6 +18,7 @@ WebsocketRails.setup do |config|
   # * Requires Redis
   # if Rails.env.production?
       config.standalone = true
+      config.synchronize = true
 
   # Change to true to enable channel synchronization between
   # multiple server instances.
