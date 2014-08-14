@@ -24,6 +24,8 @@ class SocketController < WebsocketRails::BaseController
 
   def receive_code
 
+    return
+
     tracing_vars = message[:vars]
     language = message[:language]
     code = message[:code]
