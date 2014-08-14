@@ -28,7 +28,7 @@ module Preprocessor
         @lang = ErlangPreprocessor.new('Erlang')
         @code = @lang.process_code(msg, tracing_vars)
       else
-        puts 'Something went terribly wrong!'
+        $stderr.puts 'Something went terribly wrong!'
     end
   end
 
