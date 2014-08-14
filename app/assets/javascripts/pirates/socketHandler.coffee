@@ -12,7 +12,7 @@ onError = (event) ->
   console.log event
 
 # establish connection
-window.webSocket = new WebSocketRails "#{window.location.host}/websocket"
+window.webSocket = new WebSocketRails "#{window.location.hostname}:3001/websocket"
 webSocket.on_open = onOpen
 webSocket.on_close = onClose
 webSocket.on_error = onError
