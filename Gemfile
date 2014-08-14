@@ -66,11 +66,11 @@ gem 'codemirror-rails' # MIT License
 # gem 'opal-rails'
 
 gem 'magic_encoding' #every file as UTF - 8
-gem 'jquery-ui-rails' # visual jquery plugins
+gem 'jquery-ui-rails', '~>4.2.1' # visual jquery plugins
 
 # monitoring
 gem 'airbrake'
 
 gem 'mina'
 gem 'thin'
-# gem 'passenger'
+gem 'rubyperf', :git => 'https://github.com/Maddis1337/rubyperf.git', :branch => 'csv'

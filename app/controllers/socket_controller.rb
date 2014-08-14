@@ -1,5 +1,4 @@
 # -*- encoding : utf-8 -*-
-require 'benchmark'
 class SocketController < WebsocketRails::BaseController
   $prefix = 'CkyUHZVL3q'
 
@@ -9,11 +8,11 @@ class SocketController < WebsocketRails::BaseController
   include ControlSimulation
 
   def initialize_session
-    puts 'new_event was called'
+    puts 'initializing session with client'
   end
 
   def client_connected
-    puts 'client connected!'
+    puts 'client successfully connected!'
   end
 
   def client_disconnected
@@ -23,37 +22,51 @@ class SocketController < WebsocketRails::BaseController
   # test events for the remote control buttons
 
   def receive_code
-    meter = Perf::MeterFactory.instance.get(:socket)
-    puts '============== METER =============='
-    puts meter
-    meter.measure(:receive_code) {
-        tracing_vars = message[:vars]
-        language = message[:language]
-        code = message[:code]
+    Perf::MeterFactory.instance.get(:socket).measure(:receive_code) { # performance
 
-        if code.length < 10000 and language.length < 50 and tracing_vars.length < 100 #TODO: shoud be the same as in the client
+    tracing_vars = message[:vars]
+    language = message[:language]
+    code = message[:code]
 
-          tracing_vars.each do |e|
-            if e.length > 100
-              return
-            end
-          end
+    #TODO: shoud be the same as in the client
+    if Perf::MeterFactory.instance.get(:socket).measure(:code_length){code.length < 10000 and language.length < 50 and tracing_vars.length < 100}
 
-          code = preprocess_code(code, language, tracing_vars)
-
-          #add EOF to show Wrapper the end of the code
-          code += "\n#{$prefix}_EOF\n"
-
-          start_simulation(code, tracing_vars)
-
+      Perf::MeterFactory.instance.get(:socket).measure(:tracing_vars_length){
+      tracing_vars.each do |e|
+        if e.length > 100
+          return
         end
-    }
-    puts meter.report_simple
+      end
+      }
+
+      Perf::MeterFactory.instance.get(:socket).measure(:preprocess_code){
+        code = preprocess_code(code, language, tracing_vars)
+      }
+
+      #add EOF to show Wrapper the end of the code
+      code += "\n#{$prefix}_EOF\n"
+
+      Perf::MeterFactory.instance.get(:socket).measure(:start_simulation) {
+        start_simulation(code, tracing_vars)
+      }
+
+    end
+
+    } # performance
   end
 
   def stop
     puts 'stop'
     connection_store[:is_simulation_done] = true
+  end
+
+  def report
+    puts "============== REPORTED METER =============="
+    meter = Perf::MeterFactory.instance.get(:socket)
+    puts meter.report_list_of_measures
+    PERFORMANCE_LOGGER.report(meter)
+    puts "============================================"
+
   end
 
 
