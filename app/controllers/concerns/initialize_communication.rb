@@ -22,9 +22,9 @@ module InitializeCommunication
       packet = {}
 
       connection_store[:is_simulation_done] = false
-      #initialize_timeout(Thread.current, packet)
-      #vm = initialize_vm(code, packet)
-      #communicate_with_vm(vm, packet, code, tracing_vars)
+      initialize_timeout(Thread.current, packet)
+      vm = initialize_vm(code, packet)
+      communicate_with_vm(vm, packet, code, tracing_vars)
 
     end
   end
