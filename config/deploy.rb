@@ -22,7 +22,7 @@ set :branch, 'production'
 # They will be linked in the 'deploy:link_shared_paths' step.
 set :shared_paths, ['log']
 
-set :rvm_path, '/usr/local/rvm/scripts/rvm'
+set :rvm_path, '/home/captain/.rvm/scripts/rvm'
 # Optional settings:
 #   set :user, 'foobar'    # Username in the server to SSH to.
 #   set :port, '30000'     # SSH port number.
@@ -35,7 +35,7 @@ task :environment do
   # invoke :'rbenv:load'
 
   # For those using RVM, use this to load an RVM version@gemset.
-  invoke :'rvm:use[ruby-2.0.0@default]'
+  invoke :'rvm:use[ruby-2.1.2@webpiraten]'
 end
 
 # Put any custom mkdir's in here for when `mina setup` is ran.
