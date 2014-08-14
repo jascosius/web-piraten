@@ -2,11 +2,17 @@
 class GameController < ApplicationController
 
   def index
-    @language = ['Ruby','Java', 'Erlang']
+    @language = LANGUAGES.keys
   end
 
   def learn
-    @language = params[:name]
+    language = LANGUAGES[[params[:name]][0].to_sym]
+    name = language.name
+    scripts = language.scripts
+    options = language.options
+    @scripts = scripts
+    @language = {:name => name, :scripts => scripts, :options => options}.to_json
+    @language
 
   end
 

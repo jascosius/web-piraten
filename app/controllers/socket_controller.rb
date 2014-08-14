@@ -23,7 +23,6 @@ class SocketController < WebsocketRails::BaseController
   # test events for the remote control buttons
 
   def receive_code
-
     tracing_vars = message[:vars]
     language = message[:language]
     code = message[:code]

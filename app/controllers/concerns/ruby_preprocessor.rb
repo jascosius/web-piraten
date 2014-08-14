@@ -16,7 +16,7 @@ class RubyPreprocessor < BasePreprocessor
     @execute = "ruby $PATH$/#{$prefix}_code.rb" #$PATH$ will be replaced
     @compile_error = ''
     @execute_error = ''
-
+    @operationlist = []
     @line_first = true
   end
 
@@ -34,6 +34,7 @@ class RubyPreprocessor < BasePreprocessor
     bools[:dont_skip_line] = true
     if code_msg =~ regex_verify_case_statement
       codes = case_block_processsing(code_msg, vars, i, '', bools)
+
     elsif code_msg =~ /(?:'(?:.*(?:\n|\r|\r\n).*)+'|"(?:.*(?:\n|\r|\r\n).*)+")/
       # Regular expression that verifies the existence of a multiline string in
       # the code.
@@ -45,6 +46,7 @@ class RubyPreprocessor < BasePreprocessor
         codes = insert_debug_information(codes, vars, bools[:dont_skip_line])
         i += 1
       end
+
     else
       codes = ''
       code_msg.each_line do |s|
@@ -326,18 +328,22 @@ class RubyPreprocessor < BasePreprocessor
   end
 
 
-
-
-
   # Adds the line of the user's code and a commment with the linenumber, doesn't add
   # a comment if it's processing a multiline string.
   def add_user_codeline(s, i, no_multiline_string)
-    if s=~ /def\n/ || s=~ /class\n/
+    if s=~ /\bdef\b/ || s=~/\bclass\b/ #def class
+      @operationlist.unshift(:defClass)
       no_multiline_string ?  s.chomp + "; break_point(:down)" + " # #{$prefix}_(#{i}#{$prefix}_)\n" : s
-    elsif s=~ /do\n/ || s=~ /while\n/ || s=~ /if\n/
+    elsif s=~ /\bdo\b/ || s=~ /\bwhile\b/ || s=~ /\bif\b/ #do while if
+      @operationlist.unshift(:doWhileIf)
       no_multiline_string ? "break_point(:down); " + s.chomp +  " # #{$prefix}_(#{i}#{$prefix}_)\n" : s
-    elsif s=~ /end\n/
-      no_multiline_string ? s.chomp + " ; break_point(:up)" + " # #{$prefix}_(#{i}#{$prefix}_)\n" : s
+    elsif s=~ /\bend\b/ #end
+      op = @operationlist.shift
+      if op == :defClass
+        no_multiline_string ? "break_point(:up); " + s.chomp + " # #{$prefix}_(#{i}#{$prefix}_)\n" : s
+      else
+        no_multiline_string ? s.chomp + " ; break_point(:up)" + " # #{$prefix}_(#{i}#{$prefix}_)\n" : s
+      end
     else
       no_multiline_string ? s.chomp + " # #{$prefix}_(#{i}#{$prefix}_)\n" : s
     end

@@ -1,13 +1,13 @@
 class @CodeGUI
 
-  @initialize: (@textAreaId) ->
+  @initialize: (@textAreaId, codeMode) ->
     @WatchList._initialize()
     @codeMirror = CodeMirror.fromTextArea document.getElementById(textAreaId), {
       lineNumbers: true,
       autofocus: true,
       tabMode: 'spaces',
       enterMode: 'spaces'
-      mode: 'ruby',
+      mode: codeMode,
       theme: 'monokai',
       keymap: 'sublime',
       styleActiveLine: true,

@@ -205,3 +205,8 @@
 
 <% content_for :html_header, javascript_include_tag('pirates/simulation', 'data-turbolinks-track' => false) %>
 <%= stylesheet_link_tag 'game'%>
+    <%@scripts.each do |scripts| %>
+        <script src="<%=  asset_path scripts %>"></script>
+    <% end %>
+
+
