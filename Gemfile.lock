@@ -1,3 +1,17 @@
+GIT
+  remote: git://github.com/websocket-rails/websocket-rails.git
+  revision: db6a7147be03929608a0997621a6fec93cc9697b
+  ref: db6a714
+  specs:
+    websocket-rails (0.4.9)
+      em-synchrony
+      faye-websocket
+      hiredis
+      rack
+      rails
+      redis
+      thin
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -46,11 +60,11 @@ GEM
     erubis (2.7.0)
     eventmachine (1.0.3)
     execjs (2.0.2)
-    faye-websocket (0.7.2)
+    faye-websocket (0.7.4)
       eventmachine (>= 0.12.0)
       websocket-driver (>= 0.3.1)
     hike (1.2.3)
-    hiredis (0.5.0)
+    hiredis (0.5.2)
     i18n (0.6.11)
     jbuilder (1.5.3)
       activesupport (>= 3.0.0)
@@ -100,9 +114,7 @@ GEM
     rake (10.3.2)
     rdoc (4.1.1)
       json (~> 1.4)
-    redis (3.0.7)
-    redis-objects (0.9.1)
-      redis (>= 3.0.2)
+    redis (3.1.0)
     ref (1.0.5)
     sass (3.2.18)
     sass-rails (4.0.2)
@@ -141,16 +153,7 @@ GEM
     uglifier (2.5.0)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
-    websocket-driver (0.3.2)
-    websocket-rails (0.7.0)
-      em-synchrony
-      faye-websocket
-      hiredis
-      rack
-      rails
-      redis
-      redis-objects
-      thin
+    websocket-driver (0.3.4)
 
 PLATFORMS
   ruby
@@ -169,6 +172,7 @@ DEPENDENCIES
   sass-rails (~> 4.0.2)
   sdoc
   therubyracer
+  thin
   turbolinks
   uglifier (>= 1.3.0)
-  websocket-rails
+  websocket-rails!

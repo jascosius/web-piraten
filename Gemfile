@@ -50,7 +50,7 @@ end
 # gem 'debugger', group: [:development, :test]
 
 # Websocket Rails - https://github.com/websocket-rails/websocket-rails
-gem 'websocket-rails'
+gem 'websocket-rails', :git => 'git://github.com/websocket-rails/websocket-rails.git', :ref => 'db6a714'
 
 # https://github.com/metaskills/less-rails-bootstrap, MIT License
 gem 'therubyracer'
@@ -72,3 +72,5 @@ gem 'jquery-ui-rails' # visual jquery plugins
 gem 'airbrake'
 
 gem 'mina'
+gem 'thin'
+# gem 'passenger'
