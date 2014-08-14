@@ -26,7 +26,7 @@ WebsocketRails.setup do |config|
   #    config.synchronize = false
   # end
   # Prevent Thin from daemonizing (default is true)
-  config.daemonize = false
+  #config.daemonize = false
 
   # Uncomment and edit to point to a different redis instance.
   # Will not be used unless standalone or synchronization mode
