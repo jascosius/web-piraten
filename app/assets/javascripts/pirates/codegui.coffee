@@ -2,16 +2,7 @@ class @CodeGUI
 
   @initialize: (@textAreaId, codeMode) ->
     @WatchList._initialize()
-    @codeMirror = CodeMirror.fromTextArea document.getElementById(textAreaId), {
-      lineNumbers: true,
-      autofocus: true,
-      tabMode: 'spaces',
-      enterMode: 'spaces'
-      mode: codeMode,
-      theme: 'monokai',
-      keymap: 'sublime',
-      styleActiveLine: true,
-    }
+    @codeMirror = CodeMirror.fromTextArea document.getElementById(textAreaId), Config.codemirror
 
     @codeMirror.on  "blur", () => @isInEditor = false
     @codeMirror.on  "focus", () => @isInEditor = true

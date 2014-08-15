@@ -222,8 +222,8 @@ class @Grid
     @_drawObjects()
     @_drawShip()
 
-    @_highlightCell @activeCell, Config.cellHightlighting.hovered if @activeCell
-    @_highlightCell @look, Config.cellHightlighting.look if @look
+    @_highlightCell @activeCell, Config.cellHighlighting.hovered if @activeCell
+    @_highlightCell @look, Config.cellHighlighting.look if @look
 
   @_drawCells = (strokeStyle, vertical) ->
     @ctx.save()
