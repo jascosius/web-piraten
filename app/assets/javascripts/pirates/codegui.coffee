@@ -31,10 +31,11 @@ class @CodeGUI
     @codeMirror.on  "focus", () => @isInEditor = true
     @codeMirror.on 'dblclick', @onDoubleClick
 
-    @_$fullscreenBtn = $ '#fullscreenBtn'
-    @_$fullscreenBtn.click () =>
+    @_$fullScreenBtn = $ '#fullScreenBtn'
+    @_$fullScreenBtn.click () =>
       @codeMirror.setOption("fullScreen", true)
       showCloseFullScreenButton()
+    @_$fullScreenBtn.tooltip()
 
     @_$runBtn = $ '#runBtn'
     @_$runBtn.click Simulation.start
