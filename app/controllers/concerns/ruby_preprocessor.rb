@@ -22,7 +22,6 @@ class RubyPreprocessor < BasePreprocessor
   # statements. This'll be verified by checking the user's code with regular
   # expressions.
   def process_code(code_msg, vars)
-=begin
     i=1
     codes = ''
     bools = {}
@@ -31,7 +30,7 @@ class RubyPreprocessor < BasePreprocessor
     bools[:dont_skip_line] = true
     if code_msg =~ regex_verify_case_statement
       codes = case_block_processsing(code_msg, vars, i, '', bools)
-    elsif code_msg =~ /(?:'(?:.*(?:\n|\r|\r\n).*)+'|"(?:.*(?:\n|\r|\r\n).*)+")/
+    elsif code_msg =~ /(?:'(?:(?:[^']*(?:\\')?)*(?:\n|\r|\r\n)(?:[^']*(?:\\')?)*)'|"(?:(?:[^"]*(?:\\")?)*(?:\n|\r|\r\n)(?:[^"]*(?:\\")?)*)")/
       # Regular expression that verifies the existence of a multiline string in
       # the code.
       #codes = multiline_processing(code_msg, vars, i, '')
@@ -52,8 +51,6 @@ class RubyPreprocessor < BasePreprocessor
       end
     end
     insert_logic + codes + "\n"
-=end
-    insert_logic + code_msg +  "\n#{$prefix}_line(1)\n" + "\n"
   end
 
   # Method that processes the code, if there is a case block in the user's code.
