@@ -1,5 +1,3 @@
-
-
 require 'languages/language'
 LANGUAGES = {
     :Ruby => Language.new('Ruby', ['codemirror/modes/ruby'], {:codemirror => {:mode => 'ruby'}}),
