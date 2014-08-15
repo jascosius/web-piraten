@@ -4,11 +4,11 @@ module InitializeCommunication
   if Rails.env.production?
     @@timeout = 20 #timeout time for the programm to execute
     @@port = 12340 #port to connect to the vm
-    @@host = 'chevalblanc.informatik.uni-kiel.de' #host to connect to the vm
+    @@host = 'localhost' #'chevalblanc.informatik.uni-kiel.de' #host to connect to the vm
   else
     @@timeout = 20 #timeout time for the programm to execute
     @@port = 12340 #port to connect to the vm
-    @@host = 'localhost' #host to connect to the vm
+    @@host = 'localhost' #chevalblanc.informatik.uni-kiel.de' #host to connect to the vm #localhost
   end
 
 
