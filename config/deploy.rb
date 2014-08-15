@@ -80,7 +80,7 @@ task :start do
   queue "cd #{deploy_to}/current/ && /home/captain/bin/bundle exec thin start -d -e production -p 3000"
 end
 
-task :shutdown do
+task :stop do
   queue "cd #{deploy_to}/current/scripts/ && ./shutdown_server.sh"
 end
 
