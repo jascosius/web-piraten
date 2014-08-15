@@ -221,7 +221,10 @@ class CodeGUI.WatchList
 
   @addVariable = (word) ->
     @_$default.hide()
-    @_$watchlist.append Config.getWatchListRemoveButtonHTML(word)
+    @_$watchlist.append "<li>
+      <span class='glyphicon glyphicon-remove watchlist-remove' aria-hidden='true'></span>
+        #{word}
+      </li>"
     @updateQueueSize()
 
   @remove = (word) ->

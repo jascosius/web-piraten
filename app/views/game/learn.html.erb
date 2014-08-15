@@ -225,11 +225,6 @@
     cellHighlighting: {hovered: 'rgba(0,0,0,0.1)'},
     look: 'rgba(255,0,0,0.2)',
     maxCodeLength: 10000,
-    getWatchListRemoveButtonHTML: function (word) {
-      return "<li><span class='glyphicon glyphicon-remove watchlist-remove' aria-hidden='true'></span>" +
-          word +
-          "</li>";
-    }
   };
 
   config = jQuery.extend(true, config, jQuery.parseJSON('<%= raw(@language.gui_options.to_json) %>'));
