@@ -1,7 +1,7 @@
 #= require codemirror
 #= require codemirror/addons/selection/active-line
-#= require codemirror/modes/erlang
 #= require codemirror/keymaps/sublime
+
 
 class @Simulation
 
@@ -10,12 +10,20 @@ class @Simulation
     @canvas = document.getElementById "pirateGrid"
     @context = @canvas.getContext "2d"
 
-    @language = $('#languageData').html()
+    @languageOptions = $('#languageData').html()
+    @languageOptions = JSON.parse(@languageOptions)
+    @language = @languageOptions.name
+    codeMode = @languageOptions.options.codemirror.mode
+    scrips = @languageOptions.scripts[0]
+    console.log(scrips)
+
+    @language
+
 
     @speed = Math.round Config.maxSimulationSpeed/2 # overriden by load
     Grid.initialize @canvas, 32
     Grid.loadDefault()
-    CodeGUI.initialize 'codemirror'
+    CodeGUI.initialize('codemirror', codeMode)
     PacketHandler.initialize()
 
     @isInExecutionMode = false
@@ -168,6 +176,7 @@ class @Simulation
     throw 'not in simulation mode' unless @isInExecutionMode
     @isInExecutionMode = false
     clear()
+    PacketHandler.setStackDeep()
     webSocket.trigger 'stop'
     @isStopped = true
     @isFinished = true

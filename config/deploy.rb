@@ -20,9 +20,9 @@ set :branch, 'production'
 
 # Manually create these paths in shared/ (eg: shared/config/database.yml) in your server.
 # They will be linked in the 'deploy:link_shared_paths' step.
-set :shared_paths, ['config/database.yml', 'log']
+set :shared_paths, ['log']
 
-set :rvm_path, '/usr/local/rvm/scripts/rvm'
+set :rvm_path, '/home/captain/.rvm/scripts/rvm'
 # Optional settings:
 #   set :user, 'foobar'    # Username in the server to SSH to.
 #   set :port, '30000'     # SSH port number.
@@ -35,7 +35,7 @@ task :environment do
   # invoke :'rbenv:load'
 
   # For those using RVM, use this to load an RVM version@gemset.
-  invoke :'rvm:use[ruby-2.0.0@default]'
+  invoke :'rvm:use[ruby-2.1.2@web-piraten]'
 end
 
 # Put any custom mkdir's in here for when `mina setup` is ran.
@@ -64,7 +64,12 @@ task :deploy => :environment do
     invoke :'rails:assets_precompile'
 
     to :launch do
-      queue "touch #{deploy_to}/tmp/restart.txt"
+      #queue "mkdir #{deploy_to}/current/tmp/ && touch #{deploy_to}/current/tmp/restart.txt"
+      # queue "bundle exec rake websocket_rails:start_server"
+      #queue "bundle exec thin stop &> /dev/null"
+      #queue "bundle exec thin start -d -e production -p 3000"
+      # queue "echo 'Hallo3!'"
+      # queue "cd #{deploy_to}/current/ && ./bin/rails s -d -e production"
     end
   end
 end
