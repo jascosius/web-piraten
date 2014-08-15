@@ -37,7 +37,21 @@ LANGUAGES = {
         name: 'Java',
         script_assets: ['codemirror/modes/clike.js'],
         gui_options: {:codemirror => {:mode => 'clike'}},
-        default_code: '',
+        default_code: "public void start() {\n"+
+        "  while(ship.look(Direction.FRONT) != Item.BORDER) {\n"+
+        "    ship.move();\n"+
+        "    for(int i = 0; i<2; i++) {\n"+
+        "      ship.turn(Direction.RIGHT);\n"+
+        "    }\n"+
+        "    ship.move();\n"+
+        "    ship.turn();\n"+
+        "    ship.move();\n"+
+        "    if (ship.look() == Item.TREASURE) {\n"+
+        "      ship.take();\n"+
+        "      ship.put();\n"+
+        "    }\n"+
+        "  }\n"+
+        "}",
         file_extension: 'java'})
 }
 #current_language = LANGUAGES[params.lang]

@@ -62,9 +62,7 @@
         <div class="row">
 
             <!-- no indentation because CodeMirror would display it -->
-            <textarea id="codemirror" style="display: none">
-<%= @language.default_code %>
-            </textarea>
+            <textarea id="codemirror" style="display: none"><%= @language.default_code %></textarea>
 
             <div id="codeMirror-loading">
                 <%= image_tag 'ajax-loader.gif' %> Lade Daten

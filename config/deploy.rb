@@ -64,12 +64,28 @@ task :deploy => :environment do
     invoke :'rails:assets_precompile'
 
     to :launch do
-      #queue "pkill -9 ruby || true"
       queue "cd #{deploy_to}/shared/ && ./shutdown_server.sh"
       queue "cd #{deploy_to}/current/ && bundle exec thin start -d -e production -p 3000"
       # queue "cd #{deploy_to}/current/ && ./bin/rails s -d -e production"
     end
   end
+end
+
+task :restart do
+  queue "cd #{deploy_to}/shared/ && ./shutdown_server.sh"
+  queue "cd #{deploy_to}/current/ && bundle exec thin start -d -e production -p 3000"
+end
+
+task :start do
+  queue "cd #{deploy_to}/current/ && bundle exec thin start -d -e production -p 3000"
+end
+
+task :shutdown do
+  queue "cd #{deploy_to}/shared/ && ./shutdown_server.sh"
+end
+
+task :kill do
+  queue "pkill -9 ruby || true"
 end
 
 # For help in making your deploy script, see the Mina documentation:
