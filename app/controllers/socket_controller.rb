@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+
 class SocketController < WebsocketRails::BaseController
   $prefix = 'CkyUHZVL3q'
 
@@ -25,7 +26,7 @@ class SocketController < WebsocketRails::BaseController
     Perf::MeterFactory.instance.get(:socket).measure(:receive_code) { # performance
 
     tracing_vars = message[:vars]
-    language = message[:language]
+    language = message[:language].downcase
     code = message[:code]
 
     #TODO: shoud be the same as in the client

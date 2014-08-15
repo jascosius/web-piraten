@@ -48,7 +48,7 @@ module InitializeCommunication
       #connect to TCPServer to execute the programm
       vm = TCPSocket.open(@@host, @@port)
     rescue
-      puts 'Could not connect to TCPSocket. Start ruby app/vm/vm.rb'
+      $stderr.puts 'Could not connect to TCPSocket. Start ruby vm/vm/vm.rb development'
       exit_simulation!(packet, 'Ein interner Fehler ist aufgetreten.')
       send_packet(packet)
     else
