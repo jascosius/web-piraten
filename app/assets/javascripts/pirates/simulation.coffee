@@ -1,6 +1,7 @@
 #= require codemirror
 #= require codemirror/addons/selection/active-line
 #= require codemirror/keymaps/sublime
+#= require codemirror/addons/display/fullscreen.js
 
 
 class @Simulation
