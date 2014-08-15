@@ -1,4 +1,3 @@
-
 onOpen = (event) =>
   console.log 'Socket connection ready!'
   console.log event
@@ -73,6 +72,10 @@ class @PacketHandler
     @usedIDs = []
     @currentId = -1
     @packetCounter = 0
+    @stackDeep = 0
+
+  @setStackDeep = () =>
+    @stackDeep = 0
 
   @clear = () =>
     @packetQueue = []
@@ -145,3 +148,22 @@ class @PacketHandler
 
     # simulate operations last so that errors in there do not interfere with messages
     simulateOperation currentPacket if currentPacket.operations?
+    breakPoint currentPacket if currentPacket.break?
+
+
+  breakPoint = (packet) =>
+    breaks = packet.break
+    for br in breaks
+      switch br.type
+        when 'point' then Simulation.stop()
+        when 'up'
+          if @stackDeep >= 1
+            @stackDeep -= 1
+          else
+            @stackDeep = 0
+        when 'down'
+          @stackDeep += 1
+
+      console.log @stackDeep
+
+

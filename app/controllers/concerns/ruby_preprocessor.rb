@@ -16,7 +16,7 @@ class RubyPreprocessor < BasePreprocessor
     @execute = "ruby $PATH$/#{$prefix}_code.rb" #$PATH$ will be replaced
     @compile_error = ''
     @execute_error = ''
-
+    @operationlist = []
     @line_first = true
   end
 
@@ -328,7 +328,23 @@ class RubyPreprocessor < BasePreprocessor
   # Adds the line of the user's code and a commment with the linenumber, doesn't add
   # a comment if it's processing a multiline string.
   def add_user_codeline(s, i, no_multiline_string)
-    no_multiline_string ? s.chomp + " # #{$prefix}_(#{i}#{$prefix}_)\n" : s
+    if s=~ /\bdef\b/ || s=~/\bclass\b/ #def class
+      @operationlist.unshift(:defClass)
+      no_multiline_string ? s.chomp + "; break_point(:down)" + " # #{$prefix}_(#{i}#{$prefix}_)\n" : s
+    elsif s=~ /\bdo\b/ || s=~ /\bwhile\b/ || s=~ /\bif\b/ #do while if
+      @operationlist.unshift(:doWhileIf)
+      no_multiline_string ? "break_point(:down); " + s.chomp + " # #{$prefix}_(#{i}#{$prefix}_)\n" : s
+    elsif s=~ /\bend\b/ #end
+      op = @operationlist.shift
+      if op == :defClass
+        no_multiline_string ? "break_point(:up); " + s.chomp + " # #{$prefix}_(#{i}#{$prefix}_)\n" : s
+      else
+        no_multiline_string ? s.chomp + " ; break_point(:up)" + " # #{$prefix}_(#{i}#{$prefix}_)\n" : s
+      end
+    else
+      no_multiline_string ? s.chomp + " # #{$prefix}_(#{i}#{$prefix}_)\n" : s
+    end
+
   end
 
   # Inserts the debug information for tracing the variables during simulation.
@@ -423,6 +439,13 @@ def put(elem = :buoy)
 end
 def take
   puts "\n#{$prefix}_take"
+end
+def break_point(dir = :point)
+  case dir
+    when :point then puts "\n#{$prefix}_break_point"
+    when :up then puts "\n#{$prefix}_break_up"
+    when :down then puts "\n#{$prefix}_break_down"
+  end
 end
 def #{$prefix}_line(i)
   puts "\n#{$prefix}_line_\#{i}"

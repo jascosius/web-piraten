@@ -16,15 +16,17 @@
             </div>
 
 
-
-            <div class="btn-group" >
-                <button id="runBtn" type="button" class="btn btn-success"><span class="glyphicon glyphicon-play"> </span> Ausführen</button>
+            <div class="btn-group">
+                <button id="runBtn" type="button" class="btn btn-success">
+                    <span class="glyphicon glyphicon-play"> </span> Ausführen
+                </button>
                 <button id="runDropdown" type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
                     <span class="caret"></span>
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <ul class="dropdown-menu" role="menu">
-                    <li><a href="#" id="runNStopBtn"><span class="glyphicon glyphicon-step-forward"> </span>Schritt</a></li>
+                    <li><a href="#" id="runNStopBtn"><span class="glyphicon glyphicon-step-forward"> </span> Schritt</a>
+                    </li>
                 </ul>
             </div>
 
@@ -42,14 +44,17 @@
             <button class="btn btn-default" id="resumeBtn" style="display: none">
                 <span class="glyphicon glyphicon-play"> </span> Weiter
             </button>
-            <div class="btn-group" >
-                <button id="stepBtn" type="button" class="btn btn-default" disabled><span class="glyphicon glyphicon-step-forward"> </span>Schritt</button>
+            <div class="btn-group">
+                <button id="stepBtn" type="button" class="btn btn-default" disabled>
+                    <span class="glyphicon glyphicon-step-forward"> </span> Schritt
+                </button>
                 <button id="jumpDropdown" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" disabled>
                     <span class="caret"></span>
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <ul class="dropdown-menu" role="menu">
-                    <li><a href="#" id="jumpBtn">überspringen</a></li>
+                    <li><a href="#" id="jumpBtn"><span class="glyphicon glyphicon-share-alt"> </span> überspringen</a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -78,6 +83,7 @@
                 i += 1
                 end
             </textarea>
+
             <div id="codeMirror-loading">
                 <%= image_tag 'ajax-loader.gif' %> Lade Daten
             </div>
@@ -88,6 +94,7 @@
             <div class="speed-controls">
                 Geschwindigkeit:
                 <span id="simulationSpeed"></span>
+
                 <div id="speedSlider" style="width: 200px"></div>
             </div>
 
@@ -130,6 +137,7 @@
 <div class="row">
     <div class="col-md-4">
         <h4>Beobachtete Variablen</h4>
+
         <div id="watchlistDebugger">
             <table class="table table-hover table-condensed table-striped table-responsive">
                 <thead>
@@ -148,7 +156,8 @@
             <%= t("game.console.label") %>
             <span class="pull-right glyphicon glyphicon-trash" id="clearConsoleBtn" title="Konsole leeren"></span>
         </h4>
-        <div name="console" id="console"> </div>
+
+        <div name="console" id="console"></div>
     </div>
 </div>
 
@@ -164,6 +173,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <h4>Code</h4>
+
                         <div class="btn-group">
                             <a class="btn btn-success" id="save-code">
                                 <span class="glyphicon glyphicon-floppy-save"> speichern</span>
@@ -176,6 +186,7 @@
                     </div>
                     <div class="col-md-6">
                         <h4>Spielwelt</h4>
+
                         <div class="btn-group">
                             <a class="btn btn-success" id="save-grid">
                                 <span class="glyphicon glyphicon-floppy-save"> speichern</span>
@@ -200,8 +211,13 @@
 
 <div id="imagePreloader" style="display: none" hidden></div>
 
-<div id="languageData" style="display: none" hidden><%= @language%></div>
+<div id="languageData" style="display: none" hidden><%= @language %></div>
 
 
 <% content_for :html_header, javascript_include_tag('pirates/simulation', 'data-turbolinks-track' => false) %>
-<%= stylesheet_link_tag 'game'%>
+<%= stylesheet_link_tag 'game' %>
+<% @scripts.each do |scripts| %>
+    <script src="<%= asset_path scripts %>"></script>
+<% end %>
+
+
