@@ -7,7 +7,7 @@ class @CodeGUI
       autofocus: true,
       tabMode: 'spaces',
       enterMode: 'spaces'
-      mode: 'ruby',
+      mode: 'erlang',
       theme: 'monokai',
       keymap: 'sublime',
       styleActiveLine: true,
