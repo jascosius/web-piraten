@@ -10,14 +10,6 @@ class @Simulation
     @canvas = document.getElementById "pirateGrid"
     @context = @canvas.getContext "2d"
 
-#    @languageOptions = $('#languageData').html()
-#    @languageOptions = JSON.parse(@languageOptions)
-#    @language = @languageOptions.name
-#    codeMode = @languageOptions.options.codemirror.mode
-#    scrips = @languageOptions.scripts[0]
-#    console.log(scrips)
-
-
     @speed = Math.round Config.maxSimulationSpeed/2 # overriden by load
     Grid.initialize @canvas, 32
     Grid.loadDefault()
@@ -146,7 +138,7 @@ class @Simulation
     tempStorage = @serialize()
     webSocket.trigger "simulateGrid", tempStorage
     if localStorage? and Config.saveToLocalStorage
-      localStorage.setItem 'simulation', JSON.stringify(tempStorage)
+      localStorage.setItem "simulation.#{Config.language.id}", JSON.stringify(tempStorage)
 
   @stop = () =>
     throw 'already stopped' if @isStopped
@@ -180,12 +172,6 @@ class @Simulation
     delete tempStorage.speed # usability
     @load tempStorage
     tempStorage = null
-
-    # does not work because 'disabled' does not trigger hover
-#    $serialization_trigger.tooltip {
-#      placement: 'bottom'
-#      title: 'Erst Ausführung stoppen'
-#    }
 
   clear = () ->
     CodeGUI.clearHighlighting()
