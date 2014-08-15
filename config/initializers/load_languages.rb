@@ -30,9 +30,11 @@ LANGUAGES = {
     :erlang => Language.new({
         name: 'Erlang',
         script_assets: ['codemirror/modes/erlang.js'],
-        options: {:codemirror => {:mode => 'erlang'}},
+        stylesheet_assets: ['codemirror/themes/eclipse.css'],
+        gui_options: {:codemirror => {:mode => 'erlang', :theme => 'eclipse'}},
         default_code: '',
-        file_extension: 'erl'}),
+        file_extension: 'erl'
+    }),
     :java => Language.new({
         name: 'Java',
         script_assets: ['codemirror/modes/clike.js'],
@@ -52,6 +54,7 @@ LANGUAGES = {
         "    }\n"+
         "  }\n"+
         "}",
-        file_extension: 'java'})
+        file_extension: 'java'
+    })
 }
 #current_language = LANGUAGES[params.lang]

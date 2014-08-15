@@ -194,6 +194,10 @@
 <% content_for :html_header, javascript_include_tag('pirates/simulation', 'data-turbolinks-track' => false) %>
 <%= stylesheet_link_tag 'game' %>
 
+<% @language.stylesheet_assets.each do | stylesheet | %>
+  <%= stylesheet_link_tag stylesheet %>
+<% end %>
+
 <script>
   var config = {
     language: {
@@ -227,7 +231,7 @@
     maxCodeLength: 10000
   };
 
-  config = jQuery.extend(true, config, jQuery.parseJSON('<%= raw(@language.gui_options.to_json) %>'));
+  config = jQuery.extend(true, config, jQuery.parseJSON('<%= raw @language.gui_options.to_json %>'));
   window.Config = config
 
   var scripts = [
