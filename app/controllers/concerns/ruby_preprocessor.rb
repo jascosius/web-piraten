@@ -34,8 +34,7 @@ class RubyPreprocessor < BasePreprocessor
     bools[:dont_skip_line] = true
     if code_msg =~ regex_verify_case_statement
       codes = case_block_processsing(code_msg, vars, i, '', bools)
-
-    elsif code_msg =~ /(?:'(?:.*(?:\n|\r|\r\n).*)+'|"(?:.*(?:\n|\r|\r\n).*)+")/
+    elsif code_msg =~ /(?:'(?:(?:[^']*(?:\\')?)*(?:\n|\r|\r\n)(?:[^']*(?:\\')?)*)'|"(?:(?:[^"]*(?:\\")?)*(?:\n|\r|\r\n)(?:[^"]*(?:\\")?)*)")/
       # Regular expression that verifies the existence of a multiline string in
       # the code.
       #codes = multiline_processing(code_msg, vars, i, '')
@@ -46,7 +45,6 @@ class RubyPreprocessor < BasePreprocessor
         codes = insert_debug_information(codes, vars, bools[:dont_skip_line])
         i += 1
       end
-
     else
       codes = ''
       code_msg.each_line do |s|
@@ -326,7 +324,6 @@ class RubyPreprocessor < BasePreprocessor
   def insert_line_number(i, dont_skip_line)
     dont_skip_line ? "#{$prefix}_line(#{i})\n" : ''
   end
-
 
   # Adds the line of the user's code and a commment with the linenumber, doesn't add
   # a comment if it's processing a multiline string.
