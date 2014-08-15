@@ -7,6 +7,8 @@ class RubyPreprocessor < BasePreprocessor
   attr :compile_error
   attr :execute_error
 
+  attr :line_first
+
   def initialize(attribut)
     super(attribut)
     @filename = "#{$prefix}_code.rb"
@@ -14,9 +16,11 @@ class RubyPreprocessor < BasePreprocessor
     @execute = "ruby $PATH$/#{$prefix}_code.rb" #$PATH$ will be replaced
     @compile_error = ''
     @execute_error = ''
+
+    @line_first = true
   end
 
-  # Method that processes the given code and includes the debug information 
+  # Method that processes the given code and includes the debug information
   # if the user wants to trace specified variables. Furthermore it handles the
   # given code differently, when there are multline strings or correct case-
   # statements. This'll be verified by checking the user's code with regular

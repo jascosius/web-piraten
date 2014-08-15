@@ -40,6 +40,10 @@ module Preprocessor
     @lang.postprocess_error_compile(line,code)
   end
 
+  def line_first
+    @lang.line_first
+  end
+
   def preprocess_filename
     @lang.filename
   end
