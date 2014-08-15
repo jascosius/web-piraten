@@ -64,11 +64,9 @@ task :deploy => :environment do
     invoke :'rails:assets_precompile'
 
     to :launch do
-      #queue "mkdir #{deploy_to}/current/tmp/ && touch #{deploy_to}/current/tmp/restart.txt"
-      # queue "bundle exec rake websocket_rails:start_server"
-      #queue "bundle exec thin stop &> /dev/null"
-      #queue "bundle exec thin start -d -e production -p 3000"
-      # queue "echo 'Hallo3!'"
+      #queue "pkill -9 ruby || true"
+      queue "cd #{deploy_to}/shared/ && ./shutdown_server.sh"
+      queue "cd #{deploy_to}/current/ && bundle exec thin start -d -e production -p 3000"
       # queue "cd #{deploy_to}/current/ && ./bin/rails s -d -e production"
     end
   end
