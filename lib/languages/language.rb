@@ -1,5 +1,5 @@
 class Language
-  attr_reader :name, :scripts, :options
+  attr_accessor :name, :scripts, :options
   def initialize(name, scripts, options)
     @name = name
     @scripts = scripts

@@ -1,9 +1,11 @@
 
 
 require 'languages/language'
+
 LANGUAGES = {
-    :Ruby => Language.new('Ruby', ['codemirror/modes/ruby'], {:codemirror => {:mode => 'ruby'}}),
-    :Erlang => Language.new('Erlang', ['codemirror/modes/erlang'], {:codemirror => {:mode => 'erlang'}}),
-    :Java => Language.new('Java', ['codemirror/modes/clike'], {:codemirror => {:mode => 'clike'}})
+    # object => Language.new(name, [scrips], options, url)
+    :ruby => Language.new('Ruby' , ['codemirror/modes/ruby'], {:codemirror => {:mode => 'ruby'}}),
+    :erlang => Language.new('Erlang', ['codemirror/modes/erlang'], {:codemirror => {:mode => 'erlang'}}),
+    :java => Language.new('Java', ['codemirror/modes/clike'], {:codemirror => {:mode => 'clike'}})
 }
 #current_language = LANGUAGES[params.lang]
