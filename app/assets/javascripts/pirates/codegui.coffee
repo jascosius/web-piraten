@@ -4,9 +4,24 @@ class @CodeGUI
     @WatchList._initialize()
     @codeMirror = CodeMirror.fromTextArea document.getElementById(textAreaId), Config.codemirror
 
+    @codeMirror.setOption("extraKeys", {
+      'F11': () =>
+        isFullScreen = @codeMirror.getOption "fullScreen"
+        @codeMirror.setOption "fullScreen", !isFullScreen
+        alert "Klicke in den Editor und benutze ESC um den Vollbildmodus zu verlassen" if(!isFullScreen)
+      'Esc': () =>
+        @codeMirror.setOption("fullScreen", false) if (@codeMirror.getOption("fullScreen"))
+    })
+
+
     @codeMirror.on  "blur", () => @isInEditor = false
     @codeMirror.on  "focus", () => @isInEditor = true
     @codeMirror.on 'dblclick', @onDoubleClick
+
+    @_$fullscreenBtn = $ '#fullscreenBtn'
+    @_$fullscreenBtn.click () =>
+      @codeMirror.setOption("fullScreen", true)
+      alert "Klicke in den Editor und benutze ESC um den Vollbildmodus zu verlassen"
 
     @_$runBtn = $ '#runBtn'
     @_$runBtn.click Simulation.start
