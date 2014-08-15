@@ -73,6 +73,7 @@ class @Simulation
       data = localStorage.getItem "simulation.#{Config.language.id}"
       if data?
         @load JSON.parse(data)
+        CodeGUI.clearHistory()
 
   @mainLoop = () =>
     @now = new Date().getTime()

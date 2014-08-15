@@ -150,6 +150,8 @@ class @CodeGUI
   @setCode = (code) ->
     @codeMirror.setValue code
 
+  @clearHistory = () =>
+    @codeMirror.getDoc().clearHistory()
   @highlightLine: (line) ->
     line -= 1
     if @lastLine?
