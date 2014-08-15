@@ -38,7 +38,7 @@ LANGUAGES = {
     :java => Language.new({
         name: 'Java',
         script_assets: ['codemirror/modes/clike.js'],
-        gui_options: {:codemirror => {:mode => 'clike'}},
+        gui_options: {:codemirror => {:mode => 'text/x-java'}},
         default_code: "public void start() {\n"+
         "  while(ship.look(Direction.FRONT) != Item.BORDER) {\n"+
         "    ship.move();\n"+
