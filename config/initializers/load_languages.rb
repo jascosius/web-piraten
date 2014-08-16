@@ -47,7 +47,7 @@ LANGUAGES = {
     :java => Language.new({
         name: 'Java',
         script_assets: ['codemirror/modes/clike.js'],
-        gui_options: {:codemirror => {:mode => 'text/x-java'}},
+        gui_options: {:codemirror => {:mode => 'clike'}},
         default_code: "public void start() {\n"+
         "  while(ship.look(Direction.FRONT) != Item.BORDER) {\n"+
         "    ship.move();\n"+
@@ -63,7 +63,6 @@ LANGUAGES = {
         "    }\n"+
         "  }\n"+
         "}",
-        file_extension: 'java'
-    })
+        file_extension: 'java'})
 }
 #current_language = LANGUAGES[params.lang]

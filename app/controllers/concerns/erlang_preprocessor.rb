@@ -199,13 +199,13 @@ class ErlangPreprocessor < BasePreprocessor
     puts()         -> puts(buoy).
     puts(buoy)     -> io:fwrite('\n#{$prefix}_put_buoy\n');
     puts(treasure) -> io:fwrite('\n#{$prefix}_put_treasure\n');
-    puts(_)        -> erlang:exit(function_clause).
+    puts(_)        -> erlang:error(function_clause).
 
     turn()      -> turn(back).
     turn(back)  -> io:fwrite("\n#{$prefix}_turn_back\n");
     turn(right) -> io:fwrite("\n#{$prefix}_turn_right\n");
     turn(left)  -> io:fwrite("\n#{$prefix}_turn_left\n");
-    turn(_)     -> erlang:exit(function_clause).
+    turn(_)     -> erlang:error(function_clause).
 
     look()      -> look(here).
     look(here)  -> io:fwrite("\n#{$prefix}_?_look_here\n"),
