@@ -2,9 +2,10 @@
 <p>Folgende Programmiersprachen werden zur Zeit von WebPiraten akzeptiert</p>
 <br>
 <br>
-<%@language.each do |language| %>
+<%
+   @language.each do |id, language| puts id %>
     <p>
-    <p><%= link_to language, :controller => 'game', :action => "learn", :name => language%></p>
+    <p><%= link_to language.name, :controller => :game, :action => :learn, :name => id %></p>
     <hr/>
     </p>
 <% end %>

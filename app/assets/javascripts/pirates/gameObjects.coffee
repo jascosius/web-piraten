@@ -47,7 +47,7 @@ class @Ship extends GameObject
   constructor: () ->
     if arguments.length == 1 # serialized obj
       serialized = arguments[0]
-      super serialized, Config.shipImage
+      super serialized, Config.images.ship
       @rotation = serialized.rotation
     else if arguments.length <= 3
       @x = arguments[0]
@@ -55,7 +55,7 @@ class @Ship extends GameObject
       @isRotating = false
       @rotation = arguments[2] || 0 #optional
       @lastRotation = @rotation
-      super name, Config.shipImage, @x, @y
+      super name, Config.images.ship, @x, @y
     else throw "invalid ship constructor call"
 
   turn: (rotation) =>
@@ -104,11 +104,11 @@ class @Buoy extends GameObject
   constructor: () ->
     if arguments.length == 1 # serialized obj
       serialized = arguments[0]
-      super serialized, Config.buoyImage
+      super serialized, Config.images.buoy
     else if arguments.length <= 2
       @x = arguments[0]
       @y = arguments[1]
-      super name, Config.buoyImage, @x, @y
+      super name, Config.images.buoy, @x, @y
     else throw "invalid Buoy constructor call"
 
 class @Wave extends GameObject
@@ -117,11 +117,11 @@ class @Wave extends GameObject
   constructor: () ->
     if arguments.length == 1 # serialized obj
       serialized = arguments[0]
-      super serialized, Config.waveImage
+      super serialized, Config.images.wave
     else if arguments.length <= 2
       @x = arguments[0]
       @y = arguments[1]
-      super name, Config.waveImage, @x, @y
+      super name, Config.images.wave, @x, @y
     else throw "invalid Wave constructor call"
 
 class @Treasure extends GameObject
@@ -130,11 +130,11 @@ class @Treasure extends GameObject
   constructor: () ->
     if arguments.length == 1 # serialized obj
       serialized = arguments[0]
-      super serialized, Config.treasureImage
+      super serialized, Config.images.treasure
     else if arguments.length <= 2
       @x = arguments[0]
       @y = arguments[1]
-      super name, Config.treasureImage, @x, @y
+      super name, Config.images.treasure, @x, @y
     else throw "invalid Treasure constructor call"
 
 class @Monster extends GameObject
@@ -143,9 +143,9 @@ class @Monster extends GameObject
   constructor: () ->
     if arguments.length == 1 # serialized obj
       serialized = arguments[0]
-      super serialized, Config.monsterImage
+      super serialized, Config.images.monster
     else if arguments.length <= 2
       @x = arguments[0]
       @y = arguments[1]
-      super name, Config.monsterImage, @x, @y
+      super name, Config.images.monster, @x, @y
     else throw "invalid Monster constructor call"

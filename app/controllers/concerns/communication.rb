@@ -58,7 +58,7 @@ module Communication
                  :stderr => lambda { |*msg| print!(packet, :error, postprocess_error(msg.join('_'), code)) },
                  :stderrcompile => lambda { |*msg| print!(packet, :error, postprocess_error_compile(msg.join('_'), code)) },
                  :end => lambda { exit_simulation!(packet) },
-                 :break => lambda { |dir| break!(packet,dir.to_sym)},
+                 :break => lambda { |dir| break!(packet, dir.to_sym) },
                  :enderror => lambda { |*msg| exit_simulation!(packet, msg.join('_')) }}
 
     until connection_store[:is_simulation_done]

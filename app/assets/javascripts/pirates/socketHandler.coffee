@@ -1,4 +1,3 @@
-
 onOpen = (event) =>
   console.log 'Socket connection ready!'
   console.log event

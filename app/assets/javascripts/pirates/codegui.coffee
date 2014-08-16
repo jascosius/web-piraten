@@ -2,20 +2,40 @@ class @CodeGUI
 
   @initialize: (@textAreaId, codeMode) ->
     @WatchList._initialize()
-    @codeMirror = CodeMirror.fromTextArea document.getElementById(textAreaId), {
-      lineNumbers: true,
-      autofocus: true,
-      tabMode: 'spaces',
-      enterMode: 'spaces'
-      mode: codeMode,
-      theme: 'monokai',
-      keymap: 'sublime',
-      styleActiveLine: true,
-    }
+    @codeMirror = CodeMirror.fromTextArea document.getElementById(textAreaId), Config.codemirror
+
+    showCloseFullScreenButton = () =>
+      btn = '<button class="btn btn-xs" id="closeFullScreenBtn"><span class="glyphicon glyphicon-resize-small" /></span></button>'
+      $('body').append btn
+      $btn = $('#closeFullScreenBtn')
+      $btn.click () =>
+        @codeMirror.setOption("fullScreen", false)
+        $btn.remove()
+
+    @codeMirror.setOption("extraKeys", {
+      'F11': () =>
+        isFullScreen = @codeMirror.getOption "fullScreen"
+        @codeMirror.setOption "fullScreen", !isFullScreen
+        if !isFullScreen
+          showCloseFullScreenButton()
+        else
+          $('#closeFullScreenBtn').remove()
+      'Esc': () =>
+        if (@codeMirror.getOption("fullScreen"))
+          @codeMirror.setOption("fullScreen", false)
+          $('#closeFullScreenBtn').remove()
+    })
+
 
     @codeMirror.on  "blur", () => @isInEditor = false
     @codeMirror.on  "focus", () => @isInEditor = true
     @codeMirror.on 'dblclick', @onDoubleClick
+
+    @_$fullScreenBtn = $ '#fullScreenBtn'
+    @_$fullScreenBtn.click () =>
+      @codeMirror.setOption("fullScreen", true)
+      showCloseFullScreenButton()
+    @_$fullScreenBtn.tooltip()
 
     @_$runBtn = $ '#runBtn'
     @_$runBtn.click Simulation.start
@@ -159,6 +179,8 @@ class @CodeGUI
   @setCode = (code) ->
     @codeMirror.setValue code
 
+  @clearHistory = () =>
+    @codeMirror.getDoc().clearHistory()
   @highlightLine: (line) ->
     line -= 1
     if @lastLine?
@@ -230,7 +252,10 @@ class CodeGUI.WatchList
 
   @addVariable = (word) ->
     @_$default.hide()
-    @_$watchlist.append Config.getWatchListRemoveButtonHTML(word)
+    @_$watchlist.append "<li>
+      <span class='glyphicon glyphicon-remove watchlist-remove' aria-hidden='true'></span>
+        #{word}
+      </li>"
     @updateQueueSize()
 
   @remove = (word) ->

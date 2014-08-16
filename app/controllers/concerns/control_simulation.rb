@@ -34,8 +34,8 @@ module ControlSimulation
     end
   end
 
-  def break!(packet,direction)
-      packet[:break] ||= []
-      packet[:break] << {:type => direction}
+  def break!(packet, direction)
+    packet[:break] ||= []
+    packet[:break] << {:type => direction}
   end
 end

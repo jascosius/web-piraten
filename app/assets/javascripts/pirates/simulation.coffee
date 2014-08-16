@@ -1,6 +1,7 @@
 #= require codemirror
 #= require codemirror/addons/selection/active-line
 #= require codemirror/keymaps/sublime
+#= require codemirror/addons/display/fullscreen.js
 
 
 class @Simulation
@@ -10,20 +11,10 @@ class @Simulation
     @canvas = document.getElementById "pirateGrid"
     @context = @canvas.getContext "2d"
 
-    @languageOptions = $('#languageData').html()
-    @languageOptions = JSON.parse(@languageOptions)
-    @language = @languageOptions.name
-    codeMode = @languageOptions.options.codemirror.mode
-    scrips = @languageOptions.scripts[0]
-    console.log(scrips)
-
-    @language
-
-
     @speed = Math.round Config.maxSimulationSpeed/2 # overriden by load
     Grid.initialize @canvas, 32
     Grid.loadDefault()
-    CodeGUI.initialize('codemirror', codeMode)
+    CodeGUI.initialize 'codemirror'
     PacketHandler.initialize()
 
     @isInExecutionMode = false
@@ -42,7 +33,7 @@ class @Simulation
       @mouse.y = event.clientY || event.pageY
 
     $saveCode = $ '#save-code'
-    Utils.createSaveDialog $saveCode, 'code', 'rb', () ->
+    Utils.createSaveDialog $saveCode, 'code', Config.language.fileExtension, () ->
       return CodeGUI.getCode()
 
     $saveGrid = $ '#save-grid'
@@ -51,13 +42,13 @@ class @Simulation
 
     $('#load-code').click () ->
       Utils.createFileUpload {
-          fileExtension: 'rb'
+          fileExtension: Config.language.fileExtension
           onSuccess: (fileContent) ->
             CodeGUI.setCode fileContent
             # close modal
             $('#serialization-modal').modal('hide')
           onInvalidFile: () ->
-            alert 'Keine .rb Datei!'
+            alert "Keine .#{Config.language.fileExtension} Datei!"
       }
 
     $('#load-grid').click () ->
@@ -74,15 +65,16 @@ class @Simulation
 
     $(window).on 'beforeunload', (event) =>
       event = event || window.event
-      if localStorage? and not @isInExecutionMode
+      if localStorage? and not @isInExecutionMode and Config.saveToLocalStorage
         serialized = @serialize()
         delete serialized.vars # don't store watchlist
-        localStorage.setItem 'simulation', JSON.stringify serialized
+        localStorage.setItem "simulation.#{Config.language.id}", JSON.stringify serialized
 
     if localStorage?
-      data = localStorage.getItem 'simulation'
+      data = localStorage.getItem "simulation.#{Config.language.id}"
       if data?
         @load JSON.parse(data)
+        CodeGUI.clearHistory()
 
   @mainLoop = () =>
     @now = new Date().getTime()
@@ -109,17 +101,8 @@ class @Simulation
       @context.fillText Math.round(@fps)+" fps", 10, 20
 
 
-  @preload = (callback) =>
+  @preload = (dependencies, callback) =>
     loaded = 0
-    dependencies = [
-      "<%= javascript_path 'pirates/config' %>"
-      "<%= javascript_path 'pirates/utilities' %>"
-      "<%= javascript_path 'pirates/console' %>"
-      "<%= javascript_path 'pirates/socketHandler' %>"
-      "<%= javascript_path 'pirates/gameObjects' %>"
-      "<%= javascript_path 'pirates/codegui' %>"
-      "<%= javascript_path 'pirates/grid' %>"
-    ]
     for i in [0...dependencies.length]
       script = dependencies[i]
       $.getScript(script).done(() =>
@@ -132,7 +115,9 @@ class @Simulation
 
   @preloadImages = (callback) =>
     loaded = 0
-    images = Config.getImagesToPreload()
+    images = []
+    for name, img of Config.images
+      images.push img
     for i in [0...images.length]
       currentImage = images[i]
       $('<img />').attr('src', currentImage).load () ->
@@ -154,8 +139,8 @@ class @Simulation
     # store state of the grid
     tempStorage = @serialize()
     webSocket.trigger "simulateGrid", tempStorage
-    if localStorage?
-      localStorage.setItem 'simulation', JSON.stringify(tempStorage)
+    if localStorage? and Config.saveToLocalStorage
+      localStorage.setItem "simulation.#{Config.language.id}", JSON.stringify(tempStorage)
 
   @stop = () =>
     throw 'already stopped' if @isStopped
@@ -190,18 +175,10 @@ class @Simulation
     @load tempStorage
     tempStorage = null
 
-    # does not work because 'disabled' does not trigger hover
-#    $serialization_trigger.tooltip {
-#      placement: 'bottom'
-#      title: 'Erst Ausführung stoppen'
-#    }
-
   clear = () ->
     CodeGUI.clearHighlighting()
     PacketHandler.clear()
     Grid.look = null
-
-  @language
 
   @serialize = () ->
     {
@@ -209,7 +186,7 @@ class @Simulation
       grid: Grid.serialize()
       vars: CodeGUI.WatchList.get()
       speed: @speed
-      language: @language
+      language: Config.language.id
     }
 
 
@@ -226,10 +203,4 @@ class @Simulation
 
     Grid.GridControls.setSpeed obj.speed if obj.speed?
 
-
-window.onload = () -> # use jQuery to wait until DOM is ready
-
-  Simulation.preload () -> # firefox won't draw without
-    Simulation.initialize()
-    Simulation.mainLoop()
 

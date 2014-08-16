@@ -2,7 +2,7 @@ require 'mina/bundler'
 require 'mina/rails'
 require 'mina/git'
 # require 'mina/rbenv'  # for rbenv support. (http://rbenv.org)
-require 'mina/rvm'    # for rvm support. (http://rvm.io)
+require 'mina/rvm' # for rvm support. (http://rvm.io)
 
 # Basic settings:
 #   domain       - The hostname to SSH to.
@@ -49,7 +49,7 @@ task :setup => :environment do
   queue! %[chmod g+rx,u+rwx "#{deploy_to}/shared/config"]
 
   queue! %[touch "#{deploy_to}/shared/config/database.yml"]
-  queue  %[echo "-----> Be sure to edit 'shared/config/database.yml'."]
+  queue %[echo "-----> Be sure to edit 'shared/config/database.yml'."]
 end
 
 desc "Deploys the current version to the server."
@@ -64,14 +64,28 @@ task :deploy => :environment do
     invoke :'rails:assets_precompile'
 
     to :launch do
-      #queue "mkdir #{deploy_to}/current/tmp/ && touch #{deploy_to}/current/tmp/restart.txt"
-      # queue "bundle exec rake websocket_rails:start_server"
-      #queue "bundle exec thin stop &> /dev/null"
-      #queue "bundle exec thin start -d -e production -p 3000"
-      # queue "echo 'Hallo3!'"
-      # queue "cd #{deploy_to}/current/ && ./bin/rails s -d -e production"
+      queue "chmod +x #{deploy_to}/current/scripts/shutdown_server.sh"
+      queue "cd #{deploy_to}/current/scripts/ && ./shutdown_server.sh"
+      queue "cd #{deploy_to}/current/ && /home/captain/bin/bundle exec thin start -d -e production -p 3000"
     end
   end
+end
+
+task :restart do
+  queue "cd #{deploy_to}/current/scripts/ && ./shutdown_server.sh"
+  queue "cd #{deploy_to}/current/ && /home/captain/bin/bundle exec thin start -d -e production -p 3000"
+end
+
+task :start do
+  queue "cd #{deploy_to}/current/ && /home/captain/bin/bundle exec thin start -d -e production -p 3000"
+end
+
+task :stop do
+  queue "cd #{deploy_to}/current/scripts/ && ./shutdown_server.sh"
+end
+
+task :kill do
+  queue "pkill -9 ruby || true"
 end
 
 # For help in making your deploy script, see the Mina documentation:

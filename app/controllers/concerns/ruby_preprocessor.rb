@@ -330,10 +330,10 @@ class RubyPreprocessor < BasePreprocessor
   def add_user_codeline(s, i, no_multiline_string)
     if s=~ /\bdef\b/ || s=~/\bclass\b/ #def class
       @operationlist.unshift(:defClass)
-      no_multiline_string ?  s.chomp + "; break_point(:down)" + " # #{$prefix}_(#{i}#{$prefix}_)\n" : s
+      no_multiline_string ? s.chomp + "; break_point(:down)" + " # #{$prefix}_(#{i}#{$prefix}_)\n" : s
     elsif s=~ /\bdo\b/ || s=~ /\bwhile\b/ || s=~ /\bif\b/ #do while if
       @operationlist.unshift(:doWhileIf)
-      no_multiline_string ? "break_point(:down); " + s.chomp +  " # #{$prefix}_(#{i}#{$prefix}_)\n" : s
+      no_multiline_string ? "break_point(:down); " + s.chomp + " # #{$prefix}_(#{i}#{$prefix}_)\n" : s
     elsif s=~ /\bend\b/ #end
       op = @operationlist.shift
       if op == :defClass
