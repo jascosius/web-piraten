@@ -31,7 +31,11 @@ LANGUAGES = {
         name: 'Erlang',
         script_assets: ['codemirror/modes/erlang.js'],
         options: {:codemirror => {:mode => 'erlang'}},
-        default_code: '',
+        default_code: "start() -> move(),\n"+
+            "           case look() of\n"+
+            "             treasure -> take();\n"+
+            "             _        -> start()\n"+
+            "           end.",
         file_extension: 'erl'}),
     :java => Language.new({
         name: 'Java',
