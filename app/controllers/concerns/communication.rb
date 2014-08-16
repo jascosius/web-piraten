@@ -20,6 +20,19 @@ module Communication
         puts 'Verbindung beendet'
       else
         packet[:id] = @@id
+
+        #send every operation in a single packet
+        if packet[:operations]
+          while packet[:operations].size > 1
+            new_packet = packet.clone
+            new_packet[:operations] = [new_packet[:operations][0]]
+            puts new_packet
+            WebsocketRails[:simulation].trigger(:step, new_packet)
+            packet[:operations].slice!(0)
+          end
+        end
+        #remove till here to send the whole packet without splitting
+
         puts packet
         WebsocketRails[:simulation].trigger(:step, packet)
       end

@@ -12,7 +12,7 @@ class ErlangPreprocessor < BasePreprocessor
     super(attribut)
     @filename = "webpiraten.erl"
     @compile = "cd $PATH$ && erlc -W0 webpiraten.erl" #'cd /codetemp && erl -make
-    @execute = "cd $PATH$ && erl -s webpiraten main" #'echo "" && cd $PATH$ && sudo -u sailor erl -run webpiraten' #'cd $PATH$ && erl -run webpiraten'
+    @execute = "cd $PATH$ && erl -noshell -s webpiraten main -s init stop"#erl -s webpiraten main" #'echo "" && cd $PATH$ && sudo -u sailor erl -run webpiraten' #'cd $PATH$ && erl -run webpiraten'
     @compile_error = ''
     @execute_error = ''
     @line_first = true
@@ -44,18 +44,18 @@ class ErlangPreprocessor < BasePreprocessor
         #elsif !highlighting
         # maybe unnecessary, depends on further implementation
         # elsif ind_comma #&& highlighting
-        #   if ind_end
-        #     if ind_end < ind_comma
-        #       ind_end += 3
-        #       line = line.insert(ind_end, ", a#{$prefix}_line(#{i})")
-        #     else
-        #       line = line.insert(0, "a#{$prefix}_line(#{i}),")
-        #       # maybe it's smarter but uglier in animation to insert before comma
-        #     end
-        #   else
-        #     line = line.insert(ind_comma, ", a#{$prefix}_line(#{i})")
-        #   end
-        # # elsif ind_fullstop
+        #    if ind_end
+        #      if ind_end < ind_comma
+        #        ind_end += 3
+        #        line = line.insert(ind_end, ", a#{$prefix}_line(#{i})")
+        #      else
+        #        line = line.insert(0, "a#{$prefix}_line(#{i}),")
+        #        # maybe it's smarter but uglier in animation to insert before comma
+        #      end
+        #    else
+        #      line = line.insert(ind_comma, ", a#{$prefix}_line(#{i})")
+        #    end
+        # elsif ind_fullstop
         #   line = line.insert(0, ", a#{$prefix}_line(#{i})")
       end
 =begin      if index_end

@@ -32,7 +32,16 @@ LANGUAGES = {
         script_assets: ['codemirror/modes/erlang.js'],
         stylesheet_assets: ['codemirror/themes/eclipse.css'],
         gui_options: {:codemirror => {:mode => 'erlang'}},
-        default_code: '',
+        default_code: "start() -> case look(front) of\n" +
+        "     treasure -> move(), take(), start(), puts(), move();\n" +
+        "     _        -> case look(right) of\n" +
+        "                   treasure -> turn(right), move(), take(), start(), puts(), move(), turn(left);\n" +
+        "                   _        -> case look(left) of\n" +
+        "                                 treasure -> turn(left), move(), take(), start(), puts(), move(), turn(right);\n" +
+        "                                 _        -> turn()\n" +
+        "                               end\n" +
+        "                end\n" +
+        "    end.\n",
         file_extension: 'erl'
     }),
     :java => Language.new({
