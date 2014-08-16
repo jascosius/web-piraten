@@ -31,7 +31,7 @@ LANGUAGES = {
         name: 'Erlang',
         script_assets: ['codemirror/modes/erlang.js'],
         stylesheet_assets: ['codemirror/themes/eclipse.css'],
-        gui_options: {:codemirror => {:mode => 'erlang', :theme => 'eclipse'}},
+        gui_options: {:codemirror => {:mode => 'erlang'}},
         default_code: '',
         file_extension: 'erl'
     }),
