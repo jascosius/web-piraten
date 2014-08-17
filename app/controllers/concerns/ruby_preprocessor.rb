@@ -11,17 +11,12 @@ class RubyPreprocessor < BasePreprocessor
 
   def initialize(attribut)
     super(attribut)
-    @filename = "#{$prefix}_code.rb"
-    @compile = ''
-    @execute = "ruby $PATH$/#{$prefix}_code.rb" #$PATH$ will be replaced
-    @compile_error = ''
-    @execute_error = ''
     @operationlist = []
     @line_first = true
   end
 
   def commands_for_vm(code, tracing_vars)
-    {:to_file => {:filename => "#{$prefix}_code.rb", :content => process_code(code,tracing_vars)},
+    {:write_file => {:filename => "#{$prefix}_code.rb", :content => process_code(code,tracing_vars)},
     :execute => {:command => "ruby $PATH$/#{$prefix}_code.rb"}}
   end
 
@@ -365,7 +360,7 @@ class RubyPreprocessor < BasePreprocessor
     codes
   end
 
-  def postprocess_error(line, code)
+  def postprocess_print(type,line, code)
 
     #remove filepath
     index_begin = line.index('/') #filepath starts with /
@@ -398,11 +393,7 @@ class RubyPreprocessor < BasePreprocessor
         line = line.insert(index_begin, 'line') #add a line to the error instead of the filepath
       end
     end
-    line
-  end
-
-  def postprocess_error_compile(lang, code)
-
+    {:type => :error, :message => line}
   end
 
   # A method that stores the language- and ship-logic for Ruby that's put in the

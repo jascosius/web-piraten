@@ -35,36 +35,21 @@ module Preprocessor
     proof_hash(@lang.commands_for_vm(code, tracing_vars))
   end
 
-  def postprocess_error(line,code)
-    @lang.postprocess_error(line,code)
-  end
-
-  def postprocess_error_compile(line,code)
-    @lang.postprocess_error_compile(line,code)
+  def postprocess_print(type,line,code)
+    result = @lang.postprocess_print(type,line,code)
+    unless result[:type] or result[:message]
+      $stderr.puts 'The result of \'postprocess_print/3\' must be a hash with key \':type\' (value one of :log, :warning, :error) and key \':message\'.'
+      return
+    end
+    unless [:log, :warning, :error].include?(result[:type])
+      $stderr.puts 'The value of \':type\' must be one of :log, :warning, :error.'
+      return
+    end
+    result
   end
 
   def line_first
     @lang.line_first
-  end
-
-  def preprocess_filename
-    @lang.filename
-  end
-
-  def preprocess_compile
-    @lang.compile
-  end
-
-  def preprocess_execute
-    @lang.execute
-  end
-
-  def preprocess_compile_error
-    @lang.compile_error
-  end
-
-  def preprocess_execute_error
-    @lang.execute_error
   end
 
 end

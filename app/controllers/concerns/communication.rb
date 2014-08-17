@@ -68,10 +68,9 @@ module Communication
                  :put => lambda { |obj| @ship.put!(packet, obj.to_sym) },
                  :take => lambda { @ship.take!(packet) },
                  :look => lambda { |dir| @ship.look!(packet, dir.to_sym) },
-                 :stderr => lambda { |*msg| print!(packet, :error, postprocess_error(msg.join('_'), code)) },
-                 :stderrcompile => lambda { |*msg| print!(packet, :error, postprocess_error_compile(msg.join('_'), code)) },
-                 :end => lambda { exit_simulation!(packet) },
                  :break => lambda { |dir| break!(packet, dir.to_sym) },
+                 :print => lambda { |type, *msg| result = postprocess_print(type, msg.join('_'), code); print!(packet, result[:type], result[:message])},
+                 :end => lambda { exit_simulation!(packet) },
                  :enderror => lambda { |*msg| exit_simulation!(packet, msg.join('_')) }}
 
     until connection_store[:is_simulation_done]
