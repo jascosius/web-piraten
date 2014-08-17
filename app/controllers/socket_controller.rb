@@ -62,12 +62,13 @@ class SocketController < WebsocketRails::BaseController
   end
 
   def report
-    puts "============== REPORTED METER =============="
-    meter = Perf::MeterFactory.instance.get(:socket)
-    puts meter.report_list_of_measures
-    PERFORMANCE_LOGGER.report(meter)
-    puts "============================================"
-
+    [:socket, :vm].each do |name|
+      puts "============== REPORTED METER (#{name}) =============="
+      meter = Perf::MeterFactory.instance.get(name)
+      puts meter.report_list_of_measures
+      PERFORMANCE_LOGGER.report(meter, "ID:_#{connection.id}")
+      puts "============================================"
+    end
   end
 
 

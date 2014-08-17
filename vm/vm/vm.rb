@@ -2,6 +2,7 @@
 require 'socket'
 require 'open3'
 require 'fileutils'
+require_relative 'lib/performance/profiling'
 
 PREFIX = 'CkyUHZVL3q' #have to be the same as in the socket_controller
 TIMEOUT = 40 #have to be the same as in the socket_controller
@@ -9,6 +10,7 @@ MAX_OPS = 10000 #the maximal counter of ops to execute
 PORT = 12340 #have to be the same as in the socket_controller
 
 if ARGV[0] == 'development' or ARGV[0] == 'test'
+  require '../../vm/vm/lib/performance/profiling'
   puts 'Starting VM in development-mode.'
   DEVELOPMENT = true
 elsif ARGV[0] == 'production'

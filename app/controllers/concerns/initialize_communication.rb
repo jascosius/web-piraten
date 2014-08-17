@@ -15,17 +15,29 @@ module InitializeCommunication
   def start_simulation(code, tracing_vars)
 
     Thread.start do
+      Perf::MeterFactory.instance.get(:vm).measure(:start_simulation_thread) {
 
       set_id
-      read_json
+      Perf::MeterFactory.instance.get(:vm).measure(:read_json) {
+        read_json
+      }
 
       packet = {}
 
       connection_store[:is_simulation_done] = false
-      initialize_timeout(Thread.current, packet)
-      vm = initialize_vm(code, packet)
-      communicate_with_vm(vm, packet, code, tracing_vars)
 
+      Perf::MeterFactory.instance.get(:vm).measure(:initialize_timeout) {
+        initialize_timeout(Thread.current, packet)
+      }
+
+      vm = Perf::MeterFactory.instance.get(:vm).measure(:initialize_vm) {
+        initialize_vm(code, packet)
+      }
+      Perf::MeterFactory.instance.get(:vm).measure(:communicate_with_vm) {
+        communicate_with_vm(vm, packet, code, tracing_vars)
+      }
+
+      } # Performance
     end
   end
 
