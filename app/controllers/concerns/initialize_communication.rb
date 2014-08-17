@@ -23,7 +23,7 @@ module InitializeCommunication
 
       connection_store[:is_simulation_done] = false
       initialize_timeout(Thread.current, packet)
-      vm = initialize_vm(code, packet)
+      vm = initialize_vm(code, tracing_vars, packet)
       communicate_with_vm(vm, packet, code, tracing_vars)
 
     end
@@ -42,7 +42,7 @@ module InitializeCommunication
     end
   end
 
-  def initialize_vm(code, packet)
+  def initialize_vm(code, tracing_vars, packet)
 
     begin
       #connect to TCPServer to execute the programm
@@ -53,15 +53,25 @@ module InitializeCommunication
       send_packet(packet)
     else
 
+      command = commands_for_vm(code,tracing_vars).to_json
+
+      #code = preprocess_code(code, language, tracing_vars)
+
+      #add EOF to show Wrapper the end of the code
+
+      #command += "\n#{$prefix}_EOF\n"
+
+      vm.puts command
+
       #send commands to the server
-      vm.puts preprocess_filename
-      vm.puts preprocess_compile
-      vm.puts preprocess_execute
-      vm.puts preprocess_compile_error
-      vm.puts preprocess_execute_error
+      #vm.puts preprocess_filename
+      #vm.puts preprocess_compile
+      #vm.puts preprocess_execute
+      #vm.puts preprocess_compile_error
+      #vm.puts preprocess_execute_error
 
       #send programmcode to the server
-      vm.puts code
+      #vm.puts code
 
       vm
     end

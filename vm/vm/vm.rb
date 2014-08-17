@@ -2,21 +2,19 @@
 require 'socket'
 require 'open3'
 require 'fileutils'
+require 'json'
 
 PREFIX = 'CkyUHZVL3q' #have to be the same as in the socket_controller
 TIMEOUT = 40 #have to be the same as in the socket_controller
 MAX_OPS = 10000 #the maximal counter of ops to execute
 PORT = 12340 #have to be the same as in the socket_controller
 
-if ARGV[0] == 'development' or ARGV[0] == 'test'
-  puts 'Starting VM in development-mode.'
-  DEVELOPMENT = true
-elsif ARGV[0] == 'production'
+if ARGV[0] == 'production'
   puts 'Starting VM in production-mode.'
   DEVELOPMENT = false
 else
-  puts 'Use parameter development or production to start VM.'
-  exit
+  puts 'Starting VM in development-mode.'
+  DEVELOPMENT = true
 end
 
 #thread to kill the execution after a while
@@ -117,6 +115,21 @@ def execute(client, dir, execute, execute_error)
   end
 end
 
+def search_and_execute_function(functions, name, hash)
+  functions.each do |key, value|
+    if key.to_s == name
+      return value.call(hash)
+    end
+  end
+end
+
+def to_file(hash, dir)
+  open("#{dir}/#{hash['filename']}", 'w+') do |file|
+    File.write file, hash['content']
+    File.chmod(hash['permission'].to_i, file)
+  end
+end
+
 server = TCPServer.new PORT
 loop {
   Thread.start(server.accept) do |client| #spawn new process for a new client
@@ -132,33 +145,40 @@ loop {
       initialize_timeout(client)
 
       #get commands from client
-      puts filename = client.gets.chomp #filename for the code
-      puts compile = client.gets.chomp #command to compile the code
-      puts execute = client.gets.chomp #command to execute the code
-      puts compile_error = client.gets.chomp #string to find an compile error in the output of the compiler
-      puts execute_error = client.gets.chomp #string to find an compile error in the output of the execution (can't find compiled file)
+      #puts filename = client.gets.chomp #filename for the code
+      #puts compile = client.gets.chomp #command to compile the code
+      #puts execute = client.gets.chomp #command to execute the code
+      #puts compile_error = client.gets.chomp #string to find an compile error in the output of the compiler
+      #puts execute_error = client.gets.chomp #string to find an compile error in the output of the execution (can't find compiled file)
 
       #get programmcode from client
-      code = ''
-      loop do
-        puts msg = client.gets
-        if msg.include?("#{PREFIX}_EOF") #end of programmcode
-          break
-        end
-        code += msg
-      end
 
+      #code = ''
+      #loop do
+      #  puts msg = client.gets
+      #  if msg.include?("#{PREFIX}_EOF") #end of programmcode
+      #    break
+      #  end
+      #  code += msg
+      #end
       Dir.mkdir(dir, 0755)
 
-      open("#{dir}/#{filename}", 'w+') do |file|
-        File.write file, code
-        File.chmod(0744, file)
+      functions = {:to_file => lambda { |hash| to_file(hash, dir) }}
 
-        exec = compile(client, dir, compile, compile_error)
+      msg = client.gets
+      msg = JSON.parse(msg)
 
-        if exec
-          execute(client, dir, execute, execute_error)
-        end
+      msg.each do |key, value|
+        search_and_execute_function(functions, key, value)
+      end
+
+      sleep 30
+
+
+      exec = compile(client, dir, compile, compile_error)
+
+      if exec
+        execute(client, dir, execute, execute_error)
       end
     }
 

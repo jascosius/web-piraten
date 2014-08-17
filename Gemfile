@@ -71,6 +71,8 @@ gem 'jquery-ui-rails' # visual jquery plugins
 # monitoring
 gem 'airbrake'
 
+gem 'json'
+
 gem 'mina'
 gem 'thin'
 # gem 'passenger'

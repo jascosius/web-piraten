@@ -20,6 +20,11 @@ class RubyPreprocessor < BasePreprocessor
     @line_first = true
   end
 
+  def commands_for_vm(code, tracing_vars)
+    {:to_file => {:filename => "#{$prefix}_code.rb", :content => process_code(code,tracing_vars)},
+    :execute => {:command => "ruby $PATH$/#{$prefix}_code.rb"}}
+  end
+
   # Method that processes the given code and includes the debug information
   # if the user wants to trace specified variables. Furthermore it handles the
   # given code differently, when there are multline strings or correct case-

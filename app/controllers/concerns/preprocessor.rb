@@ -2,6 +2,8 @@
 module Preprocessor
   extend ActiveSupport::Concern
 
+  include CommandsForVm
+
   require 'ruby_preprocessor'
   require 'java_preprocessor'
 
@@ -16,20 +18,21 @@ module Preprocessor
   # checking if there are any variables given the user wants to trace.
   # Default set ist no debug mode and Ruby. The method then commits the code to the
   # specified preprocessor and afterwards returns the modified code.
-  def preprocess_code(msg, language='ruby', tracing_vars=[])
+  def initialize_preprocessor(language)
     case language
       when 'ruby'
         @lang = RubyPreprocessor.new('Ruby')
-        @code = @lang.process_code(msg, tracing_vars)
       when 'java'
         @lang = JavaPreprocessor.new('Java')
-        @code = @lang.process_code(msg, tracing_vars)
       when 'erlang'
         @lang = ErlangPreprocessor.new('Erlang')
-        @code = @lang.process_code(msg, tracing_vars)
       else
         $stderr.puts 'Something went terribly wrong!'
     end
+  end
+
+  def commands_for_vm(code, tracing_vars)
+    proof_hash(@lang.commands_for_vm(code, tracing_vars))
   end
 
   def postprocess_error(line,code)

@@ -35,11 +35,7 @@ class SocketController < WebsocketRails::BaseController
         end
       end
 
-      code = preprocess_code(code, language, tracing_vars)
-
-      #add EOF to show Wrapper the end of the code
-      code += "\n#{$prefix}_EOF\n"
-
+      initialize_preprocessor(language)
       start_simulation(code, tracing_vars)
 
     end
