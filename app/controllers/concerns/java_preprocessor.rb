@@ -1,12 +1,6 @@
 # -*- encoding : utf-8 -*-
 class JavaPreprocessor < BasePreprocessor
 
-  attr :filename
-  attr :compile
-  attr :execute
-  attr :compile_error
-  attr :execute_error
-
   attr :line_first
 
   def initialize(attribut)

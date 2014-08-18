@@ -1,26 +1,16 @@
 # -*- encoding : utf-8 -*-
 class ErlangPreprocessor < BasePreprocessor
 
-  attr :filename
-  attr :compile
-  attr :execute
-  attr :compile_error
-  attr :execute_error
   attr :line_first
 
   def initialize(attribut)
     super(attribut)
-    @filename = "webpiraten.erl"
-    @compile = "cd $PATH$ && erlc -W0 webpiraten.erl" #'cd /codetemp && erl -make
-    @execute = "cd $PATH$ && erl -noshell -s webpiraten main -s init stop"#erl -s webpiraten main" #'echo "" && cd $PATH$ && sudo -u sailor erl -run webpiraten' #'cd $PATH$ && erl -run webpiraten'
-    @compile_error = ''
-    @execute_error = ''
     @line_first = true
   end
 
   def commands_for_vm(code, tracing_vars)
     [{:write_file => {:filename => 'webpiraten.erl', :content => process_code(code, tracing_vars)}},
-     {:execute => {:command => 'erlc -W0 webpiraten.erl', :stderr => 'compile', :stdout => 'compile'}},
+     {:execute => {:command => 'erlc -W0 webpiraten.erl', :stderr => 'compile', :stdout => 'compile', :permissions => 'high'}},
      {:execute => {:command => 'erl -noshell -s webpiraten main -s init stop'}},
      {:exit => {}}]
   end

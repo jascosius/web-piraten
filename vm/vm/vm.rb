@@ -98,7 +98,8 @@ def execute(hash, client, dir, shared)
 
   #Open3.popen2("(#{changeuser} #{execute.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed --unbuffered s/^/#{PREFIX}_stderr_/ ) 2>&1") do |stdin, stdout|
   #["run_daemon", "-f", "some.conf", "--verbose", :err => [:child, :out]]
-  Open3.popen3("cd #{dir} && " + changeuser + command) do |stdin, stdout, stderr|
+  puts command = "cd #{dir} && " + changeuser + command
+  Open3.popen3(command) do |stdin, stdout, stderr|
     stdout.sync = true
     stdin.sync = true
     shared[:stdin] = stdin
