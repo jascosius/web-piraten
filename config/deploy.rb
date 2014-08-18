@@ -88,6 +88,10 @@ task :kill do
   queue "pkill -9 ruby || true"
 end
 
+task :deploy_vm do
+  queue "cd #{deploy_to}/current/scripts/ && ./update_vm.sh"
+end
+
 # For help in making your deploy script, see the Mina documentation:
 #
 #  - http://nadarei.co/mina
