@@ -89,6 +89,13 @@ task :kill do
 end
 
 task :deploy_vm do
+  queue "touch #{deploy_to}/deploy"
+  queue 'echo in progress ...'
+  queue 'sleep 80'
+  queue "cd #{deploy_to}/current/scripts/ && ./update_vm.sh"
+end
+
+task :deploy_vm_sh_only do
   queue "cd #{deploy_to}/current/scripts/ && ./update_vm.sh"
 end
 

@@ -7,10 +7,11 @@ class RubyPreprocessor < BasePreprocessor
     super(attribut)
     @operationlist = []
     @line_first = true
+    @filename = "#{$prefix}_code.rb"
   end
 
   def commands_for_vm(code, tracing_vars)
-    [{:write_file => {:filename => "#{$prefix}_code.rb", :content => process_code(code, tracing_vars)}},
+    [{:write_file => {:filename => @filename, :content => process_code(code, tracing_vars)}},
      {:execute => {:command => "ruby #{$prefix}_code.rb"}},
      {:exit => {}}]
   end
@@ -358,9 +359,9 @@ class RubyPreprocessor < BasePreprocessor
   def postprocess_print(send, type, line, code)
     #send.call([{:execute => {:command => "ls"}}])
     #remove filepath
-    #index_begin = line.index('/') #filepath starts with /
-    #index_end = line.index(@filename) #filepath ends with filename
-    if false #index_begin and index_end
+    index_begin = line.index('/') #filepath starts with /
+    index_end = line.index(@filename) #filepath ends with filename
+    if index_begin and index_end
       if index_begin < index_end #found a filepath?
         index_end += "#{@filename}".length #add the lenght of the filename to the end
         line.slice!(index_begin...index_end) #remove the filepath
