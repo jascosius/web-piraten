@@ -35,7 +35,7 @@ class RubyPreprocessor < BasePreprocessor
     bools[:dont_skip_line] = true
     if code_msg =~ regex_verify_case_statement
       codes = case_block_processsing(code_msg, vars, i, '', bools)
-    elsif code_msg =~ /(?:'(?:(?:[^']*(?:\\')?)*(?:\n|\r|\r\n)(?:[^']*(?:\\')?)*)'|"(?:(?:[^"]*(?:\\")?)*(?:\n|\r|\r\n)(?:[^"]*(?:\\")?)*)")/
+    elsif code_msg =~ /(?:'(?:[^']?(?:\\')?)*(?:\n|\r|\r\n)(?:[^']?(?:\\')?)*'|"(?:[^"]?(?:\\")?)*(?:\n|\r|\r\n)(?:[^"]?(?:\\")?)*")/
       # Regular expression that verifies the existence of a multiline string in
       # the code.
       #codes = multiline_processing(code_msg, vars, i, '')
