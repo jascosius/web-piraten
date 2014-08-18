@@ -18,6 +18,7 @@ class ErlangPreprocessor < BasePreprocessor
     @line_first = true
   end
 
+  # Processes the given code...
   def process_code(code_msg, vars)
     codes = ''
     i = 1
@@ -26,41 +27,7 @@ class ErlangPreprocessor < BasePreprocessor
       if ind_arrow
         ind_arrow += 2
         line = line.insert(ind_arrow, " a#{$prefix}_line(#{i}),")
-        #elsif !highlighting
-        # maybe unnecessary, depends on further implementation
-        # elsif ind_comma #&& highlighting
-        #    if ind_end
-        #      if ind_end < ind_comma
-        #        ind_end += 3
-        #        line = line.insert(ind_end, ", a#{$prefix}_line(#{i})")
-        #      else
-        #        line = line.insert(0, "a#{$prefix}_line(#{i}),")
-        #        # maybe it's smarter but uglier in animation to insert before comma
-        #      end
-        #    else
-        #      line = line.insert(ind_comma, ", a#{$prefix}_line(#{i})")
-        #    end
-        # elsif ind_fullstop
-        #   line = line.insert(0, ", a#{$prefix}_line(#{i})")
       end
-=begin      if index_end
-        line = line.insert(index_end, ", a#{$prefix}_line(#{i})")
-      elsif index_bra > index_com
-        index_bra += 1
-        if found_case
-        line = line.insert(index_bra, ", a#{$prefix}_line(#{i}), ")
-        else
-          line = line.insert(index_bra, ", a#{$prefix}_line(#{i})")
-        end
-      elsif index_com
-        line = line.insert(index_com, ", a#{$prefix}_line(#{i})")
-      elsif index_sem
-        line = line.insert(index_sem, ", a#{$prefix}_line(#{i})")
-      elsif index_sta
-        index_sta += 2
-        line = line.insert(index_sta, " a#{$prefix}_line(#{i}),")
-      end
-=end
       codes += line.chomp + "  % #{$prefix}_(#{i}#{$prefix}_)\n"
       i += 1
     end
