@@ -38,7 +38,6 @@ class RubyPreprocessor < BasePreprocessor
       # Regular expression that verifies the existence of a multiline string in
       # the code.
       #codes = multiline_processing(code_msg, vars, i, '')
-      puts "dfhklsjhf lkjdsfg"
       code_msg.each_line do |s|
         codes += insert_line_number(i, bools[:dont_skip_line])
         bools = multiline_processing(s, bools)
