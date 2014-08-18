@@ -10,6 +10,11 @@ class ErlangPreprocessor < BasePreprocessor
 
   def initialize(attribut)
     super(attribut)
+    @filename = "webpiraten.erl"
+    @compile = "cd $PATH$ && erlc -W0 webpiraten.erl" #'cd /codetemp && erl -make
+    @execute = "cd $PATH$ && erl -noshell -s webpiraten main -s init stop"#erl -s webpiraten main" #'echo "" && cd $PATH$ && sudo -u sailor erl -run webpiraten' #'cd $PATH$ && erl -run webpiraten'
+    @compile_error = ''
+    @execute_error = ''
     @line_first = true
   end
 
@@ -20,67 +25,17 @@ class ErlangPreprocessor < BasePreprocessor
      {:exit => {}}]
   end
 
+  # Processes the given code...
   def process_code(code_msg, vars)
     codes = ''
     i = 1
-    highlighting = false
     code_msg.each_line do |line|
-      puts "line number #{i}"
-      open = 0
-      arrows = line.scan('->')
-      stops = line.scan(/(?:.|end)/)
-      if true
-        ind_arrow = line.index('->')
-        ind_comma = line.index(',')
-        ind_end = line.index('end')
-        ind_fullstop = line.index('.')
-        index_sem = line.rindex(';')
-        index_curlo = line.index('{')
-        index_curlc = line.index('}')
-      end
+      ind_arrow = line.index('->')
       if ind_arrow
         ind_arrow += 2
         line = line.insert(ind_arrow, " a#{$prefix}_line(#{i}),")
-        highlighting = true
-        open += 1
-        #elsif !highlighting
-        # maybe unnecessary, depends on further implementation
-        # elsif ind_comma #&& highlighting
-        #    if ind_end
-        #      if ind_end < ind_comma
-        #        ind_end += 3
-        #        line = line.insert(ind_end, ", a#{$prefix}_line(#{i})")
-        #      else
-        #        line = line.insert(0, "a#{$prefix}_line(#{i}),")
-        #        # maybe it's smarter but uglier in animation to insert before comma
-        #      end
-        #    else
-        #      line = line.insert(ind_comma, ", a#{$prefix}_line(#{i})")
-        #    end
-        # elsif ind_fullstop
-        #   line = line.insert(0, ", a#{$prefix}_line(#{i})")
       end
-=begin      if index_end
-        line = line.insert(index_end, ", a#{$prefix}_line(#{i})")
-      elsif index_bra > index_com
-        index_bra += 1
-        if found_case
-        line = line.insert(index_bra, ", a#{$prefix}_line(#{i}), ")
-        else
-          line = line.insert(index_bra, ", a#{$prefix}_line(#{i})")
-        end
-      elsif index_com
-        line = line.insert(index_com, ", a#{$prefix}_line(#{i})")
-      elsif index_sem
-        line = line.insert(index_sem, ", a#{$prefix}_line(#{i})")
-      elsif index_sta
-        index_sta += 2
-        line = line.insert(index_sta, " a#{$prefix}_line(#{i}),")
-      end
-=end
       codes += line.chomp + "  % #{$prefix}_(#{i}#{$prefix}_)\n"
-      #codes += "#{$prefix}_line(#{i})\n" + line.chomp
-      puts line
       i += 1
     end
     insert_start_logic + codes
@@ -94,141 +49,182 @@ class ErlangPreprocessor < BasePreprocessor
     end
   end
 
+  # Processes a given error message, when the execution is aborted with an error.
+  # If there are information about line numbers in the error message the method
+  # will check if there is a corresponding line number which is visible to the
+  # user.
   def postprocess_error(line, code)
-    puts "hier beginnt die line"
-    puts line.to_s
-    puts "hier endet die line"
-
-
-    line
-  end
-
-  def postprocess_error_compile(line, code)
-    #remove filepath
-    index_begin = line.index(':') #filepath starts with /
-    index_end = line.index(':', index_begin+1) if index_begin #filepath ends with filename
-    if index_begin and index_end and index_begin < index_end #found a filepath?
-      #index_end += "#{@filename}".length #add the length of the filename to the end
-      #line.slice!(index_begin...index_end) #remove the filepath
-
-      #change the linenumber
-      index_line_end = line.index(':', index_begin+1) #find the : after the linenumber
-      line_number = line[index_begin+1...index_line_end] #get the linenumber between the two :
-      i = 1 #Set a counter
-      new_line = '' #Set a result string
-      code.each_line do |l| #search in the executed code for the right line. In every line is a comment with the original linenumber
-        if i == line_number.to_i #find the line from the errormessage
-          line_begin=l.index("#{$prefix}_(") #find the begin of the original linenumber in the comment
-          line_end=l.index("#{$prefix}_)") #find the end of the original linenumber in the comment
-          if line_begin and line_end #found something?
-            new_line = l[line_begin+"#{$prefix}_(".length...line_end] #Set the new linenumber to the number in the comment
+    if line =~ /webpiraten\.erl:\d*:/ # process message only if there's the filename
+      index_begin = line.index(':') # find line number beginning
+      index_end = line.index(':', index_begin+1) # find line number ending
+      if index_begin && index_end && index_begin < index_end
+        line_number = line[index_begin+1, index_end].to_i # extract error line number
+        i = 1
+        new_line_number = ''
+        code.each_line do |lin|
+          if i == line_number # find the line from the error message
+            line_begin = lin.index("#{$prefix}_(") # find the begin of the original line number in comment
+            line_end = lin.index("#{$prefix}_)") # find the end of the original line number in comment
+            if line_begin and line_end # found something?
+              new_line_number = lin[line_begin+"#{$prefix}_(".length...line_end]
+              # set the new line number to the number in the comment
+            end
           end
+          i += 1
         end
-        i += 1
-      end
-      line.slice!(index_begin+1...index_line_end) #remove the old linenumber from the error
 
-      if new_line == '' #is there a result for the new linenumber?
-        line.slice!(index_begin..index_begin+1) #remove the : around the old number
-      else
-        line = line.insert(index_begin+1, new_line)
-        line = line.gsub(@filename, 'line')
-        #line = line.insert(index_begin+1, new_line) #add the new linenumber to the error
-        #line = line.insert(index_begin, 'line') #add a line to the error instead of the filepath
+        line.slice!(index_begin+1...index_end) #remove the old line number from the error
+
+        if new_line_number == '' #is there a result for the new line number?
+          line.slice!(0..index_begin+2) # remove erverything up to colon after the old number
+        else
+          # add the new line number to the error and exchange filename with 'line'
+          line = line.insert(index_begin+1, new_line_number)
+          line = line.insert(index_begin, 'line')
+          line.slice!(0...index_begin)
+        end
+        # remove specific module information in the error message for the used module 'webpiraten'
+        line.slice!('webpiraten:')
       end
     end
-
-
-#     puts "postprocess compile line beginn"
-#     puts line
-#     puts "ppc ende"
-#     index_begin = line.index(':')
-#     puts index_begin
-#     index_end = line.index(':', index_begin+1) if index_begin
-#     puts index_end
-#
-#     if index_begin && index_end && index_begin < index_end
-#       number = line[index_begin+1...index_end]
-#       counter = number.to_i
-# #      line.gsub!("#{@filename}", 'line')
-#       puts number
-#       i = 1
-#       new_line = ''
-# =begin
-#       code.each_line do |li|
-#         unless li.include?("#{$prefix}_EOF")
-#           counter -= 1
-#           puts "#{counter.to_s} in code: #{li}"
-#         end
-#       end
-#       line.slice!(0, index_end)
-#
-#       if counter == 0 #new_line == ''
-#         line.slice!(0..1)
-#       else
-#         line = line.insert(0, "line:#{counter.to_s}")
-#       end
-# =end
-#       code.each_line do |li|
-#         if i == number.to_i
-#           line_begin = li.index("#{$prefix}_(")
-#           line_end = li.index("#{$prefix}_)")
-#           if line_begin && line_end
-#             new_line = li[line_begin+"#{$prefix}_(".length...line_end]
-#           end
-#         end
-#         i += 1
-#       end
-#       line.slice!(0, index_end)
-#       if new_line == ''
-#         line.slice!(index_begin..index_begin+1)
-#       else
-#         line = line.insert(0, "line:#{new_line}")
-#       end
-#     end
-#     puts "postprocesscompile"
-#     puts line
-#     puts "ende"
-
     line
   end
 
+  # Processes a given error message, when the compiling ended with an error.
+  # The handling and functionality is similar to postprocess_error.
+  def postprocess_error_compile(line, code)
+    if line =~ /webpiraten\.erl:\d*:/ # process message only if there's the filename
+      index_begin = line.index(':') # find line number beginning
+      index_end = line.index(':', index_begin+1) # find line number ending
+      if index_begin && index_end && index_begin < index_end
+        line_number = line[index_begin+1, index_end].to_i # extract error line number
+        i = 1
+        new_line_number = ''
+        code.each_line do |lin|
+          if i == line_number # find the line from the error message
+            line_begin = lin.index("#{$prefix}_(") # find the begin of the original line number in comment
+            line_end = lin.index("#{$prefix}_)") # find the end of the original line number in comment
+            if line_begin and line_end # found something?
+              new_line_number = lin[line_begin+"#{$prefix}_(".length...line_end]
+              # set the new line number to the number in the comment
+            end
+          end
+          i += 1
+        end
+
+        line.slice!(index_begin+1...index_end) #remove the old line number from the error
+
+        if new_line_number == '' #is there a result for the new line number?
+          line.slice!(0..index_begin+2) # remove erverything up to colon after the old number
+        else
+          # add the new line number to the error and exchange filename with 'line'
+          line = line.insert(index_begin+1, new_line_number)
+          line = line.insert(index_begin, 'line')
+          line.slice!(0...index_begin)
+        end
+        # remove specific module information in the error message for the used module 'webpiraten'
+        line.slice!('webpiraten:')
+      end
+    end
+    line
+  end
+
+  # String that contains logic for the pirateships movements and also preprocesses
+  # raised error messages in a pretty and easy understandable way.
   def insert_start_logic
     %Q[
     -module(webpiraten).
     -export([main/0]).
 
-    main() -> start(), halt().
+    main() -> try
+                start()
+              catch
+                error:function_clause   -> Trace = erlang:get_stacktrace(),
+                                           io:fwrite(standard_error,
+                                            "~s:~p: error: no function clause matching ~p:~p(~p)~n",
+                                            [element(2,lists:nth(1,element(4,lists:nth(2,Trace)))), % File
+                                             element(2,lists:nth(2,element(4,lists:nth(2,Trace)))), % Line
+                                             element(1,lists:nth(1,Trace)),                         % Module
+                                             element(2,lists:nth(1,Trace)),                         % Function
+                                             lists:nth(1,element(3,lists:nth(1,Trace)))]);          % Value
+                error:{case_clause,Val} -> Trace = erlang:get_stacktrace(),
+                                           io:fwrite(standard_error,
+                                            "~s:~p: error: no case clause matching ~p~n",
+                                            [element(2,lists:nth(1,element(4,lists:nth(1,Trace)))), % File
+                                             element(2,lists:nth(2,element(4,lists:nth(1,Trace)))), % Line
+                                             Val]);
+                error:if_clause         -> Trace = erlang:get_stacktrace(),
+                                           io:fwrite(standard_error,
+                                            "~s:~p: error: no true branch found when evaluating an if expression~n",
+                                            [element(2,lists:nth(1,element(4,lists:nth(1,Trace)))),    % File
+                                             element(2,lists:nth(2,element(4,lists:nth(1,Trace))))]); % Line
+                error:{badmatch,Val}    -> Trace = erlang:get_stacktrace(),
+                                           io:fwrite(standard_error,
+                                            "~s:~p: error: no match of right hand side value ~p~n",
+                                            [element(2,lists:nth(1,element(4,lists:nth(1,Trace)))), % File
+                                             element(2,lists:nth(2,element(4,lists:nth(1,Trace)))), % Line
+                                             Val]);
+                error:badarg            -> Trace = erlang:get_stacktrace(),
+                                           % unfortunately unable to extract function and arity
+                                           % io:fwrite("~s:~p: error: bad argument~n  in function ~p/~p ~n  called as ~p(~p)~n",
+                                           % [File, Line, Function, Arity, Function, Argument])
+                                           io:fwrite(standard_error, "~s:~p: error: bad argument~n",
+                                            [element(2,lists:nth(1,element(4,lists:nth(1,Trace)))), % File
+                                             element(2,lists:nth(2,element(4,lists:nth(1,Trace))))]); % Line
+                error:undef             -> Trace = erlang:get_stacktrace(),
+                                           Message = lists:nth(1,Trace),
+                                           % unable to extract position of call
+                                           io:fwrite(standard_error, "error: undefined function ~p:~p/~p~n",
+                                           [element(1,Message), element(2,Message),length(element(3,Message))]); % Module:Function/Arity
+                error:badarith          -> Trace = erlang:get_stacktrace(),
+                                           io:fwrite(standard_error,
+                                            "~s:~p: error: bad argument in an arithmetic expression~n",
+                                            [element(2,lists:nth(1,element(4,lists:nth(1,Trace)))),   % File
+                                             element(2,lists:nth(2,element(4,lists:nth(1,Trace))))]); % Line
+                error:{badfun, Fun}     -> Trace = erlang:get_stacktrace(),
+                                           Message = lists:nth(1,Trace),
+                                           io:fwrite(standard_error,
+                                            "~s:~p: error: bad function ~p~n  in function ~p:~p/~p~n",
+                                            [element(2,lists:nth(1,element(4,lists:nth(1,Trace)))),              % File
+                                             element(2,lists:nth(2,element(4,lists:nth(1,Trace)))),              % Line
+                                             Fun,
+                                             element(1,Message), element(2,Message),element(3,Message)]); % Module:Function/Arity
+                error:{badarity, Fun}   -> Trace = erlang:get_stacktrace(),
+                                           io:fwrite(standard_error,
+                                            "~s:~p: error: bad arity~n  interpreted function called with number of arguments unequal to its arity~n",
+                                            [element(2,lists:nth(1,element(4,lists:nth(1,Trace)))),   % File
+                                             element(2,lists:nth(2,element(4,lists:nth(1,Trace))))]); % Line
+                ExceptionClass:Term     -> io:fwrite(standard_error, "~p: ~p", [ExceptionClass, Term])
+                                           % standard error handling for all other exceptions
+              end, halt().
 
-    a#{$prefix}_line(I) -> io:fwrite("\n#{$prefix}_line_" ++ integer_to_list(I) ++ "\n").
+    aCkyUHZVL3q_line(I) -> io:fwrite("~nCkyUHZVL3q_line_~p~n", [I]).
 
-    move()  -> io:fwrite("\n#{$prefix}_move\n").
+    move()  -> io:fwrite("~nCkyUHZVL3q_move~n").
 
-    take()  -> io:fwrite("\n#{$prefix}_take\n").
+    take()  -> io:fwrite("~nCkyUHZVL3q_take~n").
 
     puts()         -> puts(buoy).
-    puts(buoy)     -> io:fwrite('\n#{$prefix}_put_buoy\n');
-    puts(treasure) -> io:fwrite('\n#{$prefix}_put_treasure\n');
-    puts(_)        -> erlang:error(function_clause).
+    puts(buoy)     -> io:fwrite("~nCkyUHZVL3q_put_buoy");
+    puts(treasure) -> io:fwrite("CkyUHZVL3q_put_treasure").
 
     turn()      -> turn(back).
-    turn(back)  -> io:fwrite("\n#{$prefix}_turn_back\n");
-    turn(right) -> io:fwrite("\n#{$prefix}_turn_right\n");
-    turn(left)  -> io:fwrite("\n#{$prefix}_turn_left\n");
-    turn(_)     -> erlang:error(function_clause).
+    turn(back)  -> io:fwrite("~nCkyUHZVL3q_turn_back~n");
+    turn(right) -> io:fwrite("~nCkyUHZVL3q_turn_right~n");
+    turn(left)  -> io:fwrite("~nCkyUHZVL3q_turn_left~n").
 
     look()      -> look(here).
-    look(here)  -> io:fwrite("\n#{$prefix}_?_look_here\n"),
+    look(here)  -> io:fwrite("~nCkyUHZVL3q_?_look_here~n"),
                    lists:nth(1,element(2,io:fread("", "~a")));
-    look(front) -> io:fwrite("\n#{$prefix}_?_look_front\n"),
+    look(front) -> io:fwrite("~nCkyUHZVL3q_?_look_front~n"),
                    lists:nth(1,element(2,io:fread("", "~a")));
-    look(left)  -> io:fwrite("\n#{$prefix}_?_look_left\n"),
+    look(left)  -> io:fwrite("~nCkyUHZVL3q_?_look_left~n"),
                    lists:nth(1,element(2,io:fread("", "~a")));
-    look(right) -> io:fwrite("\n#{$prefix}_?_look_right\n"),
+    look(right) -> io:fwrite("~nCkyUHZVL3q_?_look_right~n"),
                    lists:nth(1,element(2,io:fread("", "~a")));
-    look(back)  -> io:fwrite("\n#{$prefix}_?_look_back\n"),
-                   lists:nth(1,element(2,io:fread("", "~a")));
-    look(_)     -> erlang:error(function_clause).
+    look(back)  -> io:fwrite("~nCkyUHZVL3q_?_look_back~n"),
+                   lists:nth(1,element(2,io:fread("", "~a"))).
+
 ]
   end
 end
