@@ -16,7 +16,7 @@ class JavaPreprocessor < BasePreprocessor
 
   def commands_for_vm(code, tracing_vars)
     [{:write_file => {:filename => 'Pirate.java', :content => process_code(code, tracing_vars)}},
-     {:execute => {:command => 'javac -cp $LIB$/java Pirate.java'}},
+     {:execute => {:command => 'javac -cp $LIB$/java Pirate.java'}, :permissions => 'high'},
      {:execute => {:command => 'java -cp $PATH$:$LIB$/java Pirate'}},
      {:exit => {}}]
   end

@@ -84,12 +84,13 @@ def write_file(hash, dir)
 end
 
 def execute(hash, client, dir, shared)
-  changeuser = 'sudo -u sailor '
-  if DEVELOPMENT
-    changeuser = ''
-  end
 
   puts command = hash['command'].gsub('$LIB$', Dir.pwd + '/lib').gsub('$PATH$', dir)
+
+  changeuser = 'sudo -u sailor '
+  if DEVELOPMENT or hash['permissions'] == 'high'
+    changeuser = ''
+  end
 
 
   #:execute => {:command => nil, :stdout_prefix => false, :stderr_prefix => 'error', }}
