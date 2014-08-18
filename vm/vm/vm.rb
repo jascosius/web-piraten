@@ -3,6 +3,7 @@ require 'socket'
 require 'open3'
 require 'fileutils'
 require 'json'
+require 'thread'
 
 PREFIX = 'CkyUHZVL3q' #have to be the same as in the socket_controller
 TIMEOUT = 40 #have to be the same as in the socket_controller
@@ -29,62 +30,98 @@ def initialize_timeout(client)
   end
 end
 
-#execute the compile_command and stop the execution, when exit with errors
-def compile(client, dir, compile, compile_error)
-  exec = true
-  if compile != ''
-    #execute the compilecommand with the right path. add PREFIXstderr_compile to errors
-    Open3.popen2("#{compile.gsub('$PATH$', dir)} 2>&1 | sed --unbuffered s/^/#{PREFIX}_stderrcompile_/") do |_, stdout|
-      line = ''
-      unless stdout.eof?
-        puts line = stdout.readline
-        client.puts line
-      end
-      if  compile_error != '' and line.include? compile_error #check if there is a compileerror
-        puts msg = "#{PREFIX}_enderror_Beim Compilieren ist ein Fehler aufgetreten."
-        client.puts msg
-        exec = false
-      end
-    end
-  end
-  exec
-end
-
 #wait for incoming commands from the server
 def get_commands(client, functions)
   # Thread to handel incomming messages
-  Thread.start(Thread.current) do |thread|
-    while thread.alive? do
-      msg = client.gets.chomp
-      puts "Erhalten: #{msg}"
-      array = msg.split('_')
-      if array[0] == 'command'
-        if array[1] == 'stop'
-          thread.kill
-          break
-        end
-        if array[1] == 'e' #Not finished yet
-          msg = JSON.parse(msg)
-          msg.each do |key, value|
-          search_and_execute_function(functions, key, value)
-          end
-        end
-      elsif array[0] == 'response'
-        stdin.puts array[1..-1].join('_')
-      else
-        puts 'Unknown message: no command or response'
+  shared = {}
+
+  loop do
+    msg = client.gets.chomp
+    puts "Erhalten: #{msg}"
+
+    msg = JSON.parse(msg)
+
+    Thread.start do
+      msg.each do |item|
+        puts item
+        search_and_execute_function(functions, item.keys[0], item.values[0], shared)
       end
     end
   end
 end
 
-def execute2(client, stdout)
+
+def search_and_execute_function(functions, name, hash, shared)
+  functions.each do |key, value|
+    if key.to_s == name
+      value.call(hash, shared)
+      break
+    end
+  end
+end
+
+def response(msg, shared)
+  if shared[:stdin]
+    shared[:stdin].puts msg
+  end
+end
+
+def exit(hash, client)
+  if hash['succsessful']
+    puts msg = "#{PREFIX}_end"
+    client.puts msg
+  else
+    puts msg = "#{PREFIX}_enderror_#{hash['message']}"
+    client.puts msg
+  end
+end
+
+def write_file(hash, dir)
+  open("#{dir}/#{hash['filename']}", 'w+') do |file|
+    File.write file, hash['content']
+    File.chmod(hash['permissions'], file)
+  end
+end
+
+def execute(hash, client, dir, shared)
+  changeuser = 'sudo -u sailor '
+  if DEVELOPMENT
+    changeuser = ''
+  end
+
+  puts command = hash['command'].gsub('$LIB$', Dir.pwd + '/lib').gsub('$PATH$', dir)
+
+
+  #:execute => {:command => nil, :stdout_prefix => false, :stderr_prefix => 'error', }}
+
+
+  #Open3.popen2("(#{changeuser} #{execute.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed --unbuffered s/^/#{PREFIX}_stderr_/ ) 2>&1") do |stdin, stdout|
+  #["run_daemon", "-f", "some.conf", "--verbose", :err => [:child, :out]]
+  Open3.popen3("cd #{dir} && " + changeuser + command) do |stdin, stdout, stderr|
+    stdout.sync = true
+    stdin.sync = true
+    shared[:stdin] = stdin
+
+    Thread.start do
+      handle_stderr(client, stderr, hash['stderr'], shared)
+    end
+    handle_stdout(client, stdout, hash['stdout'], shared)
+  end
+end
+
+def handle_stdout(client, stdout, tag, shared)
   counter = 0
   loop do
     if stdout.eof?
-      #tell the client that the execution has finished successful
-      puts msg = "#{PREFIX}_end"
-      client.puts msg
+
+      #workarrount to print errormessages at last
+      if shared[:err]
+        shared[:err].each_line do |line|
+          puts line
+          client.puts line
+        end
+      end
+
       break
     elsif counter > MAX_OPS
       #tell the client that the execution has finished with errors
@@ -95,40 +132,31 @@ def execute2(client, stdout)
     counter += 1
     line = stdout.readline
 
-    puts line
-    client.puts line
-
-  end
-end
-
-def execute(client, dir, execute, execute_error)
-  changeuser = 'sudo -u sailor'
-  if DEVELOPMENT
-    changeuser = ''
-  end
-
-  #execute the executecommand with the right path. add PREFIXstderr to errors
-  Open3.popen2("(#{changeuser} #{execute.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed --unbuffered s/^/#{PREFIX}_stderr_/ ) 2>&1") do |stdin, stdout|
-    stdout.sync = true
-    get_commands(client, stdin)
-    send_commands(client, stdout, execute_error)
-  end
-end
-
-def search_and_execute_function(functions, name, hash)
-  functions.each do |key, value|
-    if key.to_s == name
-      return value.call(hash)
+    unless line.chomp.empty?
+      unless tag == false || line.start_with?(PREFIX)
+        line = "#{PREFIX}_print_#{tag}_#{line}"
+      end
+      puts line
+      client.puts line
     end
   end
 end
 
-def write_file(hash, dir)
-  open("#{dir}/#{hash['filename']}", 'w+') do |file|
-    File.write file, hash['content']
-    File.chmod(hash['permission'].to_i, file)
+def handle_stderr(client, stderr, tag, shared)
+  loop do
+    line = stderr.readline
+
+    unless line.chomp.empty?
+      if tag
+        #workarrout to print errormessages at last
+        shared[:err] ||= ''
+        shared[:err] = shared[:err] + "\n#{PREFIX}_print_#{tag}_#{line}"
+        #puts line = "#{PREFIX}_print_#{tag}_#{line}" #to do here without the workarround
+      end
+    end
   end
 end
+
 
 server = TCPServer.new PORT
 loop {
@@ -143,19 +171,17 @@ loop {
 
     thr = Thread.start {
       initialize_timeout(client)
+      thread = Thread.current
 
       Dir.mkdir(dir, 0755)
 
-      functions = {:write_file => lambda { |hash| write_file(hash, dir) }}
+      functions = {:response => lambda { |msg, shared| response(msg, shared) },
+                   :write_file => lambda { |hash, _| write_file(hash, dir) },
+                   :execute => lambda { |hash, shared| execute(hash, client, dir, shared) },
+                   :exit => lambda { |hash, _| exit(hash, client) },
+                   :stop => lambda { |_, _| puts 'stop'; thread.kill }}
 
       get_commands(client, functions)
-
-
-      sleep 30
-
-      if exec
-        execute(client, dir, execute, execute_error)
-      end
     }
 
     thr.join

@@ -61,6 +61,8 @@ module Communication
   def communicate_with_vm(vm, packet, code, tracing_vars)
     old_allocations = {}
 
+    send = lambda {|commands| vm.puts proof_commands(commands)}
+
     functions = {:line => lambda { |number| new_line(packet, number) },
                  :debug => lambda { |name_index, *value| debug!(packet, tracing_vars, old_allocations, name_index.to_i, value.join('_')) }, #the value can contain _, with must be joint again
                  :move => lambda { @ship.move!(packet) },
@@ -69,7 +71,7 @@ module Communication
                  :take => lambda { @ship.take!(packet) },
                  :look => lambda { |dir| @ship.look!(packet, dir.to_sym) },
                  :break => lambda { |dir| break!(packet, dir.to_sym) },
-                 :print => lambda { |type, *msg| result = postprocess_print(type, msg.join('_'), code); print!(packet, result[:type], result[:message])},
+                 :print => lambda { |type, *msg| result = postprocess_print(send, type, msg.join('_'), code); print!(packet, result[:type], result[:message])},
                  :end => lambda { exit_simulation!(packet) },
                  :enderror => lambda { |*msg| exit_simulation!(packet, msg.join('_')) }}
 
@@ -81,15 +83,15 @@ module Communication
         array = line.split('_') #a command looks like $prefix_function_params or $prefix_?_function_params
         if array[0] == $prefix #is the line a command?
           if array[1] == '?' #is the command a question?
-            vm.puts "response_#{search_and_execute_function(functions, array[2..-1])}" #when there is a ?, the vm expects a response
+            vm.puts([{:response => search_and_execute_function(functions, array[2..-1])}].to_json) #when there is a ?, the vm expects a response
           else
             search_and_execute_function(functions, array[1..-1])
           end
         else
-          print!(packet, :log, line) #line) #without $prefix this must be a print from the user
+          print!(packet, :log, line) #without $prefix this must be a print from the user
         end
       end
     end
-    vm.puts 'command_stop'
+    vm.puts([{:stop => nil}].to_json)
   end
 end

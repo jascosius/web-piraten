@@ -11,13 +11,14 @@ class JavaPreprocessor < BasePreprocessor
 
   def initialize(attribut)
     super(attribut)
-    @filename = 'Pirate.java'
-    @compile = 'javac -cp lib/java $PATH$/Pirate.java' #$PATH$ will be replaced
-    @execute = 'java -cp $PATH$:lib/java Pirate'
-    @compile_error = 'error' #break, when this is in the last line of compiler error
-    @execute_error = 'Could not find or load main class' #break, when this is in the first line of the execution error
-
     @line_first = true
+  end
+
+  def commands_for_vm(code, tracing_vars)
+    [{:write_file => {:filename => 'Pirate.java', :content => process_code(code, tracing_vars)}},
+     {:execute => {:command => 'javac -cp $LIB$/java Pirate.java'}},
+     {:execute => {:command => 'java -cp $PATH$:$LIB$/java Pirate'}},
+     {:exit => {}}]
   end
 
   def process_code(code_msg, vars)
@@ -32,12 +33,8 @@ class JavaPreprocessor < BasePreprocessor
     insert_logic + codes + insert_logic_end + "\n"
   end
 
-  def postprocess_error(line, _)
-    line
-  end
-
-  def postprocess_error_compile(line, _)
-    line
+  def postprocess_print(_, _, line, _)
+    {:type => :error, :message => line}
   end
 
 

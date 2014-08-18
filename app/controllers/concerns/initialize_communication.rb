@@ -55,23 +55,7 @@ module InitializeCommunication
 
       command = commands_for_vm(code,tracing_vars).to_json
 
-      #code = preprocess_code(code, language, tracing_vars)
-
-      #add EOF to show Wrapper the end of the code
-
-      #command += "\n#{$prefix}_EOF\n"
-
       vm.puts command
-
-      #send commands to the server
-      #vm.puts preprocess_filename
-      #vm.puts preprocess_compile
-      #vm.puts preprocess_execute
-      #vm.puts preprocess_compile_error
-      #vm.puts preprocess_execute_error
-
-      #send programmcode to the server
-      #vm.puts code
 
       vm
     end

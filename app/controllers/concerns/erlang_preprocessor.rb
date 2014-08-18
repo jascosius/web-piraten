@@ -10,12 +10,14 @@ class ErlangPreprocessor < BasePreprocessor
 
   def initialize(attribut)
     super(attribut)
-    @filename = "webpiraten.erl"
-    @compile = "cd $PATH$ && erlc -W0 webpiraten.erl" #'cd /codetemp && erl -make
-    @execute = "cd $PATH$ && erl -noshell -s webpiraten main -s init stop"#erl -s webpiraten main" #'echo "" && cd $PATH$ && sudo -u sailor erl -run webpiraten' #'cd $PATH$ && erl -run webpiraten'
-    @compile_error = ''
-    @execute_error = ''
     @line_first = true
+  end
+
+  def commands_for_vm(code, tracing_vars)
+    [{:write_file => {:filename => 'webpiraten.erl', :content => process_code(code, tracing_vars)}},
+     {:execute => {:command => 'erlc -W0 webpiraten.erl', :stderr => 'compile', :stdout => 'compile'}},
+     {:execute => {:command => 'erl -noshell -s webpiraten main -s init stop'}},
+     {:exit => {}}]
   end
 
   def process_code(code_msg, vars)
@@ -82,6 +84,14 @@ class ErlangPreprocessor < BasePreprocessor
       i += 1
     end
     insert_start_logic + codes
+  end
+
+  def postprocess_print(_, type, line, code)
+    if type == 'compile'
+      postprocess_error_compile(line, code)
+    elsif type == 'error'
+      postprocess_error(line, code)
+    end
   end
 
   def postprocess_error(line, code)
