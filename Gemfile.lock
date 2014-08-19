@@ -173,12 +173,8 @@ DEPENDENCIES
   coffee-rails
   jbuilder
   jquery-rails
-<<<<<<< HEAD
-  jquery-ui-rails
-  json
-=======
   jquery-ui-rails (~> 4.2.1)
->>>>>>> origin/performance
+  json
   less-rails-bootstrap
   magic_encoding
   mina
