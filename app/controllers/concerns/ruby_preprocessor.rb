@@ -276,7 +276,7 @@ class RubyPreprocessor < BasePreprocessor
       # checks for start of multilinestring with double quotes
       double_q = true
       dont_skip_line = false
-    elsif s =~ /;?\s*(?:\w*[!\?]*\s*=|print|puts)\s*'(?:[^']*(?:\\')?)*$/
+    elsif s =~ /;?\s*(?:\w*[!\?]*\s*=|print|puts)?\s*'(?:[^']*(?:\\')?)*$/
       # checks for start of multilinestring with single quotes
       single_q = true
       dont_skip_line = false
