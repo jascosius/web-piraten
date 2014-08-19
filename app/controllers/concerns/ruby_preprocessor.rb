@@ -31,10 +31,7 @@ class RubyPreprocessor < BasePreprocessor
     bools[:dont_skip_line] = true
     if code_msg =~ regex_verify_case_statement
       codes = case_block_processsing(code_msg, vars, i, '', bools)
-    elsif code_msg =~ /(?:'(?:[^']?(?:\\')?)*(?:\n|\r|\r\n)(?:[^']?(?:\\')?)*'|"(?:[^"]?(?:\\")?)*(?:\n|\r|\r\n)(?:[^"]?(?:\\")?)*")/
-      # Regular expression that verifies the existence of a multiline string in
-      # the code.
-      #codes = multiline_processing(code_msg, vars, i, '')
+    elsif code_msg =~ regex_verify_multiline_string
       code_msg.each_line do |s|
         codes += insert_line_number(i, bools[:dont_skip_line])
         bools = multiline_processing(s, bools)
@@ -244,11 +241,11 @@ class RubyPreprocessor < BasePreprocessor
     double_q = booleans[:double_q]
     dont_skip_line = booleans[:dont_skip_line]
     if single_q && !double_q
-      if s =~ /^(?:[^']*(?:\\')?)*[^\\]?'\s*(?:;|\+|<<)/
+      if s =~ /^(?:[^']?(?:\\')?)*[^\\]?'\s*(?:;|\+|<<)/
         single_q = false
-        if s =~ /"(?:[^"]*(?:\\")?)*$/
+        if s =~ /"(?:[^"]?(?:\\")?)*$/
           double_q = true
-        elsif s =~ /'(?:[^']*(?:\\')?)*$/
+        elsif s =~ /(?:;\s*(?:\w*[!\?]*\s*=|print|puts)|\+|<<)\s*'(?:[^']?(?:\\')?)*$/
           single_q = true
         else
           dont_skip_line = true
@@ -258,23 +255,26 @@ class RubyPreprocessor < BasePreprocessor
         dont_skip_line = true
       end
     elsif double_q && !single_q
-      if s=~ /^(?:[^"]*(?:\\")?)*[^\\]?"\s*(?:;|\+|<<)/
-        double_q = false
-        if s =~ /'(?:[^']*(?:\\')?)*$/
-          single_q = true
-        elsif s =~ /"(?:[^"]*(?:\\")?)*$/
+      if s =~ /^(?:[^"]?(?:\\")?)*[^\\]?"\s*(?:;|\+|<<)/
+        single_q = false
+        if s =~ /'(?:[^']?(?:\\')?)*$/
           double_q = true
+        elsif s =~ /(?:;\s*(?:\w*[!\?]*\s*=|print|puts)|\+|<<)\s*"(?:[^"]?(?:\\")?)*$/
+          single_q = true
         else
-          dont_skip_line = false
+          dont_skip_line = true
         end
-      elsif s =~ /^(?:[^"]?(?:\\")?)*[^\\]?"\s*(?:#.*)?/
-        double_q = false
+      elsif s=~ /^(?:[^"]*(?:\\")?)*"\s*(?:#.*)?/
+        single_q = false
         dont_skip_line = true
       end
-    elsif s =~ /;?\s*\w*[!\?]*\s*=\s*"(?:[^"]*(?:\\")?)*$/
+    elsif s =~ /;?\s*(?:\w*[!\?]*\s*=|print|puts)\s*"(?:[^"]*(?:\\")?)*$/
+      # checks for start of multilinestring with double quotes
       double_q = true
       dont_skip_line = false
-    elsif s =~ /;?\s*\w*[!\?]*\s*=\s*'(?:[^']*(?:\\')?)*$/
+    elsif s =~ /;?\s*(?:\w*[!\?]*\s*=|print|puts)\s*'(?:[^']*(?:\\')?)*$/
+      # checks for start of multilinestring with single quotes
+      puts "last elsif"
       single_q = true
       dont_skip_line = false
     end
@@ -287,6 +287,12 @@ class RubyPreprocessor < BasePreprocessor
   # Regularexpression for validating case-blocks in the code.
   def regex_verify_case_statement
     /(?:.*;)?\s*case\s*(?:#+.*\s*)*(?:\s:*\w+\s|'(?:[^']?(?:\\')?)*'|"(?:[^"]?(?:\\")?)*")\s*(?:#+.*\s*)*\s*when\s*(?:#+.*\s*)*(?:\s:*\w+\s|'(?:[^']?(?:\\')?)*'|"(?:[^"]?(?:\\")?)*")/
+  end
+
+  # Regular expression that verifies the existence of a multiline string in
+  # the code.
+  def regex_verify_multiline_string
+    /(?:'(?:[^']?(?:\\')?)*(?:\n|\r|\r\n)(?:[^']?(?:\\')?)*'|"(?:[^"]?(?:\\")?)*(?:\n|\r|\r\n)(?:[^"]?(?:\\")?)*")/
   end
 
   # Verifies if the given line has a complete case statement from the case to
