@@ -24,8 +24,12 @@ module Communication
         #send every operation in a single packet
         if packet[:operations]
           while packet[:operations].size > 1
-            new_packet = packet.clone
-            new_packet[:operations] = [new_packet[:operations][0]]
+            new_packet = {}
+            new_packet[:operations] = [packet[:operations][0]]
+            if packet[:line]
+              new_packet[:line] = packet[:line]
+            end
+            new_packet[:id] = packet[:id]
             puts new_packet
             WebsocketRails[:simulation].trigger(:step, new_packet)
             packet[:operations].slice!(0)
