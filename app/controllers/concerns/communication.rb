@@ -65,9 +65,14 @@ module Communication
   def communicate_with_vm(vm, packet, tracing_vars)
     old_allocations = {}
 
+<<<<<<< HEAD
     send = lambda {|commands| vm.puts proof_commands(commands).to_json}
 
     functions = {:line => lambda { |number| new_line(packet, number) },
+=======
+
+    functions = Perf::MeterFactory.instance.get(:vm).measure(:mapping) {{:line => lambda { |number| new_line(packet, number) },
+>>>>>>> origin/performance
                  :debug => lambda { |name_index, *value| debug!(packet, tracing_vars, old_allocations, name_index.to_i, value.join('_')) }, #the value can contain _, with must be joint again
                  :move => lambda { @ship.move!(packet) },
                  :turn => lambda { |dir| @ship.turn!(packet, dir.to_sym) },
@@ -78,7 +83,7 @@ module Communication
                  :print => lambda { |type, *msg| result = postprocess_print(send, type, msg.join('_')); unless result[:type] == :no; print!(packet, result[:type], result[:message]) end } ,
                  :end => lambda { exit_simulation!(packet) },
                  :enderror => lambda { |*msg| exit_simulation!(packet, msg.join('_')) }}
-
+    }
     until connection_store[:is_simulation_done]
       line = vm.gets.chomp
       line = line.force_encoding('utf-8')
