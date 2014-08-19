@@ -67,6 +67,7 @@ class SocketController < WebsocketRails::BaseController
       meter = Perf::MeterFactory.instance.get(name)
       puts meter.report_list_of_measures
       PERFORMANCE_LOGGER.report(meter, "ID:_#{connection.id}")
+      Perf::MeterFactory.instance.clear_meter(name)
       puts "============================================"
     end
   end

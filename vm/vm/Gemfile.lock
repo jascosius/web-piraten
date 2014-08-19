@@ -1,0 +1,15 @@
+GIT
+  remote: https://github.com/Maddis1337/rubyperf.git
+  revision: e5a9e280989f94f6bf0e50ca613d5de63f9a6244
+  branch: csv
+  specs:
+    rubyperf (1.5.0)
+
+GEM
+  specs:
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  rubyperf!
