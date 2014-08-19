@@ -37,6 +37,10 @@ module Preprocessor
 
   def postprocess_print(send,type,line,code)
     result = @lang.postprocess_print(send,type,line,code)
+    unless result.is_a?(Hash)
+      $stderr.puts 'The result of \'postprocess_print/3\' must be a hash with key \':type\' (value one of :log, :warning, :error) and key \':message\'.'
+      return
+    end
     unless result[:type] or result[:message]
       $stderr.puts 'The result of \'postprocess_print/3\' must be a hash with key \':type\' (value one of :log, :warning, :error) and key \':message\'.'
       return

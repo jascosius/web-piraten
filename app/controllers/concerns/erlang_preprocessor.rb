@@ -34,7 +34,7 @@ class ErlangPreprocessor < BasePreprocessor
   def postprocess_print(_, type, line, code)
     if type == 'compile'
       postprocess_error_compile(line, code)
-    elsif type == 'error'
+    else
       postprocess_error(line, code)
     end
   end
@@ -77,7 +77,7 @@ class ErlangPreprocessor < BasePreprocessor
         line.slice!('webpiraten:')
       end
     end
-    line
+    {:type => :error, :message => line}
   end
 
   # Processes a given error message, when the compiling ended with an error.
@@ -116,7 +116,7 @@ class ErlangPreprocessor < BasePreprocessor
         line.slice!('webpiraten:')
       end
     end
-    line
+    {:type => :error, :message => line}
   end
 
   # String that contains logic for the pirateships movements and also preprocesses
