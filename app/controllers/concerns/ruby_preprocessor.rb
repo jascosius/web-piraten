@@ -278,7 +278,6 @@ class RubyPreprocessor < BasePreprocessor
       dont_skip_line = false
     elsif s =~ /;?\s*(?:\w*[!\?]*\s*=|print|puts)\s*'(?:[^']*(?:\\')?)*$/
       # checks for start of multilinestring with single quotes
-      puts "last elsif"
       single_q = true
       dont_skip_line = false
     end
