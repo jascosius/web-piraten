@@ -17,6 +17,8 @@ class RubyPreprocessor < BasePreprocessor
     @compile_error = ''
     @execute_error = ''
     @operationlist = []
+    @end_break = ''
+    @beg_break = ''
     @line_first = true
   end
 
@@ -32,16 +34,17 @@ class RubyPreprocessor < BasePreprocessor
     bools[:single_q] = false
     bools[:double_q] = false
     bools[:dont_skip_line] = true
+    bools[:string_at_beginning] = false
     if code_msg =~ regex_verify_case_statement
       codes = case_block_processsing(code_msg, vars, i, '', bools)
-    elsif code_msg =~ /(?:'(?:(?:[^']*(?:\\')?)*(?:\n|\r|\r\n)(?:[^']*(?:\\')?)*)'|"(?:(?:[^"]*(?:\\")?)*(?:\n|\r|\r\n)(?:[^"]*(?:\\")?)*)")/
+    elsif code_msg =~ /(?:'(?:[^']?(?:\\')?)*(?:\n|\r|\r\n)(?:[^']?(?:\\')?)*'|"(?:[^"]?(?:\\")?)*(?:\n|\r|\r\n)(?:[^"]?(?:\\")?)*")/
       # Regular expression that verifies the existence of a multiline string in
       # the code.
       #codes = multiline_processing(code_msg, vars, i, '')
       code_msg.each_line do |s|
         codes += insert_line_number(i, bools[:dont_skip_line])
         bools = multiline_processing(s, bools)
-        codes += add_user_codeline(s, i, bools[:dont_skip_line])
+        codes += add_user_codeline(s, i, bools)
         codes = insert_debug_information(codes, vars, bools[:dont_skip_line])
         i += 1
       end
@@ -49,7 +52,7 @@ class RubyPreprocessor < BasePreprocessor
       codes = ''
       code_msg.each_line do |s|
         codes += insert_line_number(i, true)
-        codes += add_user_codeline(s, i, true)
+        codes += add_user_codeline(s, i, bools)
         codes = insert_debug_information(codes, vars, true)
         i += 1
       end
@@ -327,23 +330,80 @@ class RubyPreprocessor < BasePreprocessor
 
   # Adds the line of the user's code and a commment with the linenumber, doesn't add
   # a comment if it's processing a multiline string.
-  def add_user_codeline(s, i, no_multiline_string)
-    if s=~ /\bdef\b/ || s=~/\bclass\b/ #def class
+  def add_user_codeline(s, i, bools)
+    @comment = true
+    code = s.chomp
+    puts bools[:dont_skip_line]
+    if s =~ /#/
+      puts 'hier ist ein Kommentar: ' + s
+      @comment = s.index('#')
+      s = s[0..@comment]
+    end
+    if s=~ /\bdef\b/ || s=~/\bclass\b/ || s=~/\bmodule\b/ || s=~/\bEND\b/ || s=~/\bBEGIN\b/ || s=~/\bbegin\b/ #def class
       @operationlist.unshift(:defClass)
-      no_multiline_string ? s.chomp + "; break_point(:down)" + " # #{$prefix}_(#{i}#{$prefix}_)\n" : s
-    elsif s=~ /\bdo\b/ || s=~ /\bwhile\b/ || s=~ /\bif\b/ #do while if
+      @end_break = @end_break + '; break_point(:down)'
+    elsif s=~ /\buntil\b/ || s=~ /\bwhile\b/ || s=~ /\bif\b/ || s=~ /\bcase\b/ # while until if case
       @operationlist.unshift(:doWhileIf)
-      no_multiline_string ? "break_point(:down); " + s.chomp + " # #{$prefix}_(#{i}#{$prefix}_)\n" : s
+      @beg_break = 'break_point(:down); ' + @beg_break
+    elsif s=~ /\bdo\b/   #do when no [while, until, if, case] exist because while [expr] [do]...
+      @operationlist.unshift(:doWhileIf)
+      @beg_break = 'break_point(:down); ' + @beg_break
+    elsif s=~ /\breturn\b/ #end
+      code = 'break_point(:up); ' + code
     elsif s=~ /\bend\b/ #end
       op = @operationlist.shift
       if op == :defClass
-        no_multiline_string ? "break_point(:up); " + s.chomp + " # #{$prefix}_(#{i}#{$prefix}_)\n" : s
+        @beg_break = 'break_point(:up); ' + @beg_break
       else
-        no_multiline_string ? s.chomp + " ; break_point(:up)" + " # #{$prefix}_(#{i}#{$prefix}_)\n" : s
+        @end_break = @end_break + '; break_point(:up)'
       end
-    else
-      no_multiline_string ? s.chomp + " # #{$prefix}_(#{i}#{$prefix}_)\n" : s
     end
+    if @comment == true
+      code = @beg_break + code + @end_break + " # #{$prefix}_(#{i}#{$prefix}_)\n"
+    else
+      code.insert(@comment, @end_break)
+      code = @beg_break + code  + " # #{$prefix}_(#{i}#{$prefix}_)\n"
+    end
+
+    @beg_break = ''
+    @end_break = ''
+    code
+=begin
+    #multilining
+    puts bools[:dont_skip_line]
+    puts !bools[:string_at_beginning]
+    if bools[:dont_skip_line] then #no multiline at the end
+      if !bools[:string_at_beginning] then #no multiline at the beginning
+        puts 'no multiline' + s
+        code = @beg_break + s.chomp + @end_break + " # #{$prefix}_(#{i}#{$prefix}_)\n"
+        bools[:string_at_beginning] = false
+        @beg_break = ''
+        @end_break = ''
+        code
+      else                         #multiline at the beginning but not at the end
+        bools[:string_at_beginning] = false
+        puts 'multiline at the beginning' + s
+        puts s.index('"')
+        puts s.index(/[']/)
+        code = s.chomp + @end_break + " # #{$prefix}_(#{i}#{$prefix}_)\n"
+        @end_break = ''
+        code
+      end
+    else                       #multiline at the end
+
+      if !bools[:string_at_beginning]  #no multiline at the beginning
+        code = @beg_break + s.chomp + " # #{$prefix}_(#{i}#{$prefix}_)\n"
+        bools[:string_at_beginning] = true #multiline at the beginning of the next line
+        puts 'multiline at the end' + s
+        @beg_break = ''
+        code
+      else                     #multiline at the beginning and the end
+        bools[:string_at_beginning] = true #multiline at the beginning of the next line
+        puts 'multiline at the beginning and the end' + s
+        s
+      end
+    end
+=end
 
   end
 
