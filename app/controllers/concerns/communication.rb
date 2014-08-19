@@ -76,7 +76,8 @@ module Communication
                  :break => lambda { |dir| break!(packet, dir.to_sym) },
                  :print => lambda { |type, *msg| result = postprocess_print(send, type, msg.join('_')); unless result[:type] == :no; print!(packet, result[:type], result[:message]) end } ,
                  :end => lambda { exit_simulation!(packet) },
-                 :enderror => lambda { |*msg| exit_simulation!(packet, msg.join('_')) }}
+                 :enderror => lambda { |*msg| exit_simulation!(packet, msg.join('_')) },
+                 :timings => lambda { |diff| $stderr.puts diff}}#TODO
 
     until connection_store[:is_simulation_done]
       line = vm.gets.chomp

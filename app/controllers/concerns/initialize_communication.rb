@@ -64,7 +64,6 @@ module InitializeCommunication
       exit_simulation!(packet, 'Ein interner Fehler ist aufgetreten.')
       send_packet(packet)
     else
-
       command = commands_for_vm(code,tracing_vars).to_json
 
       vm.puts command
