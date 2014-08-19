@@ -88,7 +88,7 @@ def execute(hash, client, dir, shared)
   puts command = hash['command'].gsub('$LIB$', Dir.pwd + '/lib').gsub('$PATH$', dir)
 
   changeuser = 'sudo -u sailor '
-  if DEVELOPMENT or hash['permissions'] == 'high'
+  if DEVELOPMENT or hash['permissions'] == 'read-write'
     changeuser = ''
   end
 

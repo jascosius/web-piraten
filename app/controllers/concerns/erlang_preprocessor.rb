@@ -10,7 +10,7 @@ class ErlangPreprocessor < BasePreprocessor
 
   def commands_for_vm(code, tracing_vars)
     [{:write_file => {:filename => 'webpiraten.erl', :content => process_code(code, tracing_vars)}},
-     {:execute => {:command => 'erlc -W0 webpiraten.erl', :stderr => 'compile', :stdout => 'compile', :permissions => 'high'}},
+     {:execute => {:command => 'erlc -W0 webpiraten.erl', :stderr => 'compile', :stdout => 'compile', :permissions => 'read-write'}},
      {:execute => {:command => 'erl -noshell -s webpiraten main -s init stop'}},
      {:exit => {}}]
   end

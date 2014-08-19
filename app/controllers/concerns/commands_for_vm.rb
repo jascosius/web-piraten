@@ -5,7 +5,7 @@ module CommandsForVm
 
     #these are all commands the vm can handle with
     default_functions = {:write_file => {:filename => nil, :permissions => 0744, :content => nil},
-                         :execute => {:command => nil, :stdout => false, :stderr => 'error', :permissions => 'low' },
+                         :execute => {:command => nil, :stdout => false, :stderr => 'error', :permissions => 'read-only' },
                          :exit => {:succsessful => true, :message => ''}}
 
     unless array.kind_of?(Array)
