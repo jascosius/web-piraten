@@ -23,14 +23,14 @@ class SocketController < WebsocketRails::BaseController
   # test events for the remote control buttons
 
   def receive_code
-    Perf::MeterFactory.instance.get(:socket).measure(:receive_code) { # performance
+    # receive_start = Time.now # performance
 
     tracing_vars = message[:vars]
     language = message[:language].downcase
     code = message[:code]
 
     #TODO: shoud be the same as in the client
-    if Perf::MeterFactory.instance.get(:socket).measure(:code_length){code.length < 10000 and language.length < 50 and tracing_vars.length < 100}
+    if code.length < 10000 and language.length < 50 and tracing_vars.length < 100
 
       tracing_vars.each do |e|
         if e.length > 100
@@ -40,13 +40,12 @@ class SocketController < WebsocketRails::BaseController
 
       initialize_preprocessor(language)
 
-      Perf::MeterFactory.instance.get(:socket).measure(:start_simulation){
-        start_simulation(code, tracing_vars)
-      }
+      start_simulation(code, tracing_vars)
 
     end
 
-    } # performance
+
+    # PERFORMANCE_LOGGER.track(connection.id, :receive_code, Time.now - receive_start)
   end
 
   def stop
@@ -55,14 +54,8 @@ class SocketController < WebsocketRails::BaseController
   end
 
   def report
-    [:socket, :vm].each do |name|
-      puts "============== REPORTED METER (#{name}) =============="
-      meter = Perf::MeterFactory.instance.get(name)
-      puts meter.report_list_of_measures
-      PERFORMANCE_LOGGER.report(meter, "ID:_#{connection.id}")
-      Perf::MeterFactory.instance.clear_meter(name)
-      puts "============================================"
-    end
+    PERFORMANCE_LOGGER.save
+    puts 'Saving performance logs!'
   end
 
 

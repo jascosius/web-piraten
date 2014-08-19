@@ -75,4 +75,3 @@ gem 'json'
 
 gem 'mina'
 gem 'thin'
-gem 'rubyperf', :git => 'https://github.com/Maddis1337/rubyperf.git', :branch => 'csv'

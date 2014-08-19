@@ -58,12 +58,7 @@ end
 
 
 def search_and_execute_function(functions, name, hash, shared)
-  functions.each do |key, value|
-    if key.to_s == name
-      value.call(hash, shared)
-      break
-    end
-  end
+  functions[name.to_sym].call(hash, shared)
 end
 
 def response(msg, shared)
@@ -74,9 +69,9 @@ end
 
 def exit(hash, client, shared)
   if hash['successful']
-    puts end_msg = "\n#{PREFIX}_end"
+    end_msg = "\n#{PREFIX}_end"
   else
-    puts end_msg = "\n#{PREFIX}_enderror_#{hash['message']}"
+    end_msg = "\n#{PREFIX}_enderror_#{hash['message']}"
   end
 
   if PERFORMANCE_TEST
@@ -84,9 +79,11 @@ def exit(hash, client, shared)
     start_time = shared[:start_time]
 
     diff = exit_time - start_time
-    client.puts "\n#{PREFIX}_timings_#{diff*1000}"
+    client.puts timing = "\n#{PREFIX}_timings_#{diff}"
+    puts timing
   end
 
+  puts end_msg
   client.puts end_msg
 end
 
