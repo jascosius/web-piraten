@@ -250,6 +250,8 @@ class RubyPreprocessor < BasePreprocessor
           double_q = true
         elsif s =~ /(?:;\s*(?:\w*[!\?]*\s*=|print|puts)|\+|<<)\s*'(?:[^']?(?:\\')?)*$/
           single_q = true
+        elsif s =~ /^(?:[^']?(?:\\')?)*'\s*;(?:#.*)?/
+          dont_skip_line = true
         else
           dont_skip_line = true
         end
