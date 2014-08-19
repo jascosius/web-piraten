@@ -93,6 +93,7 @@ task :deploy_vm do
   queue 'echo in progress ...'
   queue 'sleep 80'
   queue "cd #{deploy_to}/current/scripts/ && ./update_vm.sh"
+  queue 'wait 60 secounds to complete'
 end
 
 task :deploy_vm_sh_only do
