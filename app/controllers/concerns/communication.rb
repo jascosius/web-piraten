@@ -58,10 +58,10 @@ module Communication
     end
   end
 
-  def communicate_with_vm(vm, packet, code, tracing_vars)
+  def communicate_with_vm(vm, packet, tracing_vars)
     old_allocations = {}
 
-    send = lambda {|commands| vm.puts proof_commands(commands)}
+    send = lambda {|commands| vm.puts proof_commands(commands).to_json}
 
     functions = {:line => lambda { |number| new_line(packet, number) },
                  :debug => lambda { |name_index, *value| debug!(packet, tracing_vars, old_allocations, name_index.to_i, value.join('_')) }, #the value can contain _, with must be joint again
@@ -71,7 +71,7 @@ module Communication
                  :take => lambda { @ship.take!(packet) },
                  :look => lambda { |dir| @ship.look!(packet, dir.to_sym) },
                  :break => lambda { |dir| break!(packet, dir.to_sym) },
-                 :print => lambda { |type, *msg| result = postprocess_print(send, type, msg.join('_'), code); print!(packet, result[:type], result[:message])},
+                 :print => lambda { |type, *msg| result = postprocess_print(send, type, msg.join('_')); unless result[:type] == :no; print!(packet, result[:type], result[:message]) end } ,
                  :end => lambda { exit_simulation!(packet) },
                  :enderror => lambda { |*msg| exit_simulation!(packet, msg.join('_')) }}
 

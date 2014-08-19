@@ -24,7 +24,7 @@ module InitializeCommunication
       connection_store[:is_simulation_done] = false
       initialize_timeout(Thread.current, packet)
       vm = initialize_vm(code, tracing_vars, packet)
-      communicate_with_vm(vm, packet, code, tracing_vars)
+      communicate_with_vm(vm, packet, tracing_vars)
 
     end
   end

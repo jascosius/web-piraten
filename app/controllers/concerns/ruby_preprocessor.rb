@@ -8,12 +8,13 @@ class RubyPreprocessor < BasePreprocessor
     @operationlist = []
     @line_first = true
     @filename = "#{$prefix}_code.rb"
+    @syntaxflag = true
   end
 
   def commands_for_vm(code, tracing_vars)
-    [{:write_file => {:filename => @filename, :content => process_code(code, tracing_vars)}},
-     {:execute => {:command => "ruby #{$prefix}_code.rb"}},
-     {:exit => {}}]
+    @code = process_code(code, tracing_vars)
+    [{:write_file => {:filename => @filename, :content => code}},
+     {:execute => {:command => "ruby -c #{@filename}", :stdout => 'checksuccsess', :stderr => 'checkerror'}}]
   end
 
   # Method that processes the given code and includes the debug information
@@ -356,39 +357,52 @@ class RubyPreprocessor < BasePreprocessor
     codes
   end
 
-  def postprocess_print(send, type, line, code)
+  def postprocess_print(send, type, line)
+    if type == 'checksuccsess'
+      send.call([{:write_file => {:filename => @filename, :content => @code}},{:execute => {:command => "ruby #{@filename}"}},{:exit => {}}])
+      {:type => :no}
+    elsif type == 'checkerror'
+      if @syntaxflag
+        send.call([{:exit => {:succsessful => false, :message => 'Syntaxfehler'}}])
+        @syntaxflag = false
+      end
+      return {:type => :error, :message => line}
+    else
+      postprocess_execute(line)
+    end
+  end
+
+  def postprocess_execute(line)
     #send.call([{:execute => {:command => "ls"}}])
+
     #remove filepath
-    index_begin = line.index('/') #filepath starts with /
-    index_end = line.index(@filename) #filepath ends with filename
-    if index_begin and index_end
-      if index_begin < index_end #found a filepath?
-        index_end += "#{@filename}".length #add the lenght of the filename to the end
-        line.slice!(index_begin...index_end) #remove the filepath
+    index_begin = line.index(@filename) #filepath ends with filename
+    if index_begin
+      index_end = index_begin + "#{@filename}".length #add the lenght of the filename to the end
+      line.slice!(index_begin...index_end) #remove the filepath
 
-        #change the linenumber
-        index_line_end = line.index(':', index_begin+1) #find the : after the linenumber
-        line_number = line[index_begin+1...index_line_end] #get the linenumber between the two :
-        i = 1 #Set a counter
-        new_line = '' #Set a result string
-        code.each_line do |l| #search in the executed code for the right line. In every line is a comment with the original linenumber
-          if i == line_number.to_i #find the line from the errormessage
-            line_begin=l.index("#{$prefix}_(") #find the begin of the original linenumber in the comment
-            line_end=l.index("#{$prefix}_)") #find the end of the original linenumber in the comment
-            if line_begin and line_end #found something?
-              new_line = l[line_begin+"#{$prefix}_(".length...line_end] #Set the new linenumber to the number in the comment
-            end
+      #change the linenumber
+      index_line_end = line.index(':', index_begin+1) #find the : after the linenumber
+      line_number = line[index_begin+1...index_line_end] #get the linenumber between the two :
+      i = 1 #Set a counter
+      new_line = '' #Set a result string
+      @code.each_line do |l| #search in the executed code for the right line. In every line is a comment with the original linenumber
+        if i == line_number.to_i #find the line from the errormessage
+          line_begin=l.index("#{$prefix}_(") #find the begin of the original linenumber in the comment
+          line_end=l.index("#{$prefix}_)") #find the end of the original linenumber in the comment
+          if line_begin and line_end #found something?
+            new_line = l[line_begin+"#{$prefix}_(".length...line_end] #Set the new linenumber to the number in the comment
           end
-          i += 1
         end
-        line.slice!(index_begin+1...index_line_end) #remove the old linenumber from the error
+        i += 1
+      end
+      line.slice!(index_begin+1...index_line_end) #remove the old linenumber from the error
 
-        if new_line == '' #is there a result for the new linenumber?
-          line.slice!(index_begin..index_begin+1) #remove the : around the old number
-        else
-          line = line.insert(index_begin+1, new_line) #add the new linenumber to the error
-          line = line.insert(index_begin, 'line') #add a line to the error instead of the filepath
-        end
+      if new_line == '' #is there a result for the new linenumber?
+        line.slice!(index_begin..index_begin+1) #remove the : around the old number
+      else
+        line = line.insert(index_begin+1, new_line) #add the new linenumber to the error
+        line = line.insert(index_begin, 'line') #add a line to the error instead of the filepath
       end
     end
     {:type => :error, :message => line}

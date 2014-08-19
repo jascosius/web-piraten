@@ -35,18 +35,18 @@ module Preprocessor
     proof_commands(@lang.commands_for_vm(code, tracing_vars))
   end
 
-  def postprocess_print(send,type,line,code)
-    result = @lang.postprocess_print(send,type,line,code)
+  def postprocess_print(send,type,line)
+    result = @lang.postprocess_print(send,type,line)
     unless result.is_a?(Hash)
       $stderr.puts 'The result of \'postprocess_print/3\' must be a hash with key \':type\' (value one of :log, :warning, :error) and key \':message\'.'
       return
     end
-    unless result[:type] or result[:message]
-      $stderr.puts 'The result of \'postprocess_print/3\' must be a hash with key \':type\' (value one of :log, :warning, :error) and key \':message\'.'
+    unless result[:type]
+      $stderr.puts 'The result of \'postprocess_print/3\' must be a hash with key \':type\' (value one of :log, :warning, :error, :no) and key \':message\'.'
       return
     end
-    unless [:log, :warning, :error].include?(result[:type])
-      $stderr.puts 'The value of \':type\' must be one of :log, :warning, :error.'
+    unless [:log, :warning, :error, :no].include?(result[:type])
+      $stderr.puts 'The value of \':type\' must be one of :log, :warning, :error, :no.'
       return
     end
     result

@@ -27,7 +27,7 @@ class JavaPreprocessor < BasePreprocessor
     insert_logic + codes + insert_logic_end + "\n"
   end
 
-  def postprocess_print(_, _, line, _)
+  def postprocess_print(_, _, line)
     {:type => :error, :message => line}
   end
 

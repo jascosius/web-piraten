@@ -9,7 +9,8 @@ class ErlangPreprocessor < BasePreprocessor
   end
 
   def commands_for_vm(code, tracing_vars)
-    [{:write_file => {:filename => 'webpiraten.erl', :content => process_code(code, tracing_vars)}},
+    @code = process_code(code, tracing_vars)
+    [{:write_file => {:filename => 'webpiraten.erl', :content => @code}},
      {:execute => {:command => 'erlc -W0 webpiraten.erl', :stderr => 'compile', :stdout => 'compile', :permissions => 'read-write'}},
      {:execute => {:command => 'erl -noshell -s webpiraten main -s init stop'}},
      {:exit => {}}]
@@ -31,11 +32,11 @@ class ErlangPreprocessor < BasePreprocessor
     insert_start_logic + codes
   end
 
-  def postprocess_print(_, type, line, code)
+  def postprocess_print(_, type, line)
     if type == 'compile'
-      postprocess_error_compile(line, code)
+      postprocess_error_compile(line)
     else
-      postprocess_error(line, code)
+      postprocess_error(line)
     end
   end
 
@@ -43,7 +44,7 @@ class ErlangPreprocessor < BasePreprocessor
   # If there are information about line numbers in the error message the method
   # will check if there is a corresponding line number which is visible to the
   # user.
-  def postprocess_error(line, code)
+  def postprocess_error(line)
     if line =~ /webpiraten\.erl:\d*:/ # process message only if there's the filename
       index_begin = line.index(':') # find line number beginning
       index_end = line.index(':', index_begin+1) # find line number ending
@@ -51,7 +52,7 @@ class ErlangPreprocessor < BasePreprocessor
         line_number = line[index_begin+1, index_end].to_i # extract error line number
         i = 1
         new_line_number = ''
-        code.each_line do |lin|
+        @code.each_line do |lin|
           if i == line_number # find the line from the error message
             line_begin = lin.index("#{$prefix}_(") # find the begin of the original line number in comment
             line_end = lin.index("#{$prefix}_)") # find the end of the original line number in comment
@@ -82,7 +83,7 @@ class ErlangPreprocessor < BasePreprocessor
 
   # Processes a given error message, when the compiling ended with an error.
   # The handling and functionality is similar to postprocess_error.
-  def postprocess_error_compile(line, code)
+  def postprocess_error_compile(line)
     if line =~ /webpiraten\.erl:\d*:/ # process message only if there's the filename
       index_begin = line.index(':') # find line number beginning
       index_end = line.index(':', index_begin+1) # find line number ending
@@ -90,7 +91,7 @@ class ErlangPreprocessor < BasePreprocessor
         line_number = line[index_begin+1, index_end].to_i # extract error line number
         i = 1
         new_line_number = ''
-        code.each_line do |lin|
+        @code.each_line do |lin|
           if i == line_number # find the line from the error message
             line_begin = lin.index("#{$prefix}_(") # find the begin of the original line number in comment
             line_end = lin.index("#{$prefix}_)") # find the end of the original line number in comment

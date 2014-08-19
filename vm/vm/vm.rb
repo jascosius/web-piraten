@@ -23,7 +23,7 @@ def initialize_timeout(client)
   Thread.start(Thread.current) do |thread|
     sleep(TIMEOUT)
     if thread.alive?
-      puts msg = "#{PREFIX}_enderror_Das Programm hat zu lange gebraucht."
+      puts msg = "\n#{PREFIX}_enderror_Das Programm hat zu lange gebraucht."
       client.puts msg
       thread.kill
     end
@@ -43,7 +43,6 @@ def get_commands(client, functions)
 
     Thread.start do
       msg.each do |item|
-        puts item
         search_and_execute_function(functions, item.keys[0], item.values[0], shared)
       end
     end
@@ -68,10 +67,10 @@ end
 
 def exit(hash, client)
   if hash['succsessful']
-    puts msg = "#{PREFIX}_end"
+    puts msg = "\n#{PREFIX}_end"
     client.puts msg
   else
-    puts msg = "#{PREFIX}_enderror_#{hash['message']}"
+    puts msg = "\n#{PREFIX}_enderror_#{hash['message']}"
     client.puts msg
   end
 end
@@ -85,16 +84,14 @@ end
 
 def execute(hash, client, dir, shared)
 
-  puts command = hash['command'].gsub('$LIB$', Dir.pwd + '/lib').gsub('$PATH$', dir)
+  command = hash['command'].gsub('$LIB$', Dir.pwd + '/lib').gsub('$PATH$', dir)
 
   changeuser = 'sudo -u sailor '
   if DEVELOPMENT or hash['permissions'] == 'read-write'
     changeuser = ''
   end
 
-
   #:execute => {:command => nil, :stdout_prefix => false, :stderr_prefix => 'error', }}
-
 
   #Open3.popen2("(#{changeuser} #{execute.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed --unbuffered s/^/#{PREFIX}_stderr_/ ) 2>&1") do |stdin, stdout|
   #["run_daemon", "-f", "some.conf", "--verbose", :err => [:child, :out]]
