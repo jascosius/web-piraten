@@ -6,14 +6,14 @@ class ErlangPreprocessor < BasePreprocessor
   def initialize(attribut)
     super(attribut)
     @line_first = true
+    @compileflag = true
   end
 
   def commands_for_vm(code, tracing_vars)
     @code = process_code(code, tracing_vars)
     [{:write_file => {:filename => 'webpiraten.erl', :content => @code}},
      {:execute => {:command => 'erlc -W0 webpiraten.erl', :stderr => 'compile', :stdout => 'compile', :permissions => 'read-write'}},
-     {:execute => {:command => 'erl -noshell -s webpiraten main -s init stop'}},
-     {:exit => {}}]
+     {:execute => {:command => 'echo ok', :stdout => 'ok'}}]
   end
 
   # Processes the given code...
@@ -32,11 +32,20 @@ class ErlangPreprocessor < BasePreprocessor
     insert_start_logic + codes
   end
 
-  def postprocess_print(_, type, line)
+  def postprocess_print(send, type, line)
     if type == 'compile'
+      if @compileflag
+        @compileflag = false
+        send.call([{:exit => {:succsessful => false, :message => 'Syntaxfehler'}}])
+      end
       postprocess_error_compile(line)
-    else
+    elsif type == 'ok' and @compileflag
+      send.call([{:execute => {:command => 'erl -noshell -s webpiraten main -s init stop'}}, {:exit => {}}])
+      {:type => :no}
+    elsif type == 'error'
       postprocess_error(line)
+    else
+      {:type => :no}
     end
   end
 
