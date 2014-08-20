@@ -30,7 +30,6 @@ LANGUAGES = {
     :erlang => Language.new({
         name: 'Erlang',
         script_assets: ['codemirror/modes/erlang.js'],
-        stylesheet_assets: ['codemirror/themes/eclipse.css'],
         gui_options: {:codemirror => {:mode => 'erlang'}},
         default_code: "start() -> case look(front) of\n" +
         "     treasure -> move(), take(), start(), puts(), move();\n" +
@@ -47,7 +46,8 @@ LANGUAGES = {
     :java => Language.new({
         name: 'Java',
         script_assets: ['codemirror/modes/clike.js'],
-        gui_options: {:codemirror => {:mode => 'clike'}},
+        stylesheet_assets: ['codemirror/themes/eclipse.css'],
+        gui_options: {:codemirror => {:mode => 'text/x-java', :theme => 'eclipse'}},
         default_code: "public void start() {\n"+
         "  while(ship.look(Direction.FRONT) != Item.BORDER) {\n"+
         "    ship.move();\n"+
