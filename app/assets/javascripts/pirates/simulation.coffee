@@ -5,7 +5,6 @@
 
 
 class @Simulation
-
   @initialize = () ->
     # load elements
     @canvas = document.getElementById "pirateGrid"
