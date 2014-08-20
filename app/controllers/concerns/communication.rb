@@ -1,12 +1,8 @@
 module Communication
 
-  @@id ||= 0 # Due to 'inheritance' through module including the class variable moved in this module.
-
   def set_id
-    @@id += 1
-    if @@id > 100000
-      @@id = 0
-    end
+    connection_store[:id] ||= 0
+    connection_store[:id] += 1
   end
 
   def remove_prefix!(string)
@@ -19,7 +15,7 @@ module Communication
       if connection_store[:is_simulation_done]
         puts 'Verbindung beendet'
       else
-        packet[:id] = @@id
+        packet[:id] = connection_store[:id]
 
         #send every operation in a single packet
         if packet[:operations]

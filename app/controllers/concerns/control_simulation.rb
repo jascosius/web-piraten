@@ -22,7 +22,10 @@ module ControlSimulation
   end
 
   def debug!(packet, tracing_vars, old_allocations, name_index, value)
-    name = tracing_vars[name_index].chomp
+    name = ''
+    if tracing_vars.length > 0
+      name = tracing_vars[name_index].chomp
+    end
     remove_prefix! name
     remove_prefix! value
 
