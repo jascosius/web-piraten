@@ -18,6 +18,14 @@ else
   DEVELOPMENT = true
 end
 
+if ARGV.length > 1 and ARGV[1] == 'performance'
+  puts 'Performance mode set as active'
+  PERFORMANCE_TEST = true
+else
+  puts 'Performance mode set as inactive'
+  PERFORMANCE_TEST = false
+end
+
 #thread to kill the execution after a while
 def initialize_timeout(client)
   Thread.start(Thread.current) do |thread|
@@ -31,9 +39,8 @@ def initialize_timeout(client)
 end
 
 #wait for incoming commands from the server
-def get_commands(client, functions)
+def get_commands(client, functions,shared)
   # Thread to handel incomming messages
-  shared = {}
 
   loop do
     msg = client.gets.chomp
@@ -51,12 +58,7 @@ end
 
 
 def search_and_execute_function(functions, name, hash, shared)
-  functions.each do |key, value|
-    if key.to_s == name
-      value.call(hash, shared)
-      break
-    end
-  end
+  functions[name.to_sym].call(hash, shared)
 end
 
 def response(msg, shared)
@@ -65,14 +67,24 @@ def response(msg, shared)
   end
 end
 
-def exit(hash, client)
-  if hash['succsessful']
-    puts msg = "\n#{PREFIX}_end"
-    client.puts msg
+def exit(hash, client, shared)
+  if hash['successful']
+    end_msg = "\n#{PREFIX}_end"
   else
-    puts msg = "\n#{PREFIX}_enderror_#{hash['message']}"
-    client.puts msg
+    end_msg = "\n#{PREFIX}_enderror_#{hash['message']}"
   end
+
+  if PERFORMANCE_TEST
+    exit_time = Time.now
+    start_time = shared[:start_time]
+
+    diff = exit_time - start_time
+    client.puts timing = "\n#{PREFIX}_timings_#{diff}"
+    puts timing
+  end
+
+  puts end_msg
+  client.puts end_msg
 end
 
 def write_file(hash, dir)
@@ -160,13 +172,14 @@ end
 server = TCPServer.new PORT
 loop {
   Thread.start(server.accept) do |client| #spawn new process for a new client
+    shared = { :start_time => Time.now }
 
     temp = '/codetemp'
     if DEVELOPMENT
       temp = '/tmp'
     end
 
-    dir = "#{temp}/session_#{Time.now.nsec}_#{rand(1000000)}"
+    dir = "#{temp}/session_#{Time.now.to_i}_#{rand(1000000)}"
 
     thr = Thread.start {
       initialize_timeout(client)
@@ -174,13 +187,14 @@ loop {
 
       Dir.mkdir(dir, 0755)
 
+
       functions = {:response => lambda { |msg, shared| response(msg, shared) },
                    :write_file => lambda { |hash, _| write_file(hash, dir) },
                    :execute => lambda { |hash, shared| execute(hash, client, dir, shared) },
-                   :exit => lambda { |hash, _| exit(hash, client) },
+                   :exit => lambda { |hash, shared| exit(hash, client, shared) },
                    :stop => lambda { |_, _| puts 'stop'; thread.kill }}
 
-      get_commands(client, functions)
+      get_commands(client, functions, shared)
     }
 
     thr.join

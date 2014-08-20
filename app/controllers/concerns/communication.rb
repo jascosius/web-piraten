@@ -55,18 +55,15 @@ module Communication
   end
 
   def search_and_execute_function(functions, array)
-    functions.each do |key, value|
-      if key.to_s == array[0]
-        return value.call(*array[1..-1])
-      end
-    end
+    functions[array[0].to_sym].call(*array[1..-1])
   end
 
   def communicate_with_vm(vm, packet, tracing_vars)
+    communication_start = Time.now #Performance
+
     old_allocations = {}
 
     send = lambda {|commands| vm.puts proof_commands(commands).to_json}
-
     functions = {:line => lambda { |number| new_line(packet, number) },
                  :debug => lambda { |name_index, *value| debug!(packet, tracing_vars, old_allocations, name_index.to_i, value.join('_')) }, #the value can contain _, with must be joint again
                  :move => lambda { @ship.move!(packet) },
@@ -77,7 +74,8 @@ module Communication
                  :break => lambda { |dir| break!(packet, dir.to_sym) },
                  :print => lambda { |type, *msg| result = postprocess_print(send, type, msg.join('_')); unless result[:type] == :no; print!(packet, result[:type], result[:message]) end } ,
                  :end => lambda { exit_simulation!(packet) },
-                 :enderror => lambda { |*msg| exit_simulation!(packet, msg.join('_')) }}
+                 :enderror => lambda { |*msg| exit_simulation!(packet, msg.join('_')) },
+                 :timings => lambda { |diff| PERFORMANCE_LOGGER.track(connection.id, :vm, diff.to_f)}}
 
     until connection_store[:is_simulation_done]
       line = vm.gets.chomp
@@ -97,5 +95,7 @@ module Communication
       end
     end
     vm.puts([{:stop => nil}].to_json)
+
+    PERFORMANCE_LOGGER.track(connection.id, :communicate_with_vm, Time.now - communication_start)
   end
 end

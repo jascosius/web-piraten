@@ -14,7 +14,7 @@ class RubyPreprocessor < BasePreprocessor
   def commands_for_vm(code, tracing_vars)
     @code = process_code(code, tracing_vars)
     [{:write_file => {:filename => @filename, :content => code}},
-     {:execute => {:command => "ruby -c #{@filename}", :stdout => 'checksuccsess', :stderr => 'checkerror'}}]
+     {:execute => {:command => "ruby -c #{@filename}", :stdout => 'checksuccess', :stderr => 'checkerror'}}]
   end
 
   # Method that processes the given code and includes the debug information
@@ -367,12 +367,12 @@ class RubyPreprocessor < BasePreprocessor
   end
 
   def postprocess_print(send, type, line)
-    if type == 'checksuccsess'
+    if type == 'checksuccess'
       send.call([{:write_file => {:filename => @filename, :content => @code}},{:execute => {:command => "ruby #{@filename}"}},{:exit => {}}])
       {:type => :no}
     elsif type == 'checkerror'
       if @syntaxflag
-        send.call([{:exit => {:succsessful => false, :message => 'Syntaxfehler'}}])
+        send.call([{:exit => {:successful => false, :message => 'Syntaxfehler'}}])
         @syntaxflag = false
       end
       return {:type => :error, :message => line}

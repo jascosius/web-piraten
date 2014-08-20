@@ -36,7 +36,7 @@ class ErlangPreprocessor < BasePreprocessor
     if type == 'compile'
       if @compileflag
         @compileflag = false
-        send.call([{:exit => {:succsessful => false, :message => 'Syntaxfehler'}}])
+        send.call([{:exit => {:successful => false, :message => 'Syntaxfehler'}}])
       end
       postprocess_error_compile(line)
     elsif type == 'ok' and @compileflag
