@@ -27,14 +27,14 @@ module Communication
             end
             new_packet[:id] = packet[:id]
             puts new_packet
-            WebsocketRails[:simulation].trigger(:step, new_packet)
+            send_message :step, new_packet
             packet[:operations].slice!(0)
           end
         end
         #remove till here to send the whole packet without splitting
 
         puts packet
-        WebsocketRails[:simulation].trigger(:step, packet)
+        send_message :step, packet
       end
     end
     packet.clear

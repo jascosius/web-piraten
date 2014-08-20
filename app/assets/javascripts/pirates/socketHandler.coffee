@@ -56,17 +56,8 @@ class @PacketHandler
       @currentId = id
     @packetQueue.push packet
 
-  onSubscribe = (event) =>
-    console.log "Subscribed to simulation channel"
-
-  onSubscribeFail = (event) =>
-    Console.logError "Fehler bei der Kommunikation, bitte lade die Seite neu!"
-    console.log event
-
-
   @initialize = () ->
-    @channel = webSocket.subscribe 'simulation', onSubscribe, onSubscribeFail
-    @channel.bind 'step', addToQueue
+    webSocket.bind 'step', addToQueue
     @lifeTime = 0
     @packetQueue = []
     @usedIDs = []
