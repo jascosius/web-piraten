@@ -26,6 +26,7 @@ class PerformanceLogger
         file.puts entry
       end
     end
+    @log.clear
 
   end
 end
