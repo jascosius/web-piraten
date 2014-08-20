@@ -66,18 +66,18 @@ task :deploy => :environment do
     to :launch do
       queue "chmod +x #{deploy_to}/current/scripts/shutdown_server.sh"
       queue "cd #{deploy_to}/current/scripts/ && ./shutdown_server.sh"
-      queue "cd #{deploy_to}/current/ && /home/captain/bin/bundle exec thin start -d -e production -p 3000"
+      queue "cd #{deploy_to}/current/ && PERFORMANCE_TEST=true /home/captain/bin/bundle exec thin start -d -e production -p 3000"
     end
   end
 end
 
 task :restart do
   queue "cd #{deploy_to}/current/scripts/ && ./shutdown_server.sh"
-  queue "cd #{deploy_to}/current/ && /home/captain/bin/bundle exec thin start -d -e production -p 3000"
+  queue "cd #{deploy_to}/current/ && PERFORMANCE_TEST=true /home/captain/bin/bundle exec thin start -d -e production -p 3000"
 end
 
 task :start do
-  queue "cd #{deploy_to}/current/ && /home/captain/bin/bundle exec thin start -d -e production -p 3000"
+  queue "cd #{deploy_to}/current/ && PERFORMANCE_TEST=true /home/captain/bin/bundle exec thin start -d -e production -p 3000"
 end
 
 task :stop do
