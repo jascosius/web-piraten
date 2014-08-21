@@ -1,4 +1,4 @@
-if Rails.env.development?
+if Rails.env.development? and !PERFORMANCE_TEST
   Thread.start do
     puts 'Started virtual machine for simulation (development only)'
     # blocking the thread

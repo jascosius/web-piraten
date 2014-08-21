@@ -11,7 +11,7 @@ module ControlSimulation
       print!(packet, :log, 'Ausführung beendet!') #add endmessage
     end
     send_packet(packet)
-    PERFORMANCE_LOGGER.track connection.id, :first_to_last, Time.now - connection_store[:first_packet]
+    PERFORMANCE_LOGGER.track connection.id, :first_to_last, Time.now - connection_store[:incoming]
     connection_store[:is_simulation_done] = true
   end
 
