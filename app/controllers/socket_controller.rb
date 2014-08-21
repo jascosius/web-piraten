@@ -23,7 +23,7 @@ class SocketController < WebsocketRails::BaseController
   # test events for the remote control buttons
 
   def receive_code
-    # receive_start = Time.now # performance
+    connection_store[:incoming] = Time.now # performance
 
     tracing_vars = message[:vars]
     language = message[:language].downcase
