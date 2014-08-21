@@ -14,24 +14,22 @@ module InitializeCommunication
 
   def start_simulation(code, tracing_vars)
 
-    Thread.start do
-      start_simulation = Time.now # Performance
+    #start_simulation = Time.now # Performance
 
-      set_id
-      read_json
+    set_id
+    read_json
 
-      packet = {}
+    packet = {}
 
-      connection_store[:is_simulation_done] = false
+    connection_store[:is_simulation_done] = false
 
-      initialize_timeout(Thread.current, packet)
+    initialize_timeout(Thread.current, packet)
 
-      vm = initialize_vm(code, tracing_vars, packet)
+    vm = initialize_vm(code, tracing_vars, packet)
 
-      communicate_with_vm(vm, packet, tracing_vars)
+    communicate_with_vm(vm, packet, tracing_vars)
 
-      PERFORMANCE_LOGGER.track(connection.id, :start_simulation, Time.now - start_simulation)
-    end
+    #PERFORMANCE_LOGGER.track(connection.id, :start_simulation, Time.now - start_simulation)
   end
 
   def initialize_timeout(thread, packet)
@@ -57,7 +55,7 @@ module InitializeCommunication
       exit_simulation!(packet, 'Ein interner Fehler ist aufgetreten.')
       send_packet(packet)
     else
-      command = commands_for_vm(code,tracing_vars).to_json
+      command = commands_for_vm(code, tracing_vars).to_json
 
       vm.puts command
 

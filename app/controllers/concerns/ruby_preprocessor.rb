@@ -243,12 +243,10 @@ class RubyPreprocessor < BasePreprocessor
     if single_q && !double_q
       if s =~ /^(?:[^']?(?:\\')?)*[^\\]?'\s*(?:;|\+|<<)/
         single_q = false
-        if s =~ /"(?:[^"]?(?:\\")?)*$/
+        if s =~ /^(?:[^']|(?:\\'))*'(?:[^"']?|"(?:[^"]|(?:\\"))*"|'(?:[^']|(?:\\'))*')*"(?:[^"]|(?:\\"))*$/
           double_q = true
-        elsif s =~ /(?:;\s*(?:\w*[!\?]*\s*=|print|puts)|\+|<<)\s*'(?:[^']?(?:\\')?)*$/
+        elsif s =~ /^(?:[^']|(?:\\'))*'(?:[^"']?|"(?:[^"]|(?:\\"))*"|'(?:[^']|(?:\\'))*')*'(?:[^']|(?:\\'))*$/
           single_q = true
-        elsif s =~ /^(?:[^']?(?:\\')?)*'\s*;(?:#.*)?/
-          dont_skip_line = true
         else
           dont_skip_line = true
         end
@@ -258,25 +256,23 @@ class RubyPreprocessor < BasePreprocessor
       end
     elsif double_q && !single_q
       if s =~ /^(?:[^"]?(?:\\")?)*[^\\]?"\s*(?:;|\+|<<)/
-        single_q = false
-        if s =~ /'(?:[^']?(?:\\')?)*$/
+        double_q = false
+        if s =~ /^(?:[^"]|(?:\\"))*"(?:[^"']?|"(?:[^"]|(?:\\"))*"|'(?:[^']|(?:\\'))*')*"(?:[^"]|(?:\\"))*$/
           double_q = true
-        elsif s =~ /(?:;\s*(?:\w*[!\?]*\s*=|print|puts)|\+|<<)\s*"(?:[^"]?(?:\\")?)*$/
+        elsif s =~ /^(?:[^"]|(?:\\"))*"(?:[^"']?|"(?:[^"]|(?:\\"))*"|'(?:[^']|(?:\\'))*')*'(?:[^']|(?:\\'))*$/
           single_q = true
-        elsif s =~ /^(?:[^"]?(?:\\")?)*"\s*;(?:#.*)?/
-          dont_skip_line = true
         else
           dont_skip_line = true
         end
       elsif s=~ /^(?:[^"]*(?:\\")?)*"\s*(?:#.*)?/
-        single_q = false
+        double_q = false
         dont_skip_line = true
       end
-    elsif s =~ /;?\s*(?:\w*[!\?]*\s*=|print|puts)\s*"(?:[^"]*(?:\\")?)*$/
+    elsif s =~ /^(?:[^"']?|"(?:[^"]|(?:\\"))*"|'(?:[^']|(?:\\'))*')*"(?:[^"]|(?:\\"))*$/
       # checks for start of multilinestring with double quotes
       double_q = true
       dont_skip_line = false
-    elsif s =~ /;?\s*(?:\w*[!\?]*\s*=|print|puts)\s*'(?:[^']*(?:\\')?)*$/
+    elsif s =~ /^(?:[^"']?|"(?:[^"]|(?:\\"))*"|'(?:[^']|(?:\\'))*')*'(?:[^']|(?:\\'))*$/
       # checks for start of multilinestring with single quotes
       single_q = true
       dont_skip_line = false
