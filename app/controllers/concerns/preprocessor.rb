@@ -2,6 +2,8 @@
 module Preprocessor
   extend ActiveSupport::Concern
 
+  include CommandsForVm
+
   require 'ruby_preprocessor'
   require 'java_preprocessor'
 
@@ -16,52 +18,42 @@ module Preprocessor
   # checking if there are any variables given the user wants to trace.
   # Default set ist no debug mode and Ruby. The method then commits the code to the
   # specified preprocessor and afterwards returns the modified code.
-  def preprocess_code(msg, language='ruby', tracing_vars=[])
+  def initialize_preprocessor(language)
     case language
       when 'ruby'
         @lang = RubyPreprocessor.new('Ruby')
-        @code = @lang.process_code(msg, tracing_vars)
       when 'java'
         @lang = JavaPreprocessor.new('Java')
-        @code = @lang.process_code(msg, tracing_vars)
       when 'erlang'
         @lang = ErlangPreprocessor.new('Erlang')
-        @code = @lang.process_code(msg, tracing_vars)
       else
         $stderr.puts 'Something went terribly wrong!'
     end
   end
 
-  def postprocess_error(line,code)
-    @lang.postprocess_error(line,code)
+  def commands_for_vm(code, tracing_vars)
+    proof_commands(@lang.commands_for_vm(code, tracing_vars))
   end
 
-  def postprocess_error_compile(line,code)
-    @lang.postprocess_error_compile(line,code)
+  def postprocess_print(send,type,line)
+    result = @lang.postprocess_print(send,type,line)
+    unless result.is_a?(Hash)
+      $stderr.puts 'The result of \'postprocess_print/3\' must be a hash with key \':type\' (value one of :log, :warning, :error) and key \':message\'.'
+      return
+    end
+    unless result[:type]
+      $stderr.puts 'The result of \'postprocess_print/3\' must be a hash with key \':type\' (value one of :log, :warning, :error, :no) and key \':message\'.'
+      return
+    end
+    unless [:log, :warning, :error, :no].include?(result[:type])
+      $stderr.puts 'The value of \':type\' must be one of :log, :warning, :error, :no.'
+      return
+    end
+    result
   end
 
   def line_first
     @lang.line_first
-  end
-
-  def preprocess_filename
-    @lang.filename
-  end
-
-  def preprocess_compile
-    @lang.compile
-  end
-
-  def preprocess_execute
-    @lang.execute
-  end
-
-  def preprocess_compile_error
-    @lang.compile_error
-  end
-
-  def preprocess_execute_error
-    @lang.execute_error
   end
 
 end

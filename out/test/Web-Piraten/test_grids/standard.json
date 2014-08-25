@@ -1,0 +1,13 @@
+{
+    "width": 21,
+    "height": 10,
+    "size": 32,
+    "objects": [
+        {"name": "buoy", "x": 5, "y":5},
+        {"name": "monster", "x": 6, "y":5},
+        {"name": "treasure", "x": 7, "y":4},
+        {"name": "buoy", "x": 7, "y":5},
+        {"name": "wave", "x": 7, "y":6}
+    ],
+    "ship": {"name": "ship", "x": 2, "y":3, "rotation": 0}
+}

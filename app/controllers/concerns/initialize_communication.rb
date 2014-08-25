@@ -14,19 +14,22 @@ module InitializeCommunication
 
   def start_simulation(code, tracing_vars)
 
-    Thread.start do
+    #start_simulation = Time.now # Performance
 
-      set_id
-      read_json
+    set_id
+    read_json
 
-      packet = {}
+    packet = {}
 
-      connection_store[:is_simulation_done] = false
-      initialize_timeout(Thread.current, packet)
-      vm = initialize_vm(code, packet)
-      communicate_with_vm(vm, packet, code, tracing_vars)
+    connection_store[:is_simulation_done] = false
 
-    end
+    initialize_timeout(Thread.current, packet)
+
+    vm = initialize_vm(code, tracing_vars, packet)
+
+    communicate_with_vm(vm, packet, tracing_vars)
+
+    #PERFORMANCE_LOGGER.track(connection.id, :start_simulation, Time.now - start_simulation)
   end
 
   def initialize_timeout(thread, packet)
@@ -42,7 +45,7 @@ module InitializeCommunication
     end
   end
 
-  def initialize_vm(code, packet)
+  def initialize_vm(code, tracing_vars, packet)
 
     begin
       #connect to TCPServer to execute the programm
@@ -52,16 +55,9 @@ module InitializeCommunication
       exit_simulation!(packet, 'Ein interner Fehler ist aufgetreten.')
       send_packet(packet)
     else
+      command = commands_for_vm(code, tracing_vars).to_json
 
-      #send commands to the server
-      vm.puts preprocess_filename
-      vm.puts preprocess_compile
-      vm.puts preprocess_execute
-      vm.puts preprocess_compile_error
-      vm.puts preprocess_execute_error
-
-      #send programmcode to the server
-      vm.puts code
+      vm.puts command
 
       vm
     end

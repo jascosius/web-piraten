@@ -1,25 +1,22 @@
 # -*- encoding : utf-8 -*-
 class RubyPreprocessor < BasePreprocessor
 
-  attr :filename
-  attr :compile
-  attr :execute
-  attr :compile_error
-  attr :execute_error
-
   attr :line_first
 
   def initialize(attribut)
     super(attribut)
-    @filename = "#{$prefix}_code.rb"
-    @compile = ''
-    @execute = "ruby $PATH$/#{$prefix}_code.rb" #$PATH$ will be replaced
-    @compile_error = ''
-    @execute_error = ''
     @operationlist = []
     @end_break = ''
     @beg_break = ''
     @line_first = true
+    @filename = "#{$prefix}_code.rb"
+    @syntaxflag = true
+  end
+
+  def commands_for_vm(code, tracing_vars)
+    @code = process_code(code, tracing_vars)
+    [{:write_file => {:filename => @filename, :content => code}},
+     {:execute => {:command => "ruby -c #{@filename}", :stdout => 'checksuccess', :stderr => 'checkerror'}}]
   end
 
   # Method that processes the given code and includes the debug information
@@ -37,10 +34,7 @@ class RubyPreprocessor < BasePreprocessor
     bools[:string_at_beginning] = false
     if code_msg =~ regex_verify_case_statement
       codes = case_block_processsing(code_msg, vars, i, '', bools)
-    elsif code_msg =~ /(?:'(?:[^']?(?:\\')?)*(?:\n|\r|\r\n)(?:[^']?(?:\\')?)*'|"(?:[^"]?(?:\\")?)*(?:\n|\r|\r\n)(?:[^"]?(?:\\")?)*")/
-      # Regular expression that verifies the existence of a multiline string in
-      # the code.
-      #codes = multiline_processing(code_msg, vars, i, '')
+    elsif code_msg =~ regex_verify_multiline_string
       code_msg.each_line do |s|
         codes += insert_line_number(i, bools[:dont_skip_line])
         bools = multiline_processing(s, bools)
@@ -250,11 +244,11 @@ class RubyPreprocessor < BasePreprocessor
     double_q = booleans[:double_q]
     dont_skip_line = booleans[:dont_skip_line]
     if single_q && !double_q
-      if s =~ /^(?:[^']*(?:\\')?)*[^\\]?'\s*(?:;|\+|<<)/
+      if s =~ /^(?:[^']?(?:\\')?)*[^\\]?'\s*(?:;|\+|<<)/
         single_q = false
-        if s =~ /"(?:[^"]*(?:\\")?)*$/
+        if s =~ /^(?:[^']|(?:\\'))*'(?:[^"']?|"(?:[^"]|(?:\\"))*"|'(?:[^']|(?:\\'))*')*"(?:[^"]|(?:\\"))*$/
           double_q = true
-        elsif s =~ /'(?:[^']*(?:\\')?)*$/
+        elsif s =~ /^(?:[^']|(?:\\'))*'(?:[^"']?|"(?:[^"]|(?:\\"))*"|'(?:[^']|(?:\\'))*')*'(?:[^']|(?:\\'))*$/
           single_q = true
         else
           dont_skip_line = true
@@ -264,23 +258,25 @@ class RubyPreprocessor < BasePreprocessor
         dont_skip_line = true
       end
     elsif double_q && !single_q
-      if s=~ /^(?:[^"]*(?:\\")?)*[^\\]?"\s*(?:;|\+|<<)/
+      if s =~ /^(?:[^"]?(?:\\")?)*[^\\]?"\s*(?:;|\+|<<)/
         double_q = false
-        if s =~ /'(?:[^']*(?:\\')?)*$/
-          single_q = true
-        elsif s =~ /"(?:[^"]*(?:\\")?)*$/
+        if s =~ /^(?:[^"]|(?:\\"))*"(?:[^"']?|"(?:[^"]|(?:\\"))*"|'(?:[^']|(?:\\'))*')*"(?:[^"]|(?:\\"))*$/
           double_q = true
+        elsif s =~ /^(?:[^"]|(?:\\"))*"(?:[^"']?|"(?:[^"]|(?:\\"))*"|'(?:[^']|(?:\\'))*')*'(?:[^']|(?:\\'))*$/
+          single_q = true
         else
-          dont_skip_line = false
+          dont_skip_line = true
         end
-      elsif s =~ /^(?:[^"]?(?:\\")?)*[^\\]?"\s*(?:#.*)?/
+      elsif s=~ /^(?:[^"]*(?:\\")?)*"\s*(?:#.*)?/
         double_q = false
         dont_skip_line = true
       end
-    elsif s =~ /;?\s*\w*[!\?]*\s*=\s*"(?:[^"]*(?:\\")?)*$/
+    elsif s =~ /^(?:[^"']?|"(?:[^"]|(?:\\"))*"|'(?:[^']|(?:\\'))*')*"(?:[^"]|(?:\\"))*$/
+      # checks for start of multilinestring with double quotes
       double_q = true
       dont_skip_line = false
-    elsif s =~ /;?\s*\w*[!\?]*\s*=\s*'(?:[^']*(?:\\')?)*$/
+    elsif s =~ /^(?:[^"']?|"(?:[^"]|(?:\\"))*"|'(?:[^']|(?:\\'))*')*'(?:[^']|(?:\\'))*$/
+      # checks for start of multilinestring with single quotes
       single_q = true
       dont_skip_line = false
     end
@@ -293,6 +289,12 @@ class RubyPreprocessor < BasePreprocessor
   # Regularexpression for validating case-blocks in the code.
   def regex_verify_case_statement
     /(?:.*;)?\s*case\s*(?:#+.*\s*)*(?:\s:*\w+\s|'(?:[^']?(?:\\')?)*'|"(?:[^"]?(?:\\")?)*")\s*(?:#+.*\s*)*\s*when\s*(?:#+.*\s*)*(?:\s:*\w+\s|'(?:[^']?(?:\\')?)*'|"(?:[^"]?(?:\\")?)*")/
+  end
+
+  # Regular expression that verifies the existence of a multiline string in
+  # the code.
+  def regex_verify_multiline_string
+    /(?:'(?:[^']?(?:\\')?)*(?:\n|\r|\r\n)(?:[^']?(?:\\')?)*'|"(?:[^"]?(?:\\")?)*(?:\n|\r|\r\n)(?:[^"]?(?:\\")?)*")/
   end
 
   # Verifies if the given line has a complete case statement from the case to
@@ -443,13 +445,28 @@ class RubyPreprocessor < BasePreprocessor
     codes
   end
 
-  def postprocess_error(line, code)
+  def postprocess_print(send, type, line)
+    if type == 'checksuccess'
+      send.call([{:write_file => {:filename => @filename, :content => @code}},{:execute => {:command => "ruby #{@filename}"}},{:exit => {}}])
+      {:type => :no}
+    elsif type == 'checkerror'
+      if @syntaxflag
+        send.call([{:exit => {:successful => false, :message => 'Syntaxfehler'}}])
+        @syntaxflag = false
+      end
+      return {:type => :error, :message => line}
+    else
+      postprocess_execute(line)
+    end
+  end
+
+  def postprocess_execute(line)
+    #send.call([{:execute => {:command => "ls"}}])
 
     #remove filepath
-    index_begin = line.index('/') #filepath starts with /
-    index_end = line.index(@filename) #filepath ends with filename
-    if index_begin and index_end and index_begin < index_end #found a filepath?
-      index_end += "#{@filename}".length #add the lenght of the filename to the end
+    index_begin = line.index(@filename) #filepath ends with filename
+    if index_begin
+      index_end = index_begin + "#{@filename}".length #add the lenght of the filename to the end
       line.slice!(index_begin...index_end) #remove the filepath
 
       #change the linenumber
@@ -457,7 +474,7 @@ class RubyPreprocessor < BasePreprocessor
       line_number = line[index_begin+1...index_line_end] #get the linenumber between the two :
       i = 1 #Set a counter
       new_line = '' #Set a result string
-      code.each_line do |l| #search in the executed code for the right line. In every line is a comment with the original linenumber
+      @code.each_line do |l| #search in the executed code for the right line. In every line is a comment with the original linenumber
         if i == line_number.to_i #find the line from the errormessage
           line_begin=l.index("#{$prefix}_(") #find the begin of the original linenumber in the comment
           line_end=l.index("#{$prefix}_)") #find the end of the original linenumber in the comment
@@ -476,11 +493,7 @@ class RubyPreprocessor < BasePreprocessor
         line = line.insert(index_begin, 'line') #add a line to the error instead of the filepath
       end
     end
-    line
-  end
-
-  def postprocess_error_compile(lang, code)
-
+    {:type => :error, :message => line}
   end
 
   # A method that stores the language- and ship-logic for Ruby that's put in the
