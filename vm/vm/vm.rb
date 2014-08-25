@@ -5,7 +5,8 @@ require 'fileutils'
 require 'json'
 require 'thread'
 
-WHITELIST_IPS = [''] #ips that can connect to the vm
+#ips that can connect to the vm
+WHITELIST_IPS = ['134.245.252.93'] #chevalblanc
 
 PREFIX = 'CkyUHZVL3q' #have to be the same as in the socket_controller
 TIMEOUT = 20 #have to be the same as in the socket_controller
