@@ -331,14 +331,15 @@ class RubyPreprocessor < BasePreprocessor
   # Adds the line of the user's code and a commment with the linenumber, doesn't add
   # a comment if it's processing a multiline string.
   def add_user_codeline(s, i, bools)
-    @comment = true
+    @comment = false
     code = s.chomp
-    puts bools[:dont_skip_line]
+    #comments?
     if s =~ /#/
       puts 'hier ist ein Kommentar: ' + s
       @comment = s.index('#')
       s = s[0..@comment]
     end
+    #open functions
     if s=~ /\bdef\b/ || s=~/\bclass\b/ || s=~/\bmodule\b/ || s=~/\bEND\b/ || s=~/\bBEGIN\b/ || s=~/\bbegin\b/ #def class
       @operationlist.unshift(:defClass)
       @end_break = @end_break + '; break_point(:down)'
@@ -348,21 +349,30 @@ class RubyPreprocessor < BasePreprocessor
     elsif s=~ /\bdo\b/   #do when no [while, until, if, case] exist because while [expr] [do]...
       @operationlist.unshift(:doWhileIf)
       @beg_break = 'break_point(:down); ' + @beg_break
-    elsif s=~ /\breturn\b/ #end
-      code = 'break_point(:up); ' + code
-    elsif s=~ /\bend\b/ #end
-      op = @operationlist.shift
-      if op == :defClass
-        @beg_break = 'break_point(:up); ' + @beg_break
-      else
-        @end_break = @end_break + '; break_point(:up)'
+    end
+    #closing functions
+    puts 'first'
+    if !@operationlist.empty?
+      puts 'strike'
+      if s=~ /\breturn\b/ #end
+        @beg_break = return_break(@beg_break)
+        puts 'here'
+        puts @beg_break
+      elsif s=~ /\bend\b/ #end
+        op = @operationlist.shift
+        if op == :defClass
+          @beg_break = 'break_point(:up); ' + @beg_break
+        else
+          @end_break = @end_break + '; break_point(:up)'
+        end
       end
     end
-    if @comment == true
+    #add code
+    if @comment == false && bools[:dont_skip_line]
       code = @beg_break + code + @end_break + " # #{$prefix}_(#{i}#{$prefix}_)\n"
-    else
+    elsif @comment != false
       code.insert(@comment, @end_break)
-      code = @beg_break + code  + " # #{$prefix}_(#{i}#{$prefix}_)\n"
+      code = @beg_break + code + " # #{$prefix}_(#{i}#{$prefix}_)\n"
     end
 
     @beg_break = ''
@@ -404,7 +414,20 @@ class RubyPreprocessor < BasePreprocessor
       end
     end
 =end
+  end
 
+  def return_break(break_up)
+    operationlist = Array.new(@operationlist)
+    op = operationlist.shift
+    loop do
+      @beg_break = 'break_point(:up); ' + @beg_break
+      puts 'return'
+      if operationlist.empty? ||  op == :defClass
+        break
+      end
+      op = operationlist.shift
+    end
+    return @beg_break
   end
 
   # Inserts the debug information for tracing the variables during simulation.
