@@ -12,12 +12,12 @@ end
 
 def exit_simulation!(line='')
   @packet.send_packet
-  @packet.add_operation('exit')
   if line != ''
     print!(:error, line) #add errormessages
   else
     print!(:log, 'Ausführung beendet!') #add endmessage
   end
+  @packet.add_operation('exit')
   connection_store[:is_simulation_done] = true
 end
 
