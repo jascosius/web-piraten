@@ -18,7 +18,6 @@ def exit_simulation!(line='')
   else
     print!(:log, 'Ausführung beendet!') #add endmessage
   end
-  @packet.send_packet
   connection_store[:is_simulation_done] = true
 end
 
