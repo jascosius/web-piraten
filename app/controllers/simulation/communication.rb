@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 def set_id
   connection_store[:id] ||= 0
   connection_store[:id] += 1

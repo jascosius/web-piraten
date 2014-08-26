@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 def proof_commands(array)
   error = ' Look at \'commands_for_vm.rb\' to see defined functions.'
 

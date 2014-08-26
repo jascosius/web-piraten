@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require 'languages/language'
 require 'preprocessor/ruby_preprocessor'
 require 'preprocessor/java_preprocessor'

@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class PacketHandler
 
   def initialize(id, send_message)

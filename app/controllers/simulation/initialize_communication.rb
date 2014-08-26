@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 if Rails.env.production?
   TIMEOUT = 20 #timeout time for the programm to execute
   PORT = 12340 #port to connect to the vm

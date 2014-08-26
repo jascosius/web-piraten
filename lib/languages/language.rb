@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Language
   attr_accessor :preprocessor,
                 :name,
