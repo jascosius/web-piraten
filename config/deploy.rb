@@ -66,18 +66,18 @@ task :deploy => :environment do
     to :launch do
       queue "chmod +x #{deploy_to}/current/scripts/shutdown_server.sh"
       queue "cd #{deploy_to}/current/scripts/ && ./shutdown_server.sh"
-      queue "cd #{deploy_to}/current/ && /home/captain/bin/bundle exec thin start -d -e production -p 3000"
+      queue "cd #{deploy_to}/current/ && PERFORMANCE_TEST=true /home/captain/bin/bundle exec thin start -d -e production -p 3000"
     end
   end
 end
 
 task :restart do
   queue "cd #{deploy_to}/current/scripts/ && ./shutdown_server.sh"
-  queue "cd #{deploy_to}/current/ && /home/captain/bin/bundle exec thin start -d -e production -p 3000"
+  queue "cd #{deploy_to}/current/ && PERFORMANCE_TEST=true /home/captain/bin/bundle exec thin start -d -e production -p 3000"
 end
 
 task :start do
-  queue "cd #{deploy_to}/current/ && /home/captain/bin/bundle exec thin start -d -e production -p 3000"
+  queue "cd #{deploy_to}/current/ && PERFORMANCE_TEST=true /home/captain/bin/bundle exec thin start -d -e production -p 3000"
 end
 
 task :stop do
@@ -88,15 +88,15 @@ task :kill do
   queue "pkill -9 ruby || true"
 end
 
-task :deploy_vm do
-  queue "touch #{deploy_to}/deploy"
-  queue 'echo in progress ...'
-  queue 'sleep 80'
-  queue "cd #{deploy_to}/current/scripts/ && ./update_vm.sh"
-  queue 'echo wait 60 seconds to complete'
-end
+#task :deploy_vm do
+#  queue "touch #{deploy_to}/deploy"
+#  queue 'echo in progress ...'
+#  queue 'sleep 80'
+#  queue "cd #{deploy_to}/current/scripts/ && ./update_vm.sh"
+#  queue 'echo wait 60 seconds to complete'
+#end
 
-task :deploy_vm_sh_only do
+task :deploy_vm do
   queue "cd #{deploy_to}/current/scripts/ && ./update_vm.sh"
 end
 

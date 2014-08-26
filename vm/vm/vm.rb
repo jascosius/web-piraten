@@ -5,8 +5,11 @@ require 'fileutils'
 require 'json'
 require 'thread'
 
+#ips that can connect to the vm
+WHITELIST_IPS = ['134.245.252.93'] #chevalblanc
+
 PREFIX = 'CkyUHZVL3q' #have to be the same as in the socket_controller
-TIMEOUT = 40 #have to be the same as in the socket_controller
+TIMEOUT = 20 #have to be the same as in the socket_controller
 MAX_OPS = 10000 #the maximal counter of ops to execute
 PORT = 12340 #have to be the same as in the socket_controller
 
@@ -39,7 +42,7 @@ def initialize_timeout(client)
 end
 
 #wait for incoming commands from the server
-def get_commands(client, functions,shared)
+def get_commands(client, functions)
   # Thread to handel incomming messages
 
   loop do
@@ -50,15 +53,15 @@ def get_commands(client, functions,shared)
 
     Thread.start do
       msg.each do |item|
-        search_and_execute_function(functions, item.keys[0], item.values[0], shared)
+        search_and_execute_function(functions, item.keys[0], item.values[0])
       end
     end
   end
 end
 
 
-def search_and_execute_function(functions, name, hash, shared)
-  functions[name.to_sym].call(hash, shared)
+def search_and_execute_function(functions, name, hash)
+  functions[name.to_sym].call(hash)
 end
 
 def response(msg, shared)
@@ -172,7 +175,17 @@ end
 server = TCPServer.new PORT
 loop {
   Thread.start(server.accept) do |client| #spawn new process for a new client
-    shared = { :start_time => Time.now }
+
+    #just accept connections from whitelisted_ips
+    unless DEVELOPMENT
+      unless WHITELIST_IPS.include? client.peeraddr[3]
+        puts "The IP '#{client.peeraddr[3]}' is not in the whitelist."
+        return
+      end
+    end
+
+
+    shared = {:start_time => Time.now}
 
     temp = '/codetemp'
     if DEVELOPMENT
@@ -188,13 +201,13 @@ loop {
       Dir.mkdir(dir, 0755)
 
 
-      functions = {:response => lambda { |msg, shared| response(msg, shared) },
-                   :write_file => lambda { |hash, _| write_file(hash, dir) },
-                   :execute => lambda { |hash, shared| execute(hash, client, dir, shared) },
-                   :exit => lambda { |hash, shared| exit(hash, client, shared) },
-                   :stop => lambda { |_, _| puts 'stop'; thread.kill }}
+      functions = {:response => lambda { |msg| response(msg, shared) },
+                   :write_file => lambda { |hash| write_file(hash, dir) },
+                   :execute => lambda { |hash| execute(hash, client, dir, shared) },
+                   :exit => lambda { |hash| exit(hash, client, shared) },
+                   :stop => lambda { |_| puts 'stop'; thread.kill }}
 
-      get_commands(client, functions, shared)
+      get_commands(client, functions)
     }
 
     thr.join
