@@ -1,17 +1,16 @@
 # -*- encoding : utf-8 -*-
-class ErlangPreprocessor < BasePreprocessor
+class ErlangPreprocessor
 
   attr :line_first
 
-  def initialize(attribut)
-    super(attribut)
+  def initialize(code,tracing_vars)
     @line_first = true
     @compileflag = true
+    @process_code = process_code(code, tracing_vars)
   end
 
-  def commands_for_vm(code, tracing_vars)
-    @code = process_code(code, tracing_vars)
-    [{:write_file => {:filename => 'webpiraten.erl', :content => @code}},
+  def commands_for_vm
+    [{:write_file => {:filename => 'webpiraten.erl', :content => @process_code}},
      {:execute => {:command => 'erlc -W0 webpiraten.erl', :stderr => 'compile', :stdout => 'compile', :permissions => 'read-write'}},
      {:execute => {:command => 'echo ok', :stdout => 'ok'}}]
   end
@@ -61,7 +60,7 @@ class ErlangPreprocessor < BasePreprocessor
         line_number = line[index_begin+1, index_end].to_i # extract error line number
         i = 1
         new_line_number = ''
-        @code.each_line do |lin|
+        @process_code.each_line do |lin|
           if i == line_number # find the line from the error message
             line_begin = lin.index("#{$prefix}_(") # find the begin of the original line number in comment
             line_end = lin.index("#{$prefix}_)") # find the end of the original line number in comment
@@ -100,7 +99,7 @@ class ErlangPreprocessor < BasePreprocessor
         line_number = line[index_begin+1, index_end].to_i # extract error line number
         i = 1
         new_line_number = ''
-        @code.each_line do |lin|
+        @process_code.each_line do |lin|
           if i == line_number # find the line from the error message
             line_begin = lin.index("#{$prefix}_(") # find the begin of the original line number in comment
             line_end = lin.index("#{$prefix}_)") # find the end of the original line number in comment
