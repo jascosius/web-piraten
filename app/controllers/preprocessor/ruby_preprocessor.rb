@@ -1,19 +1,19 @@
 # -*- encoding : utf-8 -*-
-class RubyPreprocessor < BasePreprocessor
+class RubyPreprocessor
 
   attr :line_first
 
-  def initialize(attribut)
-    super(attribut)
+  def initialize(code, tracing_vars)
     @operationlist = []
     @line_first = true
     @filename = "#{$prefix}_code.rb"
     @syntaxflag = true
+    @code = code
+    @process_code = process_code(code, tracing_vars)
   end
 
-  def commands_for_vm(code, tracing_vars)
-    @code = process_code(code, tracing_vars)
-    [{:write_file => {:filename => @filename, :content => code}},
+  def commands_for_vm
+    [{:write_file => {:filename => @filename, :content => @code}},
      {:execute => {:command => "ruby -c #{@filename}", :stdout => 'checksuccess', :stderr => 'checkerror'}}]
   end
 
@@ -364,7 +364,7 @@ class RubyPreprocessor < BasePreprocessor
 
   def postprocess_print(send, type, line)
     if type == 'checksuccess'
-      send.call([{:write_file => {:filename => @filename, :content => @code}},{:execute => {:command => "ruby #{@filename}"}},{:exit => {}}])
+      send.call([{:write_file => {:filename => @filename, :content => @process_code}},{:execute => {:command => "ruby #{@filename}"}},{:exit => {}}])
       {:type => :no}
     elsif type == 'checkerror'
       if @syntaxflag
@@ -391,7 +391,7 @@ class RubyPreprocessor < BasePreprocessor
       line_number = line[index_begin+1...index_line_end] #get the linenumber between the two :
       i = 1 #Set a counter
       new_line = '' #Set a result string
-      @code.each_line do |l| #search in the executed code for the right line. In every line is a comment with the original linenumber
+      @process_code.each_line do |l| #search in the executed code for the right line. In every line is a comment with the original linenumber
         if i == line_number.to_i #find the line from the errormessage
           line_begin=l.index("#{$prefix}_(") #find the begin of the original linenumber in the comment
           line_end=l.index("#{$prefix}_)") #find the end of the original linenumber in the comment

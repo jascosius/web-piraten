@@ -1,12 +1,16 @@
 # -*- encoding : utf-8 -*-
 
 class SocketController < WebsocketRails::BaseController
-  $prefix = 'CkyUHZVL3q'
 
-  include Preprocessor
-  include InitializeCommunication
-  include Communication
-  include ControlSimulation
+  require 'tools/preprocessor'
+  require 'simulation/initialize_communication'
+  require 'simulation/communication'
+  require 'simulation/control_simulation'
+  require 'simulation/grid'
+  require 'simulation/ship'
+  require 'simulation/packet_handler'
+
+  $prefix = 'CkyUHZVL3q'
 
   def initialize_session
     puts 'initializing session with client'
@@ -39,9 +43,9 @@ class SocketController < WebsocketRails::BaseController
           end
         end
 
-        initialize_preprocessor(language)
+        @preprocessor = Preprocessor.new(language,code,tracing_vars)
 
-        start_simulation(code, tracing_vars)
+        start_simulation(tracing_vars)
 
       end
 

@@ -165,7 +165,7 @@ def handle_stderr(client, stderr, tag, shared)
         #workarrout to print errormessages at last
         shared[:err] ||= ''
         shared[:err] = shared[:err] + "\n#{PREFIX}_print_#{tag}_#{line}"
-        #puts line = "#{PREFIX}_print_#{tag}_#{line}" #to do here without the workarround
+        #client.puts line = "#{PREFIX}_print_#{tag}_#{line}" #to do here without the workarround
       end
     end
   end

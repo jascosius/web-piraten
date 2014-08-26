@@ -19,20 +19,16 @@ class Ship
       else
         @rotation = (@rotation + 2) % 4
     end
-    packet[:operations] ||= []
-    packet[:operations] << {:name => 'turn', :return => @rotation}
+    packet.add_operation('turn', @rotation)
   end
 
   def put!(packet, elem) # event: ship.put
     if @grid.grid[[@x_position, @y_position]] == :nothing
       @grid.grid[[@x_position, @y_position]] = elem
-      packet[:operations] ||= []
-      packet[:operations] << {:name => 'put', :return => {:name => elem, :x => @x_position, :y => @y_position}}
+      packet.add_operation('put', {:name => elem, :x => @x_position, :y => @y_position})
     else
-      packet[:operations] ||= []
-      packet[:operations] << {:name => 'put'}
-      packet[:messages] ||= []
-      packet[:messages] << {:type => 'warning', :message => 'Es ist kein Platz für ein weiteres Element'}
+      packet.add_message('warning', 'Es ist kein Platz für ein weiteres Element.')
+      packet.add_operation('put')
 
     end
   end
@@ -41,13 +37,10 @@ class Ship
     elem = @grid.grid[[@x_position, @y_position]]
     if elem == :buoy || elem == :treasure
       @grid.grid[[@x_position, @y_position]] = :nothing
-      packet[:operations] ||= []
-      packet[:operations] << {:name => 'take', :return => {:name => elem, :x => @x_position, :y => @y_position}}
+      packet.add_operation('take', {:name => elem, :x => @x_position, :y => @y_position})
     else
-      packet[:operations] ||= []
-      packet[:operations] << {:name => 'take'}
-      packet[:messages] ||= []
-      packet[:messages] << {:type => 'warning', :message => 'Kein Objekt zum aufnehmen'}
+      packet.add_message('warning', 'Kein Objekt zum Aufnehmen.')
+      packet.add_operation('take')
     end
   end
 
@@ -89,37 +82,29 @@ class Ship
     else
       look_obj = :border
     end
-    packet[:operations] ||= []
-    packet[:operations] << {:name => 'look', :return => {:x => coord[0], :y => coord[1]}}
+    packet.add_operation('look',:return => {:x => coord[0], :y => coord[1]})
     look_obj
   end
 
   def move!(packet) # event: ship.move
+    puts 'move'
     coord = get_next_position
     if coords_in_grid(coord)
       elem = @grid.grid[[coord[0], coord[1]]]
       case elem
         when :wave
-          packet[:operations] ||= []
-          packet[:operations] << {:name => 'move'}
-          packet[:messages] ||= []
-          packet[:messages] << {:type => 'warning', :message => 'Du wolltest in unruhige Gewässer fahren'}
+          packet.add_message('warning','Du wolltest in unruhige Gewässer fahren.')
+          packet.add_operation('move')
         when :monster
-          packet[:operations] ||= []
-          packet[:operations] << {:name => 'exit'}
-          packet[:messages] ||= []
-          packet[:messages] << {:type => 'error', :message => 'Du bist auf einen Kraken gefahren'}
+          packet.add_message('error','Du wolltest auf einen Kraken fahren.')
+          packet.add_operation('exit')
         else
           @x_position, @y_position = coord
-          packet[:operations] ||= []
-          packet[:operations] << {:name => 'move', :return => {:x => coord[0], :y => coord[1]}}
+          packet.add_operation('move',{:x => coord[0], :y => coord[1]})
       end
-
     else
-      packet[:operations] ||= []
-      packet[:operations] << {:name => 'move'}
-      packet[:messages] ||= []
-      packet[:messages] << {:type => 'warning', :message => 'Du bist an das Ende der Welt gestoßen'}
+      packet.add_message('warning','Du bist an das Ende der Welt gestoßen.')
+      packet.add_operation('move')
     end
   end
 

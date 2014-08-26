@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require 'mina/bundler'
 require 'mina/rails'
 require 'mina/git'

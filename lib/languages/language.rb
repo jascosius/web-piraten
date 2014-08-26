@@ -1,5 +1,7 @@
+# -*- encoding : utf-8 -*-
 class Language
-  attr_accessor :name,
+  attr_accessor :preprocessor,
+                :name,
                 :script_assets,
                 :gui_options,
                 :default_code,
@@ -8,6 +10,7 @@ class Language
 
 
   def initialize(options)
+    @preprocessor = options[:preprocessor]
     @name = options[:name]
     @script_assets = options[:script_assets] || []
     @gui_options = options[:gui_options] || {}

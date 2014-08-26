@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 if ENV['PERFORMANCE_TEST']
   PERFORMANCE_TEST = true
   puts 'PERFORMANCE_TEST environment variable is set, activating method profiling'
