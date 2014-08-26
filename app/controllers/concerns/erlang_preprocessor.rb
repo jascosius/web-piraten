@@ -18,10 +18,34 @@ class ErlangPreprocessor < BasePreprocessor
 
   # Processes the given code...
   def process_code(code_msg, vars)
+    bools = {:dont_skip_line => true}
+    if code_msg =~ regex_verify_multiline_string
+      bools[:multiline] = true
+      bools[:single_q] = false
+      bools[:double_q] = false
+    end
     codes = ''
     i = 1
     code_msg.each_line do |line|
       ind_arrow = line.index('->')
+      res = []
+      ind_str = line.scan('->')
+      ind_str_arr = line.scan(/('(?:[^']|(?:\\'))*->(?:[^']|(?:\\'))*'|"(?:[^"]|(?:\\"))*->(?:[^"]|(?:\\"))*")/) do
+        res << Regexp.last_match.offset(0).first
+        puts Regexp.last_match.offset(0)
+      end
+      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      puts ind_str
+      puts "-------------------------------------"
+      puts ind_str_arr
+      puts "-------------------------------------"
+      puts res
+      res.each do |x|
+        puts line[x..x+1]
+      end
+      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
       if ind_arrow
         ind_arrow += 2
         line = line.insert(ind_arrow, " a#{$prefix}_line(#{i}),")
@@ -32,11 +56,17 @@ class ErlangPreprocessor < BasePreprocessor
     insert_start_logic + codes
   end
 
+  # Regular expression that verifies the existence of a multiline string in
+  # the code.
+  def regex_verify_multiline_string
+    /(?:'(?:[^']|\\')*(?:\n|\r|\r\n)(?:[^']|\\'?)*'|"(?:[^"]|\\")*(?:\n|\r|\r\n)(?:[^"]|\\")*")/
+  end
+
   def postprocess_print(send, type, line)
     if type == 'compile'
       if @compileflag
         @compileflag = false
-        send.call([{:exit => {:successful => false, :message => 'Syntaxfehler'}}])
+        send.call([{:exit => {:succsessful => false, :message => 'Syntaxfehler'}}])
       end
       postprocess_error_compile(line)
     elsif type == 'ok' and @compileflag
@@ -198,31 +228,39 @@ class ErlangPreprocessor < BasePreprocessor
                                            % standard error handling for all other exceptions
               end, halt().
 
-    aCkyUHZVL3q_line(I) -> io:fwrite("~nCkyUHZVL3q_line_~p~n", [I]).
+    a#{$prefix}_line(I) -> io:fwrite("~n#{$prefix}_line_~p~n", [I]).
 
-    move()  -> io:fwrite("~nCkyUHZVL3q_move~n").
+    a#{$prefix}_break(F) -> a#{$prefix}_break_point(down),
+                            X = F(),
+                            a#{$prefix}_break_point(up),
+                            X.
 
-    take()  -> io:fwrite("~nCkyUHZVL3q_take~n").
+    a#{$prefix}_break_point(up)   -> io:fwrite("~n#{$prefix}_break_up~n");
+    a#{$prefix}_break_point(down) -> io:fwrite("~n#{$prefix}_break_down~n").
+
+    move()  -> io:fwrite("~n#{$prefix}_move~n").
+
+    take()  -> io:fwrite("~n#{$prefix}_take~n").
 
     puts()         -> puts(buoy).
-    puts(buoy)     -> io:fwrite("~nCkyUHZVL3q_put_buoy");
-    puts(treasure) -> io:fwrite("CkyUHZVL3q_put_treasure").
+    puts(buoy)     -> io:fwrite("~n#{$prefix}_put_buoy");
+    puts(treasure) -> io:fwrite("~n#{$prefix}_put_treasure").
 
     turn()      -> turn(back).
-    turn(back)  -> io:fwrite("~nCkyUHZVL3q_turn_back~n");
-    turn(right) -> io:fwrite("~nCkyUHZVL3q_turn_right~n");
-    turn(left)  -> io:fwrite("~nCkyUHZVL3q_turn_left~n").
+    turn(back)  -> io:fwrite("~n#{$prefix}_turn_back~n");
+    turn(right) -> io:fwrite("~n#{$prefix}_turn_right~n");
+    turn(left)  -> io:fwrite("~n#{$prefix}_turn_left~n").
 
     look()      -> look(here).
-    look(here)  -> io:fwrite("~nCkyUHZVL3q_?_look_here~n"),
+    look(here)  -> io:fwrite("~n#{$prefix}_?_look_here~n"),
                    lists:nth(1,element(2,io:fread("", "~a")));
-    look(front) -> io:fwrite("~nCkyUHZVL3q_?_look_front~n"),
+    look(front) -> io:fwrite("~n#{$prefix}_?_look_front~n"),
                    lists:nth(1,element(2,io:fread("", "~a")));
-    look(left)  -> io:fwrite("~nCkyUHZVL3q_?_look_left~n"),
+    look(left)  -> io:fwrite("~n#{$prefix}_?_look_left~n"),
                    lists:nth(1,element(2,io:fread("", "~a")));
-    look(right) -> io:fwrite("~nCkyUHZVL3q_?_look_right~n"),
+    look(right) -> io:fwrite("~n#{$prefix}_?_look_right~n"),
                    lists:nth(1,element(2,io:fread("", "~a")));
-    look(back)  -> io:fwrite("~nCkyUHZVL3q_?_look_back~n"),
+    look(back)  -> io:fwrite("~n#{$prefix}_?_look_back~n"),
                    lists:nth(1,element(2,io:fread("", "~a"))).
 
 ]
