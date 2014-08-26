@@ -16,51 +16,125 @@ class ErlangPreprocessor < BasePreprocessor
      {:execute => {:command => 'echo ok', :stdout => 'ok'}}]
   end
 
-  # Processes the given code...
-  def process_code(code_msg, vars)
-    bools = {:dont_skip_line => true}
-    if code_msg =~ regex_verify_multiline_string
-      bools[:multiline] = true
-      bools[:single_q] = false
-      bools[:double_q] = false
-    end
-    codes = ''
-    i = 1
-    code_msg.each_line do |line|
-      ind_arrow = line.index('->')
-      res = []
-      ind_str = line.scan('->')
-      ind_str_arr = line.scan(/('(?:[^']|(?:\\'))*->(?:[^']|(?:\\'))*'|"(?:[^"]|(?:\\"))*->(?:[^"]|(?:\\"))*")/) do
-        res << Regexp.last_match.offset(0).first
-        puts Regexp.last_match.offset(0)
-      end
-      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-      puts ind_str
-      puts "-------------------------------------"
-      puts ind_str_arr
-      puts "-------------------------------------"
-      puts res
-      res.each do |x|
-        puts line[x..x+1]
-      end
-      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-      puts "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-      if ind_arrow
-        ind_arrow += 2
-        line = line.insert(ind_arrow, " a#{$prefix}_line(#{i}),")
-      end
-      codes += line.chomp + "  % #{$prefix}_(#{i}#{$prefix}_)\n"
-      i += 1
-    end
-    insert_start_logic + codes
+  def regex_verify_string_comment
+    /('(?:[^']|(?:\\'))*%(?:[^']|(?:\\'))*'|"(?:[^"]|(?:\\"))*%(?:[^"]|(?:\\"))*")/
   end
 
-  # Regular expression that verifies the existence of a multiline string in
-  # the code.
-  def regex_verify_multiline_string
-    /(?:'(?:[^']|\\')*(?:\n|\r|\r\n)(?:[^']|\\'?)*'|"(?:[^"]|\\")*(?:\n|\r|\r\n)(?:[^"]|\\")*")/
+  def is_not_in_string?(index, string_indexes)
+    not_in_string = true
+    string_indexes.each do |pair|
+      if index > pair[:starts] && index <= pair[:ends]
+        not_in_string = false
+      end
+    end
+    not_in_string
   end
+
+  def scan_for_index_start_n_end(code, regex)
+    res = []
+    code.scan(regex) do
+      res << {starts: Regexp.last_match.offset(0).first, ends: Regexp.last_match.offset(0).last}
+    end
+    res
+  end
+
+  def remove_comments(code_msg)
+    codes = ''
+    code_msg.each_line do |line|
+      res_c = []
+      line.scan('%') do
+        res_c << Regexp.last_match.offset(0).first
+      end
+      res_s = scan_for_index_start_n_end(line, regex_verify_string_comment)
+      if !res_c.empty? && !res_s.empty?
+        res_c.each do |res|
+          if is_not_in_string?(res, res_s)
+            line.slice!(res..-1)
+          end
+        end
+      elsif !res_c.empty?
+        line.slice!(res_c[0]..-1)
+      end
+      codes += line.chomp + "\n"
+    end
+    codes
+  end
+
+  def regex_find_strings
+    /(?:'(?:[^']|(?:\\'))*'|"(?:[^"]|(?:\\"))*")/
+  end
+
+  def regex_find_operations
+    /(?:\bmove\(|\btake\(|\blook\(|\bputs\(|\bturn\(|->|\.)/
+  end
+
+  def regex_arrow_prefix
+    Regexp.new("->line#{$prefix}")
+  end
+
+  def regex_semicolon_prefix
+    Regexp.new(";line#{$prefix}")
+  end
+
+  def regex_end_prefix
+    Regexp.new("endline#{$prefix}")
+  end
+
+  def regex_stop_prefix
+    Regexp.new("\\.line#{$prefix}")
+  end
+
+  def regex_op_prefix
+    Regexp.new("\\(line#{$prefix}")
+  end
+
+  def insert_prefix(code, operations, strings)
+    if strings.empty?
+      operations.reverse_each do |op|
+        code.insert(op[:ends], "line#{$prefix}")
+      end
+    else
+      operations.reverse_each do |op|
+        code.insert(op[:ends], "line#{$prefix}") if is_not_in_string?(op[:starts], strings)
+      end
+    end
+    code
+  end
+
+  def change_prefix_2_line_number(code)
+    new_code = ''
+    number = 1
+    first_arrow = true
+    code.each_line do |line|
+      if first_arrow
+        first_arrow = false if line.gsub!(regex_arrow_prefix, "-> a#{$prefix}_line(#{number}), a#{$prefix}_break(fun() ->")
+      else
+        line.gsub!(regex_arrow_prefix, "-> a#{$prefix}_line(#{number}), ")
+      end
+      first_arrow = true if line.gsub!(regex_stop_prefix, ' end).')
+      line.gsub!(regex_op_prefix, "(#{number}, ")
+      line.gsub!(/\(\d+,\s+\)/, "(#{number})")
+      new_code += line.chomp + "  % #{$prefix}_(#{number}#{$prefix}_)\n"
+      number += 1
+    end
+    new_code
+  end
+
+  # Processes the given code...
+  def process_code(code_msg, vars)
+    new_code = remove_comments(code_msg)
+    string_indexes = scan_for_index_start_n_end(new_code, regex_find_strings)
+    operation_indexes = scan_for_index_start_n_end(new_code, regex_find_operations)
+    if string_indexes.empty? && !operation_indexes.empty?
+      new_code = insert_prefix(new_code, operation_indexes, [])
+      new_code = change_prefix_2_line_number(new_code)
+    elsif !string_indexes.empty? && !operation_indexes.empty?
+      new_code = insert_prefix(new_code, operation_indexes, string_indexes)
+      new_code = change_prefix_2_line_number(new_code)
+    end
+    insert_start_logic + new_code
+  end
+
 
   def postprocess_print(send, type, line)
     if type == 'compile'
@@ -214,11 +288,11 @@ class ErlangPreprocessor < BasePreprocessor
                 error:{badfun, Fun}     -> Trace = erlang:get_stacktrace(),
                                            Message = lists:nth(1,Trace),
                                            io:fwrite(standard_error,
-                                            "~s:~p: error: bad function ~p~n  in function ~p:~p/~p~n",
+                                            "~s:~p: error: bad function ~p~n  in function ~p:~p~n",
                                             [element(2,lists:nth(1,element(4,lists:nth(1,Trace)))),              % File
                                              element(2,lists:nth(2,element(4,lists:nth(1,Trace)))),              % Line
                                              Fun,
-                                             element(1,Message), element(2,Message),element(3,Message)]); % Module:Function/Arity
+                                             element(1,Message), element(2,Message)]); % Module:Function/Arity
                 error:{badarity, Fun}   -> Trace = erlang:get_stacktrace(),
                                            io:fwrite(standard_error,
                                             "~s:~p: error: bad arity~n  interpreted function called with number of arguments unequal to its arity~n",
@@ -238,31 +312,42 @@ class ErlangPreprocessor < BasePreprocessor
     a#{$prefix}_break_point(up)   -> io:fwrite("~n#{$prefix}_break_up~n");
     a#{$prefix}_break_point(down) -> io:fwrite("~n#{$prefix}_break_down~n").
 
-    move()  -> io:fwrite("~n#{$prefix}_move~n").
+    move(I)  -> a#{$prefix}_line(I),
+                io:fwrite("~n#{$prefix}_move~n").
 
-    take()  -> io:fwrite("~n#{$prefix}_take~n").
+    take(I)  -> a#{$prefix}_line(I),
+                io:fwrite("~n#{$prefix}_take~n").
 
-    puts()         -> puts(buoy).
-    puts(buoy)     -> io:fwrite("~n#{$prefix}_put_buoy");
-    puts(treasure) -> io:fwrite("~n#{$prefix}_put_treasure").
+    puts(I)           -> puts(I, buoy).
+    puts(I, buoy)     -> a#{$prefix}_line(I),
+                         io:fwrite("~n#{$prefix}_put_buoy~n");
+    puts(I, treasure) -> a#{$prefix}_line(I),
+                         io:fwrite("~n#{$prefix}_put_treasure~n").
 
-    turn()      -> turn(back).
-    turn(back)  -> io:fwrite("~n#{$prefix}_turn_back~n");
-    turn(right) -> io:fwrite("~n#{$prefix}_turn_right~n");
-    turn(left)  -> io:fwrite("~n#{$prefix}_turn_left~n").
+    turn(I)        -> turn(I, back).
+    turn(I, back)  -> a#{$prefix}_line(I),
+                      io:fwrite("~n#{$prefix}_turn_back~n");
+    turn(I, right) -> a#{$prefix}_line(I),
+                      io:fwrite("~n#{$prefix}_turn_right~n");
+    turn(I, left)  -> a#{$prefix}_line(I),
+                      io:fwrite("~n#{$prefix}_turn_left~n").
 
-    look()      -> look(here).
-    look(here)  -> io:fwrite("~n#{$prefix}_?_look_here~n"),
-                   lists:nth(1,element(2,io:fread("", "~a")));
-    look(front) -> io:fwrite("~n#{$prefix}_?_look_front~n"),
-                   lists:nth(1,element(2,io:fread("", "~a")));
-    look(left)  -> io:fwrite("~n#{$prefix}_?_look_left~n"),
-                   lists:nth(1,element(2,io:fread("", "~a")));
-    look(right) -> io:fwrite("~n#{$prefix}_?_look_right~n"),
-                   lists:nth(1,element(2,io:fread("", "~a")));
-    look(back)  -> io:fwrite("~n#{$prefix}_?_look_back~n"),
-                   lists:nth(1,element(2,io:fread("", "~a"))).
-
+    look(I)        -> look(I, here).
+    look(I, here)  -> a#{$prefix}_line(I),
+                      io:fwrite("~n#{$prefix}_?_look_here~n"),
+                      lists:nth(1,element(2,io:fread("", "~a")));
+    look(I, front) -> a#{$prefix}_line(I),
+                      io:fwrite("~n#{$prefix}_?_look_front~n"),
+                      lists:nth(1,element(2,io:fread("", "~a")));
+    look(I, left)  -> a#{$prefix}_line(I),
+                      io:fwrite("~n#{$prefix}_?_look_left~n"),
+                      lists:nth(1,element(2,io:fread("", "~a")));
+    look(I, right) -> a#{$prefix}_line(I),
+                      io:fwrite("~n#{$prefix}_?_look_right~n"),
+                      lists:nth(1,element(2,io:fread("", "~a")));
+    look(I, back)  -> a#{$prefix}_line(I),
+                      io:fwrite("~n#{$prefix}_?_look_back~n"),
+                      lists:nth(1,element(2,io:fread("", "~a"))).
 ]
   end
 end
