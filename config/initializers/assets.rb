@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 # config/initializers/assets.rb
 Rails.application.config.assets.precompile << Proc.new do |path|
 if path =~ /\.(css|js)\z/

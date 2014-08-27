@@ -1,8 +1,13 @@
+# -*- encoding : utf-8 -*-
 require 'languages/language'
+require 'preprocessor/ruby/ruby_preprocessor'
+require 'preprocessor/java/java_preprocessor'
+require 'preprocessor/erlang/erlang_preprocessor'
 
 LANGUAGES = {
     # object => Language.new(name, [scrips], options, url)
     :ruby => Language.new({
+        preprocessor: RubyPreprocessor,
         name: 'Ruby',
         script_assets: ['codemirror/modes/ruby.js'],
         gui_options: {:codemirror => {:mode => 'ruby'}},
@@ -28,6 +33,7 @@ LANGUAGES = {
         file_extension: 'rb'
     }),
     :erlang => Language.new({
+        preprocessor: ErlangPreprocessor,
         name: 'Erlang',
         script_assets: ['codemirror/modes/erlang.js'],
         gui_options: {:codemirror => {:mode => 'erlang'}},
@@ -44,10 +50,11 @@ LANGUAGES = {
         file_extension: 'erl'
     }),
     :java => Language.new({
+        preprocessor: JavaPreprocessor,
         name: 'Java',
         script_assets: ['codemirror/modes/clike.js'],
-        stylesheet_assets: ['codemirror/themes/eclipse.css'],
-        gui_options: {:codemirror => {:mode => 'text/x-java', :theme => 'eclipse'}},
+        #stylesheet_assets: ['codemirror/themes/eclipse.css'],
+        gui_options: {:codemirror => {:mode => 'text/x-java'}},
         default_code: "public void start() {\n"+
         "  while(ship.look(Direction.FRONT) != Item.BORDER) {\n"+
         "    ship.move();\n"+

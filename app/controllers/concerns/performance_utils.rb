@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module PerformanceUtils
   def performance_helper(test_name, &block)
     if ENV['PERFORMANCE_TEST']

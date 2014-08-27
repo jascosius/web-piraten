@@ -1,30 +1,22 @@
 # -*- encoding : utf-8 -*-
-class JavaPreprocessor < BasePreprocessor
+class JavaPreprocessor
 
   attr :line_first
 
-  def initialize(attribut)
-    super(attribut)
+  def initialize(code, _)
     @line_first = true
+    @process_code = process_code(code)
   end
 
-  def commands_for_vm(code, tracing_vars)
-    [{:write_file => {:filename => 'Pirate.java', :content => process_code(code, tracing_vars)}},
+  def commands_for_vm
+    [{:write_file => {:filename => 'Pirate.java', :content => @process_code}},
      {:execute => {:command => 'javac -cp $LIB$/java $PATH$/Pirate.java', :permissions => 'read-write'}},
      {:execute => {:command => 'java -cp $PATH$:$LIB$/java Pirate'}},
      {:exit => {}}]
   end
 
-  def process_code(code_msg, vars)
-    i=1
-    codes = ''
-    code_msg.each_line do |s|
-      codes += "#{$prefix}_line(#{i});\n" + s.chomp + " // #{$prefix}_(#{i+1}#{$prefix}_)\n"
-      i += 1
-    end
-    codes.slice! "#{$prefix}_line(1);\n"
-
-    insert_logic + codes + insert_logic_end + "\n"
+  def process_code(code_msg)
+    insert_logic + code_msg + insert_logic_end + "\n"
   end
 
   def postprocess_print(_, _, line)
@@ -49,7 +41,6 @@ public class Pirate extends Main{
 	}
 ]
   end
-
 
 
   def insert_logic_end
