@@ -29,3 +29,7 @@ end
 def regex_op_prefix
   Regexp.new("\\(line#{$prefix}")
 end
+
+def regex_arrow_with_function
+  Regexp.new("-> a#{$prefix}_line\\(")
+end

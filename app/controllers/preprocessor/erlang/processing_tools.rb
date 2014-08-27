@@ -55,12 +55,10 @@ end
 def insert_highlighting(new_code, vars)
   string_indexes = scan_for_index_start_and_end(new_code, regex_find_strings)
   operation_indexes = scan_for_index_start_and_end(new_code, regex_find_operations)
-  puts vars.to_s
-  if vars
+  # Set the array of tracing variables to empty, if there only is
+  # the underscore, which by default is in erlang undefined.
+  vars = [] if vars.length == 1 && vars[0] == '_'
 
-  end
-
-  # if vars.empty?
   if string_indexes.empty? && !operation_indexes.empty?
     new_code = insert_prefix(new_code, operation_indexes, [])
     new_code = change_prefix_2_line_number(new_code)
@@ -68,10 +66,28 @@ def insert_highlighting(new_code, vars)
     new_code = insert_prefix(new_code, operation_indexes, string_indexes)
     new_code = change_prefix_2_line_number(new_code)
   end
-  #else
-
-  # end
-  new_code
+  if vars.empty?
+    new_code
+  else
+    regex_array = []
+    vars.each do |var|
+      regex_array << Regexp.new("\\b#{var}\\b")
+    end
+    debug_code = ''
+    new_code.each_line do |line|
+      vars.each_with_index do |variable, index|
+        if variable != '_'
+          pos_variable = line.index(regex_array[index])
+          pos_arrow = line.index(regex_arrow_with_function)
+          if pos_variable && pos_arrow && pos_variable < pos_arrow
+            line = line.insert(pos_arrow.to_i + 2, " a#{$prefix}_debug(#{index}, #{variable}),")
+          end
+        end
+      end
+      debug_code += line
+    end
+    debug_code
+  end
 end
 
 # Method takes code, an array of start- and endpoints of the pirate
