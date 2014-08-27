@@ -95,7 +95,9 @@ class Ship
           packet.add_message('warning','Du wolltest in unruhige Gewässer fahren.')
           packet.add_operation('move')
         when :monster
-          packet.add_message('error','Du wolltest auf einen Kraken fahren.')
+          packet.add_message('error','Du bist auf einen Kraken gefahren.')
+          @x_position, @y_position = coord
+          packet.add_operation('move',{:x => coord[0], :y => coord[1]})
           packet.add_operation('exit')
         else
           @x_position, @y_position = coord
