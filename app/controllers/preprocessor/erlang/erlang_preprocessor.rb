@@ -13,6 +13,11 @@ class ErlangPreprocessor
     @precompile_code = process_code_for_precompile(code)
   end
 
+  #compile without changing code first, just add logic
+  #when it fails print error message
+  #when it succeeds compile with changing code for line-highlighting and so on
+  #when this fails start in backup-mode, because it's not the users failure
+  #when this succeeds run erlang
   def commands_for_vm
     [{:write_file => {:filename => 'prewebpiraten.erl', :content => @precompile_code}},
      {:execute => {:command => 'erlc -W0 prewebpiraten.erl', :stderr => 'precompile', :stdout => 'precompile', :permissions => 'read-write'}},
@@ -123,30 +128,30 @@ class ErlangPreprocessor
 
 
   def postprocess_print(send, type, line)
-    if type == 'precompile'
+    if type == 'precompile' #an error raised in compiling without our line-logic
       if @precompileflag
         @precompileflag = false
-        send.call([{:exit => {:succsessful => false, :message => 'Syntaxfehler'}}])
+        send.call([{:exit => {:successful => false, :message => 'Syntaxfehler'}}])
       end
-      postprocess_error_compile(line)
-    elsif type == 'precompileok' and @precompileflag
+      postprocess_error_compile(line) #handle compile-errors
+    elsif type == 'precompileok' and @precompileflag #compiling without our line-logic succeeds
       send.call([{:write_file => {:filename => 'webpiraten.erl', :content => @process_code}},
                  {:execute => {:command => 'erlc -W0 webpiraten.erl', :stderr => 'compile', :stdout => 'compile', :permissions => 'read-write'}},
                  {:execute => {:command => 'echo ok', :stdout => 'ok'}}])
       {:type => :no}
-    elsif type == 'compile'
+    elsif type == 'compile' #compiling with our line logic failed, but without not => running in backup-mode
       if @compileflag
         @compileflag = false
         send.call([{:execute => {:command => 'erl -noshell -s prewebpiraten main -s init stop', :stderr => 'preerror'}}, {:exit => {}}])
         return {:type => :warning, :message => 'Start im vereinfachten Modus.'}
       end
-      {:type => :no}
-    elsif type == 'ok' and @compileflag
+      {:type => :no} #dismiss error message because it is not the users fault
+    elsif type == 'ok' and @compileflag #compiling with our line logic succeeds
       send.call([{:execute => {:command => 'erl -noshell -s webpiraten main -s init stop'}}, {:exit => {}}])
       {:type => :no}
-    elsif type == 'preerror'
+    elsif type == 'preerror' #handle runtime-error in backup-mode
       postprocess_error(line, 'prewebpiraten')
-    elsif type == 'error'
+    elsif type == 'error' #handle runtime-error
       postprocess_error(line, 'webpiraten')
     else
       {:type => :no}

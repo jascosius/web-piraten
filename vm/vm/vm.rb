@@ -66,13 +66,12 @@ end
 
 def response(msg, shared)
   if shared[:stdin]
-    puts 1
     shared[:stdin].puts msg
-    puts 2
   end
 end
 
 def exit(hash, client, shared)
+  puts 'exit'
   if hash['successful']
     end_msg = "\n#{PREFIX}_end"
   else
@@ -99,8 +98,15 @@ def write_file(hash, dir)
   end
 end
 
-def execute(hash, client, dir, shared)
+def handle_queue_functions(queue)
+  Thread.start do
+    loop do
+      queue.pop.call
+    end
+  end
+end
 
+def execute(hash, client, dir, shared)
   command = hash['command'].gsub('$LIB$', Dir.pwd + '/lib').gsub('$PATH$', dir)
 
   changeuser = 'sudo -u sailor '
@@ -113,7 +119,6 @@ def execute(hash, client, dir, shared)
     stdout.sync = true
     stdin.sync = true
     shared[:stdin] = stdin
-    puts 3
 
     Thread.start do
       handle_stderr(stderr, hash['stderr'], shared)
@@ -183,6 +188,7 @@ loop {
     end
 
     shared = {:start_time => Time.now}
+    queue = Queue.new
 
     temp = '/codetemp'
     if DEVELOPMENT
@@ -199,11 +205,13 @@ loop {
 
 
       functions = {:response => lambda { |msg| response(msg, shared) },
-                   :write_file => lambda { |hash| write_file(hash, dir) },
-                   :execute => lambda { |hash| execute(hash, client, dir, shared) },
-                   :exit => lambda { |hash| exit(hash, client, shared) },
-                   :stop => lambda { |_| puts 'stop'; thread.kill }}
+                   :stop => lambda { |_| puts 'stop'; thread.kill },
+                   :write_file => lambda { |hash| queue.push( lambda {write_file(hash, dir)} )},
+                   :execute => lambda {|hash| queue.push( lambda {execute(hash, client, dir, shared)} )},
+                   :exit => lambda { |hash| queue.push( lambda {exit(hash, client, shared)} )}}
 
+
+      handle_queue_functions(queue)
       get_commands(client, functions)
     }
 
