@@ -4,11 +4,8 @@ class Preprocessor
 
   require 'tools/commands_for_vm'
 
-  # A method that takes the given message aka the code of the user and checks which
-  # programming language is selected as well as if the debug mode is set or not by
-  # checking if there are any variables given the user wants to trace.
-  # Default set ist no debug mode and Ruby. The method then commits the code to the
-  # specified preprocessor and afterwards returns the modified code.
+
+  # Initializes a preprocessor for a given language.
   def initialize(language, code, tracing_vars)
     @lang = LANGUAGES[language.to_sym].preprocessor.new(code, tracing_vars)
   end
