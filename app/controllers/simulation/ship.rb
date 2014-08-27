@@ -87,7 +87,6 @@ class Ship
   end
 
   def move!(packet) # event: ship.move
-    puts 'move'
     coord = get_next_position
     if coords_in_grid(coord)
       elem = @grid.grid[[coord[0], coord[1]]]
