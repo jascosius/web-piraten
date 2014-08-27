@@ -51,6 +51,7 @@ class RubyPreprocessor < BasePreprocessor
         i += 1
       end
     end
+    puts insert_logic + codes + "\n"
     insert_logic + codes + "\n"
   end
 
@@ -333,50 +334,30 @@ class RubyPreprocessor < BasePreprocessor
   # Adds the line of the user's code and a commment with the linenumber, doesn't add
   # a comment if it's processing a multiline string.
   def add_user_codeline(s, i, bools)
-    @comment = false
     code = s.chomp
-    #comments?
-    if s =~ /#/
-      puts 'hier ist ein Kommentar: ' + s
-      @comment = s.index('#')
-      s = s[0..@comment]
-    end
-    #open functions
-    if s=~ /\bdef\b/ || s=~/\bclass\b/ || s=~/\bmodule\b/ || s=~/\bEND\b/ || s=~/\bBEGIN\b/ || s=~/\bbegin\b/ #def class
-      @operationlist.unshift(:defClass)
-      @end_break = @end_break + '; break_point(:down)'
-    elsif s=~ /\buntil\b/ || s=~ /\bwhile\b/ || s=~ /\bif\b/ || s=~ /\bcase\b/ # while until if case
-      @operationlist.unshift(:doWhileIf)
-      @beg_break = 'break_point(:down); ' + @beg_break
-    elsif s=~ /\bdo\b/   #do when no [while, until, if, case] exist because while [expr] [do]...
-      @operationlist.unshift(:doWhileIf)
-      @beg_break = 'break_point(:down); ' + @beg_break
-    end
-    #closing functions
-    puts 'first'
-    if !@operationlist.empty?
-      puts 'strike'
-      if s=~ /\breturn\b/ #end
-        @beg_break = return_break(@beg_break)
-        puts 'here'
-        puts @beg_break
-      elsif s=~ /\bend\b/ #end
-        op = @operationlist.shift
-        if op == :defClass
-          @beg_break = 'break_point(:up); ' + @beg_break
-        else
-          @end_break = @end_break + '; break_point(:up)'
-        end
-      end
-    end
+    com_n_str = find_comments_and_strings(s,bools)         #[modified string, position of comment]
+    s = com_n_str[0]
+    comment = com_n_str[1]
+    open_break_functions(s)
+    closing_break_functions(s)
     #add code
-    if @comment == false && bools[:dont_skip_line]
+    if comment == false && bools[:dont_skip_line]
       code = @beg_break + code + @end_break + " # #{$prefix}_(#{i}#{$prefix}_)\n"
-    elsif @comment != false
-      code.insert(@comment, @end_break)
+    elsif comment != false && bools[:dont_skip_line]
+      code.insert(comment, @end_break)
       code = @beg_break + code + " # #{$prefix}_(#{i}#{$prefix}_)\n"
     end
-
+    #strings at the beginning of the next line
+    if !bools[:dont_skip_line]
+      if bools[:single_q]
+        bools[:string_at_beginning] = :sq
+      end
+      if bools[:double_q]
+        bools[:string_at_beginning] = :dq
+      end
+    else
+      bools[:string_at_beginning] = false
+    end
     @beg_break = ''
     @end_break = ''
     code
@@ -384,6 +365,7 @@ class RubyPreprocessor < BasePreprocessor
     #multilining
     puts bools[:dont_skip_line]
     puts !bools[:string_at_beginning]
+
     if bools[:dont_skip_line] then #no multiline at the end
       if !bools[:string_at_beginning] then #no multiline at the beginning
         puts 'no multiline' + s
@@ -418,12 +400,101 @@ class RubyPreprocessor < BasePreprocessor
 =end
   end
 
-  def return_break(break_up)
+  def find_comments_and_strings(s,bools)
+    diff = 0
+    #multiline string at the beginning
+    if bools[:string_at_beginning] == :dq
+      if  s =~ /"/
+        diff = (s.index(/"/) + 1)
+        s = s[diff..-1]
+      else
+        s = ''
+      end
+    elsif bools[:string_at_beginning] == :sq
+      if  s =~ /'/
+        diff = (s.index(/'/) + 1)
+        s = s[diff..-1]
+      else
+        s = ''
+      end
+    end
+    finding_loop(s,diff)
+  end
+
+  def finding_loop(s,diff)
+    position = [nil, s.length]
+    loop do
+      #find first symbol
+      if s.index(/"/) != nil
+        position = [:dq, s.index(/"/)]
+      end
+      if s.index(/'/) != nil && s.index(/'/) < position[1]
+        position = [:sq, s.index(/'/)]
+      end
+      if s.index(/#/) != nil && s.index(/#/) < position[1]
+        position = [:com, s.index(/#/)]
+      end
+      # next of the same symbol
+      if position[0] == :dq
+        next_curr = s.index(/"/,position[1]+1)
+        if  next_curr != nil
+          diff += (next_curr - position[1])+1
+          s = s[0..position[1]-1] + s[next_curr+1..-1]
+        else
+          return [s[0..position[1]], false]
+        end
+      elsif position[0] == :sq
+        next_curr = s.index(/'/,position[1]+1)
+        if  next_curr != nil
+          diff += (next_curr - position[1])+1
+          s = s[0..position[1]-1] + s[next_curr+1..-1]
+        else
+          return [s[0..position[1]], false]
+        end
+      elsif position[0] == :com
+        s = s[0..position[1]]
+        return [s, position[1] + diff]
+      else return [s, false]
+      end
+      position = [nil, s.length]
+      puts s
+      puts diff
+    end
+  end
+
+  def closing_break_functions(s)
+    if !@operationlist.empty?
+      if s=~ /\breturn\b/ #end
+        @beg_break = return_break()
+      elsif s=~ /\bend\b/ #end
+        op = @operationlist.shift
+        if op == :defClass
+          @beg_break = 'break_point(:up); ' + @beg_break
+        else
+          @end_break = @end_break + '; break_point(:up)'
+        end
+      end
+    end
+  end
+
+  def open_break_functions(s)
+    if s=~ /\bdef\b/ || s=~/\bclass\b/ || s=~/\bmodule\b/ || s=~/\bEND\b/ || s=~/\bBEGIN\b/ || s=~/\bbegin\b/ #def class
+      @operationlist.unshift(:defClass)
+      @end_break = @end_break + '; break_point(:down)'
+    elsif s=~ /\buntil\b/ || s=~ /\bwhile\b/ || s=~ /\bif\b/ || s=~ /\bcase\b/ # while until if case
+      @operationlist.unshift(:doWhileIf)
+      @beg_break = 'break_point(:down); ' + @beg_break
+    elsif s=~ /\bdo\b/   #do when no [while, until, if, case] exist because while [expr] [do]...
+      @operationlist.unshift(:doWhileIf)
+      @beg_break = 'break_point(:down); ' + @beg_break
+    end
+  end
+
+  def return_break()
     operationlist = Array.new(@operationlist)
     op = operationlist.shift
     loop do
       @beg_break = 'break_point(:up); ' + @beg_break
-      puts 'return'
       if operationlist.empty? ||  op == :defClass
         break
       end
