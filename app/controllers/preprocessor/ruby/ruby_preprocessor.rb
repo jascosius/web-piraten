@@ -378,8 +378,6 @@ class RubyPreprocessor
   end
 
   def postprocess_execute(line)
-    #send.call([{:execute => {:command => "ls"}}])
-
     #remove filepath
     index_begin = line.index(@filename) #filepath ends with filename
     if index_begin
