@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 class ErlangPreprocessor
 
-  require 'preprocessor/erlang/regular_expressions'
+  require 'preprocessor/erlang/processing_tools'
 
   attr :line_first
 
@@ -24,95 +24,10 @@ class ErlangPreprocessor
      {:execute => {:command => 'echo ok', :stdout => 'precompileok'}}]
   end
 
-  def regex_verify_string_comment
-    /('(?:[^']|(?:\\'))*%(?:[^']|(?:\\'))*'|"(?:[^"]|(?:\\"))*%(?:[^"]|(?:\\"))*")/
-  end
-
-  def is_not_in_string?(index, string_indexes)
-    not_in_string = true
-    string_indexes.each do |pair|
-      if index > pair[:starts] && index <= pair[:ends]
-        not_in_string = false
-      end
-    end
-    not_in_string
-  end
-
-  def scan_for_index_start_and_end(code, regex)
-    res = []
-    code.scan(regex) do
-      res << {starts: Regexp.last_match.offset(0).first, ends: Regexp.last_match.offset(0).last}
-    end
-    res
-  end
-
-  def remove_comments(code_msg)
-    codes = ''
-    code_msg.each_line do |line|
-      res_c = []
-      line.scan('%') do
-        res_c << Regexp.last_match.offset(0).first
-      end
-      res_s = scan_for_index_start_and_end(line, regex_verify_string_comment)
-      if !res_c.empty? && !res_s.empty?
-        res_c.each do |res|
-          if is_not_in_string?(res, res_s)
-            line.slice!(res..-1)
-          end
-        end
-      elsif !res_c.empty?
-        line.slice!(res_c[0]..-1)
-      end
-      codes += line.chomp + "\n"
-    end
-    codes
-  end
-
-
-  def insert_prefix(code, operations, strings)
-    if strings.empty?
-      operations.reverse_each do |op|
-        code.insert(op[:ends], "line#{$prefix}")
-      end
-    else
-      operations.reverse_each do |op|
-        code.insert(op[:ends], "line#{$prefix}") if is_not_in_string?(op[:starts], strings)
-      end
-    end
-    code
-  end
-
-  def change_prefix_2_line_number(code)
-    new_code = ''
-    number = 1
-    first_arrow = true
-    code.each_line do |line|
-      if first_arrow
-        first_arrow = false if line.gsub!(regex_arrow_prefix, "-> a#{$prefix}_line(#{number}), a#{$prefix}_break(fun() ->")
-      else
-        line.gsub!(regex_arrow_prefix, "-> a#{$prefix}_line(#{number}), ")
-      end
-      first_arrow = true if line.gsub!(regex_stop_prefix, ' end).')
-      line.gsub!(regex_op_prefix, "(#{number}, ")
-      line.gsub!(/\(\d+,\s+\)/, "(#{number})")
-      new_code += line.chomp + "  % #{$prefix}_(#{number}#{$prefix}_)\n"
-      number += 1
-    end
-    new_code
-  end
-
   # Processes the given code...
   def process_code(code_msg, vars)
     new_code = remove_comments(code_msg)
-    string_indexes = scan_for_index_start_and_end(new_code, regex_find_strings)
-    operation_indexes = scan_for_index_start_and_end(new_code, regex_find_operations)
-    if string_indexes.empty? && !operation_indexes.empty?
-      new_code = insert_prefix(new_code, operation_indexes, [])
-      new_code = change_prefix_2_line_number(new_code)
-    elsif !string_indexes.empty? && !operation_indexes.empty?
-      new_code = insert_prefix(new_code, operation_indexes, string_indexes)
-      new_code = change_prefix_2_line_number(new_code)
-    end
+    new_code = insert_highlighting(new_code, vars)
     insert_start_logic + new_code
   end
 
@@ -158,7 +73,7 @@ class ErlangPreprocessor
     end
   end
 
-  # Processes a given error message, when the execution is aborted with an error.
+  # Processes a given error message, if the execution is aborted with an error.
   # If there are information about line numbers in the error message the method
   # will check if there is a corresponding line number which is visible to the
   # user.
@@ -246,7 +161,8 @@ class ErlangPreprocessor
   end
 
   # String that contains logic for the pirateships movements and also preprocesses
-  # raised error messages in a pretty and easy understandable way.
+  # raised error messages in a pretty and easy understandable way in style of the
+  # erlang-shell.
   def insert_start_logic
     %Q[
     -module(webpiraten).
@@ -363,6 +279,7 @@ class ErlangPreprocessor
 ]
   end
 
+  # Contains
   def insert_compile_logic
     %Q[
     -module(prewebpiraten).
