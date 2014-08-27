@@ -232,13 +232,12 @@ class ErlangPreprocessor
 
     a#{$prefix}_line(I) -> io:fwrite("~n#{$prefix}_line_~p~n", [I]).
 
-    a#{$prefix}_break(F) -> a#{$prefix}_break_point(down),
+    a#{$prefix}_break(F) -> io:fwrite("~n#{$prefix}_break_down~n"),
                             X = F(),
-                            a#{$prefix}_break_point(up),
+                            io:fwrite("~n#{$prefix}_break_up~n"),
                             X.
 
-    a#{$prefix}_break_point(up)   -> io:fwrite("~n#{$prefix}_break_up~n");
-    a#{$prefix}_break_point(down) -> io:fwrite("~n#{$prefix}_break_down~n").
+    a#{$prefix}_debug(Ind, Var) -> io:fwrite("~n#{$prefix}_debug_~p_~p~n", [Ind, Var]).
 
     move(I)  -> a#{$prefix}_line(I),
                 io:fwrite("~n#{$prefix}_move~n").
