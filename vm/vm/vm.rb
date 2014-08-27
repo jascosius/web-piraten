@@ -59,6 +59,13 @@ def get_commands(client, functions)
   end
 end
 
+def handle_queue_functions(queue)
+  Thread.start do
+    loop do
+      queue.pop.call
+    end
+  end
+end
 
 def search_and_execute_function(functions, name, hash)
   functions[name.to_sym].call(hash)
@@ -95,14 +102,6 @@ def write_file(hash, dir)
   open("#{dir}/#{hash['filename']}", 'w+') do |file|
     File.write file, hash['content']
     File.chmod(hash['permissions'], file)
-  end
-end
-
-def handle_queue_functions(queue)
-  Thread.start do
-    loop do
-      queue.pop.call
-    end
   end
 end
 
@@ -203,10 +202,9 @@ loop {
 
       Dir.mkdir(dir, 0755)
 
-
-      functions = {:response => lambda { |msg| response(msg, shared) },
+      functions = {:response => lambda { |msg| response(msg, shared) }, #execute immediate
                    :stop => lambda { |_| puts 'stop'; thread.kill },
-                   :write_file => lambda { |hash| queue.push( lambda {write_file(hash, dir)} )},
+                   :write_file => lambda { |hash| queue.push( lambda {write_file(hash, dir)} )}, #add to queue
                    :execute => lambda {|hash| queue.push( lambda {execute(hash, client, dir, shared)} )},
                    :exit => lambda { |hash| queue.push( lambda {exit(hash, client, shared)} )}}
 
@@ -215,9 +213,9 @@ loop {
       get_commands(client, functions)
     }
 
-    thr.join
+    thr.join #wait for execution to finish or stopped by timeout
 
-    FileUtils.rm_r dir
+    FileUtils.rm_r dir #clean up
 
   end
 }.join
