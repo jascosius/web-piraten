@@ -47,7 +47,7 @@ def get_commands(client, functions)
 
   loop do
     msg = client.gets.chomp
-    puts "Erhalten: #{msg}"
+    puts "Incoming: #{msg}"
 
     msg = JSON.parse(msg)
 
@@ -106,10 +106,6 @@ def execute(hash, client, dir, shared)
     changeuser = ''
   end
 
-  #:execute => {:command => nil, :stdout_prefix => false, :stderr_prefix => 'error', }}
-
-  #Open3.popen2("(#{changeuser} #{execute.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed --unbuffered s/^/#{PREFIX}_stderr_/ ) 2>&1") do |stdin, stdout|
-  #["run_daemon", "-f", "some.conf", "--verbose", :err => [:child, :out]]
   puts command = "cd #{dir} && " + changeuser + command
   Open3.popen3(command) do |stdin, stdout, stderr|
     stdout.sync = true
@@ -117,7 +113,7 @@ def execute(hash, client, dir, shared)
     shared[:stdin] = stdin
 
     Thread.start do
-      handle_stderr(client, stderr, hash['stderr'], shared)
+      handle_stderr(stderr, hash['stderr'], shared)
     end
     handle_stdout(client, stdout, hash['stdout'], shared)
   end
@@ -128,7 +124,7 @@ def handle_stdout(client, stdout, tag, shared)
   loop do
     if stdout.eof?
 
-      #workarrount to print errormessages at last
+      #print errormessages at last
       if shared[:err]
         shared[:err].each_line do |line|
           puts line
@@ -156,16 +152,15 @@ def handle_stdout(client, stdout, tag, shared)
   end
 end
 
-def handle_stderr(client, stderr, tag, shared)
+def handle_stderr(stderr, tag, shared)
   loop do
     line = stderr.readline
 
     unless line.chomp.empty?
       if tag
-        #workarrout to print errormessages at last
+        #print errormessages at last
         shared[:err] ||= ''
         shared[:err] = shared[:err] + "\n#{PREFIX}_print_#{tag}_#{line}"
-        #client.puts line = "#{PREFIX}_print_#{tag}_#{line}" #to do here without the workarround
       end
     end
   end
@@ -183,7 +178,6 @@ loop {
         return
       end
     end
-
 
     shared = {:start_time => Time.now}
 
