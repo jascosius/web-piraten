@@ -66,7 +66,9 @@ end
 
 def response(msg, shared)
   if shared[:stdin]
+    puts 1
     shared[:stdin].puts msg
+    puts 2
   end
 end
 
@@ -111,6 +113,7 @@ def execute(hash, client, dir, shared)
     stdout.sync = true
     stdin.sync = true
     shared[:stdin] = stdin
+    puts 3
 
     Thread.start do
       handle_stderr(stderr, hash['stderr'], shared)

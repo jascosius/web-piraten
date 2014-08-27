@@ -1,8 +1,8 @@
 # -*- encoding : utf-8 -*-
 require 'languages/language'
-require 'preprocessor/ruby_preprocessor'
-require 'preprocessor/java_preprocessor'
-require 'preprocessor/erlang_preprocessor'
+require 'preprocessor/ruby/ruby_preprocessor'
+require 'preprocessor/java/java_preprocessor'
+require 'preprocessor/erlang/erlang_preprocessor'
 
 LANGUAGES = {
     # object => Language.new(name, [scrips], options, url)

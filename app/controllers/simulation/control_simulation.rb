@@ -22,7 +22,6 @@ def exit_simulation!(line='')
 end
 
 def print!(type, line)
-  puts 'print'
   remove_prefix! line
   line = CGI::escapeHTML(line)
   @packet.add_message(type, line)

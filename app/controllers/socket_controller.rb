@@ -2,7 +2,7 @@
 
 class SocketController < WebsocketRails::BaseController
 
-  require 'tools/preprocessor'
+  require 'preprocessor/preprocessor'
   require 'simulation/initialize_communication'
   require 'simulation/communication'
   require 'simulation/control_simulation'

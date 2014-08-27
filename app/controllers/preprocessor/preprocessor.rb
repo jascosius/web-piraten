@@ -9,8 +9,8 @@ class Preprocessor
   # checking if there are any variables given the user wants to trace.
   # Default set ist no debug mode and Ruby. The method then commits the code to the
   # specified preprocessor and afterwards returns the modified code.
-  def initialize(language,code,tracing_vars)
-    @lang = LANGUAGES[language.to_sym].preprocessor.new(code,tracing_vars)
+  def initialize(language, code, tracing_vars)
+    @lang = LANGUAGES[language.to_sym].preprocessor.new(code, tracing_vars)
   end
 
   def commands_for_vm

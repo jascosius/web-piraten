@@ -32,7 +32,6 @@ def communicate_with_vm(tracing_vars)
 
   until connection_store[:is_simulation_done]
     line = @vm.gets.chomp
-    puts line
     line = line.force_encoding('utf-8')
 
     unless line.empty?

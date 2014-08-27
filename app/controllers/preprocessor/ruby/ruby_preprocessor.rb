@@ -364,7 +364,7 @@ class RubyPreprocessor
 
   def postprocess_print(send, type, line)
     if type == 'checksuccess'
-      send.call([{:write_file => {:filename => @filename, :content => @process_code}},{:execute => {:command => "ruby #{@filename}"}},{:exit => {}}])
+      send.call([{:write_file => {:filename => @filename, :content => @process_code}}, {:execute => {:command => "ruby #{@filename}"}}, {:exit => {}}])
       {:type => :no}
     elsif type == 'checkerror'
       if @syntaxflag

@@ -43,7 +43,6 @@ public class Pirate extends Main{
   end
 
 
-
   def insert_logic_end
     '}'
   end
