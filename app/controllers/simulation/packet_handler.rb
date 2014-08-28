@@ -32,6 +32,9 @@ class PacketHandler
   end
 
   def add_break(direction)
+    if @packet[:break]
+      send_packet
+    end
     @packet[:break] ||= []
     @packet[:break] << {:type => direction}
   end
