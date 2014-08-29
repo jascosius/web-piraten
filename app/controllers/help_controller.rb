@@ -8,16 +8,16 @@ class HelpController < ApplicationController
     end
     
     filename = params[:file]
-    contend = ''
+    content = ''
     begin
       File.open("help/#{filename}.md") do |file|
-        contend = file.read
+        content = file.read
       end
     rescue
       redirect_to :controller => :help, :action => :index, :file => :index
       return
     else
-      @code = Markdown.new(contend).to_html
+      @content = Markdown.new(content).to_html
     end
   end
 
