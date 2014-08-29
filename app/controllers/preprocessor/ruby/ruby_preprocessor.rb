@@ -64,7 +64,6 @@ class RubyPreprocessor
         i += 1
       end
     end
-    puts insert_logic + codes + "\n"
     insert_logic + codes + "\n"
   end
 
@@ -176,17 +175,17 @@ class RubyPreprocessor
           return code
         when :return
           insert_code = return_break()
-          diff = code.length - s.length+1
+          diff = code.length - s.length
           code.insert(s.index(/\breturn\b/)+diff, insert_code)
           s = s[position[1]+5..-1]
         when :end
           insert_code = '; break_point(:up); '
-          diff = code.length - s.length+1
+          diff = code.length - s.length
           op = @operationlist.shift
             if op == :def
               code.insert(s.index(/\bend\b/)+diff, @end_break + insert_code)
               @end_break = ''
-            else
+            elsif op != nil
               code.insert(s.index(/\bend\b/)+diff+3, insert_code)
               code.insert(s.index(/\bend\b/)+diff, @end_break)
               @end_break = ''
@@ -194,7 +193,7 @@ class RubyPreprocessor
           s = s[position[1]+3..-1]
         when :do
           if is_while
-            s = s[position[1]+3..-1]
+            s = s[position[1]+2..-1]
           else
             @operationlist.unshift(:do)
             @beg_break = 'break_point(:down); ' + @beg_break

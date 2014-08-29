@@ -18,7 +18,6 @@ class HelpController < ApplicationController
       return
     else
       @code = Markdown.new(contend).to_html
-      puts @code
     end
   end
 

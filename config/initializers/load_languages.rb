@@ -10,7 +10,7 @@ LANGUAGES = {
         preprocessor: RubyPreprocessor,
         name: 'Ruby',
         script_assets: ['codemirror/modes/ruby.js'],
-        gui_options: {:codemirror => {:mode => 'ruby'}},
+        gui_options: {:codemirror => {:mode => 'ruby', :theme => 'monokai'}},
         default_code: "print \"Hallo Welt!\"\n"+
         "i = 0\n"+
         "(1..3).each do\n"+
