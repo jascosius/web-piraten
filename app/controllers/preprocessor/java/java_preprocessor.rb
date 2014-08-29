@@ -70,7 +70,7 @@ class JavaPreprocessor
 
   def postprocess_error_compile(line)
     #remove filepath
-    index_begin = line.index('/tmp/session_')
+    index_begin = line.index('/')
     index_end = line.index('Pirate.java:')
     if index_begin and index_end
       index_end += 11 #length of Pirate.java

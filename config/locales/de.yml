@@ -25,6 +25,7 @@ de:
   nav:
     home: "Start"
     learn: "Lernen"
+    help: "Hilfe"
     account: "Konto"
     greeting: "Hallo, %{name}"
   login:
