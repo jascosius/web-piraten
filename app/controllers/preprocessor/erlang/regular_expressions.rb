@@ -31,5 +31,9 @@ def regex_op_prefix
 end
 
 def regex_arrow_with_function
-  Regexp.new("-> a#{$prefix}_line\\(")
+  Regexp.new("-> a#{$prefix}_line\\(\\d+\\),")
+end
+
+def regex_lineprefix
+  Regexp.new("line#{$prefix}")
 end

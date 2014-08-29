@@ -59,6 +59,15 @@ def insert_highlighting(new_code, vars)
   # the underscore, which by default is in erlang undefined.
   vars = [] if vars.length == 1 && vars[0] == '_'
 
+  if !vars.empty?
+    vars.each do |var|
+      if var != '_'
+        operation_indexes += scan_for_index_start_and_end(new_code, Regexp.new("\\b#{var}\\b"))
+      end
+    end
+    operation_indexes = operation_indexes.sort_by { |hash| hash[:starts] }
+  end
+
   if string_indexes.empty? && !operation_indexes.empty?
     new_code = insert_prefix(new_code, operation_indexes, [])
     new_code = change_prefix_2_line_number(new_code)
@@ -66,28 +75,9 @@ def insert_highlighting(new_code, vars)
     new_code = insert_prefix(new_code, operation_indexes, string_indexes)
     new_code = change_prefix_2_line_number(new_code)
   end
-  if vars.empty?
-    new_code
-  else
-    regex_array = []
-    vars.each do |var|
-      regex_array << Regexp.new("\\b#{var}\\b")
-    end
-    debug_code = ''
-    new_code.each_line do |line|
-      vars.each_with_index do |variable, index|
-        if variable != '_'
-          pos_variable = line.index(regex_array[index])
-          pos_arrow = line.index(regex_arrow_with_function)
-          if pos_variable && pos_arrow && pos_variable < pos_arrow
-            line = line.insert(pos_arrow.to_i + 2, " a#{$prefix}_debug(#{index}, #{variable}),")
-          end
-        end
-      end
-      debug_code += line
-    end
-    debug_code
-  end
+  new_code = change_prefix_2_debug(new_code, vars) if !vars.empty?
+  new_code.gsub!(regex_lineprefix, '')
+  new_code
 end
 
 # Method takes code, an array of start- and endpoints of the pirate
@@ -121,7 +111,7 @@ def change_prefix_2_line_number(code)
     else
       line.gsub!(regex_arrow_prefix, "-> a#{$prefix}_line(#{number}), ")
     end
-    first_arrow = true if line.gsub!(regex_stop_prefix, ' end).')
+    first_arrow = true if line.gsub!(regex_stop_prefix, " end).line#{$prefix}")
     line.gsub!(regex_op_prefix, "(#{number}, ")
     line.gsub!(/\(\d+,\s+\)/, "(#{number})")
     new_code += line.chomp + "  % #{$prefix}_(#{number}#{$prefix}_)\n"
@@ -130,3 +120,59 @@ def change_prefix_2_line_number(code)
   new_code
 end
 
+# Takes the code and variables to trace and scans the code line by
+# line for arrows with functions and the beforehand marked variables.
+# If there is a variable on the left-hand side of an arrow it inserts
+# the tracing- (a.k.a. debug-)information and slices the inserted
+# prefixes out of the code.
+def change_prefix_2_debug(code, variables)
+  array_regex_var_prefix = []
+  scan_arrow = scan_for_index_start_and_end(code, regex_arrow_with_function)
+  scan_stops = scan_for_index_start_and_end(code, Regexp.new("(?:\\.line#{$prefix}|;line#{$prefix})"))
+  if scan_stops[0]
+    puts scan_stops
+  end
+  debug_code = code
+  variables.each_with_index do |var, index|
+    array_regex_var_prefix << Regexp.new("\\b#{var}line#{$prefix}")
+    debug_code = debug_code.gsub(Regexp.new("\\b#{var}line#{$prefix}\\s*="),
+                                 " a#{$prefix}_debug!#{index}, a#{$prefix}_debug!#{var} =")
+
+    my_array = scan_for_index_start_and_end(code, Regexp.new("\\b#{var}line#{$prefix}"))
+    i = 0
+    my_array.each do |stuff|
+
+    end
+
+  end
+
+  full_debug_code = ''
+
+=begin
+  code.each_line do |line|
+    array_regex_var_prefix.each_with_index do |regex, index|
+      i = 0
+      pos_variable = line.index(regex)
+      pos_variables = scan_for_index_start_and_end(line, regex)
+      puts pos_variables
+      puts "full stop"
+      if pos_variables[0]
+        puts pos_variables[0][:starts]
+      end
+      pos_arrow = []
+      line.scan(regex_arrow_with_function) do
+        pos_arrow << Regexp.last_match.offset(0).last
+      end
+      if pos_variables[0] && pos_arrow[0] && pos_arrow[1] && pos_variables[0][:starts] < pos_arrow[0]
+
+      elsif pos_variables[0] && pos_arrow[0] && pos_variables[0][:starts] < pos_arrow[0]
+        line = line.insert(pos_arrow[0], " a#{$prefix}_debug!#{index}, a#{$prefix}_debug!#{variables[index]}, ")
+      end
+      line.gsub!(regex, variables[index])
+    end
+    debug_code += line
+  end
+=end
+  puts debug_code
+  debug_code
+end
