@@ -9,8 +9,10 @@ RailsPrototype::Application.routes.draw do
   # root 'welcome#index'
   root 'main#index'
 
+  get 'help' => 'help#index', as: :help # creates learn_path and learn_url
   get 'learn' => 'game#index', as: :learn # creates learn_path and learn_url
   get 'learn/:name' => 'game#learn' # creates learn_path and learn_url
+  get 'help/:file' => 'help#index' # creates help_path and help_url
   get 'learn/new' => 'game#new' # creates learn_path and learn_url
 
   # Example of regular route:
