@@ -34,6 +34,10 @@ def regex_arrow_with_function
   Regexp.new("-> a#{$prefix}_line\\(\\d+\\),")
 end
 
+def regex_stop_or_semicolon
+  Regexp.new("(?:\\.line#{$prefix}|;line#{$prefix})")
+end
+
 def regex_lineprefix
   Regexp.new("line#{$prefix}")
 end
