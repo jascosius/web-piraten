@@ -7,10 +7,6 @@
 -  Das Überspringen von Codeblöcken.  
 -  Das Setzen von Breakponits.  
 
-##Einschränkungen:  
-Bei Funktionen mit Rückgabewert muss **return** benutzt werden.  
-Um eine korrekte Blockerkennung zu garantieren, dar nur ein Block pro Zeile geöffnet werden.  
-
 ##Funktionen
 
 ####Objekte
@@ -18,7 +14,8 @@ Um eine korrekte Blockerkennung zu garantieren, dar nur ein Block pro Zeile geö
 * :buoy
 * :monster
 * :wave
-* (:border)
+* (:border)  
+* (:nothing)
 
 ####Richtungen
 * :front
@@ -30,7 +27,7 @@ Um eine korrekte Blockerkennung zu garantieren, dar nur ein Block pro Zeile geö
 
 ###move()
 Das Piratenschiff bewegt sich eine Feld in die aktuelle Bewegungsrichtung.  
-**Akzeptierte Parameter:** : keine  
+**Akzeptierte Parameter:**  keine  
 
 ###turn(Richtung)  
 Dreht das Schiff mit der übergebenen Richtung.  
@@ -46,19 +43,23 @@ Platziert ein Objekt an der aktuellen Position.
 Prüft, was sich auf dem Feld in der übergebenen Richtung befindet.  
 **Akzeptierte Parameter:** alle Richtungen  
 **Standardparameter:** :here  
-**Rückgabe:** das gefundene Objekt oder :nothing  
+**Rückgabe:** das gefundene Objekt 
 
 ###take()
 Nimmt das Objekt an der aktuellen Position auf.  
 **Akzeptierte Parameter:** keine  
 **Aufzunehmende Objekte:** :treasure, :buoy    
 
-###break_ponit()
+###break_point()
 Setzt einen Breakpoint. Bei einer Simulation stoppt diese, sobald der Breakpoint erreicht ist.  
 Von dieser Position kann dann weiter Simuliert oder Schrittweise durch den Code gegangen werden.  
 **Akzeptierte Parameter:** :point setzt einen Breakpoint  
 **Standardparameter:** :point  
 
+
+##Einschränkungen:  
+Bei Funktionen mit Rückgabewert muss **return** benutzt werden.  
+Um eine korrekte Blockerkennung zu garantieren, dar nur ein Block pro Zeile geöffnet werden.  
 
 
 

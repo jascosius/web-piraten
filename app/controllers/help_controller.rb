@@ -17,7 +17,7 @@ class HelpController < ApplicationController
       redirect_to :controller => :help, :action => :index, :file => :index
       return
     else
-      @content = Markdown.new(content).to_html
+      @code = Markdown.new(content).to_html
     end
   end
 
