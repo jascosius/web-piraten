@@ -1,7 +1,6 @@
 # -*- encoding : utf-8 -*-
 class RubyPreprocessor
 
-  require 'preprocessor/ruby/regular_expressions'
   require 'preprocessor/ruby/processing_tools'
 
   attr :line_first
@@ -67,8 +66,6 @@ class RubyPreprocessor
     puts insert_logic + codes + "\n"
     insert_logic + codes + "\n"
   end
-
-
 
   # Method to add the linenumber for linehighlighting in codemirror. Previous
   # to the user's line of code.
