@@ -184,9 +184,13 @@ class RubyPreprocessor
               code.insert(s.index(/\bend\b/)+diff, @end_break + insert_code)
               @end_break = ''
             elsif op != nil
-              code.insert(s.index(/\bend\b/)+diff+4, insert_code)
-              code.insert(s.index(/\bend\b/)+diff, @end_break)
-              @end_break = ''
+              if code.length <= s.index(/\bend\b/)+diff+4
+                code = code + insert_code
+              else
+                code.insert(s.index(/\bend\b/)+diff+4, insert_code)
+                code.insert(s.index(/\bend\b/)+diff, @end_break)
+                @end_break = ''
+              end
             end
           s = s[position[1]+3..-1]
         when :do
