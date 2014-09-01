@@ -49,8 +49,6 @@ class @CodeGUI
     @_$runNStopBtn.click () =>
       Simulation.start()
       Simulation.stop()
-    @_$jumpDropdown = $ '#jumpDropdown'
-    @_$jumpDropdown.attr 'disabled', 'disabled'
     @_$jumpBtn = $ '#jumpBtn'
     @_$jumpBtn.attr 'disabled', 'disabled'
     @_$jumpBtn.click () =>
@@ -213,11 +211,11 @@ class @CodeGUI
   @toggleStepper = () =>
     if @_$stepBtn.attr 'disabled'
       @_$stepBtn.removeAttr 'disabled'
-      @_$jumpDropdown.removeAttr 'disabled'
+      @_$jumpBtn.removeAttr 'disabled'
       @_$resumeBtn.removeAttr 'disabled'
     else
       @_$stepBtn.attr 'disabled', 'disabled'
-      @_$jumpDropdown.attr 'disabled', 'disabled'
+      @_$jumpBtn.attr 'disabled', 'disabled'
       @_$resumeBtn.attr 'disabled', 'disabled'
 
 
