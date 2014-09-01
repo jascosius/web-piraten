@@ -58,7 +58,6 @@ class @CodeGUI
           Simulation.step()
         catch
           if Simulation.isFinished
-            console.log 'nein'
             @toggleStepper()
             @_$resumeBtn.attr 'disabled', 'disabled'
       else while PacketHandler.stackDeep >= acDeep && !Simulation.isFinished

@@ -155,6 +155,4 @@ class @PacketHandler
         when 'down'
           @stackDeep += 1
 
-      console.log @stackDeep
-
 
