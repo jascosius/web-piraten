@@ -313,52 +313,40 @@ end
 def move
   puts "\n#{$prefix}_move"
 end
-def turn(dir = :back)
-  case dir
-    when :right then puts "\n#{$prefix}_turn_right"
-    when :left then puts "\n#{$prefix}_turn_left"
-    when :back then puts "\n#{$prefix}_turn_back"
-    else raise(ArgumentError, "unknown argument")
+def turn(direction = :back)
+  if [:right, :left, :back].include? direction
+    puts "\n#{$prefix}_turn_\#{direction}"
+  else
+    raise(ArgumentError, "unknown argument")
   end
 end
-def put(elem = :buoy)
-  case elem
-    when :buoy then puts "\n#{$prefix}_put_buoy"
-    when :treasure then puts "\n#{$prefix}_put_treasure"
-    else raise(ArgumentError, "unknown argument")
+def put(element = :buoy)
+  if [:buoy, :treasure].include? element
+    puts "\n#{$prefix}_put_\#{element}"
+  else
+    raise(ArgumentError, "unknown argument")
   end
 end
 def take
   puts "\n#{$prefix}_take"
 end
-def break_point(dir = :point)
-  case dir
-    when :point then puts "\n#{$prefix}_break_point"
-    when :up then puts "\n#{$prefix}_break_up"
-    when :down then puts "\n#{$prefix}_break_down"
+def break_point(direction = :point)
+  if [:point, :up, :down].include? direction
+    puts "\n#{$prefix}_break_\#{direction}"
+  else
+    raise(ArgumentError, "unknown argument")
   end
 end
 def #{$prefix}_line(i)
   puts "\n#{$prefix}_line_\#{i}"
 end
-def look(dir = :here)
-  case dir
-    when :right then puts "\n#{$prefix}_?_look_right"
-    when :left then puts "\n#{$prefix}_?_look_left"
-    when :here then puts "\n#{$prefix}_?_look_here"
-    when :back then puts "\n#{$prefix}_?_look_back"
-    when :front then puts "\n#{$prefix}_?_look_front"
-    else raise(ArgumentError, "unknown argument")
+def look(direction = :here)
+  if [:right, :left, :here, :back, :front].include? direction
+    puts "\n#{$prefix}_?_look_\#{direction}"
+  else
+    raise(ArgumentError, "unknown argument")
   end
-  ret = gets.chomp
-  case ret
-    when 'buoy' then return :buoy
-    when 'monster' then return :monster
-    when 'treasure' then return :treasure
-    when 'wave' then return :wave
-    when 'border' then return :border
-    else return :nothing
-  end
+  gets.chomp.to_sym
 end
 ]
   end
