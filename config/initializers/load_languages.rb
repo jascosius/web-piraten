@@ -10,7 +10,7 @@ LANGUAGES = {
         preprocessor: RubyPreprocessor,
         name: 'Ruby',
         script_assets: ['codemirror/modes/ruby.js'],
-        gui_options: {:codemirror => {:mode => 'ruby', :theme => 'monokai'}},
+        gui_options: {:codemirror => {:mode => 'ruby'}},
         default_code: "print \"Hallo Welt!\"\n"+
         "i = 0\n"+
         "(1..3).each do\n"+
@@ -36,7 +36,7 @@ LANGUAGES = {
         preprocessor: ErlangPreprocessor,
         name: 'Erlang',
         script_assets: ['codemirror/modes/erlang.js'],
-        gui_options: {:codemirror => {:mode => 'erlang'}},
+        gui_options: {:codemirror => {:mode => 'erlang', :theme => 'blackboard'}},
         default_code: "start() -> case look(front) of\n" +
         "     treasure -> move(), take(), start(), puts(), move();\n" +
         "     _        -> case look(right) of\n" +
