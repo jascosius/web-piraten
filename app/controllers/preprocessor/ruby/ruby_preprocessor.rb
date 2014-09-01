@@ -64,6 +64,7 @@ class RubyPreprocessor
         i += 1
       end
     end
+    puts insert_logic + codes + "\n"
     insert_logic + codes + "\n"
   end
 
@@ -186,7 +187,7 @@ class RubyPreprocessor
               code.insert(s.index(/\bend\b/)+diff, @end_break + insert_code)
               @end_break = ''
             elsif op != nil
-              code.insert(s.index(/\bend\b/)+diff+3, insert_code)
+              code.insert(s.index(/\bend\b/)+diff+4, insert_code)
               code.insert(s.index(/\bend\b/)+diff, @end_break)
               @end_break = ''
             end
