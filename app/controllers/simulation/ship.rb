@@ -82,7 +82,7 @@ class Ship
     else
       look_obj = :border
     end
-    packet.add_operation('look',:return => {:x => coord[0], :y => coord[1]})
+    packet.add_operation('look', {:x => coord[0], :y => coord[1]})
     look_obj
   end
 
