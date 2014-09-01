@@ -204,6 +204,7 @@ class @CodeGUI
     @_$resumeBtn.hide()
     @_$stopBtn.show()
     @_$stepBtn.attr 'disabled', 'disabled'
+    @_$jumpBtn.attr 'disabled', 'disabled'
 #    @_$resumeBtn.attr 'disabled', 'disabled'
 
 
