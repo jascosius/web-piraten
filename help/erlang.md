@@ -1,7 +1,7 @@
-# Sprachspezifische Hilfe: Ruby
+# Sprachspezifische Hilfe: Erlang
 [Zurück](index "Hilfe")
 
-####Die Programmiersprache Ruby unterstützt zur Zeit:  
+####Für die Programmiersprache Erlang unterstützen wir zur Zeit:  
 -  Das Highlighten der aktuellen Zeile.  
 -  Das Beobachten von Variablen.  
 -  Das Überspringen von Codeblöcken.  
