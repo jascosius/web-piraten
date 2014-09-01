@@ -136,7 +136,7 @@ def change_prefix_2_line_number(code)
       break_array << element
       break_counter = 0
     elsif element[:type] == 'start'
-      break_counter += 1
+      break_counter += 1 unless code[element[:starts], 4] == 'case' || code[element[:starts], 2] == 'if'
     elsif element[:type] == 'end'
       break_counter -= 1
     end
