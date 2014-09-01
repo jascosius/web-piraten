@@ -65,6 +65,7 @@ class JavaPreprocessor
       line = line.insert(first_colon+1,(line_number-12).to_s) #lines of insert_logic
       line.slice!('Pirate.')
     end
+    line.gsub!('Pirate.java','line')
     {:type => :error, :message => line}
   end
 
@@ -94,7 +95,7 @@ class JavaPreprocessor
     %q[
 import logic.*;
 
-public class Pirate extends Main{
+public class Pirate{
 
 	public Ship ship;
 
