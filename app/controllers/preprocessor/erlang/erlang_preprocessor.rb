@@ -9,6 +9,7 @@ class ErlangPreprocessor
     @line_first = true
     @compileflag = true
     @precompileflag = true
+    @code = code
     @process_code = process_code(code, tracing_vars)
     @precompile_code = process_code_for_precompile(code)
   end
@@ -57,8 +58,18 @@ class ErlangPreprocessor
     elsif type == 'compile' #compiling with our line logic failed, but without not => running in backup-mode
       if @compileflag
         @compileflag = false
-        send.call([{:execute => {:command => 'erl -noshell -s prewebpiraten main -s init stop', :stderr => 'preerror'}}, {:exit => {}}])
-        return {:type => :warning, :message => 'Start im vereinfachten Modus.'}
+        begin
+          open("log/simplemode.log", 'a') do |file|
+            file.puts '--------------------------------'
+            file.puts Time.now
+            file.puts '--------------------------------'
+            file.puts @code
+            file.puts "\n\n\n"
+          end
+        ensure
+          send.call([{:execute => {:command => 'erl -noshell -s prewebpiraten main -s init stop', :stderr => 'preerror'}}, {:exit => {}}])
+          return {:type => :warning, :message => 'Start im vereinfachten Modus.'}
+        end
       end
       {:type => :no} #dismiss error message because it is not the users fault
     elsif type == 'ok' and @compileflag #compiling with our line logic succeeds
