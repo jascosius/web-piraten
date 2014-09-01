@@ -35,7 +35,8 @@ end
 def scan_for_index_start_and_end(code, regex)
   res = []
   code.scan(regex) do
-    res << {starts: Regexp.last_match.offset(0).first, ends: Regexp.last_match.offset(0).last}
+    res << {starts: Regexp.last_match.offset(0).first,
+            ends: Regexp.last_match.offset(0).last}
   end
   res
 end
@@ -57,10 +58,14 @@ end
 # is inserted in the code and returns the processed code, also
 # deletes all inserted helping-prefixes (for keyword recognition).
 def insert_highlighting(new_code, vars)
-  string_indexes = scan_for_index_start_and_end(new_code, regex_find_strings)
+  string_indexes = scan_for_index_start_and_end(new_code, regex_find_strings) +
+      scan_for_index_start_and_end(new_code, /\d+\.\d+/)
+  # scan also for floating point numbers to prevent wrong
+  # handling ot the "."
+  string_indexes
   operation_indexes = scan_for_index_start_and_end(new_code, regex_find_operations)
   # Set the array of tracing variables to empty, if there only is
-  # the underscore, which by default is in erlang undefined.
+  # the underscore, which by default in erlang is undefined.
   vars = [] if vars.length == 1 && vars[0] == '_'
 
   unless vars.empty?
@@ -106,22 +111,59 @@ end
 # with break-functions, functions for line highlighting and in
 # case of functions of the pirates the line number.
 def change_prefix_2_line_number(code)
-  new_code = ''
-  number = 1
-  first_arrow = true
-  code.each_line do |line|
-    if first_arrow
-      (first_arrow = false if line.gsub!(regex_arrow_prefix, "-> a#{$prefix}_line(#{number}), a#{$prefix}_break(fun() ->"))
-    else
-      line.gsub!(regex_arrow_prefix, "-> a#{$prefix}_line(#{number}), ")
+  break_counter = 0
+  starts_and_ends = []
+  code.scan(Regexp.new("(?:->|case|if|fun\\s*(?:\\s[A-Z]\\w*)?\\(.*\\)\\s*(?:when.*)?->)line#{$prefix}")) do
+    starts_and_ends << {type: 'start',
+                        starts: Regexp.last_match.offset(0).first,
+                        ends: Regexp.last_match.offset(0).last}
+  end
+  code.scan(Regexp.new("(?:\\.|;|end)line#{$prefix}")) do
+    starts_and_ends << {type: 'end',
+                        starts: Regexp.last_match.offset(0).first,
+                        ends: Regexp.last_match.offset(0).last}
+  end
+  starts_and_ends.sort_by! { |hsh| hsh[:starts] }
+
+  break_array = []
+  starts_and_ends.each do |element|
+    # filter start- and endpoints of functions to correctly insert
+    # break functionality
+    if element[:type] == 'start' && break_counter == 0
+      break_array << element
+      break_counter = 1
+    elsif element[:type] == 'end' && break_counter == 1
+      break_array << element
+      break_counter = 0
+    elsif element[:type] == 'start'
+      break_counter += 1
+    elsif element[:type] == 'end'
+      break_counter -= 1
     end
-    first_arrow = true if line.gsub!(regex_stop_prefix, " end).line#{$prefix}")
+  end
+
+  break_code = code
+  break_array.reverse_each do |element|
+    if element[:type] == 'start'
+      break_code.slice!(element[:starts]..element[:ends])
+      break_code = code.insert(element[:starts],
+                               "-> a#{$prefix}_line(number#{$prefix}), a#{$prefix}_break(fun() -> ")
+    elsif element[:type] == 'end'
+      break_code = code.insert(element[:starts], " end)")
+    end
+  end
+
+  return_code = ''
+  number = 1
+  break_code.each_line do |line|
+    line.gsub!(regex_arrow_prefix, "-> a#{$prefix}_line(#{number}), ")
+    line.gsub!(Regexp.new("a#{$prefix}_line\\(number#{$prefix}\\)"), "a#{$prefix}_line(#{number})")
     line.gsub!(regex_op_prefix, "(#{number}, ")
     line.gsub!(/\(\d+,\s+\)/, "(#{number})")
-    new_code += line.chomp + "  % #{$prefix}_(#{number}#{$prefix}_)\n"
+    return_code += line.chomp + "  % #{$prefix}_(#{number}#{$prefix}_)\n"
     number += 1
   end
-  new_code
+  return_code
 end
 
 # Takes the code and variables to trace and scans the code line by

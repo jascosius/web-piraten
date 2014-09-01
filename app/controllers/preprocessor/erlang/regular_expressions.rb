@@ -11,7 +11,7 @@ end
 
 
 def regex_find_operations
-  /(?:\bmove\(|\btake\(|\blook\(|\bputs\(|\bturn\(|->|\.)/
+  /(?:\bmove\(|\btake\(|\blook\(|\bputs\(|\bturn\(|->|\.|;|\bend\b|\bcase\b|\bif\b)/
 end
 
 def regex_arrow_prefix
