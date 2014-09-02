@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 class Ship
-  attr_accessor :x_position, :y_position, :rotation
+  attr_accessor :x_position, :y_position, :rotation, :send
 
   def initialize(x, y, rotation, grid)
     @x_position = x
@@ -99,6 +99,7 @@ class Ship
           @x_position, @y_position = coord
           packet.add_operation('move',{:x => coord[0], :y => coord[1]})
           packet.add_operation('exit')
+          @send.call([{:stop => :stop}])
         else
           @x_position, @y_position = coord
           packet.add_operation('move',{:x => coord[0], :y => coord[1]})

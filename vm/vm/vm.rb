@@ -73,7 +73,7 @@ end
 
 def response(msg, shared)
   if shared[:stdin]
-    shared[:stdin].puts msg
+    shared[:stdin].puts msg['value']
   end
 end
 

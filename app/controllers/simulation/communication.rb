@@ -14,6 +14,8 @@ def communicate_with_vm(tracing_vars)
   old_allocations = {}
 
   send = lambda { |commands| @vm.puts proof_commands(commands).to_json }
+  @ship.send = send
+
   functions = {:line => lambda { |number| new_line!(number) },
                :debug => lambda { |name_index, *value| debug!(tracing_vars, old_allocations, name_index.to_i, value.join('_')) }, #the value can contain _, with must be joint again
                :move => lambda { @ship.move!(@packet) },
@@ -38,7 +40,7 @@ def communicate_with_vm(tracing_vars)
       array = line.split('_') #a command looks like $prefix_function_params or $prefix_?_function_params
       if array[0] == $prefix #is the line a command?
         if array[1] == '?' #is the command a question?
-          @vm.puts([{:response => search_and_execute_function(functions, array[2..-1])}].to_json) #when there is a ?, the vm expects a response
+          @vm.puts([{:response => {:value => search_and_execute_function(functions, array[2..-1])}}].to_json) #when there is a ?, the vm expects a response
         else
           search_and_execute_function(functions, array[1..-1])
         end
@@ -47,7 +49,7 @@ def communicate_with_vm(tracing_vars)
       end
     end
   end
-  @vm.puts([{:stop => nil}].to_json)
+  @vm.puts([{:stop => {}}].to_json)
 
   PERFORMANCE_LOGGER.track(connection.id, :communicate_with_vm, Time.now - communication_start)
 end

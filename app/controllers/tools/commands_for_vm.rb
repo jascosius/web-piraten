@@ -5,7 +5,9 @@ def proof_commands(array)
   #these are all commands the vm can handle with
   default_functions = {:write_file => {:filename => nil, :permissions => 0744, :content => nil},
                        :execute => {:command => nil, :stdout => false, :stderr => 'error', :permissions => 'read-only'},
-                       :exit => {:successful => true, :message => ''}}
+                       :exit => {:successful => true, :message => ''},
+                       :stop => {},
+                       :response => {:value => nil}}
 
   unless array.kind_of?(Array)
     $stderr.puts 'The argument for \'commands_for_vm.rb\' must be an array with hashes as values.'
