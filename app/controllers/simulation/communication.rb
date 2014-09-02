@@ -15,14 +15,15 @@ def communicate_with_vm(tracing_vars)
 
   send = lambda { |commands| @vm.puts proof_commands(commands).to_json }
   @ship.send = send
+  @ship.packet = @packet
 
   functions = {:line => lambda { |number| new_line!(number) },
                :debug => lambda { |name_index, *value| debug!(tracing_vars, old_allocations, name_index.to_i, value.join('_')) }, #the value can contain _, with must be joint again
-               :move => lambda { @ship.move!(@packet) },
-               :turn => lambda { |dir| @ship.turn!(@packet, dir.to_sym) },
-               :put => lambda { |obj| @ship.put!(@packet, obj.to_sym) },
-               :take => lambda { @ship.take!(@packet) },
-               :look => lambda { |dir| @ship.look!(@packet, dir.to_sym) },
+               :move => lambda { @ship.move! },
+               :turn => lambda { |dir| @ship.turn!(dir.to_sym) },
+               :put => lambda { |obj| @ship.put!(obj.to_sym) },
+               :take => lambda { @ship.take! },
+               :look => lambda { |dir| @ship.look!(dir.to_sym) },
                :break => lambda { |dir| break!(dir.to_sym) },
                :print => lambda { |type, *msg| result = @preprocessor.postprocess_print(send, type, msg.join('_'))
                unless result[:type] == :no

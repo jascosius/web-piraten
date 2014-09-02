@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 
 class Ship
-  attr_accessor :x_position, :y_position, :rotation, :send
+  attr_accessor :x_position, :y_position, :rotation, :send, :packet
 
   def initialize(x, y, rotation, grid)
     @x_position = x
@@ -10,7 +10,7 @@ class Ship
     @grid = grid
   end
 
-  def turn!(packet, direction) # event: ship.left
+  def turn!(direction) # event: ship.left
     case direction
       when :left
         @rotation = (@rotation - 1) % 4
@@ -19,32 +19,32 @@ class Ship
       else
         @rotation = (@rotation + 2) % 4
     end
-    packet.add_operation('turn', @rotation)
+    @packet.add_operation('turn', @rotation)
   end
 
-  def put!(packet, elem) # event: ship.put
+  def put!(elem) # event: ship.put
     if @grid.grid[[@x_position, @y_position]] == :nothing
       @grid.grid[[@x_position, @y_position]] = elem
-      packet.add_operation('put', {:name => elem, :x => @x_position, :y => @y_position})
+      @packet.add_operation('put', {:name => elem, :x => @x_position, :y => @y_position})
     else
-      packet.add_message('warning', 'Es ist kein Platz für ein weiteres Element.')
-      packet.add_operation('put')
+      @packet.add_message('warning', 'Es ist kein Platz für ein weiteres Element.')
+      @packet.add_operation('put')
 
     end
   end
 
-  def take!(packet) # event: ship.take
+  def take!() # event: ship.take
     elem = @grid.grid[[@x_position, @y_position]]
     if elem == :buoy || elem == :treasure
       @grid.grid[[@x_position, @y_position]] = :nothing
-      packet.add_operation('take', {:name => elem, :x => @x_position, :y => @y_position})
+      @packet.add_operation('take', {:name => elem, :x => @x_position, :y => @y_position})
     else
-      packet.add_message('warning', 'Kein Objekt zum Aufnehmen.')
-      packet.add_operation('take')
+      @packet.add_message('warning', 'Kein Objekt zum Aufnehmen.')
+      @packet.add_operation('take')
     end
   end
 
-  def look!(packet, direction)
+  def look!(direction)
     coord = [@x_position, @y_position]
     next_coord = get_next_position
     case direction
@@ -82,31 +82,31 @@ class Ship
     else
       look_obj = :border
     end
-    packet.add_operation('look', {:x => coord[0], :y => coord[1]})
+    @packet.add_operation('look', {:x => coord[0], :y => coord[1]})
     look_obj
   end
 
-  def move!(packet) # event: ship.move
+  def move!() # event: ship.move
     coord = get_next_position
     if coords_in_grid(coord)
       elem = @grid.grid[[coord[0], coord[1]]]
       case elem
         when :wave
-          packet.add_message('warning','Du wolltest in unruhige Gewässer fahren.')
-          packet.add_operation('move')
+          @packet.add_message('warning','Du wolltest in unruhige Gewässer fahren.')
+          @packet.add_operation('move')
         when :monster
-          packet.add_message('error','Du bist auf einen Kraken gefahren.')
+          @packet.add_message('error','Du bist auf einen Kraken gefahren.')
           @x_position, @y_position = coord
-          packet.add_operation('move',{:x => coord[0], :y => coord[1]})
-          packet.add_operation('exit')
+          @packet.add_operation('move',{:x => coord[0], :y => coord[1]})
+          @packet.add_operation('exit')
           @send.call([{:stop => :stop}])
         else
           @x_position, @y_position = coord
-          packet.add_operation('move',{:x => coord[0], :y => coord[1]})
+          @packet.add_operation('move',{:x => coord[0], :y => coord[1]})
       end
     else
-      packet.add_message('warning','Du bist an das Ende der Welt gestoßen.')
-      packet.add_operation('move')
+      @packet.add_message('warning','Du bist an das Ende der Welt gestoßen.')
+      @packet.add_operation('move')
     end
   end
 
