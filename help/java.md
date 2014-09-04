@@ -42,7 +42,7 @@ Prüft, was sich auf dem Feld in der übergebenen Richtung befindet.
 ###take()
 Nimmt das Objekt an der aktuellen Position auf.  
 **Akzeptierte Parameter:** keine  
-**Aufzunehmende Objekte:** item.TREASURE, Item.BUOY   
+**Aufzunehmende Objekte:** Item.TREASURE, Item.BUOY   
 
 
 ##Einschränkungen:  
