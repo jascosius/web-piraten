@@ -71,9 +71,9 @@ def search_and_execute_function(functions, name, hash)
   functions[name.to_sym].call(hash)
 end
 
-def response(msg, shared)
+def response(hash, shared)
   if shared[:stdin]
-    shared[:stdin].puts msg['value']
+    shared[:stdin].puts hash['value']
   end
 end
 
@@ -202,12 +202,11 @@ loop {
 
       Dir.mkdir(dir, 0755)
 
-      functions = {:response => lambda { |msg| response(msg, shared) }, #execute immediate
+      functions = {:response => lambda { |hash| response(hash, shared) }, #execute immediate
                    :stop => lambda { |_| puts 'stop'; thread.kill },
                    :write_file => lambda { |hash| queue.push( lambda {write_file(hash, dir)} )}, #add to queue
                    :execute => lambda {|hash| queue.push( lambda {execute(hash, client, dir, shared)} )},
                    :exit => lambda { |hash| queue.push( lambda {exit(hash, client, shared)} )}}
-
 
       handle_queue_functions(queue)
       get_commands(client, functions)
