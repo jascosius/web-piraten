@@ -25,7 +25,7 @@
 <br><br>
 
 ###move()
-Das Piratenschiff bewegt sich eine Feld in die aktuelle Bewegungsrichtung.  
+Das Piratenschiff bewegt sich ein Feld in die aktuelle Bewegungsrichtung.
 **Akzeptierte Parameter:**  keine  
 
 ###turn(Richtung)  
