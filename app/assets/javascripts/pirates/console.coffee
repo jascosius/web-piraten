@@ -3,7 +3,7 @@ class @Console
   printToConsole = (message, type) ->
     line = $ '<p></p>'
     line.addClass type
-    line.html message
+    line.text message
     $console.append line
     console.log message
     $console.scrollTop($console[0].scrollHeight)

@@ -296,7 +296,8 @@ class CodeGUI.WatchList
     )
 
     if $row.length < 1 # new row
-      $row = $ "<tr><td>#{variable}</td><td>#{allocation}</td></tr>"
+      $row = $ "<tr><td></td><td></td></tr>"
+      $row.children('td:first').text variable
       @_$watchlistDebuggerTbody.append $row
     allocation = allocation.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     $row.children('td:last').html allocation
