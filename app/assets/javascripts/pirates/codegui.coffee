@@ -277,7 +277,7 @@ class CodeGUI.WatchList
 
   @updateQueueSize = () ->
     watchlist = @get()
-    @_$size.html watchlist.length
+    @_$size.text watchlist.length
 
   @get = () ->
     watchlist = []
