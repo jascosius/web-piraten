@@ -221,7 +221,7 @@ class RubyPreprocessor
     beg_break = '; '
     loop do
       beg_break =  beg_break + 'break_point(:up); '
-      if operationlist.empty? ||  op == :defClass
+      if operationlist.empty? ||  op == :def
         break
       end
       op = operationlist.shift
