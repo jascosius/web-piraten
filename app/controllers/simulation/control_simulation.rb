@@ -35,6 +35,9 @@ def debug!(tracing_vars, old_allocations, name_index, value)
   remove_prefix! name
   remove_prefix! value
 
+  name = CGI::escapeHTML(name)
+  value = CGI::escapeHTML(value)
+
   old_allocations[name] ||= {}
   if old_allocations[name] != value
     old_allocations[name] = value
