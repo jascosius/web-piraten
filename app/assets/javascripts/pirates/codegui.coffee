@@ -293,8 +293,8 @@ class CodeGUI.WatchList
       return $(this).find('td:first').text() is variable
     )
 
-    variable = variable.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    allocation = allocation.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+#    variable = variable.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+#    allocation = allocation.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
     if $row.length < 1 # new row
       $row = $ "<tr><td></td><td></td></tr>"
