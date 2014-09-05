@@ -2,8 +2,6 @@
 class GameController < ApplicationController
 
   def index
-    puts "Languages:"
-    puts LANGUAGES
     @language = LANGUAGES
   end
 

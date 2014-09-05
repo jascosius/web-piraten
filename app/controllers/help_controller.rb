@@ -6,7 +6,6 @@ class HelpController < ApplicationController
       redirect_to :controller => :help, :action => :index, :file => :index
       return
     end
-    
     filename = params[:file]
     content = ''
     begin
