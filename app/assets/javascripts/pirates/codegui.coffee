@@ -49,8 +49,6 @@ class @CodeGUI
     @_$runNStopBtn.click () =>
       Simulation.start()
       Simulation.stop()
-    @_$jumpDropdown = $ '#jumpDropdown'
-    @_$jumpDropdown.attr 'disabled', 'disabled'
     @_$jumpBtn = $ '#jumpBtn'
     @_$jumpBtn.attr 'disabled', 'disabled'
     @_$jumpBtn.click () =>
@@ -60,7 +58,6 @@ class @CodeGUI
           Simulation.step()
         catch
           if Simulation.isFinished
-            console.log 'nein'
             @toggleStepper()
             @_$resumeBtn.attr 'disabled', 'disabled'
       else while PacketHandler.stackDeep >= acDeep && !Simulation.isFinished
@@ -207,17 +204,18 @@ class @CodeGUI
     @_$resumeBtn.hide()
     @_$stopBtn.show()
     @_$stepBtn.attr 'disabled', 'disabled'
+    @_$jumpBtn.attr 'disabled', 'disabled'
 #    @_$resumeBtn.attr 'disabled', 'disabled'
 
 
   @toggleStepper = () =>
     if @_$stepBtn.attr 'disabled'
       @_$stepBtn.removeAttr 'disabled'
-      @_$jumpDropdown.removeAttr 'disabled'
+      @_$jumpBtn.removeAttr 'disabled'
       @_$resumeBtn.removeAttr 'disabled'
     else
       @_$stepBtn.attr 'disabled', 'disabled'
-      @_$jumpDropdown.attr 'disabled', 'disabled'
+      @_$jumpBtn.attr 'disabled', 'disabled'
       @_$resumeBtn.attr 'disabled', 'disabled'
 
 
@@ -295,12 +293,14 @@ class CodeGUI.WatchList
       return $(this).find('td:first').text() is variable
     )
 
+    variable = variable.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    allocation = allocation.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
     if $row.length < 1 # new row
       $row = $ "<tr><td></td><td></td></tr>"
       $row.children('td:first').text variable
       @_$watchlistDebuggerTbody.append $row
-    allocation = allocation.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    $row.children('td:last').html allocation
+    $row.children('td:last').text allocation
     $row.children().addClass('highlight').delay(250).removeClass 'highlight', 1000, 'linear'
 
   @clearAllocations = () ->

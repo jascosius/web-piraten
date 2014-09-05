@@ -63,6 +63,7 @@ GEM
     jquery-ui-rails (4.2.1)
       railties (>= 3.2.16)
     json (1.8.1)
+    kramdown (1.4.1)
     less (2.5.1)
       commonjs (~> 0.2.7)
     less-rails (2.5.0)
@@ -71,10 +72,15 @@ GEM
     less-rails-bootstrap (3.2.0)
       less-rails (~> 2.5.0)
     libv8 (3.16.14.3)
+    logutils (0.6.0)
     magic_encoding (0.0.2)
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
+    markdown (1.1.1)
+      kramdown (>= 1.0.2)
+      props (>= 1.0.0)
+      textutils (>= 0.6.4)
     mime-types (1.25.1)
     mina (0.3.0)
       open4
@@ -83,6 +89,7 @@ GEM
     multi_json (1.10.1)
     open4 (1.3.4)
     polyglot (0.3.5)
+    props (1.1.1)
     rack (1.5.2)
     rack-test (0.6.2)
       rack (>= 1.0)
@@ -126,6 +133,10 @@ GEM
       actionpack (>= 3.0)
       activesupport (>= 3.0)
       sprockets (~> 2.8)
+    textutils (0.9.4)
+      activesupport
+      logutils (~> 0.5)
+      props
     therubyracer (0.12.1)
       libv8 (~> 3.16.14.0)
       ref
@@ -170,6 +181,7 @@ DEPENDENCIES
   json
   less-rails-bootstrap
   magic_encoding
+  markdown
   mina
   rails (= 4.1.4)
   sass-rails

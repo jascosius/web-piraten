@@ -8,8 +8,7 @@
                 <span class="glyphicon glyphicon-resize-full"></span>
             </button>
             <div class="btn-group">
-                <button type="button" class="btn btn-warning dropdown-toggle pull-right" id="watchlist-dropdown" data-toggle="dropdown">
-                    Beobachtete Variablen <span class="caret"></span>
+                <button type="button" class="btn btn-warning dropdown-toggle pull-right" id="watchlist-dropdown" data-toggle="dropdown">Beobachtete Variablen<span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" id='watchlist'>
                     <div id="watchlist-default">Mache einen Doppelklick auf Variablen zum Beobachten der Werte</div>
@@ -20,16 +19,8 @@
 
             <div class="btn-group">
                 <button id="runBtn" type="button" class="btn btn-success">
-                    <span class="glyphicon glyphicon-play"> </span> Ausführen
-                </button>
-                <button id="runDropdown" type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
-                    <span class="caret"></span>
-                    <span class="sr-only">Toggle Dropdown</span>
-                </button>
-                <ul class="dropdown-menu" role="menu">
-                    <li><a href="#" id="runNStopBtn"><span class="glyphicon glyphicon-step-forward"> </span> Schritt</a>
-                    </li>
-                </ul>
+                    <span class="glyphicon glyphicon-play"> </span>Ausführen</button>
+                <button id="runNStopBtn" type="button" class="btn btn-success"><span class="glyphicon glyphicon-step-forward sm"></span></button>
             </div>
 
         </div>
@@ -50,14 +41,9 @@
                 <button id="stepBtn" type="button" class="btn btn-default" disabled>
                     <span class="glyphicon glyphicon-step-forward"> </span> Schritt
                 </button>
-                <button id="jumpDropdown" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" disabled>
-                    <span class="caret"></span>
-                    <span class="sr-only">Toggle Dropdown</span>
+                <button id="jumpBtn" type="button" class="btn btn-default" disabled>
+                    <span class="glyphicon glyphicon-share-alt"> </span>
                 </button>
-                <ul class="dropdown-menu" role="menu">
-                    <li><a href="#" id="jumpBtn"><span class="glyphicon glyphicon-share-alt"> </span> überspringen</a>
-                    </li>
-                </ul>
             </div>
         </div>
         <div class="clearfix"></div>
@@ -88,13 +74,13 @@
             </div>
             <div class="btn-group gameObject-controls">
                 <button class=" btn btn-default" id="addTreasure">
-                    <span class="glyphicon glyphicon-arrow-left"> </span> Schatz
+                    <%= image_tag 'frank/treasure.gif', size: '18' %> Schatz
                 </button>
                 <button class=" btn btn-default" id="addMonster">
-                    <span class="glyphicon glyphicon-arrow-up"> </span> Kraken
+                    <%= image_tag 'frank/monster.gif', size: '18' %> Kraken
                 </button>
                 <button class=" btn btn-default" id="addWave">
-                    <span class="glyphicon glyphicon-arrow-right"> </span> Welle
+                    <%= image_tag 'frank/wave.gif', size: '18'%> Welle
                 </button>
             </div>
         </div>
