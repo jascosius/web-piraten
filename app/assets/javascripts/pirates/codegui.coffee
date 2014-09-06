@@ -52,7 +52,7 @@ class @CodeGUI
     @_$jumpBtn = $ '#jumpBtn'
     @_$jumpBtn.attr 'disabled', 'disabled'
     @_$jumpBtn.click () =>
-      acDeep = PacketHandler.stackDeep
+      acDeep = SocketHandler.stackDeep
       if acDeep <= 0
         try
           Simulation.step()
@@ -60,7 +60,7 @@ class @CodeGUI
           if Simulation.isFinished
             @toggleStepper()
             @_$resumeBtn.attr 'disabled', 'disabled'
-      else while PacketHandler.stackDeep >= acDeep && !Simulation.isFinished
+      else while SocketHandler.stackDeep >= acDeep && !Simulation.isFinished
         try
           Simulation.step()
         catch
@@ -289,18 +289,17 @@ class CodeGUI.WatchList
     @_$watchlist.children("li:contains('#{word}')").length > 0
 
   @setAllocation = (variable, allocation) ->
+    console.log 'allocation:', variable, allocation
+    variable = Utils.escapeHTML variable
+    allocation = Utils.escapeHTML allocation
     $row = @_$watchlistDebuggerTbody.children("tr").filter(() ->
-      return $(this).find('td:first').text() is variable
+      return $(this).find('td:first').html() is variable
     )
 
-#    variable = variable.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-#    allocation = allocation.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
     if $row.length < 1 # new row
-      $row = $ "<tr><td></td><td></td></tr>"
-      $row.children('td:first').text variable
+      $row = $ "<tr><td>#{variable}</td><td></td></tr>"
       @_$watchlistDebuggerTbody.append $row
-    $row.children('td:last').text allocation
+    $row.children('td:last').html allocation
     $row.children().addClass('highlight').delay(250).removeClass 'highlight', 1000, 'linear'
 
   @clearAllocations = () ->

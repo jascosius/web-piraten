@@ -1,26 +1,4 @@
-onOpen = (event) =>
-  console.log 'Socket connection ready!'
-  console.log event
-
-onClose = (event) =>
-  Console.logError "Verbindung zum Server verloren, bitte lade die Seite neu!"
-
-
-onError = (event) ->
-  Console.logError "Fehler bei der Verbindung mit dem Server, bitte lade die Seite neu!"
-  console.log event
-
-# establish connection
-window.webSocket = new WebSocketRails "#{window.location.host}/websocket"
-webSocket.on_open = onOpen
-webSocket.on_close = onClose
-webSocket.on_error = onError
-webSocket._conn.on_close = onClose
-webSocket._conn.on_error = onError
-webSocket._conn.on_open = onOpen
-
-# allows to subscribe to several channels
-class @PacketHandler
+class @SocketHandler
 
   # can't be stored directly because the Grid does not exist at loading  _mapping = null
   operationMapping = () ->
@@ -56,8 +34,30 @@ class @PacketHandler
       @currentId = id
     @packetQueue.push packet
 
+  onOpen = (event) ->
+  console.log 'Socket connection ready!'
+  console.log event
+
+  onClose = (event) ->
+    Console.logError "Verbindung zum Server verloren, bitte lade die Seite neu!"
+
+
+  onError = (event) ->
+    Console.logError "Fehler bei der Verbindung mit dem Server, bitte lade die Seite neu!"
+    console.log event
+
   @initialize = () ->
-    webSocket.bind 'step', addToQueue
+    # establish connection
+    @webSocket = new WebSocketRails "#{window.location.host}/websocket"
+    @webSocket.on_open = onOpen
+    @webSocket.on_close = onClose
+    @webSocket.on_error = onError
+    @webSocket._conn.on_close = onClose
+    @webSocket._conn.on_error = onError
+    @webSocket._conn.on_open = onOpen
+
+    # listen to step event which includes all packages
+    @webSocket.bind 'step', addToQueue
     @lifeTime = 0
     @packetQueue = []
     @usedIDs = []
@@ -67,6 +67,12 @@ class @PacketHandler
 
   @setStackDeep = () =>
     @stackDeep = 0
+
+  @startSimulation = (serialized) ->
+    @webSocket.trigger "simulateGrid", serialized
+
+  @stopSimulation = () ->
+    @webSocket.trigger 'stop'
 
   @clear = () =>
     @packetQueue = []
@@ -113,8 +119,7 @@ class @PacketHandler
 
     for messageObj in messages
       msg = messageObj.message
-      msg = msg.replace /\t/g, '    ' # 4 whitespaces
-      msg = msg.replace /\ /g, '&nbsp;'
+
       switch messageObj.type
         when 'log' then Console.log msg
         when 'warning' then Console.logWarning msg

@@ -284,10 +284,10 @@ class @Grid
       }
 
       if !@_lastPacket?
-        @_lastPacket = PacketHandler.packetCounter
+        @_lastPacket = SocketHandler.packetCounter
 
-      if @_lastPacket != PacketHandler.packetCounter # old packet we are working on
-        @_lastPacket = PacketHandler.packetCounter
+      if @_lastPacket != SocketHandler.packetCounter # old packet we are working on
+        @_lastPacket = SocketHandler.packetCounter
         @_smoothingStep = 0
 
       cellCenter = @_smoothShipMovement(cellCenter)
