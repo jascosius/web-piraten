@@ -200,6 +200,6 @@ class @Simulation
       for key of obj.vars
         CodeGUI.WatchList.addVariable obj.vars[key]
 
-    Grid.GridControls.setSpeed obj.speed if obj.speed?
+    CodeGUI.setSpeed obj.speed if obj.speed?
 
 

@@ -91,42 +91,7 @@
 .grid-wrapper {
   text-align: center;
   .grid-controls {
-    margin-right: 35px;
-
-    .speed-controls {
-      float: left;
-      margin-left: 25px;
-      width: 200px;
-      text-align: left;
-
-      #simulationSpeed {
-        border: none;
-        color: #ccc;
-      }
-
-      #speedSlider {
-        &.ui-slider {
-          border-color: #4cae4c;
-        }
-        .ui-state-default, .ui-widget-content {
-          border-color: #4cae4c;
-        }
-        .ui-slider-handle {
-          background: #5cb85c;
-          border-color: #4cae4c;
-
-          &.ui-state-focus,
-          &.ui-state-active,
-          &.ui-state-hover {
-            border: solid 1px #398439 !important;
-            box-shadow: none;
-          }
-        }
-        .ui-slider-range {
-          background: #5cb85c;
-        }
-      }
-    }
+    margin-right: 9px;
 
     .grid-resetter{
       float: left;
@@ -145,6 +110,41 @@
   }
 }
 
+.speed-controls {
+  margin-left: 25px;
+  width: 200px;
+  text-align: left;
+  margin-left: 15px;
+
+  #simulationSpeed {
+    border: none;
+    color: #ccc;
+  }
+
+  #speedSlider {
+    &.ui-slider {
+      border-color: #4cae4c;
+    }
+    .ui-state-default, .ui-widget-content {
+      border-color: #4cae4c;
+    }
+    .ui-slider-handle {
+      background: #5cb85c;
+      border-color: #4cae4c;
+
+      &.ui-state-focus,
+      &.ui-state-active,
+      &.ui-state-hover {
+        border: solid 1px #398439 !important;
+        box-shadow: none;
+      }
+    }
+    .ui-slider-range {
+      background: #5cb85c;
+    }
+  }
+}
+
 #clearConsoleBtn {
   cursor: pointer;
 }
@@ -157,6 +157,9 @@
   }
 }
 
+.console-wrapper {
+  padding: 0; // override bootstrap so that it is aligned with CodeMirror
+}
 #console {
   border: solid 1px #272822;
   background-color: #272822;

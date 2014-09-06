@@ -1,51 +1,61 @@
 <% content_for :body_tag, 'data-no-turbolink' %>
 <div class="row">
 
-    <div class="col-md-4 code-wrapper">
+    <div class="col-md-7 code-wrapper">
 
-        <div class="row code-controls pull-right">
-            <button class="btn btn-xs" id="fullScreenBtn" data-toggle="tooltip" data-placement="right" title="Editor im Vollbildmodus anzeigen">
-                <span class="glyphicon glyphicon-resize-full"></span>
-            </button>
-            <div class="btn-group">
-                <button type="button" class="btn btn-warning dropdown-toggle pull-right" id="watchlist-dropdown" data-toggle="dropdown">Beobachtete Variablen<span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" id='watchlist'>
-                    <div id="watchlist-default">Mache einen Doppelklick auf Variablen zum Beobachten der Werte</div>
-                </ul>
-                <div id="watchlist-size">0</div>
-            </div>
+        <div class="speed-controls pull-right">
+            Geschwindigkeit:
+            <span id="simulationSpeed"></span>
 
-
-            <div class="btn-group">
-                <button id="runBtn" type="button" class="btn btn-success">
-                    <span class="glyphicon glyphicon-play"> </span>Ausführen</button>
-                <button id="runNStopBtn" type="button" class="btn btn-success"><span class="glyphicon glyphicon-step-forward sm"></span></button>
-            </div>
-
+            <div id="speedSlider" style="width: 200px"></div>
         </div>
-        <div class="row code-controls pull-right hidden" id="disabled-state-controls">
-            <button class="btn btn-default" id="resetBtn">
-                <span class="glyphicon glyphicon-step-backward"> </span> Zurücksetzen
-            </button>
-            <button class="btn btn-default" id="stopBtn">
-                <span class="glyphicon glyphicon-stop"> </span> Stop
-            </button>
-            <!--<button class="btn btn-default" id="pauseBtn">-->
-            <!--<span class="glyphicon glyphicon-pause"> </span> Pause-->
-            <!--</button>-->
-            <button class="btn btn-default" id="resumeBtn" style="display: none">
-                <span class="glyphicon glyphicon-play"> </span> Weiter
-            </button>
-            <div class="btn-group">
-                <button id="stepBtn" type="button" class="btn btn-default" disabled>
-                    <span class="glyphicon glyphicon-step-forward"> </span> Schritt
-                </button>
-                <button id="jumpBtn" type="button" class="btn btn-default" disabled>
-                    <span class="glyphicon glyphicon-share-alt"> </span>
-                </button>
-            </div>
+        <div class="pull-left">
+          <div class="row code-controls pull-right">
+              <button class="btn btn-xs" id="fullScreenBtn" data-toggle="tooltip" data-placement="right" title="Editor im Vollbildmodus anzeigen">
+                  <span class="glyphicon glyphicon-resize-full"></span>
+              </button>
+              <div class="btn-group">
+                  <button type="button" class="btn btn-warning dropdown-toggle pull-right" id="watchlist-dropdown" data-toggle="dropdown">Beobachtete Variablen<span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" id='watchlist'>
+                      <div id="watchlist-default">Mache einen Doppelklick auf Variablen zum Beobachten der Werte</div>
+                  </ul>
+                  <div id="watchlist-size">0</div>
+              </div>
+
+
+              <div class="btn-group">
+                  <button id="runBtn" type="button" class="btn btn-success">
+                      <span class="glyphicon glyphicon-play"> </span>Ausführen</button>
+                  <button id="runNStopBtn" type="button" class="btn btn-success"><span class="glyphicon glyphicon-step-forward sm"></span></button>
+              </div>
+
+          </div>
+          <div class="row code-controls pull-right hidden" id="disabled-state-controls">
+              <button class="btn btn-default" id="resetBtn">
+                  <span class="glyphicon glyphicon-step-backward"> </span> Zurücksetzen
+              </button>
+              <button class="btn btn-default" id="stopBtn">
+                  <span class="glyphicon glyphicon-stop"> </span> Stop
+              </button>
+              <!--<button class="btn btn-default" id="pauseBtn">-->
+              <!--<span class="glyphicon glyphicon-pause"> </span> Pause-->
+              <!--</button>-->
+              <button class="btn btn-default" id="resumeBtn" style="display: none">
+                  <span class="glyphicon glyphicon-play"> </span> Weiter
+              </button>
+              <div class="btn-group">
+                  <button id="stepBtn" type="button" class="btn btn-default" disabled>
+                      <span class="glyphicon glyphicon-step-forward"> </span> Schritt
+                  </button>
+                  <button id="jumpBtn" type="button" class="btn btn-default" disabled>
+                      <span class="glyphicon glyphicon-share-alt"> </span>
+                  </button>
+              </div>
+          </div>
+          <div class="clearfix"></div>
         </div>
+
         <div class="clearfix"></div>
         <div class="row">
 
@@ -57,15 +67,8 @@
             </div>
         </div>
     </div>
-    <div class="col-md-8 grid-wrapper">
+    <div class="col-md-5 grid-wrapper">
         <div class="grid-controls">
-            <div class="speed-controls">
-                Geschwindigkeit:
-                <span id="simulationSpeed"></span>
-
-                <div id="speedSlider" style="width: 200px"></div>
-            </div>
-
 
             <div class="btn-group serialization-controls">
                 <btn class="btn btn-default" id="serialization-trigger" data-toggle="modal" data-target="#serialization-modal">
@@ -87,7 +90,7 @@
 
         <div id="gridData" style="display: none" hidden>
             {
-            "width":22,
+            "width":14,
             "height":10,
             "objects":[],
             "ship":{
@@ -99,11 +102,20 @@
             }
         </div>
         <!-- Grid borders add an offset of 1 pixel -->
-        <canvas width="729" height="321" id="pirateGrid">Your browser is not supported!</canvas>
+        <canvas width="458" height="321" id="pirateGrid">Your browser is not supported!</canvas>
     </div>
 </div>
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-7 console-wrapper">
+        <h4>
+            <%= t("game.console.label") %>
+            <span class="pull-right glyphicon glyphicon-trash" id="clearConsoleBtn" title="Konsole leeren"></span>
+        </h4>
+
+        <div name="console" id="console"></div>
+    </div>
+
+    <div class="col-md-5">
         <h4>Beobachtete Variablen</h4>
 
         <div id="watchlistDebugger">
@@ -118,14 +130,6 @@
                 </tbody>
             </table>
         </div>
-    </div>
-    <div class="col-md-8">
-        <h4>
-            <%= t("game.console.label") %>
-            <span class="pull-right glyphicon glyphicon-trash" id="clearConsoleBtn" title="Konsole leeren"></span>
-        </h4>
-
-        <div name="console" id="console"></div>
     </div>
 </div>
 
@@ -234,7 +238,6 @@
   <% @language.script_assets.each do |script| %>
     scripts.push('<%= asset_path script %>');
   <% end %>
-//  console.log('scripts to preload:', scripts);
 
   window.onload = function() { // wait until DOM is ready
     Simulation.preload(scripts, function() { // firefox won't draw without
