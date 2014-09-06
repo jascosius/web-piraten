@@ -52,7 +52,7 @@ class @CodeGUI
     @_$jumpBtn = $ '#jumpBtn'
     @_$jumpBtn.attr 'disabled', 'disabled'
     @_$jumpBtn.click () =>
-      acDeep = PacketHandler.stackDeep
+      acDeep = SocketHandler.stackDeep
       if acDeep <= 0
         try
           Simulation.step()
@@ -60,7 +60,7 @@ class @CodeGUI
           if Simulation.isFinished
             @toggleStepper()
             @_$resumeBtn.attr 'disabled', 'disabled'
-      else while PacketHandler.stackDeep >= acDeep && !Simulation.isFinished
+      else while SocketHandler.stackDeep >= acDeep && !Simulation.isFinished
         try
           Simulation.step()
         catch
@@ -89,6 +89,29 @@ class @CodeGUI
     # github.com/marijnh/CodeMirror/issues/821#issuecomment-36967065
     @codeMirror.setOption "maxLength", Config.maxCodeLength
     @codeMirror.on "beforeChange", @enforceMaxLength
+
+
+    @_$speed = $ '#simulationSpeed'
+    $("#speedSlider").slider {
+      range: 'min'
+      value: Simulation.speed
+      min: 0
+      max: Config.maxSimulationSpeed
+      step: 1
+      slide: (event, ui) =>
+        @setSpeed(Config.maxSimulationSpeed-ui.value)
+    }
+    @setSpeed Simulation.speed
+
+  @setSpeed = (speed) =>
+    percentage = (Config.maxSimulationSpeed-speed)/Config.maxSimulationSpeed
+    percentage *= 100
+    percentage = Math.round percentage
+    percentage = Math.max percentage, 1 # no 0%
+    $("#speedSlider").slider 'value', Config.maxSimulationSpeed-speed
+    @_$speed.html "#{percentage} %"
+    Simulation.speed = speed #Config.maxSimulationSpeed-speed
+
 
   @onDoubleClick = (event) =>
     return if Simulation.isInExecutionMode
@@ -289,18 +312,17 @@ class CodeGUI.WatchList
     @_$watchlist.children("li:contains('#{word}')").length > 0
 
   @setAllocation = (variable, allocation) ->
+    console.log 'allocation:', variable, allocation
+    variable = Utils.escapeHTML variable
+    allocation = Utils.escapeHTML allocation
     $row = @_$watchlistDebuggerTbody.children("tr").filter(() ->
-      return $(this).find('td:first').text() is variable
+      return $(this).find('td:first').html() is variable
     )
 
-#    variable = variable.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-#    allocation = allocation.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
     if $row.length < 1 # new row
-      $row = $ "<tr><td></td><td></td></tr>"
-      $row.children('td:first').text variable
+      $row = $ "<tr><td>#{variable}</td><td></td></tr>"
       @_$watchlistDebuggerTbody.append $row
-    $row.children('td:last').text allocation
+    $row.children('td:last').html allocation
     $row.children().addClass('highlight').delay(250).removeClass 'highlight', 1000, 'linear'
 
   @clearAllocations = () ->

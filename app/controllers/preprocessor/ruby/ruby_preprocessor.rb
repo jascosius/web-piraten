@@ -77,6 +77,7 @@ class RubyPreprocessor
   # a comment if it's processing a multiline string.
   def add_user_codeline(s, i, bools)
     code = s.chomp
+    s = s.chomp
     #multiline comments
     if code.start_with?('=end')
       bools[:multiline_comment] = false

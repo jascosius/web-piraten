@@ -15,7 +15,7 @@ class @Simulation
     Grid.initialize @canvas, 32
     Grid.loadDefault()
     CodeGUI.initialize 'codemirror'
-    PacketHandler.initialize()
+    SocketHandler.initialize()
 
     @isInExecutionMode = false
     @isStopped = true
@@ -89,8 +89,7 @@ class @Simulation
     # clear screen
     @context.clearRect 0, 0, @context.canvas.width, @context.canvas.height
 
-    #@operationHandler.update();
-    PacketHandler.update()
+    SocketHandler.update()
     Grid.update()
     Grid.draw()
 
@@ -138,7 +137,7 @@ class @Simulation
 
     # store state of the grid
     tempStorage = @serialize()
-    webSocket.trigger "simulateGrid", tempStorage
+    SocketHandler.startSimulation tempStorage
     if localStorage? and Config.saveToLocalStorage
       localStorage.setItem "simulation.#{Config.language.id}", JSON.stringify(tempStorage)
 
@@ -150,7 +149,7 @@ class @Simulation
 
   @step = () =>
     throw 'can\'t step through a stopped simulation' unless @isInExecutionMode
-    PacketHandler.simulatePacket()
+    SocketHandler.simulatePacket()
 
   @resume = () =>
     throw 'Simulation is not paused' unless @isStopped
@@ -161,8 +160,8 @@ class @Simulation
     throw 'not in simulation mode' unless @isInExecutionMode
     @isInExecutionMode = false
     clear()
-    PacketHandler.setStackDeep()
-    webSocket.trigger 'stop'
+    SocketHandler.setStackDeep()
+    SocketHandler.stopSimulation()
     @isStopped = true
     @isFinished = true
     $serialization_trigger = $ '#serialization-trigger'
@@ -177,7 +176,7 @@ class @Simulation
 
   clear = () ->
     CodeGUI.clearHighlighting()
-    PacketHandler.clear()
+    SocketHandler.clear()
     Grid.look = null
 
   @serialize = () ->
@@ -201,6 +200,6 @@ class @Simulation
       for key of obj.vars
         CodeGUI.WatchList.addVariable obj.vars[key]
 
-    Grid.GridControls.setSpeed obj.speed if obj.speed?
+    CodeGUI.setSpeed obj.speed if obj.speed?
 
 
