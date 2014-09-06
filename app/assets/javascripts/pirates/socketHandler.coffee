@@ -35,8 +35,8 @@ class @SocketHandler
     @packetQueue.push packet
 
   onOpen = (event) ->
-  console.log 'Socket connection ready!'
-  console.log event
+    console.log 'Socket connection ready!'
+    console.log event
 
   onClose = (event) ->
     Console.logError "Verbindung zum Server verloren, bitte lade die Seite neu!"
