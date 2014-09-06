@@ -13,7 +13,7 @@ class RubyPreprocessor
     @filename = "#{$prefix}_code.rb"
     @syntaxflag = true
     @code = code
-    @process_code = process_code(code, tracing_vars)
+    @tracing_vars = tracing_vars
   end
 
   def commands_for_vm
@@ -245,6 +245,7 @@ class RubyPreprocessor
 
   def postprocess_print(send, type, line)
     if type == 'checksuccess'
+      @process_code = process_code(@code, @tracing_vars)
       send.call([{:write_file => {:filename => @filename, :content => @process_code}}, {:execute => {:command => "ruby #{@filename}"}}, {:exit => {}}])
       {:type => :no}
     elsif type == 'checkerror'
