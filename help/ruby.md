@@ -58,8 +58,9 @@ Von dieser Position kann dann weiter Simuliert oder Schrittweise durch den Code 
 
 
 ##Einschränkungen:  
-Bei Funktionen mit Rückgabewert muss **return** benutzt werden.  
-Um eine korrekte Blockerkennung zu garantieren, dar nur ein Block pro Zeile geöffnet werden.  
+* Bei Funktionen mit Rückgabewert muss **return** benutzt werden.  
+* Um eine korrekte Blockerkennung zu garantieren, darf in Zeilen, die mit einem  
+mehrzeiligen String beginnen, kein Block und generell nur ein Block pro Zeile geöffnet werden.  
 
 
 
