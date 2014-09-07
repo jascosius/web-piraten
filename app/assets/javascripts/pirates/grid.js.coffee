@@ -202,6 +202,8 @@ class @Grid
   @draw = () =>
     @ctx.save()
 
+    @ctx.clearRect 0, 0, @canvasWidth, @canvasHeight
+
     # draw horizontal and vertical lines
     if not @_cache? or @_cachedData.size != @size or
       @_cachedData.width != @width or
