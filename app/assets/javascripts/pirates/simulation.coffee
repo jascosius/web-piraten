@@ -14,6 +14,8 @@ class @Simulation
 
     @speed = Math.round Config.maxSimulationSpeed/2 # overriden by load
 
+    window.dispatchEvent new Event('beforeSimulationInitialize') # IDE says too many arguments, not correct!
+
     # initialize modules
     Grid.initialize @canvas, 32
     Grid.loadDefault()
@@ -95,6 +97,8 @@ class @Simulation
         # store language depending on the language
         localStorage.setItem "simulation.#{Config.language.id}", JSON.stringify serialized
 
+    window.dispatchEvent new Event('simulationInitialized')
+
   # called about 60 times per second (depended on the browsers refresh rate)
   @mainLoop = () =>
 
@@ -160,6 +164,7 @@ class @Simulation
         $(this).appendTo '#imagePreloader'
         if loaded >= images.length
           # run the callback function if everything is done
+          window.dispatchEvent new Event('simulationPreloaded')
           callback()
 
   # private scope within Simulation,
@@ -168,6 +173,10 @@ class @Simulation
 
   @start = () =>
     throw 'already started' if @isInExecutionMode
+    canceled = !window.dispatchEvent new CustomEvent('beforeSimulationStart', {
+      'cancelable': true
+    })
+    return if canceled
 
     # make sure it's in the correct state before executing
     clear()
@@ -185,25 +194,47 @@ class @Simulation
     if localStorage? and Config.saveToLocalStorage
       localStorage.setItem "simulation.#{Config.language.id}", JSON.stringify(tempStorage)
 
+    window.dispatchEvent new Event('simulationStarted')
   @stop = () =>
     throw 'already stopped' if @isStopped
     throw 'not in simulation mode' unless @isInExecutionMode
+
+    canceled = !window.dispatchEvent new CustomEvent('beforeSimulationStop', {
+      'cancelable': true
+    })
+    return if canceled
     @isStopped = true
     CodeGUI.stop()
+
+    window.dispatchEvent new Event('simulationStopped')
 
   # manually skip through packets
   @step = () =>
     throw 'can\'t step through a non existent simulation' unless @isInExecutionMode
+    canceled = !window.dispatchEvent new CustomEvent('beforeSimulationStep', {
+      'cancelable': true
+    })
+    return if canceled
     SocketHandler.simulatePacket()
+    window.dispatchEvent new Event('simulationStepped')
 
   @resume = () =>
     throw 'Simulation is not paused' unless @isStopped
+    canceled = !window.dispatchEvent new CustomEvent('beforeSimulationResume', {
+      'cancelable': true
+    })
+    return if canceled
     @isStopped = false
     CodeGUI.resume()
+    window.dispatchEvent new Event('simulationResumed')
 
   # reset the simulation from execution mode back to editing mode
   @reset = () =>
     throw 'not in simulation mode' unless @isInExecutionMode
+    canceled = !window.dispatchEvent new CustomEvent('beforeSimulationReset', {
+      'cancelable': true
+    })
+    return if canceled
 
     @isInExecutionMode = false
     clear()
@@ -229,6 +260,8 @@ class @Simulation
     @load tempStorage
     tempStorage = null
 
+    window.dispatchEvent new Event('simulationReset')
+
   # private scope within Simulation
   # makes sure that there are no old packets in the SocketHandler queue
   clear = () ->
@@ -240,16 +273,30 @@ class @Simulation
 
   # save the state of the client to a javascript object
   @serialize = () ->
-    {
+    result = {
       code: CodeGUI.getCode()
       grid: Grid.serialize()
       vars: CodeGUI.WatchList.get()
       speed: @speed
       language: Config.language.id
     }
+    event = new CustomEvent('simulationSerialized', {
+      'detail': result
+    })
+    window.dispatchEvent event
+    return event['detail']
 
   # can load a serialized client (see @serialize())
   @load = (obj) ->
+
+    event = new CustomEvent('beforeSimulationLoad', {
+      'detail': obj
+      'cancelable': true
+    })
+    canceled = !window.dispatchEvent event
+    obj = event['detail']
+    return if canceled
+
     clear()
     throw 'cannot load null' unless obj?
 
@@ -264,5 +311,7 @@ class @Simulation
 
     # sets the simulation speed slider
     CodeGUI.setSpeed obj.speed if obj.speed?
+
+    window.dispatchEvent new Event('simulationLoaded')
 
 

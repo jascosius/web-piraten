@@ -195,11 +195,14 @@ class @Grid
     }
 
   @update = () ->
+    window.dispatchEvent new Event('beforeGridUpdate')
     for gameObject in @objects
       gameObject.update()
     @ship.update()
+    window.dispatchEvent new Event('socketHandlerUpdated')
 
   @draw = () =>
+    window.dispatchEvent new Event('beforeGridDraw')
     @ctx.save()
 
     @ctx.clearRect 0, 0, @canvasWidth, @canvasHeight
@@ -226,6 +229,8 @@ class @Grid
 
     @_highlightCell @activeCell, Config.cellHighlighting.hovered if @activeCell
     @_highlightCell @look, Config.cellHighlighting.look if @look
+
+    window.dispatchEvent new Event('gridDrawn')
 
   @_drawCells = (strokeStyle, vertical) ->
     @ctx.save()

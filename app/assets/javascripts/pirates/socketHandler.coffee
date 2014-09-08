@@ -80,12 +80,15 @@ class @SocketHandler
 
   @update = () =>
     if !Simulation.isInExecutionMode then return
+
+    window.dispatchEvent new Event('beforeSocketHandlerUpdate')
     speed = Simulation.speed
     if Simulation.isStopped or (speed > 0 && (@lifeTime % speed) != 0) or @packetQueue.length < 1
       @lifeTime++
       return
     @simulatePacket()
     @lifeTime++
+    window.dispatchEvent new Event('socketHandlerUpdated')
 
   validateArray = (name, arr) ->
     throw "#{name} in packet are not an array" unless Array.isArray arr
@@ -94,9 +97,17 @@ class @SocketHandler
   simulateOperation = (packet) =>
     operations = packet.operations
     validateArray "operations", operations
-    # TODO animate or not?
-    #Grid.blockAnimation = (operations.length > 1)
+
     for op in operations
+      # allows more message types
+      event = new CustomEvent('socketHandlerSimulateSimulateOperation', {
+        'detail': op
+        'cancelable': true
+      })
+      canceled = !window.dispatchEvent event
+      op = event['detail']
+      continue if canceled
+
       if operationMapping()[op.name]?
         operationMapping()[op.name](op.return)
       else
@@ -120,10 +131,18 @@ class @SocketHandler
     for messageObj in messages
       msg = messageObj.message
 
+      # allows more message types
+      event = new CustomEvent('socketHandlerSimulateMessage', {
+        'detail': messageObj
+        'cancelable': true
+      })
+      canceled = !window.dispatchEvent event
+      messageObj = event['detail']
+      continue if canceled
       switch messageObj.type
-        when 'log' then Console.log msg
-        when 'warning' then Console.logWarning msg
-        when 'error' then Console.logError msg
+          when 'log' then Console.log msg
+          when 'warning' then Console.logWarning msg
+          when 'error' then Console.logError msg
 
   @simulatePacket = () =>
     return if @packetQueue.isEmpty
@@ -137,6 +156,13 @@ class @SocketHandler
       console.log 'skipped packet that seems to be old or null', currentPacket
       return
     @packetCounter++
+
+    event = new CustomEvent('socketHandlerSimulatePacket', {
+      'detail': currentPacket
+    })
+    window.dispatchEvent event
+    currentPacket = event['detail']
+
 
     simulateLine currentPacket if currentPacket.line
     simulateAllocations currentPacket if currentPacket.allocations?
