@@ -225,8 +225,8 @@
       maxCodeLength: 10000
     };
 
-    config = jQuery.extend(true, config, jQuery.parseJSON('<%= raw @language.gui_options.to_json %>'));
-    window.Config = config
+    /* merge base configuration and language specific options, global scope */
+    window.Config = jQuery.extend(true, config, jQuery.parseJSON('<%= raw @language.gui_options.to_json %>'));
 
     var scripts = [
       "<%= javascript_path 'pirates/utilities' %>",
