@@ -191,55 +191,56 @@
 <% end %>
 
 <script>
-  var config = {
-    language: {
-      id: '<%= @id %>',
-      name: '<%= @language.name %>',
-      fileExtension: '<%= @language.file_extension %>'
-    },
-    saveToLocalStorage: true,
-    maxSimulationSpeed: 120, // time in ticks between each action
-    images: {
-      buoy: "<%= asset_path 'frank/buoy.gif' %>",
-      ship: "<%= asset_path 'frank/ship.gif' %>",
-      wave: "<%= asset_path 'frank/wave.gif' %>",
-      treasure: "<%= asset_path 'frank/treasure.gif' %>",
-      monster: "<%= asset_path 'frank/monster.gif' %>"
-    },
-    codemirror: {
-      lineNumbers: true,
-      autofocus: true,
-      tabMode: 'spaces',
-      enterMode: 'spaces',
-      theme: 'monokai',
-      keymap: 'sublime',
-      styleActiveLine: true
-    },
-    lineColor: '#999',
-    cellHighlighting: {
-      hovered: 'rgba(0,0,0,0.1)',
-      look: 'rgba(255,0,0,0.2)'
-    },
-    maxCodeLength: 10000
-  };
-
-  config = jQuery.extend(true, config, jQuery.parseJSON('<%= raw @language.gui_options.to_json %>'));
-  window.Config = config
-
-  var scripts = [
-    "<%= javascript_path 'pirates/utilities' %>",
-    "<%= javascript_path 'pirates/console' %>",
-    "<%= javascript_path 'pirates/socketHandler' %>",
-    "<%= javascript_path 'pirates/gameObjects' %>",
-    "<%= javascript_path 'pirates/codegui' %>",
-    "<%= javascript_path 'pirates/grid' %>"
-  ];
-
-  <% @language.script_assets.each do |script| %>
-    scripts.push('<%= asset_path script %>');
-  <% end %>
 
   window.onload = function() { // wait until DOM is ready
+    var config = {
+      language: {
+        id: '<%= @id %>',
+        name: '<%= @language.name %>',
+        fileExtension: '<%= @language.file_extension %>'
+      },
+      saveToLocalStorage: true,
+      maxSimulationSpeed: 120, // time in ticks between each action
+      images: {
+        buoy: "<%= asset_path 'frank/buoy.gif' %>",
+        ship: "<%= asset_path 'frank/ship.gif' %>",
+        wave: "<%= asset_path 'frank/wave.gif' %>",
+        treasure: "<%= asset_path 'frank/treasure.gif' %>",
+        monster: "<%= asset_path 'frank/monster.gif' %>"
+      },
+      codemirror: {
+        lineNumbers: true,
+        autofocus: true,
+        tabMode: 'spaces',
+        enterMode: 'spaces',
+        theme: 'monokai',
+        keymap: 'sublime',
+        styleActiveLine: true
+      },
+      lineColor: '#999',
+      cellHighlighting: {
+        hovered: 'rgba(0,0,0,0.1)',
+        look: 'rgba(255,0,0,0.2)'
+      },
+      maxCodeLength: 10000
+    };
+
+    config = jQuery.extend(true, config, jQuery.parseJSON('<%= raw @language.gui_options.to_json %>'));
+    window.Config = config
+
+    var scripts = [
+      "<%= javascript_path 'pirates/utilities' %>",
+      "<%= javascript_path 'pirates/console' %>",
+      "<%= javascript_path 'pirates/socketHandler' %>",
+      "<%= javascript_path 'pirates/gameObjects' %>",
+      "<%= javascript_path 'pirates/codegui' %>",
+      "<%= javascript_path 'pirates/grid' %>"
+    ];
+
+    <% @language.script_assets.each do |script| %>
+      scripts.push('<%= asset_path script %>');
+    <% end %>
+
     Simulation.preload(scripts, function() { // firefox won't draw without
       Simulation.initialize();
       Simulation.mainLoop();
