@@ -43,7 +43,7 @@ class RubyPreprocessor
       code_msg.each_line do |s|
         codes += insert_line_number(i, bools[:dont_skip_line])
         bools = case_block_processing(s, bools)
-        codes += add_user_codeline(s, i, bools[:dont_skip_line])
+        codes += add_user_codeline(s, i, bools)
         codes = insert_debug_information(codes, vars, bools[:dont_skip_line])
         i += 1
       end
@@ -82,7 +82,6 @@ class RubyPreprocessor
     if code.start_with?('=end')
       bools[:multiline_comment] = false
       s = s[4..-1]
-
     elsif ((bools[:multiline_comment] == true) || (code.start_with?('=begin')))
       bools[:multiline_comment] = true
       return code + " # #{$prefix}_(#{i}#{$prefix}_)\n"
