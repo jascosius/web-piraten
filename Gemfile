@@ -7,19 +7,19 @@ gem 'rails', '4.1.4'
 # gem 'sqlite3'
 
 # Use SCSS for stylesheets
-gem 'sass-rails' #, '~> 4.0.2'
+#gem 'sass-rails' #, '~> 4.0.2'
 
 # Use Uglifier as compressor for JavaScript assets
-gem 'uglifier' #, '>= 1.3.0'
+gem 'uglifier' , '>= 1.3.0'
 
 # Use CoffeeScript for .js.coffee assets and views
-gem 'coffee-rails' #, '~> 4.0.0'
+gem 'coffee-rails' , '~> 4.0.0'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 
 # Use jquery as the JavaScript library
-gem 'jquery-rails'
+gem 'jquery-rails', '~>3.1.1'
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 gem 'turbolinks'
@@ -27,7 +27,7 @@ gem 'turbolinks'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder' #, '~> 1.2'
 
-gem 'markdown'
+gem 'markdown', '>=1.1.1'
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
@@ -56,13 +56,13 @@ gem 'websocket-rails' #, :git => 'git://github.com/websocket-rails/websocket-rai
 
 # https://github.com/metaskills/less-rails-bootstrap, MIT License
 gem 'therubyracer'
-gem 'less-rails-bootstrap'
+gem 'less-rails-bootstrap', '~>3.2.0'
 
 # devise authentication
 # gem 'devise'
 
 # gem 'simple_form', '~> 3.1.0.rc1' # latest rc for bootstrap 3 support
-gem 'codemirror-rails' # MIT License
+gem 'codemirror-rails', '~>4.4' # MIT License
 
 # gem 'opal' # ruby2javascript compiler
 # gem 'opal-rails'
@@ -75,5 +75,5 @@ gem 'airbrake'
 
 gem 'json'
 
-gem 'mina'
+gem 'mina', '>=0.3.0'
 gem 'thin'
