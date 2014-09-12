@@ -54,7 +54,7 @@ class @SocketHandler
 
   @initialize = () ->
     # establish connection
-    @webSocket = new WebSocketRails "#{window.location.host}/websocket"
+    @webSocket = new WebSocketRails Config.webSocketServer
     @webSocket.on_open = onOpen
     @webSocket.on_close = onClose
     @webSocket.on_error = onError
