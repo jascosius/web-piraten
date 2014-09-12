@@ -165,10 +165,12 @@ class @SocketHandler
     return if @packetQueue.isEmpty
 
     CodeGUI.clearHighlighting()
-    Grid.look = null
+    Grid.look = null # cell highlighting of look operations
 
+    # get first in queue
     currentPacket = @packetQueue.shift()
 
+    # do not allow packets from old execution that might be from an old execution
     if !currentPacket or @currentId is not currentPacket.id
       console.log 'skipped packet that seems to be old or null', currentPacket
       return
