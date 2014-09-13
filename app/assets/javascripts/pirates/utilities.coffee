@@ -89,6 +89,14 @@ class @Utils
         $(btn).attr 'download', fileName
         $selection.popover 'hide'
 
+  @escapeHTML = (text) ->
+    console.log text
+    return text if text is null or text.length < 1
+
+    text = text.replace /\t/g, '    ' # tab to 4 whitespaces
+    #break html tags by removing < and >
+    text = text.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    text = text.replace /\ /g, '&nbsp;' # force html to display all whitespaces
 
 class @Coordinate
   constructor: (@x,@y) ->

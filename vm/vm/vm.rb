@@ -5,8 +5,11 @@ require 'fileutils'
 require 'json'
 require 'thread'
 
+#ips that can connect to the vm
+WHITELIST_IPS = ['134.245.252.93'] #chevalblanc
+
 PREFIX = 'CkyUHZVL3q' #have to be the same as in the socket_controller
-TIMEOUT = 40 #have to be the same as in the socket_controller
+TIMEOUT = 20 #have to be the same as in the socket_controller
 MAX_OPS = 10000 #the maximal counter of ops to execute
 PORT = 12340 #have to be the same as in the socket_controller
 
@@ -39,35 +42,43 @@ def initialize_timeout(client)
 end
 
 #wait for incoming commands from the server
-def get_commands(client, functions,shared)
+def get_commands(client, functions)
   # Thread to handel incomming messages
 
   loop do
     msg = client.gets.chomp
-    puts "Erhalten: #{msg}"
+    puts "Incoming: #{msg}"
 
     msg = JSON.parse(msg)
 
     Thread.start do
       msg.each do |item|
-        search_and_execute_function(functions, item.keys[0], item.values[0], shared)
+        search_and_execute_function(functions, item.keys[0], item.values[0])
       end
     end
   end
 end
 
-
-def search_and_execute_function(functions, name, hash, shared)
-  functions[name.to_sym].call(hash, shared)
+def handle_queue_functions(queue)
+  Thread.start do
+    loop do
+      queue.pop.call
+    end
+  end
 end
 
-def response(msg, shared)
+def search_and_execute_function(functions, name, hash)
+  functions[name.to_sym].call(hash)
+end
+
+def response(hash, shared)
   if shared[:stdin]
-    shared[:stdin].puts msg
+    shared[:stdin].puts hash['value']
   end
 end
 
 def exit(hash, client, shared)
+  puts 'exit'
   if hash['successful']
     end_msg = "\n#{PREFIX}_end"
   else
@@ -95,7 +106,6 @@ def write_file(hash, dir)
 end
 
 def execute(hash, client, dir, shared)
-
   command = hash['command'].gsub('$LIB$', Dir.pwd + '/lib').gsub('$PATH$', dir)
 
   changeuser = 'sudo -u sailor '
@@ -103,10 +113,6 @@ def execute(hash, client, dir, shared)
     changeuser = ''
   end
 
-  #:execute => {:command => nil, :stdout_prefix => false, :stderr_prefix => 'error', }}
-
-  #Open3.popen2("(#{changeuser} #{execute.gsub('$PATH$', dir)} 3>&1 1>&2 2>&3 | sed --unbuffered s/^/#{PREFIX}_stderr_/ ) 2>&1") do |stdin, stdout|
-  #["run_daemon", "-f", "some.conf", "--verbose", :err => [:child, :out]]
   puts command = "cd #{dir} && " + changeuser + command
   Open3.popen3(command) do |stdin, stdout, stderr|
     stdout.sync = true
@@ -114,7 +120,7 @@ def execute(hash, client, dir, shared)
     shared[:stdin] = stdin
 
     Thread.start do
-      handle_stderr(client, stderr, hash['stderr'], shared)
+      handle_stderr(stderr, hash['stderr'], shared)
     end
     handle_stdout(client, stdout, hash['stdout'], shared)
   end
@@ -125,7 +131,7 @@ def handle_stdout(client, stdout, tag, shared)
   loop do
     if stdout.eof?
 
-      #workarrount to print errormessages at last
+      #print errormessages at last
       if shared[:err]
         shared[:err].each_line do |line|
           puts line
@@ -153,16 +159,15 @@ def handle_stdout(client, stdout, tag, shared)
   end
 end
 
-def handle_stderr(client, stderr, tag, shared)
+def handle_stderr(stderr, tag, shared)
   loop do
     line = stderr.readline
 
     unless line.chomp.empty?
       if tag
-        #workarrout to print errormessages at last
+        #print errormessages at last
         shared[:err] ||= ''
         shared[:err] = shared[:err] + "\n#{PREFIX}_print_#{tag}_#{line}"
-        #puts line = "#{PREFIX}_print_#{tag}_#{line}" #to do here without the workarround
       end
     end
   end
@@ -172,7 +177,17 @@ end
 server = TCPServer.new PORT
 loop {
   Thread.start(server.accept) do |client| #spawn new process for a new client
-    shared = { :start_time => Time.now }
+
+    #just accept connections from whitelisted_ips
+    unless DEVELOPMENT
+      unless WHITELIST_IPS.include? client.peeraddr[3]
+        puts "The IP '#{client.peeraddr[3]}' is not in the whitelist."
+        return
+      end
+    end
+
+    shared = {:start_time => Time.now}
+    queue = Queue.new
 
     temp = '/codetemp'
     if DEVELOPMENT
@@ -187,19 +202,19 @@ loop {
 
       Dir.mkdir(dir, 0755)
 
+      functions = {:response => lambda { |hash| response(hash, shared) }, #execute immediate
+                   :stop => lambda { |_| puts 'stop'; thread.kill },
+                   :write_file => lambda { |hash| queue.push( lambda {write_file(hash, dir)} )}, #add to queue
+                   :execute => lambda {|hash| queue.push( lambda {execute(hash, client, dir, shared)} )},
+                   :exit => lambda { |hash| queue.push( lambda {exit(hash, client, shared)} )}}
 
-      functions = {:response => lambda { |msg, shared| response(msg, shared) },
-                   :write_file => lambda { |hash, _| write_file(hash, dir) },
-                   :execute => lambda { |hash, shared| execute(hash, client, dir, shared) },
-                   :exit => lambda { |hash, shared| exit(hash, client, shared) },
-                   :stop => lambda { |_, _| puts 'stop'; thread.kill }}
-
-      get_commands(client, functions, shared)
+      handle_queue_functions(queue)
+      get_commands(client, functions)
     }
 
-    thr.join
+    thr.join #wait for execution to finish or stopped by timeout
 
-    FileUtils.rm_r dir
+    FileUtils.rm_r dir #clean up
 
   end
 }.join

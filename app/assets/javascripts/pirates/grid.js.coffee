@@ -195,12 +195,17 @@ class @Grid
     }
 
   @update = () ->
+    window.dispatchEvent new Event('beforeGridUpdate')
     for gameObject in @objects
       gameObject.update()
     @ship.update()
+    window.dispatchEvent new Event('socketHandlerUpdated')
 
   @draw = () =>
+    window.dispatchEvent new Event('beforeGridDraw')
     @ctx.save()
+
+    @ctx.clearRect 0, 0, @canvasWidth, @canvasHeight
 
     # draw horizontal and vertical lines
     if not @_cache? or @_cachedData.size != @size or
@@ -224,6 +229,8 @@ class @Grid
 
     @_highlightCell @activeCell, Config.cellHighlighting.hovered if @activeCell
     @_highlightCell @look, Config.cellHighlighting.look if @look
+
+    window.dispatchEvent new Event('gridDrawn')
 
   @_drawCells = (strokeStyle, vertical) ->
     @ctx.save()
@@ -284,10 +291,10 @@ class @Grid
       }
 
       if !@_lastPacket?
-        @_lastPacket = PacketHandler.packetCounter
+        @_lastPacket = SocketHandler.packetCounter
 
-      if @_lastPacket != PacketHandler.packetCounter # old packet we are working on
-        @_lastPacket = PacketHandler.packetCounter
+      if @_lastPacket != SocketHandler.packetCounter # old packet we are working on
+        @_lastPacket = SocketHandler.packetCounter
         @_smoothingStep = 0
 
       cellCenter = @_smoothShipMovement(cellCenter)
@@ -408,29 +415,6 @@ class Grid.GridControls
     @_$treasureButton = $ "#addTreasure"
     @_$monsterButton = $ "#addMonster"
     @_$waveButton = $ "#addWave"
-
-    @_$speed = $ '#simulationSpeed'
-
-    $("#speedSlider").slider {
-      range: 'min'
-      value: Simulation.speed
-      min: 0
-      max: Config.maxSimulationSpeed
-      step: 1
-      slide: (event, ui) =>
-        @setSpeed(Config.maxSimulationSpeed-ui.value)
-    }
-    @setSpeed Simulation.speed
-
-  @setSpeed = (speed) =>
-    percentage = (Config.maxSimulationSpeed-speed)/Config.maxSimulationSpeed
-    percentage *= 100
-    percentage = Math.round percentage
-    percentage = Math.max percentage, 1 # no 0%
-    $("#speedSlider").slider 'value', Config.maxSimulationSpeed-speed
-    @_$speed.html "#{percentage} %"
-    Simulation.speed = speed #Config.maxSimulationSpeed-speed
-
 
 
   # switch between gameobject selection with number keys

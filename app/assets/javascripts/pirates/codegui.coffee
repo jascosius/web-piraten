@@ -49,21 +49,18 @@ class @CodeGUI
     @_$runNStopBtn.click () =>
       Simulation.start()
       Simulation.stop()
-    @_$jumpDropdown = $ '#jumpDropdown'
-    @_$jumpDropdown.attr 'disabled', 'disabled'
     @_$jumpBtn = $ '#jumpBtn'
     @_$jumpBtn.attr 'disabled', 'disabled'
     @_$jumpBtn.click () =>
-      acDeep = PacketHandler.stackDeep
+      acDeep = SocketHandler.stackDeep
       if acDeep <= 0
         try
           Simulation.step()
         catch
           if Simulation.isFinished
-            console.log 'nein'
             @toggleStepper()
             @_$resumeBtn.attr 'disabled', 'disabled'
-      else while PacketHandler.stackDeep >= acDeep && !Simulation.isFinished
+      else while SocketHandler.stackDeep >= acDeep && !Simulation.isFinished
         try
           Simulation.step()
         catch
@@ -92,6 +89,29 @@ class @CodeGUI
     # github.com/marijnh/CodeMirror/issues/821#issuecomment-36967065
     @codeMirror.setOption "maxLength", Config.maxCodeLength
     @codeMirror.on "beforeChange", @enforceMaxLength
+
+
+    @_$speed = $ '#simulationSpeed'
+    $("#speedSlider").slider {
+      range: 'min'
+      value: Simulation.speed
+      min: 0
+      max: Config.maxSimulationSpeed
+      step: 1
+      slide: (event, ui) =>
+        @setSpeed(Config.maxSimulationSpeed-ui.value)
+    }
+    @setSpeed Simulation.speed
+
+  @setSpeed = (speed) =>
+    percentage = (Config.maxSimulationSpeed-speed)/Config.maxSimulationSpeed
+    percentage *= 100
+    percentage = Math.round percentage
+    percentage = Math.max percentage, 1 # no 0%
+    $("#speedSlider").slider 'value', Config.maxSimulationSpeed-speed
+    @_$speed.html "#{percentage} %"
+    Simulation.speed = speed #Config.maxSimulationSpeed-speed
+
 
   @onDoubleClick = (event) =>
     return if Simulation.isInExecutionMode
@@ -207,17 +227,18 @@ class @CodeGUI
     @_$resumeBtn.hide()
     @_$stopBtn.show()
     @_$stepBtn.attr 'disabled', 'disabled'
+    @_$jumpBtn.attr 'disabled', 'disabled'
 #    @_$resumeBtn.attr 'disabled', 'disabled'
 
 
   @toggleStepper = () =>
     if @_$stepBtn.attr 'disabled'
       @_$stepBtn.removeAttr 'disabled'
-      @_$jumpDropdown.removeAttr 'disabled'
+      @_$jumpBtn.removeAttr 'disabled'
       @_$resumeBtn.removeAttr 'disabled'
     else
       @_$stepBtn.attr 'disabled', 'disabled'
-      @_$jumpDropdown.attr 'disabled', 'disabled'
+      @_$jumpBtn.attr 'disabled', 'disabled'
       @_$resumeBtn.attr 'disabled', 'disabled'
 
 
@@ -279,7 +300,7 @@ class CodeGUI.WatchList
 
   @updateQueueSize = () ->
     watchlist = @get()
-    @_$size.html watchlist.length
+    @_$size.text watchlist.length
 
   @get = () ->
     watchlist = []
@@ -291,14 +312,16 @@ class CodeGUI.WatchList
     @_$watchlist.children("li:contains('#{word}')").length > 0
 
   @setAllocation = (variable, allocation) ->
+    console.log 'allocation:', variable, allocation
+    variable = Utils.escapeHTML variable
+    allocation = Utils.escapeHTML allocation
     $row = @_$watchlistDebuggerTbody.children("tr").filter(() ->
-      return $(this).find('td:first').text() is variable
+      return $(this).find('td:first').html() is variable
     )
 
     if $row.length < 1 # new row
-      $row = $ "<tr><td>#{variable}</td><td>#{allocation}</td></tr>"
+      $row = $ "<tr><td>#{variable}</td><td></td></tr>"
       @_$watchlistDebuggerTbody.append $row
-    allocation = allocation.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     $row.children('td:last').html allocation
     $row.children().addClass('highlight').delay(250).removeClass 'highlight', 1000, 'linear'
 

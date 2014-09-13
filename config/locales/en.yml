@@ -25,6 +25,7 @@ en:
   nav:
     home: "Home"
     learn: "Learn"
+    help: "Help"
   socketConsole:
     label: "Server Connection Console"
 
