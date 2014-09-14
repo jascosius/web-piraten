@@ -4,6 +4,7 @@ require 'open3'
 require 'fileutils'
 require 'json'
 require 'thread'
+require 'digest'
 
 #ips that can connect to the vm
 WHITELIST_IPS = ['134.245.252.93'] #chevalblanc
@@ -27,6 +28,32 @@ if ARGV.length > 1 and ARGV[1] == 'performance'
 else
   puts 'Performance mode set as inactive'
   PERFORMANCE_TEST = false
+end
+
+#get the pepper to communicate with the server
+#the server must have the same pepper
+#IMPORTANT: The pepper is a secret
+pepper_path = '/pepper'
+if DEVELOPMENT
+  PEPPER = ''
+  puts 'The pepper is empty.'
+else
+  pepper = ''
+  begin
+    File.open(pepper_path) do |file|
+      pepper = file.read
+    end
+  rescue
+    $stderr.puts "There is no pepper in '#{pepper_path}'"
+    exit 1
+  else
+    if pepper.length < 32
+      $stderr.puts "The pepper '#{pepper}' is not long enough."
+      exit 1
+    end
+    PEPPER = pepper
+    end
+    puts "The hash of the pepper is '#{Digest::SHA1.hexdigest(PEPPER)}'."
 end
 
 #thread to kill the execution after a while
@@ -53,7 +80,18 @@ def get_commands(client, functions)
 
     Thread.start do
       msg.each do |item|
-        search_and_execute_function(functions, item.keys[0], item.values[0])
+
+        #Tests if the hash of the command is the same as the server says
+        sechash = item['value'].chars.zip PEPPER.chars
+        sechash = sechash.join
+        sechash = Digest::SHA1.hexdigest(sechash)
+        unless item['hash'] == sechash
+          $stderr.puts 'The hash is not correct.'
+          return
+        end
+
+        command = JSON.parse(item['value'])
+        search_and_execute_function(functions, command.keys[0], command.values[0])
       end
     end
   end
@@ -77,7 +115,7 @@ def response(hash, shared)
   end
 end
 
-def exit(hash, client, shared)
+def exit_command(hash, client, shared)
   puts 'exit'
   if hash['successful']
     end_msg = "\n#{PREFIX}_end"
@@ -181,7 +219,7 @@ loop {
     #just accept connections from whitelisted_ips
     unless DEVELOPMENT
       unless WHITELIST_IPS.include? client.peeraddr[3]
-        puts "The IP '#{client.peeraddr[3]}' is not in the whitelist."
+        $stderr.puts "The IP '#{client.peeraddr[3]}' is not in the whitelist."
         return
       end
     end
@@ -204,9 +242,9 @@ loop {
 
       functions = {:response => lambda { |hash| response(hash, shared) }, #execute immediate
                    :stop => lambda { |_| puts 'stop'; thread.kill },
-                   :write_file => lambda { |hash| queue.push( lambda {write_file(hash, dir)} )}, #add to queue
-                   :execute => lambda {|hash| queue.push( lambda {execute(hash, client, dir, shared)} )},
-                   :exit => lambda { |hash| queue.push( lambda {exit(hash, client, shared)} )}}
+                   :write_file => lambda { |hash| queue.push(lambda { write_file(hash, dir) }) }, #add to queue
+                   :execute => lambda { |hash| queue.push(lambda { execute(hash, client, dir, shared) }) },
+                   :exit => lambda { |hash| queue.push(lambda { exit_command(hash, client, shared) }) }}
 
       handle_queue_functions(queue)
       get_commands(client, functions)

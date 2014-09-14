@@ -11,7 +11,7 @@ class Preprocessor
   end
 
   def commands_for_vm
-    proof_commands(@lang.commands_for_vm)
+    @lang.commands_for_vm
   end
 
   def postprocess_print(send, type, line)

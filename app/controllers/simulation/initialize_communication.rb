@@ -45,9 +45,9 @@ def initialize_vm
     exit_simulation!('Ein interner Fehler ist aufgetreten.')
     @packet.send_packet
   else
-    command = @preprocessor.commands_for_vm.to_json
+    command = @preprocessor.commands_for_vm
 
-    vm.puts command
+    vm.puts proof_commands(command)
 
     vm
   end

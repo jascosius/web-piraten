@@ -1,5 +1,9 @@
 # -*- encoding : utf-8 -*-
+
 def proof_commands(array)
+
+  sendarray = []
+
   error = ' Look at \'commands_for_vm.rb\' to see defined functions.'
 
   #these are all commands the vm can handle with
@@ -27,6 +31,17 @@ def proof_commands(array)
         item.values[0][default_key] = default_value
       end
     end
+
+    newitem = item.to_json
+
+    #zip the secret pepper into the command and hash them
+    #the vm must to have the same secret pepper
+    #so the vm can proof, if the command is from the server
+    sechash = newitem.chars.zip PEPPER.chars
+    sechash = sechash.join
+    sechash = Digest::SHA1.hexdigest(sechash)
+
+    sendarray << {:hash => sechash, :value => newitem}
   end
-  array
+  sendarray.to_json
 end
