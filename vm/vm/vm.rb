@@ -53,7 +53,7 @@ else
     end
     PEPPER = pepper
     end
-    puts "The hash of the pepper is '#{Digest::SHA1.hexdigest(PEPPER)}'."
+    puts "The hash of the pepper is '#{Digest::SHA256.hexdigest(PEPPER)}'."
 end
 
 #thread to kill the execution after a while
@@ -84,7 +84,7 @@ def get_commands(client, functions)
         #Tests if the hash of the command is the same as the server says
         sechash = item['value'].chars.zip PEPPER.chars
         sechash = sechash.join
-        sechash = Digest::SHA1.hexdigest(sechash)
+        sechash = Digest::SHA256.hexdigest(sechash)
         unless item['hash'] == sechash
           $stderr.puts 'The hash is not correct.'
           return

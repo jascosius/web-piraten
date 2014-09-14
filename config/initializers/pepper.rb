@@ -23,6 +23,6 @@ else
     end
     PEPPER = pepper
     end
-    puts "The hash of the pepper is '#{Digest::SHA1.hexdigest(PEPPER)}'."
+    puts "The hash of the pepper is '#{Digest::SHA256.hexdigest(PEPPER)}'."
 end
 
