@@ -29,7 +29,7 @@ class SocketController < WebsocketRails::BaseController
   def receive_code
     Thread.start do
       receive_start = Time.now # performance
-      connection_store[:incoming] = Time.now # performance
+      connection_store[:incoming] = receive_start # performance
 
       tracing_vars = message[:vars]
       language = message[:language].downcase
@@ -57,6 +57,10 @@ class SocketController < WebsocketRails::BaseController
   def stop
     puts 'stop'
     connection_store[:is_simulation_done] = true
+  end
+
+  def ping
+    send_message :pong, ''
   end
 
   def report

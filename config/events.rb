@@ -19,6 +19,6 @@ WebsocketRails::EventMap.describe do
   subscribe :simulateGrid, :to => SocketController, :with_method => :receive_code
   subscribe :stop, :to =>SocketController, :with_method => :stop
   subscribe :report, :to => SocketController, :with_method => :report
-
+  subscribe :ping, :to => SocketController, :with_method => :ping
 
 end
