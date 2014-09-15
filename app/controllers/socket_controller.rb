@@ -10,6 +10,11 @@ class SocketController < WebsocketRails::BaseController
   require 'simulation/ship'
   require 'simulation/packet_handler'
 
+
+  # This global variable is set to be accessed from any point in
+  # the code. It's primarily used to make methods unaccessible
+  # for the user of the website and to handle the instructions
+  # whilst execution of user's code.
   $prefix = 'CkyUHZVL3q'
 
   def initialize_session
@@ -43,7 +48,7 @@ class SocketController < WebsocketRails::BaseController
           end
         end
 
-        @preprocessor = Preprocessor.new(language,code,tracing_vars)
+        @preprocessor = Preprocessor.new(language, code, tracing_vars)
 
         start_simulation(tracing_vars)
 

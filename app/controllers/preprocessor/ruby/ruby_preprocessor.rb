@@ -262,7 +262,7 @@ class RubyPreprocessor
     #remove filepath
     index_begin = line.index(@filename) #filepath ends with filename
     if index_begin
-      index_end = index_begin + "#{@filename}".length #add the lenght of the filename to the end
+      index_end = index_begin + "#{@filename}".length #add the length of the filename to the end
       line.slice!(index_begin...index_end) #remove the filepath
 
       #change the linenumber
