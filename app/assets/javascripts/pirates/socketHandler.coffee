@@ -3,21 +3,9 @@
   Uses websocket and json datapacket which it also maps to function in the client
 ###
 class @SocketHandler
-  # map name of operations in packets to specific functions in the client
-  # can't be stored directly because the Grid does not exist at loading  _mapping = null
-  operationMapping = () ->
-    return _mapping if _mapping? && _mapping not null
-    _mapping = {
-      put: Grid.ship.put
-      take: Grid.ship.take
-      move: Grid.ship.move
-      turn: Grid.ship.turn
-      look: Grid.ship.look
-      exit: () ->
-        Simulation.isFinished = true
-        Simulation.stop()
-    }
-    return _mapping
+  # map name of operations in packets to specific functions in the client,
+  # filled by registerOperation
+  _mapping = {}
 
   # push an incoming packet into the packet queue
   addToQueue = (packet) =>
@@ -83,6 +71,34 @@ class @SocketHandler
     @packetCounter = 0
     @stackDeep = 0
 
+    # register Operations
+    # have to be in a function, because Grid.ship changes on every loading of the grid
+    @registerOperation 'put', (param) -> Grid.ship.put(param)
+    @registerOperation 'take', (param) -> Grid.ship.take(param)
+    @registerOperation 'move', (param) -> Grid.ship.move(param)
+    @registerOperation 'turn', (param) -> Grid.ship.turn(param)
+    @registerOperation 'look', (param) -> Grid.ship.look(param)
+    @registerOperation 'exit', () ->
+      Simulation.isFinished = true
+      Simulation.stop()
+
+  ###
+    API Method to allow operations to be added
+    uses the name to identity the packet.
+    The callback will get executed once a packet with that operation gets simulated
+  ###
+  @registerOperation = (name, callback) ->
+    _mapping[name] = callback
+
+  ###
+    returns the function that will get executed when
+    a packet with named operation arrives.
+    @params name identifier of the function
+    @returns undefined if there is no operation with that name
+  ###
+  @getOperation = (name) ->
+    _mapping[name]
+
   @setStackDeep = () =>
     @stackDeep = 0
 
@@ -134,8 +150,8 @@ class @SocketHandler
       op = event['detail']
       continue if canceled
 
-      if operationMapping()[op.name]?
-        operationMapping()[op.name](op.return)
+      if @getOperation(op.name)?
+        @getOperation(op.name) op.return
       else
         console.log "received invalid operation", op
         throw "Packet error: Invalid operation!"
@@ -184,9 +200,9 @@ class @SocketHandler
       continue if canceled
 
       switch messageObj.type
-          when 'log' then Console.log msg
-          when 'warning' then Console.logWarning msg
-          when 'error' then Console.logError msg
+        when 'log' then Console.log msg
+        when 'warning' then Console.logWarning msg
+        when 'error' then Console.logError msg
 
   # takes the first packet in queue and simulates each part of it.
   @simulatePacket = () =>

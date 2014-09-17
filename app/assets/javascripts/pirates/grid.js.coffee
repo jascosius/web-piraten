@@ -51,6 +51,8 @@ class @Grid
   @addObject = (obj) ->
     @objects.push(obj)
 
+  @getShip = () ->
+    @ship
   @deleteObjectWithIndex = (index) ->
     if index != false
       @objects.splice index, 1
