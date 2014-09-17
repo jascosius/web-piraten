@@ -43,14 +43,24 @@ class @SocketHandler
   onOpen = (event) ->
     console.log 'Socket connection ready!'
     console.log event
+    window.dispatchEvent new CustomEvent('socketOpen', {
+      'detail': event
+    })
 
   onClose = (event) ->
     Console.logError "Verbindung zum Server verloren, bitte lade die Seite neu!"
+    window.dispatchEvent new CustomEvent('socketClosed', {
+      'detail': event
+    })
 
 
   onError = (event) ->
     Console.logError "Fehler bei der Verbindung mit dem Server, bitte lade die Seite neu!"
     console.log event
+
+    window.dispatchEvent new CustomEvent('socketError', {
+      'detail': event
+    })
 
   @initialize = () ->
     # establish connection
@@ -92,7 +102,11 @@ class @SocketHandler
   @update = () =>
     if !Simulation.isInExecutionMode then return
 
-    window.dispatchEvent new Event('beforeSocketHandlerUpdate')
+    canceled = !window.dispatchEvent new CustomEvent('beforeSocketHandlerUpdate', {
+      'cancelable': true
+    })
+    return if canceled
+
     speed = Simulation.speed
     if Simulation.isStopped or (speed > 0 && (@lifeTime % speed) != 0) or @packetQueue.length < 1
       @lifeTime++
@@ -112,7 +126,7 @@ class @SocketHandler
 
     for op in operations
       # allows more message types
-      event = new CustomEvent('socketHandlerSimulateSimulateOperation', {
+      event = new CustomEvent('socketHandlerSimulateOperation', {
         'detail': op
         'cancelable': true
       })
@@ -129,12 +143,26 @@ class @SocketHandler
   # highlights the current line of an simulation
   simulateLine = (packet) ->
     line = packet.line || 0
+    event = new CustomEvent('socketHandlerSimulateLine', {
+      'detail': line
+      'cancelable': true
+    })
+    canceled = !window.dispatchEvent event
+    line = event['detail']
+    return if canceled
     throw "Packet error: line '#{line}' is not a valid line" unless line > 0
     CodeGUI.highlightLine line
 
   # show variable allocation
   simulateAllocations = (packet) ->
     allocations = packet.allocations
+    event = new CustomEvent('socketHandlerSimulateAllocations', {
+      'detail': allocations
+      'cancelable': true
+    })
+    canceled = !window.dispatchEvent event
+    allocations = event['detail']
+    return if canceled
     for name of allocations
       CodeGUI.WatchList.setAllocation name, allocations[name]
 
@@ -178,6 +206,7 @@ class @SocketHandler
 
     event = new CustomEvent('socketHandlerSimulatePacket', {
       'detail': currentPacket
+      'cancelable': true
     })
     window.dispatchEvent event
     currentPacket = event['detail']

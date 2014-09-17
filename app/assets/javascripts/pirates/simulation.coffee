@@ -164,7 +164,6 @@ class @Simulation
         $(this).appendTo '#imagePreloader'
         if loaded >= images.length
           # run the callback function if everything is done
-          window.dispatchEvent new Event('simulationPreloaded')
           callback()
 
   # private scope within Simulation,

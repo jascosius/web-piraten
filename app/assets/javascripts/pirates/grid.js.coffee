@@ -195,17 +195,24 @@ class @Grid
     }
 
   @update = () ->
-    window.dispatchEvent new Event('beforeGridUpdate')
+    canceled = !window.dispatchEvent new CustomEvent('beforeGridUpdate', {
+      'cancelable': true
+    })
+    return if canceled
     for gameObject in @objects
       gameObject.update()
     @ship.update()
-    window.dispatchEvent new Event('socketHandlerUpdated')
+    window.dispatchEvent new Event('gridUpdated')
 
   @draw = () =>
-    window.dispatchEvent new Event('beforeGridDraw')
+    canceled = !window.dispatchEvent new CustomEvent('beforeGridDraw', {
+      'cancelable': true
+    })
+    return if canceled
     @ctx.save()
 
     @ctx.clearRect 0, 0, @canvasWidth, @canvasHeight
+    window.dispatchEvent new Event('gridDrawClearedCanvas')
 
     # draw horizontal and vertical lines
     if not @_cache? or @_cachedData.size != @size or
@@ -231,7 +238,7 @@ class @Grid
     @_highlightCell @look, Config.cellHighlighting.look if @look
 
     window.dispatchEvent new Event('gridDrawn')
-
+    @ctx.restore()
   @_drawCells = (strokeStyle, vertical) ->
     @ctx.save()
     vertical ||= false
