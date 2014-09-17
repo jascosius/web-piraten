@@ -17,7 +17,7 @@ set :port, '12343'
 # set :identity_file, 'key.pem'
 set :deploy_to, '/var/www/webpiraten'
 set :repository, 'ssh://git@git-ps.informatik.uni-kiel.de:55055/projekte/web-piraten.git'
-set :branch, 'production'
+set :branch, 'performance'
 
 # Manually create these paths in shared/ (eg: shared/config/database.yml) in your server.
 # They will be linked in the 'deploy:link_shared_paths' step.

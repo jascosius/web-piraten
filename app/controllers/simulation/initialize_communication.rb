@@ -15,7 +15,16 @@ def start_simulation(tracing_vars)
   read_json
   connection_store[:is_simulation_done] = false
 
-  @packet = PacketHandler.new(connection_store[:id],lambda { |a, b| send_message(a,b)})
+  @packet = PacketHandler.new(connection_store[:id],lambda { |a, b|
+    unless connection_store[:first_packet_send]
+      puts "first packet!"
+      connection_store[:first_packet_send] = true
+
+      puts "first packet2!"
+      PERFORMANCE_LOGGER.store :first_packet, connection_store[:incoming], Time.now
+    end
+    send_message(a,b)
+  })
   initialize_timeout(Thread.current)
   @vm = initialize_vm
 
@@ -39,7 +48,9 @@ def initialize_vm
 
   begin
     #connect to TCPServer to execute the programm
+    open_server = Time.now
     vm = TCPSocket.open(HOST, PORT)
+    PERFORMANCE_LOGGER.store :tcp_setup, open_server, Time.now
   rescue
     $stderr.puts 'Could not connect to TCPSocket. Start ruby vm/vm/vm.rb development'
     exit_simulation!('Ein interner Fehler ist aufgetreten.')

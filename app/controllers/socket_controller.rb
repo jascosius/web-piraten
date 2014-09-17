@@ -43,14 +43,16 @@ class SocketController < WebsocketRails::BaseController
             return
           end
         end
-
+        start_preprocessor = Time.now
         @preprocessor = Preprocessor.new(language,code,tracing_vars)
-
+        PERFORMANCE_LOGGER.store :start_preprocessor, start_preprocessor, Time.now
+        start_simulation_perf = Time.now
         start_simulation(tracing_vars)
+        PERFORMANCE_LOGGER.store :start_simulation, start_simulation_perf, Time.now
 
       end
 
-      PERFORMANCE_LOGGER.track(connection.id, :receive_code, Time.now - receive_start)
+      PERFORMANCE_LOGGER.store :receive_code, receive_start, Time.now
     end
   end
 
@@ -60,7 +62,9 @@ class SocketController < WebsocketRails::BaseController
   end
 
   def ping
+    start = Time.now
     send_message :pong, ''
+    PERFORMANCE_LOGGER.store :ping, start, Time.now
   end
 
   def report

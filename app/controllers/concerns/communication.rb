@@ -92,6 +92,7 @@ module Communication
     end
     vm.puts([{:stop => nil}].to_json)
 
-    PERFORMANCE_LOGGER.track(connection.id, :communicate_with_vm, Time.now - communication_start)
+    PERFORMANCE_LOGGER.store :communicate_with_vm, communication_start, Time.now
+    # PERFORMANCE_LOGGER.track(connection.id, :communicate_with_vm, Time.now - communication_start)
   end
 end

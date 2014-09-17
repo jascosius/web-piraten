@@ -45,6 +45,7 @@ class Ship
   end
 
   def look!(direction)
+    start_look = Time.now
     coord = [@x_position, @y_position]
     next_coord = get_next_position
     case direction
@@ -83,6 +84,8 @@ class Ship
       look_obj = :border
     end
     @packet.add_operation('look', {:x => coord[0], :y => coord[1]})
+
+    PERFORMANCE_LOGGER.store :look_api, start_look, Time.now
     look_obj
   end
 
