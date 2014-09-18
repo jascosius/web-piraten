@@ -18,6 +18,8 @@ class @GameObject
     @image.src = @img
     @lifeTime = 0
 
+  @registerGameObject = (name, clazz) =>
+    @ALL[name] = clazz
 
   isEqual: (other) =>
     if !other?
