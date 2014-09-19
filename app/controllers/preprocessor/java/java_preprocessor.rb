@@ -1,4 +1,7 @@
 # -*- encoding : utf-8 -*-
+# class that controls the execution of java
+# handle the outputs
+# and add the logic to the code of the user
 class JavaPreprocessor
 
   attr :line_first
@@ -10,6 +13,8 @@ class JavaPreprocessor
     @errorflag = true
   end
 
+  # sends the code to the vm
+  # starts compiling
   def commands_for_vm
     [{:write_file => {:filename => 'Pirate.java', :content => @process_code}},
      {:execute => {:command => 'javac -cp $LIB$/java $PATH$/Pirate.java', :stderr => 'compile', :permissions => 'read-write'}},
@@ -20,27 +25,30 @@ class JavaPreprocessor
     insert_logic + code_msg + insert_logic_end + "\n"
   end
 
+  # handle outputs from the vm
   def postprocess_print(send, type, line)
-    if type == 'compile' and @errorflag
+    if type == 'compile' and @errorflag # if compiling failed, just return the error message
       if @compileflag
         @compileflag = false
         send.call([{:exit => {:successful => false, :message => 'Syntaxfehler'}}])
       end
-      postprocess_error_compile(line) #handle compile-errors
-    elsif type == 'ok' and @compileflag
+      postprocess_error_compile(line)
+    elsif type == 'ok' and @compileflag # if compiling succeeds, start execution
       send.call([{:execute => {:command => 'java -cp $PATH$:$LIB$/java Pirate'}},
                  {:exit => {}}])
       {:type => :no}
     elsif type == 'ok'
       @errorflag = false
       {:type => :no}
-    elsif type == 'error'
+    elsif type == 'error' # handle error messages
       postprocess_error(line)
     else
       {:type => :no}
     end
   end
 
+  # handle error messages
+  # correct line number in the message
   def postprocess_error(line)
     if line.index('at logic.')
       line.slice!('logic.')
@@ -69,6 +77,8 @@ class JavaPreprocessor
     {:type => :error, :message => line}
   end
 
+  # handle compile error message
+  # correct line number in the message
   def postprocess_error_compile(line)
     #remove filepath
     index_begin = line.index('/')
@@ -89,7 +99,7 @@ class JavaPreprocessor
   end
 
 
-  # A method that stores the language- and ship-logic for Ruby that's put in the
+  # A method that stores the language- and ship-logic for Java that's put in the
   # code of the user to get the ship moving and so on.
   def insert_logic
     %q[

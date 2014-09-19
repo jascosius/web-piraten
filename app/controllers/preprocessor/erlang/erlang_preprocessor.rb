@@ -1,4 +1,7 @@
 # -*- encoding : utf-8 -*-
+# class that controls the execution of erlang
+# handle the outputs
+# and add the logic to the code of the user
 class ErlangPreprocessor
 
   require 'preprocessor/erlang/processing_tools'
@@ -25,13 +28,16 @@ class ErlangPreprocessor
      {:execute => {:command => 'echo ok', :stdout => 'precompileok'}}]
   end
 
-  # Processes the given code...
+  # Processes the given code to add linehighlighting and so on
   def process_code(code_msg, vars)
     new_code = remove_comments(code_msg)
     new_code = insert_highlighting(new_code, vars)
     insert_start_logic + new_code
   end
 
+  # Processes the given code
+  # just add really necessary functions
+  # do not add advanced functions link linehighlighting
   def process_code_for_precompile(code_msg)
     i = 1
     codes = ''
@@ -42,14 +48,15 @@ class ErlangPreprocessor
     insert_compile_logic + codes
   end
 
-
+  # appending on the type of answers from the compiler
+  # react like explained in the comment of commands_for_vm
   def postprocess_print(send, type, line)
     if type == 'precompile' #an error raised in compiling without our line-logic
       if @precompileflag
         @precompileflag = false
         send.call([{:exit => {:successful => false, :message => 'Syntaxfehler'}}])
       end
-      postprocess_error_compile(line) #handle compile-errors
+      postprocess_error_compile(line)
     elsif type == 'precompileok' and @precompileflag #compiling without our line-logic succeeds
       send.call([{:write_file => {:filename => 'webpiraten.erl', :content => @process_code}},
                  {:execute => {:command => 'erlc -W0 webpiraten.erl', :stderr => 'compile', :stdout => 'compile', :permissions => 'read-write'}},
@@ -97,28 +104,27 @@ class ErlangPreprocessor
       code = @precompile_code
     end
     if line =~ regex_comp # process message only if there's the filename
-      index_begin = line.index(':') # find line number beginning
-      index_end = line.index(':', index_begin+1) # find line number ending
+      index_begin = line.index(':')
+      index_end = line.index(':', index_begin+1)
       if index_begin && index_end && index_begin < index_end
-        line_number = line[index_begin+1, index_end].to_i # extract error line number
+        line_number = line[index_begin+1, index_end].to_i
         i = 1
         new_line_number = ''
         code.each_line do |lin|
-          if i == line_number # find the line from the error message
-            line_begin = lin.index("#{$prefix}_(") # find the begin of the original line number in comment
-            line_end = lin.index("#{$prefix}_)") # find the end of the original line number in comment
-            if line_begin and line_end # found something?
+          if i == line_number
+            line_begin = lin.index("#{$prefix}_(")
+            line_end = lin.index("#{$prefix}_)")
+            if line_begin and line_end
               new_line_number = lin[line_begin+"#{$prefix}_(".length...line_end]
-              # set the new line number to the number in the comment
             end
           end
           i += 1
         end
 
-        line.slice!(index_begin+1...index_end) #remove the old line number from the error
+        line.slice!(index_begin+1...index_end)
 
-        if new_line_number == '' #is there a result for the new line number?
-          line.slice!(0..index_begin+2) # remove erverything up to colon after the old number
+        if new_line_number == ''
+          line.slice!(0..index_begin+2)
         else
           # add the new line number to the error and exchange filename with 'line'
           line = line.insert(index_begin+1, new_line_number)
@@ -136,28 +142,27 @@ class ErlangPreprocessor
   # The handling and functionality is similar to postprocess_error.
   def postprocess_error_compile(line)
     if line =~ /prewebpiraten\.erl:\d*:/ # process message only if there's the filename
-      index_begin = line.index(':') # find line number beginning
-      index_end = line.index(':', index_begin+1) # find line number ending
+      index_begin = line.index(':')
+      index_end = line.index(':', index_begin+1)
       if index_begin && index_end && index_begin < index_end
-        line_number = line[index_begin+1, index_end].to_i # extract error line number
+        line_number = line[index_begin+1, index_end].to_i
         i = 1
         new_line_number = ''
         @precompile_code.each_line do |lin|
-          if i == line_number # find the line from the error message
-            line_begin = lin.index("#{$prefix}_(") # find the begin of the original line number in comment
-            line_end = lin.index("#{$prefix}_)") # find the end of the original line number in comment
-            if line_begin and line_end # found something?
+          if i == line_number
+            line_begin = lin.index("#{$prefix}_(")
+            line_end = lin.index("#{$prefix}_)")
+            if line_begin and line_end
               new_line_number = lin[line_begin+"#{$prefix}_(".length...line_end]
-              # set the new line number to the number in the comment
             end
           end
           i += 1
         end
 
-        line.slice!(index_begin+1...index_end) #remove the old line number from the error
+        line.slice!(index_begin+1...index_end)
 
-        if new_line_number == '' #is there a result for the new line number?
-          line.slice!(0..index_begin+2) # remove erverything up to colon after the old number
+        if new_line_number == ''
+          line.slice!(0..index_begin+2)
         else
           # add the new line number to the error and exchange filename with 'line'
           line = line.insert(index_begin+1, new_line_number)

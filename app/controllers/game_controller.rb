@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+# initialize learning-page
 class GameController < ApplicationController
 
   def index
