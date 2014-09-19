@@ -43,7 +43,7 @@ def proof_commands(array)
     #so the vm can proof, if the command is from the server
     sechash = newitem.chars.zip PEPPER.chars
     sechash = sechash.join
-    puts sechash = Digest::SHA256.hexdigest(sechash)
+    sechash = Digest::SHA256.hexdigest(sechash)
 
     sendarray << {:hash => sechash, :value => newitem}
   end
