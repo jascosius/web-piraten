@@ -1,5 +1,7 @@
 # -*- encoding : utf-8 -*-
 
+#the websocket creates a new instance of this class for every connection
+#this class handel requests by the user
 class SocketController < WebsocketRails::BaseController
 
   require 'preprocessor/preprocessor'
@@ -29,8 +31,8 @@ class SocketController < WebsocketRails::BaseController
     puts 'client disconnected!'
   end
 
-  # test events for the remote control buttons
-
+  # handle code send by the user
+  # starts the simulation
   def receive_code
     Thread.start do
       receive_start = Time.now # performance
@@ -39,7 +41,7 @@ class SocketController < WebsocketRails::BaseController
       language = message[:language].downcase
       code = message[:code]
 
-      #TODO: shoud be the same as in the client
+      #tests if input isn't to large
       if code.length < 10000 and language.length < 50 and tracing_vars.length < 100
 
         tracing_vars.each do |e|
@@ -58,6 +60,7 @@ class SocketController < WebsocketRails::BaseController
     end
   end
 
+  #stop simulation
   def stop
     puts 'stop'
     connection_store[:is_simulation_done] = true

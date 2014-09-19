@@ -1,5 +1,9 @@
 # -*- encoding : utf-8 -*-
 
+# proofs if a command for the vm has the right syntax
+# add the standard-values if the value isn't set
+# add a hash to legitimate at the vm
+# convert command into json
 def proof_commands(array)
 
   sendarray = []

@@ -1,4 +1,7 @@
 # -*- encoding : utf-8 -*-
+#runs on the vm to execute the user code
+#the vm has to be secure, so that the user can't take over the vm
+
 require 'socket'
 require 'open3'
 require 'fileutils'
@@ -70,7 +73,7 @@ end
 
 #wait for incoming commands from the server
 def get_commands(client, functions)
-  # Thread to handel incomming messages
+  # Thread to handel incoming messages
 
   loop do
     msg = client.gets.chomp
@@ -97,6 +100,8 @@ def get_commands(client, functions)
   end
 end
 
+# handle the commands in the queue.
+# start next one, when the previous is finished
 def handle_queue_functions(queue)
   Thread.start do
     loop do
@@ -105,16 +110,19 @@ def handle_queue_functions(queue)
   end
 end
 
+# call the function with the hash given
 def search_and_execute_function(functions, name, hash)
   functions[name.to_sym].call(hash)
 end
 
+#send a response to the execution
 def response(hash, shared)
   if shared[:stdin]
     shared[:stdin].puts hash['value']
   end
 end
 
+#send an exit to the server
 def exit_command(hash, client, shared)
   puts 'exit'
   if hash['successful']
@@ -136,6 +144,7 @@ def exit_command(hash, client, shared)
   client.puts end_msg
 end
 
+# write a file to the filesystem
 def write_file(hash, dir)
   open("#{dir}/#{hash['filename']}", 'w+') do |file|
     File.write file, hash['content']
@@ -143,10 +152,11 @@ def write_file(hash, dir)
   end
 end
 
+# execute a given command
 def execute(hash, client, dir, shared)
-  command = hash['command'].gsub('$LIB$', Dir.pwd + '/lib').gsub('$PATH$', dir)
+  command = hash['command'].gsub('$LIB$', Dir.pwd + '/lib').gsub('$PATH$', dir) #replace $LIB$ and $PATH$
 
-  changeuser = 'sudo -u sailor '
+  changeuser = 'sudo -u sailor ' # user to execute the command in a secure vm (no write permission and no internet connection)
   if DEVELOPMENT or hash['permissions'] == 'read-write'
     changeuser = ''
   end
@@ -164,6 +174,8 @@ def execute(hash, client, dir, shared)
   end
 end
 
+# handle the stdout-stream
+# add a prefix to the output if tag is a string
 def handle_stdout(client, stdout, tag, shared)
   counter = 0
   loop do
@@ -197,6 +209,8 @@ def handle_stdout(client, stdout, tag, shared)
   end
 end
 
+# handle the stderr-stream
+# add a prefix to the output, if tag is a stirng
 def handle_stderr(stderr, tag, shared)
   loop do
     line = stderr.readline
@@ -224,8 +238,8 @@ loop {
       end
     end
 
-    shared = {:start_time => Time.now}
-    queue = Queue.new
+    shared = {:start_time => Time.now} #share data over several methods
+    queue = Queue.new #queue to handle commands one after another
 
     temp = '/codetemp'
     if DEVELOPMENT
@@ -240,6 +254,7 @@ loop {
 
       Dir.mkdir(dir, 0755)
 
+      # functions that are supported by the vm
       functions = {:response => lambda { |hash| response(hash, shared) }, #execute immediate
                    :stop => lambda { |_| puts 'stop'; thread.kill },
                    :write_file => lambda { |hash| queue.push(lambda { write_file(hash, dir) }) }, #add to queue

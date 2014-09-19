@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+# load requested help-file and send it to the view
 class HelpController < ApplicationController
 
   def index

@@ -1,4 +1,7 @@
 # -*- encoding : utf-8 -*-
+#config for mina
+#deploys the application
+
 require 'mina/bundler'
 require 'mina/rails'
 require 'mina/git'
@@ -72,19 +75,23 @@ task :deploy => :environment do
   end
 end
 
+#restart the rails server
 task :restart do
   queue "cd #{deploy_to}/current/scripts/ && ./shutdown_server.sh"
   queue "cd #{deploy_to}/current/ && PERFORMANCE_TEST=true /home/captain/bin/bundle exec thin start -d -e production -p 3000"
 end
 
+#start the rails server
 task :start do
   queue "cd #{deploy_to}/current/ && PERFORMANCE_TEST=true /home/captain/bin/bundle exec thin start -d -e production -p 3000"
 end
 
+#stop the rails server
 task :stop do
   queue "cd #{deploy_to}/current/scripts/ && ./shutdown_server.sh"
 end
 
+#kill the rails server
 task :kill do
   queue "pkill -9 ruby || true"
 end
@@ -97,6 +104,9 @@ end
 #  queue 'echo wait 60 seconds to complete'
 #end
 
+#deploys the vm-script from the rails-vm to the vm for the execution
+#start the vm in edit-mode first
+#start the vm in use-mode after it
 task :deploy_vm do
   queue "cd #{deploy_to}/current/scripts/ && ./update_vm.sh"
 end

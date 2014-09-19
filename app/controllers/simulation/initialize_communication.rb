@@ -9,7 +9,8 @@ else
   HOST = 'localhost' #chevalblanc.informatik.uni-kiel.de' #host to connect to the vm #localhost
 end
 
-
+# initialize the grid on the server and start timeout for the simulation
+# initialize the vm and start simulation
 def start_simulation(tracing_vars)
   set_id
   read_json
@@ -22,6 +23,7 @@ def start_simulation(tracing_vars)
   communicate_with_vm(tracing_vars)
 end
 
+# kill the simulation after a while
 def initialize_timeout(thread)
   #Thread to stop the execution after timeout time
   Thread.start(thread) do |thr|
@@ -35,6 +37,8 @@ def initialize_timeout(thread)
   end
 end
 
+# initialize the connection to the vm
+# send the commends from the preprocessor
 def initialize_vm
 
   begin
@@ -53,6 +57,7 @@ def initialize_vm
   end
 end
 
+# read json data and initialize the grid
 def read_json
   grid = message[:grid]
   puts grid
