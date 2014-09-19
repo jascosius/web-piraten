@@ -101,6 +101,3 @@ class @Utils
 class @Coordinate
   constructor: (@x,@y) ->
     # everything is done thanks to @
-
-class @Operation
-  constructor: (@event, @data) ->

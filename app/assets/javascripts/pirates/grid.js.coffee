@@ -53,6 +53,7 @@ class @Grid
 
   @getShip = () ->
     @ship
+
   @deleteObjectWithIndex = (index) ->
     if index != false
       @objects.splice index, 1
@@ -270,6 +271,13 @@ class @Grid
   @_drawObjects = () ->
     for obj in @objects
       @ctx.save()
+      canceled = !window.dispatchEvent new CustomEvent('gridDrawObject', {
+        'cancelable': true
+        'detail': obj
+      })
+      @ctx.restore()
+      continue if canceled
+      @ctx.save()
       scaleX = @size/obj.image.width
       scaleY = @size/obj.image.height
       posx = obj.x*@size + Math.floor(obj.image.width*scaleX/2)
@@ -281,6 +289,15 @@ class @Grid
       @ctx.restore()
 
   @_drawShip = () ->
+    @ctx.save()
+    event = new CustomEvent('gridDrawShip', {
+      'cancelable': true
+      'detail': @ship
+    })
+    canceled = !window.dispatchEvent event
+    @ship = event.detail
+    @ctx.restore()
+    return if canceled
     @ctx.save()
     if @mousePressedOnShip # drag and drop
       @ctx.translate @mousePosition.x, @mousePosition.y
