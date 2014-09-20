@@ -27,6 +27,7 @@ class RubyPreprocessor
   # statements. This'll be verified by checking the user's code with regular
   # expressions.
   def process_code(code_msg, vars)
+    performance = Time.now
     i=1
     codes = ''
     bools = {}
@@ -64,7 +65,10 @@ class RubyPreprocessor
       end
     end
     puts insert_logic + codes + "\n"
-    insert_logic + codes + "\n"
+    result = insert_logic + codes + "\n"
+
+    PERFORMANCE_LOGGER.store :preprocessor, performance, Time.now
+    return result
   end
 
   # Method to add the linenumber for linehighlighting in codemirror. Previous
@@ -130,6 +134,7 @@ class RubyPreprocessor
 
   #loop for modifying the control code by finding strings and comments
   def finding_loop(s,code)
+    performance = Time.now
     is_while = false
     expressions = [[/"/, :dq],
                    [/\breturn\b/, :return],
@@ -164,12 +169,15 @@ class RubyPreprocessor
           elsif next_curr2 != nil
             s = s[0..position[1]-1] + s[next_curr2+2..-1]
           else
+            PERFORMANCE_LOGGER.store :finding_loop, performance, Time.now
             return code
           end
         when :com
           diff = code.length - s.length
           code.insert(position[1] + diff, @end_break)
           @end_break = ''
+
+          PERFORMANCE_LOGGER.store :finding_loop, performance, Time.now
           return code
         when :return
           insert_code = return_break()
@@ -210,7 +218,9 @@ class RubyPreprocessor
           @operationlist.unshift(:def)
           @end_break = @end_break + '; break_point(:down)'
           s = s[position[1]+3..-1]
-        else return code
+        else
+          PERFORMANCE_LOGGER.store :finding_loop, performance, Time.now
+          return code
       end
     end
   end
@@ -243,22 +253,31 @@ class RubyPreprocessor
   end
 
   def postprocess_print(send, type, line)
+    performance = Time.now
     if type == 'checksuccess'
       @process_code = process_code(@code, @tracing_vars)
       send.call([{:write_file => {:filename => @filename, :content => @process_code}}, {:execute => {:command => "ruby #{@filename}"}}, {:exit => {}}])
-      {:type => :no}
+      result = {:type => :no}
+      PERFORMANCE_LOGGER.store :postprocess_print, performance, Time.now
+      return result
     elsif type == 'checkerror'
       if @syntaxflag
         send.call([{:exit => {:successful => false, :message => 'Syntaxfehler'}}])
         @syntaxflag = false
       end
-      return {:type => :error, :message => line}
+      result = {:type => :error, :message => line}
+
+      PERFORMANCE_LOGGER.store :postprocess_print, performance, Time.now
+      return result
     else
-      postprocess_execute(line)
+      result = postprocess_execute(line)
+      PERFORMANCE_LOGGER.store :postprocess_print, performance, Time.now
+      return result
     end
   end
 
   def postprocess_execute(line)
+    performance = Time.now
     #remove filepath
     index_begin = line.index(@filename) #filepath ends with filename
     if index_begin
@@ -289,7 +308,9 @@ class RubyPreprocessor
         line = line.insert(index_begin, 'line') #add a line to the error instead of the filepath
       end
     end
-    {:type => :error, :message => line}
+    result = {:type => :error, :message => line}
+    PERFORMANCE_LOGGER.store :postprocess_execute, performance, Time.now
+    return result
   end
 
   # A method that stores the language- and ship-logic for Ruby that's put in the
