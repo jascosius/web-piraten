@@ -1,5 +1,9 @@
 # -*- encoding : utf-8 -*-
 
+# proofs if a command for the vm has the right syntax
+# add the standard-values if the value isn't set
+# add a hash to legitimate at the vm
+# convert command into json
 def proof_commands(array)
 
   sendarray = []
@@ -39,7 +43,7 @@ def proof_commands(array)
     #so the vm can proof, if the command is from the server
     sechash = newitem.chars.zip PEPPER.chars
     sechash = sechash.join
-    puts sechash = Digest::SHA256.hexdigest(sechash)
+    sechash = Digest::SHA256.hexdigest(sechash)
 
     sendarray << {:hash => sechash, :value => newitem}
   end

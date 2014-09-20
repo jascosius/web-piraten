@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+# Start the VM-Script when running in development-mode
 if ENV['WITHOUT_VM']
   puts 'WITHOUT_VM environment variable is set, start vm manually.'
 elsif Rails.env.development?

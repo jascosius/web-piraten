@@ -1,4 +1,6 @@
 # -*- encoding : utf-8 -*-
+# config for the different languages
+
 require 'languages/language'
 require 'preprocessor/ruby/ruby_preprocessor'
 require 'preprocessor/java/java_preprocessor'

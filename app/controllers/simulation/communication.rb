@@ -4,19 +4,25 @@ def set_id
   connection_store[:id] += 1
 end
 
+# executes the function with the given parameters
 def search_and_execute_function(functions, array)
   functions[array[0].to_sym].call(*array[1..-1])
 end
 
+# handle outputs of the vm
+# send inputs to the vm
 def communicate_with_vm(tracing_vars)
   communication_start = Time.now #Performance
 
   old_allocations = {}
 
+  #lambda-function to send new commands to the vm
   send = lambda { |commands| @vm.puts proof_commands(commands) }
+
   @ship.send = send
   @ship.packet = @packet
 
+  # functions that can be send by the vm
   functions = {:line => lambda { |number| new_line!(number) },
                :debug => lambda { |name_index, *value| debug!(tracing_vars, old_allocations, name_index.to_i, value.join('_')) }, #the value can contain _, with must be joint again
                :move => lambda { @ship.move! },
@@ -33,6 +39,7 @@ def communicate_with_vm(tracing_vars)
                :enderror => lambda { |*msg| exit_simulation!(msg.join('_')) },
                :timings => lambda { |diff| PERFORMANCE_LOGGER.track(connection.id, :vm, diff.to_f) }}
 
+  # get commands from the vm and handle them
   until connection_store[:is_simulation_done]
     line = @vm.gets.chomp
     line = line.force_encoding('utf-8')
