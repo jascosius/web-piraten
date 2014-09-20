@@ -1,14 +1,19 @@
 class @Grid
   @initialize = (@canvas) ->
     Grid.GridControls.initialize()
-    @size = 32 # pixel per cell
+    @size = 32 # pixel per cell, overriden by load
+
     @ctx = canvas.getContext "2d"
     @canvasWidth = @ctx.canvas.width
     @canvasHeight = @ctx.canvas.height
 
+    # load the default grid when the user visits the site for the first time.
     @defaultData = $.parseJSON $('#gridData').html()
 
+    # stores the cell coordinates that are highlighted because of the mouse
     @activeCell = null
+
+    # highlighted cell because of look operation
     @look = null
     @mousePosition = null
 
@@ -25,11 +30,14 @@ class @Grid
 
     @mousePressedOnShip = false
     @mousePressed = false
-    @_smoothingStep = 0 #TODO
+    @_smoothingStep = 0 # help for smooth animation
 
   @loadDefault = () =>
     @load @defaultData
 
+  ###
+    loads a serialized grid object
+  ###
   @load = (obj) =>
     @width = obj.width || 22
     @height = obj.height || 10
