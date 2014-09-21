@@ -207,6 +207,7 @@ loop {
 
       functions = {:response => lambda { |hash| response(hash, shared) }, #execute immediate
                    :stop => lambda { |_| puts 'stop'; thread.kill },
+                   :time => lambda { |hash| client.puts "\n#{PREFIX}_timings_responseOnly_#{hash['time']}" },
                    :write_file => lambda { |hash| shared[:incoming_file]= Time.now
                    queue.push( lambda {write_file(hash, dir)} )}, #add to queue
                    :execute => lambda {|hash| queue.push( lambda {execute(hash, client, dir, shared)} )},

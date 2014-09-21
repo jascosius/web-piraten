@@ -56,7 +56,10 @@ def initialize_vm
     exit_simulation!('Ein interner Fehler ist aufgetreten.')
     @packet.send_packet
   else
+
     command = @preprocessor.commands_for_vm.to_json
+
+    command = [{:time => {:time => Time.now.to_i }}].to_json
 
     vm.puts command
 

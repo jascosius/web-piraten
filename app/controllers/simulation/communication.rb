@@ -36,7 +36,7 @@ def communicate_with_vm(tracing_vars)
                end },
                :end => lambda { exit_simulation! },
                :enderror => lambda { |*msg| exit_simulation!(msg.join('_')) },
-               :timings => lambda { |name, diff| PERFORMANCE_LOGGER.store name.to_sym, 0, diff.to_f }}
+               :timings => lambda { |name, diff| PERFORMANCE_LOGGER.store name.to_sym, Time.now.to_i, diff.to_f }}
 
   until connection_store[:is_simulation_done]
     line = @vm.gets.chomp
