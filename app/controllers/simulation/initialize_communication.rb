@@ -59,7 +59,7 @@ def initialize_vm
 
     command = @preprocessor.commands_for_vm.to_json
 
-    command = [{:time => {:time => Time.now.to_i }}].to_json
+    command = [{:time => {:time => Time.now.to_f }}].to_json
 
     vm.puts command
 
