@@ -17,11 +17,8 @@ def start_simulation(tracing_vars)
   connection_store[:is_simulation_done] = false
 
   @packet = PacketHandler.new(connection_store[:id],lambda { |a, b|
-    unless connection_store[:first_packet_send]
-      puts "first packet!"
-      connection_store[:first_packet_send] = true
-
-      puts "first packet2!"
+    unless @first_packet_send
+      @first_packet_send = true
       PERFORMANCE_LOGGER.store :first_packet, connection_store[:incoming], Time.now
     end
     send_message(a,b)
