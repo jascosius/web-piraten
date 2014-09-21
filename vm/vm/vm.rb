@@ -131,12 +131,13 @@ def handle_stdout(client, stdout, tag, shared)
   loop do
     if stdout.eof?
       diff = Time.now - shared[:incoming_file]
+      client.puts timing = "\n#{PREFIX}_timings_vmIncomingFile_#{diff}"
+
       #print errormessages at last
       if shared[:err]
         shared[:err].each_line do |line|
           puts line
 
-          client.puts timing = "\n#{PREFIX}_timings_vmIncomingFile_#{diff}"
           client.puts line
         end
       end
