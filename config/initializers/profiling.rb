@@ -52,6 +52,7 @@ class PerformanceLogger
         avg = (sum.to_f/times.length)
         # puts "avg #{avg}"
         file.puts "avg: #{avg}"
+        file.puts "sum: #{sum}"
       end
     end
     @log.clear
