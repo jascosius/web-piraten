@@ -257,7 +257,10 @@ class RubyPreprocessor
     # performance = Time.now
     if type == 'checksuccess'
       PERFORMANCE_LOGGER.store :syntax_check, @timing, Time.now
+      code_processing = Time.now
       @process_code = process_code(@code, @tracing_vars)
+      PERFORMANCE_LOGGER.store :process_code_insgesamt, code_processing, Time.now
+
       send.call([{:write_file => {:filename => @filename, :content => @process_code}}, {:execute => {:command => "ruby #{@filename}"}}, {:exit => {}}])
       result = {:type => :no}
       # PERFORMANCE_LOGGER.store :postprocess_print, performance, Time.now

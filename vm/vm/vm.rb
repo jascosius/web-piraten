@@ -35,7 +35,7 @@ def initialize_timeout(client)
     sleep(TIMEOUT)
     if thread.alive?
       puts msg = "\n#{PREFIX}_enderror_Das Programm hat zu lange gebraucht."
-      client.puts msg
+      client.puts "#{msg}\n"
       thread.kill
     end
   end
@@ -90,12 +90,12 @@ def exit(hash, client, shared)
     start_time = shared[:start_time]
 
     diff = exit_time - start_time
-    client.puts timing = "\n#{PREFIX}_timings_vmVerarbeitung_#{diff}"
+    client.puts timing = "\n#{PREFIX}_timings_vmVerarbeitung_#{diff}\n"
     puts timing
   end
 
   puts end_msg
-  client.puts end_msg
+  client.puts "#{end_msg}\n"
 end
 
 def write_file(hash, dir)
@@ -131,14 +131,14 @@ def handle_stdout(client, stdout, tag, shared)
   loop do
     if stdout.eof?
       diff = Time.now - shared[:incoming_file]
-      client.puts timing = "\n#{PREFIX}_timings_vmIncomingFile_#{diff}"
+      client.puts timing = "\n#{PREFIX}_timings_vmIncomingFile_#{diff}\n"
 
       #print errormessages at last
       if shared[:err]
         shared[:err].each_line do |line|
           puts line
 
-          client.puts line
+          client.puts "#{line}\n"
         end
       end
 
@@ -146,7 +146,7 @@ def handle_stdout(client, stdout, tag, shared)
     elsif counter > MAX_OPS
       #tell the client that the execution has finished with errors
       puts msg = "#{PREFIX}_enderror_Die maximale Anzahl an Operationen wurde erreicht."
-      client.puts msg
+      client.puts "#{msg}\n"
       break
     end
     counter += 1
@@ -157,7 +157,7 @@ def handle_stdout(client, stdout, tag, shared)
         line = "#{PREFIX}_print_#{tag}_#{line}"
       end
       puts line
-      client.puts line
+      client.puts "#{line}\n"
     end
   end
 end

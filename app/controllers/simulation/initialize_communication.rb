@@ -11,6 +11,7 @@ end
 
 
 def start_simulation(tracing_vars)
+  start_simulation_initialize = Time.now
   set_id
   read_json
   connection_store[:is_simulation_done] = false
@@ -28,6 +29,7 @@ def start_simulation(tracing_vars)
   initialize_timeout(Thread.current)
   @vm = initialize_vm
 
+  PERFORMANCE_LOGGER.store :start_simulation_initialize, start_simulation_initialize, Time.now
   communicate_with_vm(tracing_vars)
 end
 
@@ -56,11 +58,12 @@ def initialize_vm
     exit_simulation!('Ein interner Fehler ist aufgetreten.')
     @packet.send_packet
   else
-
+    start = Time.now
     command = @preprocessor.commands_for_vm.to_json
 
     vm.puts command
-
+    PERFORMANCE_LOGGER.store :send_first_commands, start, Time.now
+    PERFORMANCE_LOGGER.store :first_commands_to_vm, connection_store[:incoming], Time.now
     vm
   end
 end

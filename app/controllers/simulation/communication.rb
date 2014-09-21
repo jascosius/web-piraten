@@ -39,9 +39,12 @@ def communicate_with_vm(tracing_vars)
                :timings => lambda { |name, diff| PERFORMANCE_LOGGER.store name.to_sym, 0, diff.to_f }}
 
   until connection_store[:is_simulation_done]
+    perf = Time.now
     line = @vm.gets.chomp
+    PERFORMANCE_LOGGER.store :vm_get_line, perf, Time.now
     line = line.force_encoding('utf-8')
 
+    perf = Time.now
     unless line.empty?
       array = line.split('_') #a command looks like $prefix_function_params or $prefix_?_function_params
       if array[0] == $prefix #is the line a command?
@@ -54,6 +57,7 @@ def communicate_with_vm(tracing_vars)
         print!(:log, line) #without $prefix this must be a print from the user
       end
     end
+    PERFORMANCE_LOGGER.store :vm_zeile_abarbeiten, perf, Time.now
   end
   @vm.puts([{:stop => {}}].to_json)
 

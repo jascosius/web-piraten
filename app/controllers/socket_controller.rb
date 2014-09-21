@@ -48,7 +48,7 @@ class SocketController < WebsocketRails::BaseController
         PERFORMANCE_LOGGER.store :start_preprocessor, start_preprocessor, Time.now
         start_simulation_perf = Time.now
         start_simulation(tracing_vars)
-        PERFORMANCE_LOGGER.store :start_simulation, start_simulation_perf, Time.now
+        PERFORMANCE_LOGGER.store :start_simulation_complete, start_simulation_perf, Time.now
 
       end
 
