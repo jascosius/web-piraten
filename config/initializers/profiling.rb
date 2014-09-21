@@ -53,6 +53,7 @@ class PerformanceLogger
         # puts "avg #{avg}"
         file.puts "avg: #{avg}"
         file.puts "sum: #{sum}"
+        file.puts "cnt: #{times.length}"
       end
     end
     @log.clear
