@@ -13,7 +13,12 @@ def communicate_with_vm(tracing_vars)
 
   old_allocations = {}
 
-  send = lambda { |commands| @vm.puts proof_commands(commands).to_json }
+  send = lambda { |commands|
+    start_proof_commands = Time.now
+    commands = proof_commands(commands).to_json
+    PERFORMANCE_LOGGER.store :proof_commands, start_proof_commands, Time.now
+    PERFORMANCE_LOGGER.store :sendTo_vm, connection_store[:incoming], Time.now
+    @vm.puts commands }
   @ship.send = send
   @ship.packet = @packet
 
@@ -31,7 +36,7 @@ def communicate_with_vm(tracing_vars)
                end },
                :end => lambda { exit_simulation! },
                :enderror => lambda { |*msg| exit_simulation!(msg.join('_')) },
-               :timings => lambda { |diff| PERFORMANCE_LOGGER.track(connection.id, :vm, diff.to_f) }}
+               :timings => lambda { |name, diff| PERFORMANCE_LOGGER.store name.to_sym, 0, diff.to_f }}
 
   until connection_store[:is_simulation_done]
     line = @vm.gets.chomp
@@ -52,5 +57,5 @@ def communicate_with_vm(tracing_vars)
   end
   @vm.puts([{:stop => {}}].to_json)
 
-  PERFORMANCE_LOGGER.track(connection.id, :communicate_with_vm, Time.now - communication_start)
+  PERFORMANCE_LOGGER.store :communicate_with_vm, communication_start, Time.now
 end

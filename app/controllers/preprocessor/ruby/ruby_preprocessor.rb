@@ -17,6 +17,7 @@ class RubyPreprocessor
   end
 
   def commands_for_vm
+    @timing = Time.now
     [{:write_file => {:filename => @filename, :content => @code}},
      {:execute => {:command => "ruby -c #{@filename}", :stdout => 'checksuccess', :stderr => 'checkerror'}}]
   end
@@ -253,12 +254,13 @@ class RubyPreprocessor
   end
 
   def postprocess_print(send, type, line)
-    performance = Time.now
+    # performance = Time.now
     if type == 'checksuccess'
+      PERFORMANCE_LOGGER.store :syntax_check, @timing, Time.now
       @process_code = process_code(@code, @tracing_vars)
       send.call([{:write_file => {:filename => @filename, :content => @process_code}}, {:execute => {:command => "ruby #{@filename}"}}, {:exit => {}}])
       result = {:type => :no}
-      PERFORMANCE_LOGGER.store :postprocess_print, performance, Time.now
+      # PERFORMANCE_LOGGER.store :postprocess_print, performance, Time.now
       return result
     elsif type == 'checkerror'
       if @syntaxflag
@@ -267,11 +269,11 @@ class RubyPreprocessor
       end
       result = {:type => :error, :message => line}
 
-      PERFORMANCE_LOGGER.store :postprocess_print, performance, Time.now
+      # PERFORMANCE_LOGGER.store :postprocess_print, performance, Time.now
       return result
     else
       result = postprocess_execute(line)
-      PERFORMANCE_LOGGER.store :postprocess_print, performance, Time.now
+      # PERFORMANCE_LOGGER.store :postprocess_print, performance, Time.now
       return result
     end
   end

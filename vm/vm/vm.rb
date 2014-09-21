@@ -90,7 +90,7 @@ def exit(hash, client, shared)
     start_time = shared[:start_time]
 
     diff = exit_time - start_time
-    client.puts timing = "\n#{PREFIX}_timings_#{diff}"
+    client.puts timing = "\n#{PREFIX}_timings_vmVerarbeitung_#{diff}"
     puts timing
   end
 
@@ -130,11 +130,13 @@ def handle_stdout(client, stdout, tag, shared)
   counter = 0
   loop do
     if stdout.eof?
-
+      diff = Time.now - shared[:incoming_file]
       #print errormessages at last
       if shared[:err]
         shared[:err].each_line do |line|
           puts line
+
+          client.puts timing = "\n#{PREFIX}_timings_vmIncomingFile_#{diff}"
           client.puts line
         end
       end
@@ -204,7 +206,8 @@ loop {
 
       functions = {:response => lambda { |hash| response(hash, shared) }, #execute immediate
                    :stop => lambda { |_| puts 'stop'; thread.kill },
-                   :write_file => lambda { |hash| queue.push( lambda {write_file(hash, dir)} )}, #add to queue
+                   :write_file => lambda { |hash| shared[:incoming_file]= Time.now
+                   queue.push( lambda {write_file(hash, dir)} )}, #add to queue
                    :execute => lambda {|hash| queue.push( lambda {execute(hash, client, dir, shared)} )},
                    :exit => lambda { |hash| queue.push( lambda {exit(hash, client, shared)} )}}
 
