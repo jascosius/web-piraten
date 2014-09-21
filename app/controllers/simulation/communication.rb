@@ -14,9 +14,9 @@ def communicate_with_vm(tracing_vars)
   old_allocations = {}
 
   send = lambda { |commands|
-    start_proof_commands = Time.now
+    # start_proof_commands = Time.now
     commands = proof_commands(commands).to_json
-    PERFORMANCE_LOGGER.store :proof_commands, start_proof_commands, Time.now
+    # PERFORMANCE_LOGGER.store :proof_commands, start_proof_commands, Time.now
     PERFORMANCE_LOGGER.store :sendTo_vm, connection_store[:incoming], Time.now
     @vm.puts commands }
   @ship.send = send

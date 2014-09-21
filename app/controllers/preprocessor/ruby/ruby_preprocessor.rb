@@ -170,7 +170,7 @@ class RubyPreprocessor
           elsif next_curr2 != nil
             s = s[0..position[1]-1] + s[next_curr2+2..-1]
           else
-            PERFORMANCE_LOGGER.store :finding_loop, performance, Time.now
+            # PERFORMANCE_LOGGER.store :finding_loop, performance, Time.now
             return code
           end
         when :com
@@ -178,7 +178,7 @@ class RubyPreprocessor
           code.insert(position[1] + diff, @end_break)
           @end_break = ''
 
-          PERFORMANCE_LOGGER.store :finding_loop, performance, Time.now
+          # PERFORMANCE_LOGGER.store :finding_loop, performance, Time.now
           return code
         when :return
           insert_code = return_break()
@@ -220,7 +220,7 @@ class RubyPreprocessor
           @end_break = @end_break + '; break_point(:down)'
           s = s[position[1]+3..-1]
         else
-          PERFORMANCE_LOGGER.store :finding_loop, performance, Time.now
+          # PERFORMANCE_LOGGER.store :finding_loop, performance, Time.now
           return code
       end
     end

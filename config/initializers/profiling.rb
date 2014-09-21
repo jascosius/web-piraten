@@ -43,8 +43,8 @@ class PerformanceLogger
 
         # puts "sum #{sum}"
         times.each do |ms|
-          file.puts ms
-          puts ms
+          # file.puts ms
+          # puts ms
           sum += ms
         end
 
@@ -54,6 +54,10 @@ class PerformanceLogger
         file.puts "avg: #{avg}"
         file.puts "sum: #{sum}"
         file.puts "cnt: #{times.length}"
+
+        times.each do |ms|
+          file.puts ms
+        end
       end
     end
     @log.clear

@@ -85,7 +85,7 @@ class Ship
     end
     @packet.add_operation('look', {:x => coord[0], :y => coord[1]})
 
-    PERFORMANCE_LOGGER.store :look_api, start_look, Time.now
+    # PERFORMANCE_LOGGER.store :look_api, start_look, Time.now
     look_obj
   end
 
