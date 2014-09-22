@@ -48,8 +48,9 @@ def get_commands(client, functions, shared)
   loop do
     msg = client.gets.chomp
     puts "Incoming: #{msg}"
-    if msg == "PONG!"
-      client.puts "\n#{PREFIX}_timings_vmPING_#{Time.now - shared[:ping]}\n"
+    if msg == "PING!"
+      client.puts "PONG!"
+      next
     end
     msg = JSON.parse(msg)
     if shared[:timings_look_complete] and shared[:timings_look]
@@ -220,10 +221,7 @@ loop {
                    :stop => lambda { |_| puts 'stop'; thread.kill },
                    :write_file => lambda { |hash| shared[:incoming_file]= Time.now
                    queue.push( lambda {write_file(hash, dir)} )}, #add to queue
-                   :execute => lambda {|hash|
-                     shared[:ping] = Time.now
-                     client.puts "PING!"
-                     queue.push( lambda {execute(hash, client, dir, shared)} )},
+                   :execute => lambda {|hash| queue.push( lambda {execute(hash, client, dir, shared)} )},
                    :exit => lambda { |hash| queue.push( lambda {exit(hash, client, shared)} )}}
 
       handle_queue_functions(queue)

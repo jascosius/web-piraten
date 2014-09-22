@@ -37,13 +37,14 @@ def communicate_with_vm(tracing_vars)
                :end => lambda { exit_simulation! },
                :enderror => lambda { |*msg| exit_simulation!(msg.join('_')) },
                :timings => lambda { |name, diff| PERFORMANCE_LOGGER.store name.to_sym, 0, diff.to_f }}
+  ping = Time.now
+  @vm.puts "PING!"
 
   until connection_store[:is_simulation_done]
     # perf = Time.now
     line = @vm.gets.chomp
-    if line == "PING!"
-      @vm.puts "PONG!"
-      next
+    if line == "PONG!"
+      PERFORMANCE_LOGGER.store :ping_vm, ping, Time.now
     end
     perf = Time.now
     # PERFORMANCE_LOGGER.store :vm_get_line, perf, Time.now
