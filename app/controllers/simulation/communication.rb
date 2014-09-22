@@ -41,6 +41,10 @@ def communicate_with_vm(tracing_vars)
   until connection_store[:is_simulation_done]
     # perf = Time.now
     line = @vm.gets.chomp
+    if line == "PING!"
+      @vm.puts "PONG!"
+      next
+    end
     perf = Time.now
     # PERFORMANCE_LOGGER.store :vm_get_line, perf, Time.now
     line = line.force_encoding('utf-8')
