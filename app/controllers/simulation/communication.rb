@@ -41,6 +41,7 @@ def communicate_with_vm(tracing_vars)
   until connection_store[:is_simulation_done]
     # perf = Time.now
     line = @vm.gets.chomp
+    perf = Time.now
     # PERFORMANCE_LOGGER.store :vm_get_line, perf, Time.now
     line = line.force_encoding('utf-8')
 
@@ -50,6 +51,7 @@ def communicate_with_vm(tracing_vars)
       if array[0] == $prefix #is the line a command?
         if array[1] == '?' #is the command a question?
           @vm.puts([{:response => {:value => search_and_execute_function(functions, array[2..-1])}}].to_json) #when there is a ?, the vm expects a response
+          PERFORMANCE_LOGGER.store :vm_read_look, perf, Time.now
         else
           search_and_execute_function(functions, array[1..-1])
         end

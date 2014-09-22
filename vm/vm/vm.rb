@@ -42,7 +42,7 @@ def initialize_timeout(client)
 end
 
 #wait for incoming commands from the server
-def get_commands(client, functions)
+def get_commands(client, functions, shared)
   # Thread to handel incomming messages
 
   loop do
@@ -50,7 +50,10 @@ def get_commands(client, functions)
     puts "Incoming: #{msg}"
 
     msg = JSON.parse(msg)
-
+    if shared[:timings_look_complete] and shared[:timings_look]
+     client.puts timing = "\n#{PREFIX}_timings_vmResponseCompleteVORHER_#{Time.now - shared[:timings_look_complete]}\n"
+     client.puts timing = "\n#{PREFIX}_timings_vmResponseVORHER_#{Time.now - shared[:timings_look]}\n"
+    end
     Thread.start do
       msg.each do |item|
         search_and_execute_function(functions, item.keys[0], item.values[0])
@@ -156,8 +159,10 @@ def handle_stdout(client, stdout, tag, shared)
       unless tag == false || line.start_with?(PREFIX)
         line = "#{PREFIX}_print_#{tag}_#{line}"
       end
+      shared[:timings_look_complete] = Time.now
       puts line
       client.puts "#{line}\n"
+      shared[:timings_look] = Time.now
     end
   end
 end
@@ -205,7 +210,11 @@ loop {
 
       Dir.mkdir(dir, 0755)
 
-      functions = {:response => lambda { |hash| response(hash, shared) }, #execute immediate
+      functions = {:response => lambda { |hash|
+                      client.puts timing = "\n#{PREFIX}_timings_vmResponse_#{Time.now - shared[:timings_look]}\n"
+                      response(hash, shared)
+                      client.puts timing = "\n#{PREFIX}_timings_vmResponseComplete_#{Time.now - shared[:timings_look_complete]}\n"
+                    }, #execute immediate
                    :stop => lambda { |_| puts 'stop'; thread.kill },
                    :write_file => lambda { |hash| shared[:incoming_file]= Time.now
                    queue.push( lambda {write_file(hash, dir)} )}, #add to queue
@@ -213,7 +222,7 @@ loop {
                    :exit => lambda { |hash| queue.push( lambda {exit(hash, client, shared)} )}}
 
       handle_queue_functions(queue)
-      get_commands(client, functions)
+      get_commands(client, functions, shared)
     }
 
     thr.join #wait for execution to finish or stopped by timeout
