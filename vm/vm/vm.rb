@@ -48,10 +48,7 @@ def get_commands(client, functions, shared)
   loop do
     msg = client.gets.chomp
     puts "Incoming: #{msg}"
-    if msg == "PING!"
-      client.puts "PONG!"
-      next
-    end
+
     msg = JSON.parse(msg)
     if shared[:timings_look_complete] and shared[:timings_look]
      client.puts timing = "\n#{PREFIX}_timings_vmResponseCompleteVORHER_#{Time.now - shared[:timings_look_complete]}\n"

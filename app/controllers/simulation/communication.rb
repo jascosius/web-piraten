@@ -37,15 +37,10 @@ def communicate_with_vm(tracing_vars)
                :end => lambda { exit_simulation! },
                :enderror => lambda { |*msg| exit_simulation!(msg.join('_')) },
                :timings => lambda { |name, diff| PERFORMANCE_LOGGER.store name.to_sym, 0, diff.to_f }}
-  ping = Time.now
-  @vm.puts "PING!"
 
   until connection_store[:is_simulation_done]
     # perf = Time.now
     line = @vm.gets.chomp
-    if line == "PONG!"
-      PERFORMANCE_LOGGER.store :ping_vm, ping, Time.now
-    end
     perf = Time.now
     # PERFORMANCE_LOGGER.store :vm_get_line, perf, Time.now
     line = line.force_encoding('utf-8')
@@ -56,7 +51,7 @@ def communicate_with_vm(tracing_vars)
       if array[0] == $prefix #is the line a command?
         if array[1] == '?' #is the command a question?
           @vm.puts([{:response => {:value => search_and_execute_function(functions, array[2..-1])}}].to_json) #when there is a ?, the vm expects a response
-          PERFORMANCE_LOGGER.store :vm_read_look, perf, Time.now
+          PERFORMANCE_LOGGER.store :vm_get_line, perf, Time.now
         else
           search_and_execute_function(functions, array[1..-1])
         end
