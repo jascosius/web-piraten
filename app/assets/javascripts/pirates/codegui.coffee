@@ -302,10 +302,11 @@ class CodeGUI.WatchList
     watchlist = @get()
     @_$size.text watchlist.length
 
+  # get the current list of watched variables by parsing the html list
   @get = () ->
     watchlist = []
     @_$watchlist.children('li').each () ->
-      watchlist.push $(@).text().trim()
+      watchlist.push $(@).text().trim() # read current li content
     return watchlist
 
   @contains = (word) ->
