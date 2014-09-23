@@ -61,7 +61,7 @@ def insert_highlighting(new_code, vars)
   string_indexes = scan_for_index_start_and_end(new_code, regex_find_strings) +
       scan_for_index_start_and_end(new_code, /\d+\.\d+/)
   # scan also for floating point numbers to prevent wrong
-  # handling ot the "."
+  # handling of the "."
   string_indexes
   operation_indexes = scan_for_index_start_and_end(new_code, regex_find_operations)
   # Set the array of tracing variables to empty, if there only is
@@ -77,13 +77,13 @@ def insert_highlighting(new_code, vars)
     operation_indexes = operation_indexes.sort_by { |hsh| hsh[:starts] }
   end
 
-  if string_indexes.empty? && !operation_indexes.empty?
-    new_code = insert_prefix(new_code, operation_indexes, [])
-    new_code = change_prefix_2_line_number(new_code)
-  elsif !string_indexes.empty? && !operation_indexes.empty?
+  #if string_indexes.empty? && !operation_indexes.empty?
+  #  new_code = insert_prefix(new_code, operation_indexes, [])
+  # elsif
+  unless string_indexes.empty? && operation_indexes.empty?
     new_code = insert_prefix(new_code, operation_indexes, string_indexes)
-    new_code = change_prefix_2_line_number(new_code)
   end
+  new_code = change_prefix_2_line_number(new_code)
   new_code = change_prefix_2_debug(new_code, vars) unless vars.empty?
   new_code.gsub!(regex_lineprefix, '')
   new_code

@@ -2,6 +2,8 @@
 # class that controls the execution of ruby
 # handle the outputs
 # and add the logic to the code of the user
+# some of the used methods are defined in processing_tools.rb
+# most of the regular expressions can be found in regular_expressions.rb
 class RubyPreprocessor
 
   require 'preprocessor/ruby/processing_tools'
@@ -47,7 +49,7 @@ class RubyPreprocessor
       bools[:found_when] = false
       code_msg.each_line do |s|
         codes += insert_line_number(i, bools[:dont_skip_line])
-        bools = case_block_processing(s, bools)
+        bools = case_block_processing(s, bools) # look for method in processing_tools.rb
         codes += add_user_codeline(s, i, bools)
         codes = insert_debug_information(codes, vars, bools[:dont_skip_line])
         i += 1
@@ -55,7 +57,7 @@ class RubyPreprocessor
     elsif code_msg =~ regex_verify_multiline_string
       code_msg.each_line do |s|
         codes += insert_line_number(i, bools[:dont_skip_line])
-        bools = multiline_processing(s, bools)
+        bools = multiline_processing(s, bools) # look for method in processing_tools.rb
         codes += add_user_codeline(s, i, bools)
         codes = insert_debug_information(codes, vars, bools[:dont_skip_line])
         i += 1

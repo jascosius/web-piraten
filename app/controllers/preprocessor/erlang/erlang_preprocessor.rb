@@ -2,6 +2,8 @@
 # class that controls the execution of erlang
 # handle the outputs
 # and add the logic to the code of the user
+# some of the used methods are defined in processing_tools.rb
+# most of the regular expressions can be found in regular_expressions.rb
 class ErlangPreprocessor
 
   require 'preprocessor/erlang/processing_tools'
@@ -31,7 +33,7 @@ class ErlangPreprocessor
   # Processes the given code to add linehighlighting and so on
   def process_code(code_msg, vars)
     new_code = remove_comments(code_msg)
-    new_code = insert_highlighting(new_code, vars)
+    new_code = insert_highlighting(new_code, vars) # method is found in processing_tools.rb
     insert_start_logic + new_code
   end
 
@@ -184,7 +186,7 @@ class ErlangPreprocessor
     -module(webpiraten).
     -export([main/0]).
 
-    main() -> register(a#{$prefix}_debug,spawn(fun() -> a#{$prefix}_performdebugs() end)),
+    main() -> register(a#{$prefix}_debug, spawn(fun() -> a#{$prefix}_performdebugs() end)),
               try
                 start()
               catch
