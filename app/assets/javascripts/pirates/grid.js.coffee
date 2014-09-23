@@ -116,7 +116,7 @@ class @Grid
         @mousePressedOnShip = true
       else
         if @contains(mousPos) && objOnPos == false && event.which == 1
-          @GridControls.creatObjectFromButton pos.x, pos.y
+          @GridControls.createObjectFromButton pos.x, pos.y
       if event.which == 3 && @ship.x == pos.x && @ship.y == pos.y
         if @ship.rotation <= 0
           @ship.rotation = 3
@@ -158,7 +158,7 @@ class @Grid
     pos = @getGridCoordinates mousPos
     objOnPos = @isSomethingOnPosition pos.x, pos.y
     if !Simulation.isInExecutionMode && objOnPos == false && @mousePressed == 1 && @contains(@getMousePos(event))
-      @GridControls.creatObjectFromButton pos.x, pos.y
+      @GridControls.createObjectFromButton pos.x, pos.y
     else if @mousePressed == 3 && objOnPos != false
       @deleteObjectWithIndex @objects.indexOf(objOnPos)
 
@@ -473,7 +473,7 @@ class Grid.GridControls
     $(this).addClass "btn-success"
 
 
-  @creatObjectFromButton = (x, y) ->
+  @createObjectFromButton = (x, y) ->
     $found = $(".gameObject-controls .btn-success")
     switch $found.attr 'id'
       when 'addWave'
