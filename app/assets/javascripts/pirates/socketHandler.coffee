@@ -1,6 +1,6 @@
 ###
   Module for communication between the Rails app and the client
-  Uses websocket and json datapacket which it also maps to function in the client
+  Uses websocket and json packets which it maps to function in the client
 ###
 class @SocketHandler
   # map name of operations in packets to specific functions in the client,
@@ -35,13 +35,14 @@ class @SocketHandler
       'detail': event
     })
 
+  # called when the connection is closed
   onClose = (event) ->
     Console.logError "Verbindung zum Server verloren, bitte lade die Seite neu!"
     window.dispatchEvent new CustomEvent('socketClosed', {
       'detail': event
     })
 
-
+  # called when the websocket could not send a packet
   onError = (event) ->
     Console.logError "Fehler bei der Verbindung mit dem Server, bitte lade die Seite neu!"
     console.log event
@@ -110,6 +111,7 @@ class @SocketHandler
   @stopSimulation = () ->
     @webSocket.trigger 'stop'
 
+  # delete everything from the queue
   @clear = () =>
     @packetQueue = []
     @usedIDs.push @currentId
@@ -130,6 +132,7 @@ class @SocketHandler
     @simulatePacket()
     @lifeTime++
     window.dispatchEvent new Event('socketHandlerUpdated')
+
 
   validateArray = (name, arr) ->
     throw "#{name} in packet are not an array" unless Array.isArray arr

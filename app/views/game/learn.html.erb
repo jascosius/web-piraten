@@ -3,6 +3,7 @@
 
     <div class="col-md-7 code-wrapper">
 
+        <!-- Speed slider -->
         <div class="speed-controls pull-right">
             Geschwindigkeit:
             <span id="simulationSpeed"></span>
@@ -10,10 +11,14 @@
             <div id="speedSlider" style="width: 200px"></div>
         </div>
         <div class="pull-left">
+          <!-- only visible outside of the execution mode -->
           <div class="row code-controls pull-right">
+              <!-- fullscreen toggle -->
               <button class="btn btn-xs" id="fullScreenBtn" data-toggle="tooltip" data-placement="right" title="Editor im Vollbildmodus anzeigen">
                   <span class="glyphicon glyphicon-resize-full"></span>
               </button>
+
+              <!-- watch list menu -->
               <div class="btn-group">
                   <button type="button" class="btn btn-warning dropdown-toggle pull-right" id="watchlist-dropdown" data-toggle="dropdown">Beobachtete Variablen<span class="caret"></span>
                   </button>
@@ -23,7 +28,7 @@
                   <div id="watchlist-size">0</div>
               </div>
 
-
+              <!-- execution start with break point support -->
               <div class="btn-group">
                   <button id="runBtn" type="button" class="btn btn-success">
                       <span class="glyphicon glyphicon-play"> </span>Ausführen</button>
@@ -31,19 +36,26 @@
               </div>
 
           </div>
+
+          <!-- only visble in the execution mode -->
           <div class="row code-controls pull-right hidden" id="disabled-state-controls">
+
+              <!-- reset button -->
               <button class="btn btn-default" id="resetBtn">
                   <span class="glyphicon glyphicon-step-backward"> </span> Zurücksetzen
               </button>
+
+              <!-- stop button, hidden if stopped -->
               <button class="btn btn-default" id="stopBtn">
                   <span class="glyphicon glyphicon-stop"> </span> Stop
               </button>
-              <!--<button class="btn btn-default" id="pauseBtn">-->
-              <!--<span class="glyphicon glyphicon-pause"> </span> Pause-->
-              <!--</button>-->
+
+              <!-- resume button, hidden when it's not stopped -->
               <button class="btn btn-default" id="resumeBtn" style="display: none">
                   <span class="glyphicon glyphicon-play"> </span> Weiter
               </button>
+
+              <!-- step button with jump/break point button -->
               <div class="btn-group">
                   <button id="stepBtn" type="button" class="btn btn-default" disabled>
                       <span class="glyphicon glyphicon-step-forward"> </span> Schritt
@@ -62,32 +74,37 @@
             <!-- no indentation because CodeMirror would display it -->
             <textarea id="codemirror" style="display: none"><%= @language.default_code %></textarea>
 
+            <!-- pacman, only visible when the client is not initialized -->
             <div id="codeMirror-loading">
                 <%= image_tag 'ajax-loader.gif' %> Lade Daten
             </div>
         </div>
     </div>
     <div class="col-md-5 grid-wrapper">
+        <!-- every button related to the grid -->
         <div class="grid-controls">
-
+            <!-- Save/load button -->
             <div class="btn-group serialization-controls">
                 <btn class="btn btn-default" id="serialization-trigger" data-toggle="modal" data-target="#serialization-modal">
                     <span class="glyphicon glyphicon-floppy-disk"> </span>
                 </btn>
             </div>
+
+            <!-- buttons for the gameObjects, Add new automatically by using data-object="gameObject" -->
             <div class="btn-group gameObject-controls">
-                <button class=" btn btn-default" id="addTreasure">
+                <button class=" btn btn-default" id="addTreasure" data-object="treasure">
                     <%= image_tag 'frank/treasure.gif', size: '18' %> Schatz
                 </button>
-                <button class=" btn btn-default" id="addMonster">
+                <button class=" btn btn-default" id="addMonster" data-object="monster">
                     <%= image_tag 'frank/monster.gif', size: '18' %> Kraken
                 </button>
-                <button class=" btn btn-default" id="addWave">
+                <button class=" btn btn-default" id="addWave" data-object="wave">
                     <%= image_tag 'frank/wave.gif', size: '18'%> Welle
                 </button>
             </div>
         </div>
 
+        <!-- default world -->
         <div id="gridData" style="display: none" hidden>
             {
             "width":14,
@@ -101,20 +118,24 @@
             }
             }
         </div>
+
         <!-- Grid borders add an offset of 1 pixel -->
         <canvas width="458" height="321" id="pirateGrid">Your browser is not supported!</canvas>
     </div>
 </div>
 <div class="row">
+    <!-- console -->
     <div class="col-md-7 console-wrapper">
         <h4>
             <%= t("game.console.label") %>
+            <!-- clear console button -->
             <span class="pull-right glyphicon glyphicon-trash" id="clearConsoleBtn" title="Konsole leeren"></span>
         </h4>
 
         <div name="console" id="console"></div>
     </div>
 
+    <!-- watched variables -->
     <div class="col-md-5">
         <h4>Beobachtete Variablen</h4>
 
@@ -133,16 +154,21 @@
     </div>
 </div>
 
-<!-- Serialization Modal -->
+<!-- Serialization Modal using bootstraps modal -->
 <div class="modal fade" id="serialization-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
+
             <div class="modal-header">
+
+                <!-- small closing button -->
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h4 class="modal-title" id="myModalLabel">Laden und Speichern</h4>
             </div>
+
             <div class="modal-body">
                 <div class="row">
+                    <!-- save/load code -->
                     <div class="col-md-6">
                         <h4>Code</h4>
 
@@ -156,6 +182,8 @@
                             </a>
                         </div>
                     </div>
+
+                    <!-- save/load world -->
                     <div class="col-md-6">
                         <h4>Spielwelt</h4>
 
@@ -169,9 +197,10 @@
                             </a>
                         </div>
                     </div>
-                    <!--<input type="file" id="fileUploader" style="display: none">-->
                 </div>
             </div>
+
+            <!-- close modal -->
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Schließen</button>
             </div>

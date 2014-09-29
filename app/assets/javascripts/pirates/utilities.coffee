@@ -1,5 +1,7 @@
+# useful functions
 class @Utils
 
+  # see requestAnimationFrame documentation
   @requestAnimFrame: (mainLoop) ->
     window.requestAnimationFrame(mainLoop)       ||
     window.webkitRequestAnimationFrame(mainLoop) ||
@@ -9,6 +11,8 @@ class @Utils
     (mainLoop) ->
       window.setTimeout mainLoop, 1000 / 60
 
+  # create a file uploader, by using a hidden input field
+  # parses the files with js rather than really uploading them to the server
   @createFileUpload = (parameters) ->
     defaults = {
       fileExtension: false
@@ -16,6 +20,7 @@ class @Utils
       onInvalidFile: () -> # void
     }
     options = $.extend {}, defaults, parameters
+
     # create a pseudo file uploader
     $uploader = $ '<input type="file" id="fileUploader" style="display:none"></div>'
     $uploader = $uploader.appendTo 'body'
@@ -44,6 +49,7 @@ class @Utils
     # trigger the file picker
     $uploader.click()
 
+  # create a download button for the state of the system
   @createSaveDialog = ($selection, id, extension, contentGenerator) ->
     defaultFileName = "webpiraten-#{id}"
     formId = "saveFileName-#{id}"
@@ -89,6 +95,7 @@ class @Utils
         $(btn).attr 'download', fileName
         $selection.popover 'hide'
 
+  #  disallow < and > to avoid xss injections
   @escapeHTML = (text) ->
     console.log text
     return text if text is null or text.length < 1

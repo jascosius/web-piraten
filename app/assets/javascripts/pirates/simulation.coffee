@@ -170,6 +170,7 @@ class @Simulation
   # stores the serialized simulation from before the execution begins
   tempStorage = null
 
+  # start the execution by sending everything it to the server
   @start = () =>
     throw 'already started' if @isInExecutionMode
     canceled = !window.dispatchEvent new CustomEvent('beforeSimulationStart', {
@@ -194,6 +195,8 @@ class @Simulation
       localStorage.setItem "simulation.#{Config.language.id}", JSON.stringify(tempStorage)
 
     window.dispatchEvent new Event('simulationStarted')
+
+  # stop execution
   @stop = () =>
     throw 'already stopped' if @isStopped
     throw 'not in simulation mode' unless @isInExecutionMode
@@ -207,6 +210,7 @@ class @Simulation
 
     window.dispatchEvent new Event('simulationStopped')
 
+
   # manually skip through packets
   @step = () =>
     throw 'can\'t step through a non existent simulation' unless @isInExecutionMode
@@ -217,6 +221,7 @@ class @Simulation
     SocketHandler.simulatePacket()
     window.dispatchEvent new Event('simulationStepped')
 
+  # resume the execution if it is stopped
   @resume = () =>
     throw 'Simulation is not paused' unless @isStopped
     canceled = !window.dispatchEvent new CustomEvent('beforeSimulationResume', {
@@ -299,6 +304,7 @@ class @Simulation
     clear()
     throw 'cannot load null' unless obj?
 
+    # load code and world
     CodeGUI.setCode obj.code if obj.code?
     Grid.load obj.grid if obj.grid?
 
