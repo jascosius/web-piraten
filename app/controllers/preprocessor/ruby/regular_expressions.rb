@@ -106,30 +106,37 @@ def regex_verify_when_complete
   /when\s*(?:\s:*\w+(?:\(:?.*\))?\s|'(?:[^']?(?:\\')?)*'|"(?:[^"]?(?:\\")?)*")\s*(?:#.*)?$/
 end
 
+# Verfies when at line end
 def regex_verify_when_line_end
   /when\s*(?:#+.*)?$/
 end
 
+# Verfies word case
 def regex_case
   /;?\s*case\s*/
 end
 
+# Verfies case with single quoted multiline string for statement
 def regex_case_with_sngl_q_multln
   /case\s*(?:'(?:[^']?(?:\\')?)*)$/
 end
 
+# Verfies case with double quoted multiline string for statement.
 def regex_case_with_dbl_q_multln
   /case\s*(?:"(?:[^"]?(?:\\")?)*)$/
 end
 
+# Verfies beginning of a multiline string.
 def regex_normal_multiline_start
   /;?\s*\w*[!\?]*\s*=\s*(?:"(?:[^"]*(?:\\")?)*|'(?:[^']*(?:\\')?)*)$/
 end
 
+# Verifies the word when is inside a single quoted string.
 def regex_verify_when_in_single_q
   /'.*when.*'/
 end
 
+# Verfies the word when is inside a double quoted string.
 def regex_verify_when_in_double_q
   /".*when.*"/
 end
@@ -138,26 +145,33 @@ def regex_when
   /when/
 end
 
+# Verfies end of a single quoted multiline string.
 def regex_single_q_end
   /^(?:[^']?(?:\\')?)*[^\\]?'/
 end
 
+# Verfies end of a double quoted multiline string.
 def regex_double_q_end
   /^(?:[^"]?(?:\\")?)*[^\\]?"/
 end
 
+# Verfies that an argument for case is given and the following when
+# is found.
 def regex_case_end_complete_when
   /\s*(?::*\w+(?:\(:?.*\))?\s|'(?:[^']?(?:\\')?)*'|"(?:[^"]?(?:\\")?)*")?\s*when/
 end
 
+# Verfies the beginning of a single quoted multiline string.
 def regex_single_q_multiline_start
   /(?:'(?:[^']?(?:\\')?)*)$/
 end
 
+# Verfies the beginning of a double quoted multiline string.
 def regex_double_q_multiline_start
   /(?:"(?:[^"]?(?:\\")?)*)$/
 end
 
+# Verfies if the statement of the when is given and complete.
 def regex_verify_complete_when
   /(?:\s:*\w+(?:\(:?.*\))?\s|'(?:[^']?(?:\\')?)*'|"(?:[^"]?(?:\\")?)*")\s*(?:#.*)?/
 end

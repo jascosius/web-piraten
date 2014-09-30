@@ -1,5 +1,6 @@
-# Like the name processing tools says, this file contains methods
-# (tools) to process the code.
+# Like the name processing_tools says, this file contains methods
+# (tools) to process the code. They are called from the
+# erlang_preprocessor.
 
 require 'preprocessor/erlang/regular_expressions'
 
@@ -11,11 +12,14 @@ def remove_comments(code_msg)
   code_msg.each_line do |line|
     res_c = []
     line.scan('%') do
+      # scans the code for '%' to determine comments
       res_c << Regexp.last_match.offset(0).first
     end
     res_s = scan_for_index_start_and_end(line, regex_verify_string_comment)
+    # find all those '%' that are inside of strings
     if !res_c.empty? && !res_s.empty?
       res_c.each do |res|
+        # removes every comment at line end
         if is_not_in_string?(res, res_s)
           line.slice!(res..-1)
         end
@@ -69,6 +73,7 @@ def insert_highlighting(new_code, vars)
   vars = [] if vars.length == 1 && vars[0] == '_'
 
   unless vars.empty?
+    # fill array for operation_indexes with indexes of given variables
     vars.each do |var|
       if var != '_'
         operation_indexes += scan_for_index_start_and_end(new_code, Regexp.new("\\b#{var}\\b"))
@@ -77,15 +82,19 @@ def insert_highlighting(new_code, vars)
     operation_indexes = operation_indexes.sort_by { |hsh| hsh[:starts] }
   end
 
-  #if string_indexes.empty? && !operation_indexes.empty?
-  #  new_code = insert_prefix(new_code, operation_indexes, [])
-  # elsif
   unless string_indexes.empty? && operation_indexes.empty?
     new_code = insert_prefix(new_code, operation_indexes, string_indexes)
   end
+
+  # insert information of line numbers
   new_code = change_prefix_2_line_number(new_code)
+
+  # insert debugging functionality
   new_code = change_prefix_2_debug(new_code, vars) unless vars.empty?
+
+  # delete all for processing inserted prefixes
   new_code.gsub!(regex_lineprefix, '')
+
   new_code
 end
 
@@ -156,10 +165,21 @@ def change_prefix_2_line_number(code)
   return_code = ''
   number = 1
   break_code.each_line do |line|
+
+    # every arrow with prefix for processing gets a line-function
+    # for highlighting information
     line.gsub!(regex_arrow_prefix, "-> a#{$prefix}_line(#{number}), ")
+
+    # insert line number in former inserted line-functions
     line.gsub!(Regexp.new("a#{$prefix}_line\\(number#{$prefix}\\)"), "a#{$prefix}_line(#{number})")
+
+    # find pirate-operations and insert line-number
     line.gsub!(regex_op_prefix, "(#{number}, ")
+    # special treatment for functions with zero parameters,
+    # delete previously inserted comma
     line.gsub!(/\(\d+,\s+\)/, "(#{number})")
+
+    # add comma with line-number information
     return_code += line.chomp + "  % #{$prefix}_(#{number}#{$prefix}_)\n"
     number += 1
   end

@@ -1,4 +1,7 @@
 # -*- encoding : utf-8 -*-
+# Template Class without real functionality to show the necessary
+# methods for a new preprocessor. Methods are reduced methods of
+# the ruby preprocessor.
 class ExamplePreprocessor
 
   # This flag needs to be set, so the communication between server

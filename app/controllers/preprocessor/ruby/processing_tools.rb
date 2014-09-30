@@ -10,6 +10,9 @@ def multiline_processing(s, booleans)
   double_q = booleans[:double_q]
   dont_skip_line = booleans[:dont_skip_line]
   if single_q && !double_q
+    # found single quoted multiline string, scans each line
+    # for ending quotes and when found checks for start  of
+    # a new multiline string
     if s =~ regex_multln_sngl_q_end_appnd
       single_q = false
       if s =~ regex_multln_sngl_end_dbl_strt
@@ -23,6 +26,9 @@ def multiline_processing(s, booleans)
       single_q = false
       dont_skip_line = true
     end
+    # found double quoted multiline string, scans each line
+    # for ending quotes and when found checks for start  of
+    # a new multiline string
   elsif double_q && !single_q
     if s =~ regex_multln_dbl_end_appnd
       double_q = false
@@ -38,9 +44,11 @@ def multiline_processing(s, booleans)
       dont_skip_line = true
     end
   elsif s =~ regex_start_multiline_double_q
+    # scans line for beginning of a double quoted multiline string
     double_q = true
     dont_skip_line = false
   elsif s =~ regex_start_multiline_single_q
+    # scans line for beginning of a single quoted multiline string
     single_q = true
     dont_skip_line = false
   end
@@ -54,7 +62,8 @@ end
 # The code is processed line by line and the further insertion of information is
 # controlled by booleans and verifying regular expressions.
 def case_block_processing(s, bools)
-  if bools[:multiline_string] # processes a found multiline string
+  if bools[:multiline_string]
+    # processes a found multiline string
     bool = multiline_processing(s, bools)
     bool.each_key do |key|
       bools[key] = bool[key]
@@ -72,8 +81,9 @@ def case_block_processing(s, bools)
       # if multiline string ends change back to standard processing for 'normal' code lines
       bools[:multiline_string] = false
     end
-  elsif !bools[:found_case] && !bools[:found_when] # Standard setting for processing of
-    # 'normal' code unless other flags are set.
+  elsif !bools[:found_case] && !bools[:found_when]
+    # Standard setting for processing of 'normal' code unless
+    # other flags are set.
     if s =~ regex_verify_case_when
       if s =~ regex_verify_when_sq
         bools[:single_q] = true
@@ -126,8 +136,10 @@ def case_block_processing(s, bools)
         bools[:dont_skip_line] = true
       end
     end
-  elsif bools[:found_case] && !bools[:found_when] # beginning of a case statement has been found
-    if !bools[:no_multiline_case_statement] # found a multiline string for statement
+  elsif bools[:found_case] && !bools[:found_when]
+    # beginning of a case statement has been found
+    if !bools[:no_multiline_case_statement]
+      # found a multiline string for statement
       if bools[:single_q] && s =~ regex_single_q_end
         bools[:single_q] = false
         bools[:no_multiline_case_statement] = true
@@ -173,16 +185,20 @@ def case_block_processing(s, bools)
         bools[:dont_skip_line] = true
         bools[:found_case] = false
       end
-    elsif s =~ regex_single_q_multiline_start # verifies beginning of case multiline string, single quoted
+    elsif s =~ regex_single_q_multiline_start
+      # verifies beginning of case multiline string, single quoted
       bools[:single_q] = true
       bools[:no_multiline_case_statement] = false
-    elsif s =~ regex_double_q_multiline_start # verifies beginning of case multiline string, double quoted
+    elsif s =~ regex_double_q_multiline_start
+      # verifies beginning of case multiline string, double quoted
       bools[:double_q] = true
       bools[:no_multiline_case_statement] = false
     elsif s =~ regex_when
       bools[:found_when] = true
     end
   elsif bools[:found_case] && bools[:found_when]
+    # found the statements case as well as when but no condition
+    # for the when
     if bools[:single_q] && s =~ regex_single_q_end
       # verifies end of multiline string, single quotes
       bools[:found_case] = false
@@ -196,6 +212,9 @@ def case_block_processing(s, bools)
       bools[:double_q] = false
       bools[:dont_skip_line] = true
     elsif bools[:double_q] || bools[:single_q]
+      # do nothing as long as one of these flags is set
+      # processing found beginning of multiline string
+      # but no end so far
 
     elsif s=~ regex_verify_complete_when
       # verifies end of first when statement

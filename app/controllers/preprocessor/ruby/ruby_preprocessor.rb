@@ -4,6 +4,7 @@
 # and add the logic to the code of the user
 # some of the used methods are defined in processing_tools.rb
 # most of the regular expressions can be found in regular_expressions.rb
+# (both files are in folder 'ruby')
 class RubyPreprocessor
 
   require 'preprocessor/ruby/processing_tools'
@@ -93,7 +94,7 @@ class RubyPreprocessor
       bools[:multiline_comment] = true
       return code + " # #{$prefix}_(#{i}#{$prefix}_)\n"
     end
-    code = modify_code(s,bools,code)       #modify @end_break, @beg_break and the code when finding the begin or end of scope
+    code = modify_code(s, bools, code) #modify @end_break, @beg_break and the code when finding the begin or end of scope
     #add @end_break and @beg_break for the break_point function
     if bools[:dont_skip_line]
       code = code + @end_break + " # #{$prefix}_(#{i}#{$prefix}_)\n"
@@ -117,7 +118,7 @@ class RubyPreprocessor
     code
   end
 
-  def modify_code(s,bools,code)
+  def modify_code(s, bools, code)
     #multiline string at the beginning
     if bools[:string_at_beginning] == :dq
       if  s =~ /"/
@@ -132,15 +133,15 @@ class RubyPreprocessor
         s = ''
       end
     end
-    finding_loop(s,code)
+    finding_loop(s, code)
   end
 
   #loop for modifying the control code by finding strings and comments and the begin/end of a scope
-  def finding_loop(s,code)
+  def finding_loop(s, code)
     is_while = false
     expressions = [[/"/, :dq],
                    [/\breturn\b/, :return],
-                   [/\bend\b/,:end],
+                   [/\bend\b/, :end],
                    [/'/, :sq],
                    [/#/, :com],
                    [/\bdo\b/, :do],
@@ -157,15 +158,15 @@ class RubyPreprocessor
       end
       #chose what to do
       case position[0]
-        when :dq, :sq  #find an open string -> search the end of the string
+        when :dq, :sq #find an open string -> search the end of the string
           exp1 = /'/
           exp2 = /[^\\]'/
           if position[0] == :dq
             exp1 = /"/
             exp2 =/[^\\]"/
           end
-          next_curr1 = s.index(exp1,position[1]+1)
-          next_curr2 = s.index(exp2,position[1]+1)
+          next_curr1 = s.index(exp1, position[1]+1)
+          next_curr2 = s.index(exp2, position[1]+1)
           if  next_curr1 == position[1]+1
             s = s[0..position[1]-1] + s[next_curr1+1..-1]
           elsif next_curr2 != nil
@@ -173,34 +174,34 @@ class RubyPreprocessor
           else
             return code
           end
-        when :com   #find comment -> insert code in front of this comment
+        when :com #find comment -> insert code in front of this comment
           diff = code.length - s.length
           code.insert(position[1] + diff, @end_break)
           @end_break = ''
           return code
-        when :return   #find a return -> insert break_functions in front of the return
+        when :return #find a return -> insert break_functions in front of the return
           insert_code = return_break()
           diff = code.length - s.length
           code.insert(s.index(/\breturn\b/)+diff, insert_code)
           s = s[position[1]+5..-1]
-        when :end  #find end of a scope -> insert break_functions in front and after this end
+        when :end #find end of a scope -> insert break_functions in front and after this end
           insert_code = '; break_point(:up); '
           diff = code.length - s.length
           op = @operationlist.shift
-            if op == :def
-              code.insert(s.index(/\bend\b/)+diff, @end_break + insert_code)
+          if op == :def
+            code.insert(s.index(/\bend\b/)+diff, @end_break + insert_code)
+            @end_break = ''
+          elsif op != nil
+            if code.length <= s.index(/\bend\b/)+diff+4
+              code = code + insert_code
+            else
+              code.insert(s.index(/\bend\b/)+diff+4, insert_code)
+              code.insert(s.index(/\bend\b/)+diff, @end_break)
               @end_break = ''
-            elsif op != nil
-              if code.length <= s.index(/\bend\b/)+diff+4
-                code = code + insert_code
-              else
-                code.insert(s.index(/\bend\b/)+diff+4, insert_code)
-                code.insert(s.index(/\bend\b/)+diff, @end_break)
-                @end_break = ''
-              end
             end
+          end
           s = s[position[1]+3..-1]
-        when :do  #find begin of a scope where the break_point function should be inserted in front of the scope
+        when :do #find begin of a scope where the break_point function should be inserted in front of the scope
           if is_while
             s = s[position[1]+2..-1]
           else
@@ -208,16 +209,17 @@ class RubyPreprocessor
             @beg_break = 'break_point(:down); ' + @beg_break
             s = s[position[1]+2..-1]
           end
-        when :while  #find a loop (and also the begin of a scope) with an optional do -> modify beg_break and set is_while
+        when :while #find a loop (and also the begin of a scope) with an optional do -> modify beg_break and set is_while
           @operationlist.unshift(:do)
           @beg_break = 'break_point(:down); ' + @beg_break
           s = s[position[1]+3..-1]
           is_while = true
-        when :def  #find begin of a scope where the break_point function should be inserted in the scope
+        when :def #find begin of a scope where the break_point function should be inserted in the scope
           @operationlist.unshift(:def)
           @end_break = @end_break + '; break_point(:down)'
           s = s[position[1]+3..-1]
-        else return code
+        else
+          return code
       end
     end
   end
@@ -229,8 +231,8 @@ class RubyPreprocessor
     op = operationlist.shift
     beg_break = '; '
     loop do
-      beg_break =  beg_break + 'break_point(:up); '
-      if operationlist.empty? ||  op == :def
+      beg_break = beg_break + 'break_point(:up); '
+      if operationlist.empty? || op == :def
         break
       end
       op = operationlist.shift

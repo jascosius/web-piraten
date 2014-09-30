@@ -4,6 +4,7 @@
 # and add the logic to the code of the user
 # some of the used methods are defined in processing_tools.rb
 # most of the regular expressions can be found in regular_expressions.rb
+# (both files are in folder 'erlang')
 class ErlangPreprocessor
 
   require 'preprocessor/erlang/processing_tools'
@@ -113,6 +114,8 @@ class ErlangPreprocessor
         i = 1
         new_line_number = ''
         code.each_line do |lin|
+          # search for original line number in the user's code
+          # and store it in new_line_number
           if i == line_number
             line_begin = lin.index("#{$prefix}_(")
             line_end = lin.index("#{$prefix}_)")
@@ -123,6 +126,7 @@ class ErlangPreprocessor
           i += 1
         end
 
+        # remove old line number
         line.slice!(index_begin+1...index_end)
 
         if new_line_number == ''
@@ -133,7 +137,8 @@ class ErlangPreprocessor
           line = line.insert(index_begin, 'line')
           line.slice!(0...index_begin)
         end
-        # remove specific module information in the error message for the used module 'webpiraten'
+        # remove specific module information in the error message for the used
+        # module 'webpiraten' or 'prewebpiraten'
         line.slice!("#{name}:")
       end
     end
@@ -151,6 +156,8 @@ class ErlangPreprocessor
         i = 1
         new_line_number = ''
         @precompile_code.each_line do |lin|
+          # search for original line number in the user's code
+          # and store it in new_line_number
           if i == line_number
             line_begin = lin.index("#{$prefix}_(")
             line_end = lin.index("#{$prefix}_)")
@@ -161,6 +168,7 @@ class ErlangPreprocessor
           i += 1
         end
 
+        # remove old line number
         line.slice!(index_begin+1...index_end)
 
         if new_line_number == ''
@@ -304,7 +312,8 @@ class ErlangPreprocessor
 ]
   end
 
-  # Contains
+  # Provides just ship logic for movements and interactions
+  # No advanced functionality like line-highlighting etc.
   def insert_compile_logic
     %Q[
     -module(prewebpiraten).
