@@ -6,6 +6,7 @@ require 'preprocessor/ruby/ruby_preprocessor'
 require 'preprocessor/java/java_preprocessor'
 require 'preprocessor/erlang/erlang_preprocessor'
 
+# load the languages the system supports
 LANGUAGES = {
     # object => Language.new(name, [scrips], options, url)
     :ruby => Language.new({

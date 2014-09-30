@@ -17,17 +17,21 @@ class @Grid
     @look = null
     @mousePosition = null
 
+    # canvas listeners
     $canvas = $ @canvas
     $canvas.on 'mousedown', this.onClick
     $canvas.on 'mousemove', this.onMouseMove
     $canvas.on 'mouseout', this.onMouseOut
     $canvas.on 'contextmenu', this.onContextmenu
     $canvas.on 'mouseup', this.onMouseUp
-    $canvas.on 'selectstart', () -> return false
+    $canvas.on 'selectstart', (event) ->  # no text selection
+      event.preventDefault()
+      return false
 
     @ANGLE = (Math.PI/180)
-    @blockAnimation = false
+    @blockAnimation = false # toggle animations
 
+    # mouse states
     @mousePressedOnShip = false
     @mousePressed = false
     @_smoothingStep = 0 # help for smooth animation
@@ -49,23 +53,23 @@ class @Grid
 
     @objects = []
     for o in obj.objects
-      if GameObject.ALL[o.name]?
+      if GameObject.ALL[o.name]? # is the object registered?
         @addObject new GameObject.ALL[o.name](o)
       else
         throw "Invalid GameObject name #{o.name}!"
 
 
 
+  # add an object to the grid
   @addObject = (obj) ->
     @objects.push(obj)
 
-  @getShip = () ->
-    @ship
-
+  # find and delete object from grid by index in the @objects array
   @deleteObjectWithIndex = (index) ->
     if index != false
       @objects.splice index, 1
 
+  # find and delete an object from the grid
   @deleteObject = (obj) =>
     if !obj?
       throw 'object to delete is undefined!'
@@ -82,29 +86,35 @@ class @Grid
       console.log 'unknown object', obj
       throw 'could not delete object from grid'
 
+  # check if coordinates are within the canvas borders
   @isInCanvas = (coords) =>
     coords.x >= 0 && coords.y >= 0 && coords.x < @canvasWidth && coords.y < @canvasHeight
 
-  @contains = (coords) => # is in grid, pixel
+  # is in grid, pixel based
+  @contains = (coords) =>
     @isInCanvas(coords) && coords.x <= @width*@size &&
       coords.y <= @height*@size
 
+  # calculate grid coordinates based on the pixel
   @getGridCoordinates = (coords) ->
     new Coordinate Math.floor(coords.x/@size), Math.floor((coords.y-2)/@size) #because the two pix thick line -2
 
+  # calculate the pixel from the grid coordinates
   @getCanvasCoordinates = (coords) ->
     new Coordinate Math.floor(coords.x*@size), Math.floor(coords.y*@size)
 
+  # get the canvas pixel from the mouse event
   @getMousePos = (mouseEvent) =>
     rect = @canvas.getBoundingClientRect()
     new Coordinate mouseEvent.clientX - rect.left, mouseEvent.clientY - rect.top
 
-  # relative to canvas
+  # get a rectangle of a cell, relative to canvas
   @getCellRect = (coords) ->
     x = coords.x*@size
     y = coords.y*@size
     { x1: x, y1: y, x2: @size, y2: @size }
 
+  # click handler
   @onClick = (event) =>
     if !Simulation.isInExecutionMode
       mousPos = @getMousePos event
@@ -116,7 +126,7 @@ class @Grid
         @mousePressedOnShip = true
       else
         if @contains(mousPos) && objOnPos == false && event.which == 1
-          @GridControls.creatObjectFromButton pos.x, pos.y
+          @GridControls.createObjectFromButton pos.x, pos.y
       if event.which == 3 && @ship.x == pos.x && @ship.y == pos.y
         if @ship.rotation <= 0
           @ship.rotation = 3
@@ -125,12 +135,14 @@ class @Grid
       else if event.which == 3 && objOnPos != false
         @deleteObjectWithIndex @objects.indexOf(objOnPos)
 
-
+  # triggered when the mouse button is released
   @onMouseUp = (event) =>
     @mousePressed = false
     coords = @getGridCoordinates @getMousePos(event)
     x = coords.x
     y = coords.y
+
+    # drop the ship after drag and drop
     if @mousePressedOnShip && Simulation.isInExecutionMode == false
       if !@contains(@getMousePos(event))
         x = coords.x
@@ -144,28 +156,37 @@ class @Grid
 
     @mousePressedOnShip = false
 
+  # triggered when the right mouse button is clicked
   @onContextmenu = (event) =>
     event.preventDefault()
 
+  # triggered when the mouse button is
   @onMouseMove = (event) =>
+
+    # track the cell the mouse is hovering above and highlight it
     @activeCell = null
     pos = @getMousePos(event)
     @mousePosition = pos
     if @contains(pos)
       pos = @getGridCoordinates pos
-      @activeCell = pos
+      @activeCell = pos # highlight cell
+
+    # hold right/left mouse button to delete/create objects in the grid
     mousPos = @getMousePos event
     pos = @getGridCoordinates mousPos
     objOnPos = @isSomethingOnPosition pos.x, pos.y
     if !Simulation.isInExecutionMode && objOnPos == false && @mousePressed == 1 && @contains(@getMousePos(event))
-      @GridControls.creatObjectFromButton pos.x, pos.y
+      @GridControls.createObjectFromButton pos.x, pos.y
     else if @mousePressed == 3 && objOnPos != false
       @deleteObjectWithIndex @objects.indexOf(objOnPos)
 
 
+  # triggered when the mouse leaves the area of the canvas
   @onMouseOut = (event) =>
     @mousePressed = false
     @activeCell = null
+
+    # avoid misplacement of the ship, if it is currently being dragged
     if @mousePressedOnShip
       coords = @getGridCoordinates(@getMousePos(event))
       x = coords.x
@@ -184,12 +205,14 @@ class @Grid
       @ship.y = y
     @mousePressedOnShip = false
 
+  # check coordinates for gameObject
   @isSomethingOnPosition = (x, y) =>
     for obj in @objects
       if obj.x == x && obj.y == y
         return obj
     false
 
+  # save to a singe javascript object
   @serialize = () =>
     sendObjects = []
     for gameObject in @objects
@@ -205,6 +228,7 @@ class @Grid
       size: @size
     }
 
+  # once per frame
   @update = () ->
     canceled = !window.dispatchEvent new CustomEvent('beforeGridUpdate', {
       'cancelable': true
@@ -215,6 +239,7 @@ class @Grid
     @ship.update()
     window.dispatchEvent new Event('gridUpdated')
 
+  # display grid with canvas
   @draw = () =>
     canceled = !window.dispatchEvent new CustomEvent('beforeGridDraw', {
       'cancelable': true
@@ -222,10 +247,11 @@ class @Grid
     return if canceled
     @ctx.save()
 
+    # clear the canvas
     @ctx.clearRect 0, 0, @canvasWidth, @canvasHeight
     window.dispatchEvent new Event('gridDrawClearedCanvas')
 
-    # draw horizontal and vertical lines
+    # draw horizontal and vertical lines only the first time
     if not @_cache? or @_cachedData.size != @size or
       @_cachedData.width != @width or
       @_cachedData.height != @height
@@ -250,6 +276,8 @@ class @Grid
 
     window.dispatchEvent new Event('gridDrawn')
     @ctx.restore()
+
+  # draw one axis of the grid lines.
   @_drawCells = (strokeStyle, vertical) ->
     @ctx.save()
     vertical ||= false
@@ -266,6 +294,7 @@ class @Grid
 
     @ctx.restore()
 
+  # highlight a cell (by coordinates) with a specific color
   @_highlightCell = (cell, fillStyle) ->
     @ctx.save()
     rect = @getCellRect cell
@@ -276,6 +305,7 @@ class @Grid
     @ctx.fill()
     @ctx.restore()
 
+  # draw everything from @objects
   @_drawObjects = () ->
     for obj in @objects
       @ctx.save()
@@ -286,6 +316,8 @@ class @Grid
       @ctx.restore()
       continue if canceled
       @ctx.save()
+
+      # set the size of the drawn image depending on @size
       scaleX = @size/obj.image.width
       scaleY = @size/obj.image.height
       posx = obj.x*@size + Math.floor(obj.image.width*scaleX/2)
@@ -296,6 +328,7 @@ class @Grid
       @ctx.drawImage obj.image, -Math.floor(obj.image.width/2), -Math.floor(obj.image.height/2)
       @ctx.restore()
 
+  # draw the ship with smooth animations and dragging
   @_drawShip = () ->
     @ctx.save()
     event = new CustomEvent('gridDrawShip', {
@@ -306,14 +339,17 @@ class @Grid
     @ship = event.detail
     @ctx.restore()
     return if canceled
+
     @ctx.save()
     if @mousePressedOnShip # drag and drop
+      # draw centered around the mouse position
       @ctx.translate @mousePosition.x, @mousePosition.y
       @ctx.rotate(@ship.rotation * 90 * @ANGLE)
 
       @ctx.scale @size/@ship.image.width, @size/@ship.image.height
       @ctx.drawImage(@ship.image, -Math.floor(@ship.image.width/2), -Math.floor(@ship.image.height/2))
     else
+      # resize depending on @size
       widthFactor = @size/@ship.image.width
       heightFactor = @size/@ship.image.height
       newWidth = widthFactor*@ship.image.width
@@ -324,6 +360,7 @@ class @Grid
         y: @ship.y*@size + Math.floor(newHeight/2)
       }
 
+      # check if a new operation should be animated
       if !@_lastPacket?
         @_lastPacket = SocketHandler.packetCounter
 
@@ -331,6 +368,7 @@ class @Grid
         @_lastPacket = SocketHandler.packetCounter
         @_smoothingStep = 0
 
+      # calculate the point of the drawing with the animation algorithm
       cellCenter = @_smoothShipMovement(cellCenter)
 
       @ctx.translate cellCenter.x, cellCenter.y
@@ -351,6 +389,7 @@ class @Grid
 
     @ctx.restore()
 
+  # smooth movements of the ship
   @_smoothShipMovement = (cellCenter) ->
     if !@ship.isMoving or @blockAnimation
       @_smoothingStep = 0
@@ -364,10 +403,12 @@ class @Grid
       axis = 1 #horizontal
     if @ship.rotation in [0,1] # 1 or 3
       direction = 1 # decrease ship coordinate
-    speed = Simulation.speed
-    speed = Math.max speed, 0.00001
-    pxPerFrame = @size/speed
 
+    speed = Simulation.speed
+    speed = Math.max speed, 0.00001 # can't be 0
+    pxPerFrame = @size/speed # how many pixel has the ship to move each frame
+
+    # rotation mechanism is different depending on the axis
     shipAxis = 'x' #horizontal
     if axis < 0
       shipAxis = 'y' # vertical
@@ -375,6 +416,7 @@ class @Grid
     cellCenter[shipAxis] = (@ship[shipAxis] - direction)*@size+(@size*0.5)
     cellCenter[shipAxis] += pxPerFrame*@_smoothingStep*direction
 
+    # keep track of how many animation steps have been executed already, usable for easing
     @_smoothingStep++
     # check if smoothing is/should be done
     if @_smoothingStep >= speed-1
@@ -382,6 +424,7 @@ class @Grid
 
     return cellCenter
 
+  # smooth rotation movements of the ship
   @_smoothShipRotation = () ->
     if !@_smoothingRotationStep?
       @_smoothingRotationStep = 0
@@ -412,6 +455,7 @@ class @Grid
       @ship.isRotating = false
       @_smoothingRotationStep = 0
 
+  # draw a line on the grid between [x1,y] and [x1,y2] with specific line width and style
   @_drawLine = (x1, y1, x2, y2, width, strokeStyle) ->
     newX1 = Math.min x1, x2
     newY1 = Math.min y1, y2
@@ -451,34 +495,36 @@ class Grid.GridControls
     @_$waveButton = $ "#addWave"
 
 
-  # switch between gameobject selection with number keys
+  # switch between gameObject selection with number keys
   @onKeyDown = (event) =>
     return if CodeGUI.isInEditor
     switch event.keyCode
-      when 49, 97
+      when 49, 97 # 1 key
         @_$buttons.removeClass "btn-success"
         @_$treasureButton.addClass "btn-success"
-      when 50, 98
+      when 50, 98 # 2 key
         @_$buttons.removeClass "btn-success"
         @_$monsterButton.addClass "btn-success"
-      when 51, 99
+      when 51, 99 # 3 key
         @_$buttons.removeClass "btn-success"
         @_$waveButton.addClass "btn-success"
-      when 27
+      when 27 # escape
         @_$buttons.removeClass "btn-success"
 
-  self = this
+  self = this # save context because it changes in events
+  # click event handler for the gameObject buttons
   @onClick = () ->
     self._$buttons.removeClass "btn-success"
     $(this).addClass "btn-success"
 
 
-  @creatObjectFromButton = (x, y) ->
+  # get the gameObject from the buttons, by reading data-object attribute from HTML
+  @createObjectFromButton = (x, y) ->
     $found = $(".gameObject-controls .btn-success")
-    switch $found.attr 'id'
-      when 'addWave'
-        Grid.addObject (new Wave x, y)
-      when 'addTreasure'
-        Grid.addObject (new Treasure x, y)
-      when 'addMonster'
-        Grid.addObject (new Monster x, y)
+    typeName = $found.data 'object' # read the data-object="x" attribute
+    console.log "class", typeName
+    clazz = GameObject.getGameObjectClass typeName
+    unless clazz?
+      throw "unknown object class #{obj}"
+
+    Grid.addObject (new clazz x, y)

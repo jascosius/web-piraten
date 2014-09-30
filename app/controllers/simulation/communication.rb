@@ -46,7 +46,7 @@ def communicate_with_vm(tracing_vars)
 
     unless line.empty?
       array = line.split('_') #a command looks like $prefix_function_params or $prefix_?_function_params
-      if array[0] == $prefix #is the line a command?
+      if array.length > 1 and array[0] == $prefix #is the line a command?
         if array[1] == '?' #is the command a question?
           @vm.puts(proof_commands([{:response => {:value => search_and_execute_function(functions, array[2..-1])}}])) #when there is a ?, the vm expects a response
         else
