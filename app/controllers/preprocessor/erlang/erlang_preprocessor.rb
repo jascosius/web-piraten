@@ -411,6 +411,11 @@ class ErlangPreprocessor
                    lists:nth(1,element(2,io:fread("", "~a")));
     look(back)  -> io:fwrite("~n#{$prefix}_?_look_back~n"),
                    lists:nth(1,element(2,io:fread("", "~a"))).
+
+    break()      -> break(point).
+    break(point) -> io:fwrite("~n#{$prefix}_break_point~n");
+    break(up)    -> io:fwrite("~n#{$prefix}_break_up~n");
+    break(down)  -> io:fwrite("~n#{$prefix}_break_down~n").
 ]
 
   end
