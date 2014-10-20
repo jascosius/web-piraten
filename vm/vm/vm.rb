@@ -267,6 +267,8 @@ loop {
 
     thr.join #wait for execution to finish or stopped by timeout
 
+    client.close
+
     FileUtils.rm_r dir #clean up
 
   end
