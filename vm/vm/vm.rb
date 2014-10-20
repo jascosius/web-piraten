@@ -64,7 +64,7 @@ def initialize_timeout(client)
   Thread.start(Thread.current) do |thread|
     sleep(TIMEOUT)
     if thread.alive?
-      puts msg = "\n#{PREFIX}_enderror_Das Programm hat zu lange gebraucht."
+      msg = "\n#{PREFIX}_enderror_Das Programm hat zu lange gebraucht."
       client.puts msg
       thread.kill
     end
@@ -124,7 +124,7 @@ end
 
 #send an exit to the server
 def exit_command(hash, client, shared)
-  puts 'exit'
+  #puts 'exit'
   if hash['successful']
     end_msg = "\n#{PREFIX}_end"
   else
@@ -161,7 +161,7 @@ def execute(hash, client, dir, shared)
     changeuser = ''
   end
 
-  puts command = "cd #{dir} && " + changeuser + command
+  command = "cd #{dir} && " + changeuser + command
   Open3.popen3(command) do |stdin, stdout, stderr|
     stdout.sync = true
     stdin.sync = true
@@ -184,7 +184,7 @@ def handle_stdout(client, stdout, tag, shared)
       #print errormessages at last
       if shared[:err]
         shared[:err].each_line do |line|
-          puts line
+          #puts line
           client.puts line
         end
       end
@@ -192,7 +192,7 @@ def handle_stdout(client, stdout, tag, shared)
       break
     elsif counter > MAX_OPS
       #tell the client that the execution has finished with errors
-      puts msg = "#{PREFIX}_enderror_Die maximale Anzahl an Operationen wurde erreicht."
+      msg = "#{PREFIX}_enderror_Die maximale Anzahl an Operationen wurde erreicht."
       client.puts msg
       break
     end
@@ -203,7 +203,7 @@ def handle_stdout(client, stdout, tag, shared)
       unless tag == false || line.start_with?(PREFIX)
         line = "#{PREFIX}_print_#{tag}_#{line}"
       end
-      puts line
+      #puts line
       client.puts line
     end
   end
