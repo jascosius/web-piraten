@@ -256,7 +256,7 @@ loop {
 
       # functions that are supported by the vm
       functions = {:response => lambda { |hash| response(hash, shared) }, #execute immediate
-                   :stop => lambda { |_| puts 'stop'; thread.kill },
+                   :stop => lambda { |_| thread.kill },
                    :write_file => lambda { |hash| queue.push(lambda { write_file(hash, dir) }) }, #add to queue
                    :execute => lambda { |hash| queue.push(lambda { execute(hash, client, dir, shared) }) },
                    :exit => lambda { |hash| queue.push(lambda { exit_command(hash, client, shared) }) }}
