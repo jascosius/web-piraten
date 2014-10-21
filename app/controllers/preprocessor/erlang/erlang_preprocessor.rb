@@ -196,7 +196,8 @@ class ErlangPreprocessor
     -module(webpiraten).
     -export([main/0]).
 
-    main() -> try
+    main() -> register(a#{$prefix}_debug, spawn(fun() -> a#{$prefix}_performdebugs() end)),
+              try
                 start()
               catch
                 error:function_clause   -> Trace = erlang:get_stacktrace(),
@@ -265,12 +266,15 @@ class ErlangPreprocessor
                             io:fwrite("~n#{$prefix}_break_up~n"),
                             X.
 
+    a#{$prefix}_performdebugs() -> receive Index
+                                     -> a#{$prefix}_performdebugs(Index),
+                                             a#{$prefix}_performdebugs()
+                                   end.
+
     a#{$prefix}_performdebugs(Index) -> receive Value
-                                          -> io:fwrite("~n#{$prefix}_debug_~p_~p~n", [Index, Value])
+                                          -> io:fwrite("~n#{$prefix}_debug_~p_~p~n", [Index, Value])%,
+                                             %a#{$prefix}_performdebugs()
                                         end.
-
-    a#{$prefix}_performdebugs(Index, Value) -> io:fwrite("~n#{$prefix}_debug_~p_~p~n", [Index, Value]).
-
 
     move(I)  -> a#{$prefix}_line(I),
                 io:fwrite("~n#{$prefix}_move~n").

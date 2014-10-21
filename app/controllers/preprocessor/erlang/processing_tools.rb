@@ -195,9 +195,9 @@ end
 def change_prefix_2_debug(code, variables)
   debug_code = code
   variables.each_with_index do |var, index|
-    # insert debug-information in front of a declaration with '='
     debug_code = debug_code.gsub(Regexp.new("\\b#{var}line#{$prefix}\\s*="),
                                  " spawn(fun() -> a#{$prefix}_performdebugs(#{index}) end)! #{var} =")
+    #" a#{$prefix}_debug!#{index}, a#{$prefix}_debug!#{var} =")
     full_debug_code = ''
     debug_code.each_line do |line|
       my_array = scan_for_index_start_and_end(line, Regexp.new("\\b#{var}line#{$prefix}"))
@@ -209,8 +209,7 @@ def change_prefix_2_debug(code, variables)
           # of a function
         elsif arrow
           arrow_end = line.index(')', arrow) + 1
-          # insert debug-information after an arrow
-          line = line.insert(arrow_end, ", a#{$prefix}_performdebugs(#{index}, #{var}) ")
+          line = line.insert(arrow_end, ", a#{$prefix}_debug!#{index}, a#{$prefix}_debug!#{var} ")
         end
       end
       full_debug_code += line
