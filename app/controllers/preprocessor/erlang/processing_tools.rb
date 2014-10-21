@@ -154,7 +154,7 @@ def change_prefix_2_line_number(code)
   break_code = code
   break_array.reverse_each do |element|
     if element[:type] == 'start'
-      break_code.slice!(element[:starts]..element[:ends])
+      break_code.slice!(element[:starts]..element[:ends]-1)
       break_code = code.insert(element[:starts],
                                "-> a#{$prefix}_line(number#{$prefix}), a#{$prefix}_break(fun() -> ")
     elsif element[:type] == 'end'

@@ -20,6 +20,7 @@ class ErlangPreprocessor
     @precompile_code = process_code_for_precompile(code)
   end
 
+
   #compile without changing code first, just add logic
   #when it fails print error message
   #when it succeeds compile with changing code for line-highlighting and so on
