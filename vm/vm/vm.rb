@@ -77,7 +77,7 @@ def get_commands(client, functions)
 
   loop do
     msg = client.gets.chomp
-    puts "Incoming: #{msg}"
+    #puts "Incoming: #{msg}"
 
     msg = JSON.parse(msg)
 
@@ -140,13 +140,15 @@ def exit_command(hash, client, shared)
     puts timing
   end
 
-  puts end_msg
+  #puts end_msg
   client.puts end_msg
 end
 
 # write a file to the filesystem
-def write_file(hash, dir)
-  open("#{dir}/#{hash['filename']}", 'w+') do |file|
+def write_file(hash, dir, shared)
+  path = "#{dir}/#{hash['filename']}"
+  puts "#{Time.now.strftime("%H:%M:%S:%L")} #{shared[:client]} write_file: #{path} #{hash['content']}\n\n"
+  open(path, 'w+') do |file|
     File.write file, hash['content']
     File.chmod(hash['permissions'], file)
   end
@@ -162,6 +164,8 @@ def execute(hash, client, dir, shared)
   end
 
   command = "cd #{dir} && " + changeuser + command
+
+  puts "#{Time.now.strftime("%H:%M:%S:%L")} #{shared[:client]} execute: #{command}\n\n"
   Open3.popen3(command) do |stdin, stdout, stderr|
     stdout.sync = true
     stdin.sync = true
@@ -238,7 +242,7 @@ loop {
       end
     end
 
-    shared = {:start_time => Time.now} #share data over several methods
+    shared = {:start_time => Time.now, :client => client} #share data over several methods
     queue = Queue.new #queue to handle commands one after another
 
     temp = '/codetemp'
@@ -257,7 +261,7 @@ loop {
       # functions that are supported by the vm
       functions = {:response => lambda { |hash| response(hash, shared) }, #execute immediate
                    :stop => lambda { |_| thread.kill },
-                   :write_file => lambda { |hash| queue.push(lambda { write_file(hash, dir) }) }, #add to queue
+                   :write_file => lambda { |hash| queue.push(lambda { write_file(hash, dir, shared) }) }, #add to queue
                    :execute => lambda { |hash| queue.push(lambda { execute(hash, client, dir, shared) }) },
                    :exit => lambda { |hash| queue.push(lambda { exit_command(hash, client, shared) }) }}
 
