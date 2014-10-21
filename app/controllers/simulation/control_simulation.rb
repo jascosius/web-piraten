@@ -36,7 +36,9 @@ end
 def debug!(tracing_vars, old_allocations, name_index, value)
   name = ''
   if tracing_vars.length > 0
-    name = tracing_vars[name_index].chomp
+    if name_index.kind_of? Integer && name_index >= 0 && name_index < tracing_vars.length
+      name = tracing_vars[name_index].chomp
+    end
   end
   remove_prefix! name
   remove_prefix! value
