@@ -147,7 +147,7 @@ end
 # write a file to the filesystem
 def write_file(hash, dir, shared)
   path = "#{dir}/#{hash['filename']}"
-  puts "#{Time.now.strftime("%H:%M:%S:%L")} #{shared[:client]} write_file: #{path} #{hash['content']}\n\n"
+  puts "#{Time.now.strftime("%Y_%m_%d %H:%M:%S:%L")} #{shared[:client]} write_file: #{path} #{hash['content']}\n\n"
   open(path, 'w+') do |file|
     File.write file, hash['content']
     File.chmod(hash['permissions'], file)
@@ -165,7 +165,7 @@ def execute(hash, client, dir, shared)
 
   command = "cd #{dir} && " + changeuser + command
 
-  puts "#{Time.now.strftime("%H:%M:%S:%L")} #{shared[:client]} execute: #{command}\n\n"
+  puts "#{Time.now.strftime("%Y_%m_%d %H:%M:%S:%L")} #{shared[:client]} execute: #{command}\n\n"
   Open3.popen3(command) do |stdin, stdout, stderr|
     stdout.sync = true
     stdin.sync = true
