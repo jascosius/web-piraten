@@ -1,10 +1,10 @@
 # -*- encoding : utf-8 -*-
 if Rails.env.production?
-  TIMEOUT = 20 #timeout time for the programm to execute
+  TIMEOUT = 40 #timeout time for the programm to execute, change in the vm as well
   PORT = 12340 #port to connect to the vm
   HOST = 'chevalblanc.informatik.uni-kiel.de' #host to connect to the vm
 else
-  TIMEOUT = 20 #timeout time for the programm to execute
+  TIMEOUT = 40 #timeout time for the programm to execute, change in the vm as well
   PORT = 12340 #port to connect to the vm
   HOST = 'localhost' #chevalblanc.informatik.uni-kiel.de' #host to connect to the vm #localhost
 end

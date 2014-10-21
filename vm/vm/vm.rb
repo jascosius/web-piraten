@@ -12,10 +12,10 @@ require 'digest'
 #ips that can connect to the vm
 WHITELIST_IPS = ['134.245.252.93'] #chevalblanc
 
-PREFIX = 'CkyUHZVL3q' #have to be the same as in the socket_controller
-TIMEOUT = 20 #have to be the same as in the socket_controller
+PREFIX = 'CkyUHZVL3q' #have to be the same as in initialize_communication
+TIMEOUT = 40 #have to be the same as in initialize_communication
 MAX_OPS = 10000 #the maximal counter of ops to execute
-PORT = 12340 #have to be the same as in the socket_controller
+PORT = 12340 #have to be the same as in initialize_communication
 
 if ARGV[0] == 'production'
   puts 'Starting VM in production-mode.'
