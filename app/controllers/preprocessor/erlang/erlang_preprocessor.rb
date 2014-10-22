@@ -78,13 +78,13 @@ class ErlangPreprocessor
             file.puts "\n\n\n"
           end
         ensure
-          send.call([{:execute => {:command => 'erl -env ERL_LIBS "$LIB$/erlang/" -noshell -s prewebpiraten main -s init stop', :stderr => 'preerror'}}, {:exit => {}}])
+          send.call([{:execute => {:command => 'erl -pa $LIB$/erlang -noshell -s prewebpiraten main -s init stop', :stderr => 'preerror'}}, {:exit => {}}])
           return {:type => :warning, :message => 'Start im vereinfachten Modus.'}
         end
       end
       {:type => :no} #dismiss error message because it is not the users fault
     elsif type == 'ok' and @compileflag #compiling with our line logic succeeds
-      send.call([{:execute => {:command => 'erl -env ERL_LIBS "$LIB$/erlang/" -noshell -s webpiraten main -s init stop'}}, {:exit => {}}])
+      send.call([{:execute => {:command => 'erl -pa $LIB$/erlang -noshell -s webpiraten main -s init stop'}}, {:exit => {}}])
       {:type => :no}
     elsif type == 'preerror' #handle runtime-error in backup-mode
       postprocess_error(line, 'prewebpiraten')
