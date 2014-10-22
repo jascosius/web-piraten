@@ -28,7 +28,7 @@ class ErlangPreprocessor
   #when this succeeds run erlang
   def commands_for_vm
     [{:write_file => {:filename => 'prewebpiraten.erl', :content => @precompile_code}},
-     {:execute => {:command => 'erlc -o $LIB$/erlang/ -W0 prewebpiraten.erl', :stderr => 'precompile', :stdout => 'precompile', :permissions => 'read-write'}},
+     {:execute => {:command => 'erlc -W0 prewebpiraten.erl', :stderr => 'precompile', :stdout => 'precompile', :permissions => 'read-write'}},
      {:execute => {:command => 'echo ok', :stdout => 'precompileok'}}]
   end
 
@@ -63,7 +63,7 @@ class ErlangPreprocessor
       postprocess_error_compile(line)
     elsif type == 'precompileok' and @precompileflag #compiling without our line-logic succeeds
       send.call([{:write_file => {:filename => 'webpiraten.erl', :content => @process_code}},
-                 {:execute => {:command => 'erlc -o $LIB$/erlang/ -W0 webpiraten.erl', :stderr => 'compile', :stdout => 'compile', :permissions => 'read-write'}},
+                 {:execute => {:command => 'erlc -W0 webpiraten.erl', :stderr => 'compile', :stdout => 'compile', :permissions => 'read-write'}},
                  {:execute => {:command => 'echo ok', :stdout => 'ok'}}])
       {:type => :no}
     elsif type == 'compile' #compiling with our line logic failed, but without not => running in backup-mode
