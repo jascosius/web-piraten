@@ -36,7 +36,6 @@ class ErlangPreprocessor
   def process_code(code_msg, vars)
     new_code = remove_comments(code_msg)
     new_code = insert_highlighting(new_code, vars) # method is found in processing_tools.rb
-    puts new_code
     insert_start_logic + new_code
   end
 
