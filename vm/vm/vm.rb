@@ -149,6 +149,8 @@ def write_file(hash, dir, shared)
   path = "#{dir}/#{hash['filename']}"
   puts "#{Time.now.strftime("%Y_%m_%d %H:%M:%S:%L")} #{shared[:client]} write_file: #{path} #{hash['content']}\n\n"
   open(path, 'w+') do |file|
+    shared[:close].push(file)
+
     File.write file, hash['content']
     File.chmod(hash['permissions'], file)
   end
@@ -167,6 +169,8 @@ def execute(hash, client, dir, shared)
 
   puts "#{Time.now.strftime("%Y_%m_%d %H:%M:%S:%L")} #{shared[:client]} execute: #{command}\n\n"
   Open3.popen3(command) do |stdin, stdout, stderr|
+    shared[:close].push(stdin,stdout,stderr)
+
     stdout.sync = true
     stdin.sync = true
     shared[:stdin] = stdin
@@ -242,7 +246,7 @@ loop {
       end
     end
 
-    shared = {:start_time => Time.now, :client => client} #share data over several methods
+    shared = {:start_time => Time.now, :client => client, :close => []} #share data over several methods
     queue = Queue.new #queue to handle commands one after another
 
     temp = '/codetemp'
@@ -272,6 +276,12 @@ loop {
     thr.join #wait for execution to finish or stopped by timeout
 
     client.close
+
+    shared[:close].each do |stream|
+      unless stream.closed?
+        stream.close
+      end
+    end
 
     FileUtils.rm_r dir #clean up
 
