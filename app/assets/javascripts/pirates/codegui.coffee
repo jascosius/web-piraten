@@ -103,7 +103,7 @@ class @CodeGUI
     # set maximum code length
     # github.com/marijnh/CodeMirror/issues/821#issuecomment-36967065
     @codeMirror.setOption "maxLength", Config.maxCodeLength
-    @codeMirror.on "beforeChange", @enforceMaxLength
+    #@codeMirror.on "beforeChange", @enforceMaxLength
 
     # initialize execution speed slider (jQuery UI)
     @_$speed = $ '#simulationSpeed'
@@ -224,18 +224,20 @@ class @CodeGUI
 
   # enforce maximum amount of code
   # github.com/marijnh/CodeMirror/issues/821#issuecomment-36967065
-  @enforceMaxLength = (cm, change) ->
-    maxLength = cm.getOption "maxLength"
-    if maxLength and change.update
-      str = change.text.join "\n"
-      delta = str.length-(cm.indexFromPos(change.to) - cm.indexFromPos(change.from))
-      return true if (delta <= 0)
-      delta = cm.getValue().length+delta-maxLength
-      if delta > 0
-        Console.logError 'Maximale Zeichenanzahl erreicht.'
-        str = str.substr 0, str.length-delta
-        change.update change.from, change.to, str.split("\n")
-    return true
+#  @enforceMaxLength = (cm, change) ->
+#    maxLength = cm.getOption "maxLength"
+#    if maxLength and change.update
+#      str = change.text.join "\n"
+#      console.log 'change', change.update
+#      delta = str.length-(cm.indexFromPos(change.to) - cm.indexFromPos(change.from))
+#      return true if (delta <= 0)
+#      console.log 'getValue from enforceMaxLength'
+#      delta = cm.getValue().length+delta-maxLength
+#      if delta > 0
+#        Console.logError 'Maximale Zeichenanzahl erreicht.'
+#        str = str.substr 0, str.length-delta
+#        change.update change.from, change.to, str.split("\n")
+#    return true
 
   # get the content CodeMirror
   @getCode = () ->

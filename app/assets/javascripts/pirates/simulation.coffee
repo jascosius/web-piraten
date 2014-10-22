@@ -180,6 +180,15 @@ class @Simulation
 
     # make sure it's in the correct state before executing
     clear()
+
+    # store state of the grid
+    tempStorage = @serialize()
+
+    #console.log tempStorage
+    if tempStorage.code.length >= Config.maxCodeLength
+      Console.logError "Maximale Codelänge überschritten. Bitte lösche einige Zeilen."
+      return
+
     CodeGUI.toggleCodeEditing()
     CodeGUI.setReadOnly(true)
     @isInExecutionMode = true
@@ -189,8 +198,6 @@ class @Simulation
     # it should not be possible to load/save while executing
     $('#serialization-trigger').attr 'disabled', 'disabled'
 
-    # store state of the grid
-    tempStorage = @serialize()
     SocketHandler.startSimulation tempStorage
     if localStorage? and Config.saveToLocalStorage
       localStorage.setItem "simulation.#{Config.language.id}", JSON.stringify(tempStorage)
