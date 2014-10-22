@@ -13,7 +13,7 @@ require 'digest'
 WHITELIST_IPS = ['134.245.252.93'] #chevalblanc
 
 PREFIX = 'CkyUHZVL3q' #have to be the same as in initialize_communication
-TIMEOUT = 40 #have to be the same as in initialize_communication
+TIMEOUT = 60 #have to be the same as in initialize_communication
 MAX_OPS = 10000 #the maximal counter of ops to execute
 PORT = 12340 #have to be the same as in initialize_communication
 
