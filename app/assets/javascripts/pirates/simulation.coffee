@@ -181,6 +181,7 @@ class @Simulation
     # make sure it's in the correct state before executing
     clear()
     CodeGUI.toggleCodeEditing()
+    CodeGUI.setReadOnly(true)
     @isInExecutionMode = true
     @isStopped = false
     @isFinished = false

@@ -81,6 +81,7 @@ class @SocketHandler
     @registerOperation 'look', (param) -> Grid.ship.look(param)
     @registerOperation 'exit', () ->
       Simulation.isFinished = true
+      CodeGUI.setReadOnly(false)
       Simulation.stop()
 
   ###

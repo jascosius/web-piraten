@@ -201,13 +201,25 @@ class @CodeGUI
     else @codeMirror.setOption option, def
 
   # get ready for execution mode/reset
+
+
+  @setReadOnly: (bool) =>
+    @codeMirror.setOption 'readOnly', bool
+    if bool
+      @codeMirror.setOption 'styleActiveLine', false
+    else
+      @codeMirror.setOption 'styleActiveLine', true
+
+
+#  @toggleReadOnly = () ->
+#    @toggleSetting 'readOnly', true, false          #read only
+#    @toggleSetting 'styleActiveLine', false, true   #highlight edit line
+
   @toggleCodeEditing = () ->
-    @_$codeControls.toggleClass 'hidden' # switch buttons
+    @_$codeControls.toggleClass 'hidden'            # switch buttons
 
     #lock CodeMirror
-    @toggleSetting 'readOnly', true, false
-    @toggleSetting 'styleActiveLine', false, true
-    @_$CodeMirror.toggleClass 'editing-disabled'
+    @_$CodeMirror.toggleClass 'editing-disabled'    #color
     @clearHighlighting()
 
   # enforce maximum amount of code
@@ -259,6 +271,7 @@ class @CodeGUI
   @reset = () =>
     @resetButtons()
     @toggleCodeEditing()
+    @setReadOnly(false)
 
   # reset the execution control buttons
   @resetButtons = () =>
