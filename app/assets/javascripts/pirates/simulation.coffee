@@ -262,6 +262,7 @@ class @Simulation
     delete tempStorage.speed # usability
 
     # load client state from before the execution began to restore grid and such
+    tempStorage.code = @serialize().code
     @load tempStorage
     tempStorage = null
 
