@@ -212,7 +212,7 @@ class @SocketHandler
   @simulatePacket = () =>
     return if @packetQueue.isEmpty
 
-    CodeGUI.clearHighlighting()
+    #CodeGUI.clearHighlighting()
     Grid.look = null # cell highlighting of look operations
 
     # get first in queue

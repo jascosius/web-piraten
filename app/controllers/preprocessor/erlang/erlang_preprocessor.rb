@@ -78,13 +78,13 @@ class ErlangPreprocessor
             file.puts "\n\n\n"
           end
         ensure
-          send.call([{:execute => {:command => 'erl -noshell -s prewebpiraten main -s init stop', :stderr => 'preerror'}}, {:exit => {}}])
+          send.call([{:execute => {:command => 'erl -pa $LIB$/erlang -noshell -s prewebpiraten main -s init stop', :stderr => 'preerror'}}, {:exit => {}}])
           return {:type => :warning, :message => 'Start im vereinfachten Modus.'}
         end
       end
       {:type => :no} #dismiss error message because it is not the users fault
     elsif type == 'ok' and @compileflag #compiling with our line logic succeeds
-      send.call([{:execute => {:command => 'erl -noshell -s webpiraten main -s init stop'}}, {:exit => {}}])
+      send.call([{:execute => {:command => 'erl -pa $LIB$/erlang -noshell -s webpiraten main -s init stop'}}, {:exit => {}}])
       {:type => :no}
     elsif type == 'preerror' #handle runtime-error in backup-mode
       postprocess_error(line, 'prewebpiraten')
@@ -193,10 +193,10 @@ class ErlangPreprocessor
   def insert_start_logic
     %Q[
     -module(webpiraten).
+    -import(base,[print/1,putStr/1,putStrLn/1,show/1]).
     -export([main/0]).
 
-    main() -> register(a#{$prefix}_debug, spawn(fun() -> a#{$prefix}_performdebugs() end)),
-              try
+    main() -> try
                 start()
               catch
                 error:function_clause   -> Trace = erlang:get_stacktrace(),
@@ -265,15 +265,11 @@ class ErlangPreprocessor
                             io:fwrite("~n#{$prefix}_break_up~n"),
                             X.
 
-    a#{$prefix}_performdebugs() -> receive Index
-                                     -> a#{$prefix}_performdebugs(Index),
-                                             a#{$prefix}_performdebugs()
-                                   end.
-
     a#{$prefix}_performdebugs(Index) -> receive Value
-                                          -> io:fwrite("~n#{$prefix}_debug_~p_~p~n", [Index, Value])%,
-                                             %a#{$prefix}_performdebugs()
+                                          -> io:fwrite("~n#{$prefix}_debug_~p_~p~n", [Index, Value])
                                         end.
+
+    a#{$prefix}_performdebugs(Index, Value) -> io:fwrite("~n#{$prefix}_debug_~p_~p~n", [Index, Value]).
 
     move(I)  -> a#{$prefix}_line(I),
                 io:fwrite("~n#{$prefix}_move~n").
@@ -323,6 +319,7 @@ class ErlangPreprocessor
   def insert_compile_logic
     %Q[
     -module(prewebpiraten).
+    -import(base,[print/1,putStr/1,putStrLn/1,show/1]).
     -export([main/0]).
 
     main() -> try
