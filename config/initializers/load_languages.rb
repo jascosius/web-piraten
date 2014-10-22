@@ -29,10 +29,10 @@ LANGUAGES = {
                                 script_assets: ['codemirror/modes/erlang.js'],
                                 gui_options: {:codemirror => {:mode => 'erlang', :theme => 'blackboard'}},
                                 default_code: "start() -> move(), turn(right), turn(left), prove().\n" +
-                                    "    prove() -> case look(front) of\n"+
-                                    "                 border -> puts();\n"+
-                                    "                 _      -> start()\n"+
-                                    "               end.",
+                                    "prove() -> case look(front) of\n"+
+                                    "             border -> puts();\n"+
+                                    "             _      -> start()\n"+
+                                    "           end.",
                                 file_extension: 'erl'
                             }),
     :java => Language.new({
