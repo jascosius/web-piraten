@@ -49,11 +49,6 @@ Nimmt das Objekt an der aktuellen Position auf.
 **Akzeptierte Parameter:** keine  
 **Aufzunehmende Objekte:** treasure, buoy    
 
-###break()
-Setzt einen Breakpoint. Bei einer Simulation stoppt diese, sobald der Breakpoint erreicht ist.  
-Von dieser Position kann dann weiter Simuliert oder Schrittweise durch den Code gegangen werden.  
-**Akzeptierte Parameter:** :point setzt einen Breakpoint  
-**Standardparameter:** :point  
 
 ##Einschränkungen:  
 * Mehrzeilige Strings und Atome sollten nicht genutzt werden. Sie werden nicht korrekt erkannt und führen zu falschen Auswertungen.

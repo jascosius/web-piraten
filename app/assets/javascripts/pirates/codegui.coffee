@@ -28,6 +28,9 @@ class @CodeGUI
         if (@codeMirror.getOption("fullScreen"))
           @codeMirror.setOption("fullScreen", false)
           $('#closeFullScreenBtn').remove()
+      'Ctrl-B':() =>
+        line = @codeMirror.getCursor().line
+        @breakpointlist.set(line)
     })
 
     # codeMirror event handling
@@ -118,6 +121,31 @@ class @CodeGUI
     }
     # set initial speed from saves
     @setSpeed Simulation.speed
+
+    #breakpoitlist
+    @breakpointlist =
+      list : []
+      showAll: ()->
+        for i in @list
+          @showOne(i)
+      showOne: (i)->
+        marker = document.createElement("div")
+        marker.style.color = "#FF0000"
+        marker.style.margin = "0px 2px"
+        marker.innerHTML = "●"
+        CodeGUI.codeMirror.setGutterMarker(i, 'CodeMirror-breakpoint', marker)
+      set: (i)->
+        if i in @list
+          @list.splice @list.indexOf(i), 1
+          CodeGUI.codeMirror.setGutterMarker(i, 'CodeMirror-breakpoint', null)
+          #return false
+        else
+          @list.push i
+          @showOne(i)
+          #return true
+      get: ->
+        return @list
+
 
   # set the speed of the execution and display it with the slider
   # speed is a variable that actually sets the delay between packets

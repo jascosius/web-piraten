@@ -20,6 +20,10 @@
                 <li <% if current_page? help_path %>class="active" <% end %>>
                 <%= link_to t("nav.help"), help_path %></li>
             </ul>
+            <ul class="nav navbar-nav navbar-right">
+            <li <% if current_page? help_path %>class="active" <% end %>>
+                <%= link_to t("nav.challenge"), challenge_path %></li>
+            </ul>
             <!--<div class="navbar-nav navbar-right">-->
             <!--<span style="color: #FFF"><%= I18n.locale %></span>-->
             <!--</div>-->

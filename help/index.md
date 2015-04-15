@@ -11,12 +11,12 @@
 1. [Navigation](#nav)
 2. [Spielfeld](#feld)
 3. [Eingabe des Codes](#eingabe)
+4. [Setzen von Breakpoints](#breakp)
 4. [Simulation](#sim)
 5. [Variablen beobachten](#variablen)
 6. [Ausgabekonsole](#kons)
-7. [Laden/Speichern](#laden)
+7. [Laden/Speichern](#laden)<a name="allg"></a>
 <br>
-<a name="allg"></a>
 <br><br>
 
 ### Allgemein
@@ -28,8 +28,8 @@ mit **Objekten** zu interagieren und so Aufgaben zu lösen.
 Unter der **sprachspezifischen Hilfe** (s.o.) findest du nähere Informationen  
 zu vordefinierten Funktionen und angebotenen Sonderfunktionen.
 <br><br>
-[Nach oben](index "springe zum Anfang der Seite")
 <a name="nav"></a>
+[Nach oben](index "springe zum Anfang der Seite")
 <br><br>
 
 ### Navigation  
@@ -39,8 +39,8 @@ Unter **Lernen** kannst du eine Sprache auswählen und kommst dann in die Lernob
 **Hilfe** führt dich zu dieser Seite, wo du nähere Informationen über die Lernoberfläche findest.  
 Unter **Webpiraten** findest du unsere Startseite.
 <br><br>
-[Nach oben](index "springe zum Anfang der Seite")
 <a name="feld"></a>
+[Nach oben](index "springe zum Anfang der Seite")
 <br><br>
 
 ###Spielfeld
@@ -62,8 +62,8 @@ mehrere Objekte in einer Linie ziehen.
 Außerdem kannst du durch Halten der **linken Maustaste** auf das Piratenschiff dieses auf dem Spielbrett verschieben.  
 Mit einem **Rechtsklick** kannst du entweder die Ausrichtung des Schiffes ändern oder andere Objekte entfernen.
 <br><br>
-[Nach oben](index "springe zum Anfang der Seite")
 <a name="eingabe"></a>
+[Nach oben](index "springe zum Anfang der Seite")
 <br><br>
 
 
@@ -74,9 +74,29 @@ Mit dem hier eingegebenen Code kannst du das Piratenschiff über das Spielfeld l
 Die Sprachspezifischen Befehle, mit denen du das Schiff steuern kannst, findest du in der sprachspezifischen Hilfe (s.o.).  
 ![]( /assets/help/big.png "Vollbildmodus") Hiermit kannst du zwischen normalem Eingabemodus und Vollbildmodus wechseln.
 <br><br>
+<a name="breakp"></a>
 [Nach oben](index "springe zum Anfang der Seite")
-<a name="sim"></a>
 <br><br>
+
+
+###Setzen von Breakpoints    
+
+Wenn du das Eingabefeld im Fokus hast (z.B gerade Code schreibst), gibt es die Möglichkeit,  <img title = "Breakpoint" hspace = "150" align="right"    src="/assets/help/breakpoint.png">   
+einen Breakpoint zu setzen. Die Simulation wird dann vor diesem Breakpoint stoppen,  
+so dass du die Simulation bis zu den interessanten Codepassagen in hoher Geschwindigkeit   
+"überfliegen" und dann schrittweise den Code untersuchen kannst.  
+**Um einen Breakpoint zu setzen, benutzt du die Tastenkombination "Ctrl-b" (Strg-b).**  
+Eine so markierte Zeile wird durch einen roten Punkt gekennzeichnet. Mit "Ctrl-b" kannst  
+du auch einen schon vorhandenen Breakpoint löschen.
+<br><br>
+<a name="sim"></a>
+[Nach oben](index "springe zum Anfang der Seite")
+<br><br>
+
+
+
+
+
 
 ###Simulation
 
@@ -91,8 +111,8 @@ Programmiermodus zurückkehren. Außerdem kannst du, sollte diese Funktion von d
 Sprache unterstützt werden, aus dem aktuellen Codeblock **springen**.  
 Befinden sich Fehler in deinem Programm, werden diese in der Konsole (s.u.) rot ausgegeben, und die Programmausführung beendet.
 <br><br>
-[Nach oben](index "springe zum Anfang der Seite")
 <a name="variablen"></a>
+[Nach oben](index "springe zum Anfang der Seite")
 <br><br>
 
 ###Variablen beobachten <img title = "Variablen beobachten" align="right" src="/assets/help/variable2.png">   
@@ -103,8 +123,8 @@ Benötigst du sie nicht mehr, kannst du sie, mit eine Klick auf das Kreuz, auch 
 Während der Simulation wird der Wert dieser Variablen, ab ihrer Definition, *live* unter  
 dem Eingabefeld angezeigt.
 <br><br>
-[Nach oben](index "springe zum Anfang der Seite")
 <a name="kons"></a>
+[Nach oben](index "springe zum Anfang der Seite")
 <br><br>
 
 ###Konsole <img title = "Ausgabekonsole" align="right" src="/assets/help/console1.png">  
@@ -114,8 +134,8 @@ Warnungen hingegen sind gelb brechen die Simulation nicht ab.
 Fährt das Schiff zum Beispiel gegen eine Welle, wird eine Warnung ausgegeben  
 und das Schiff bewegt sich nicht, die Simmulation geht aber weiter.
 <br><br>
-[Nach oben](index "springe zum Anfang der Seite")
 <a name="laden"></a>
+[Nach oben](index "springe zum Anfang der Seite")
 <br><br>
 
 ###Laden/Speichern ![]( /assets/help/save1.png "Laden und Speichern")<img title = "Laden und Speichern" align="right" src="/assets/help/save2.png">

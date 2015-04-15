@@ -231,6 +231,8 @@ class @SocketHandler
     window.dispatchEvent event
     currentPacket = event['detail']
 
+    if currentPacket.line in CodeGUI.breakpointlist.get()
+      Simulation.stop()
 
     simulateLine currentPacket if currentPacket.line
     simulateAllocations currentPacket if currentPacket.allocations?
@@ -245,7 +247,7 @@ class @SocketHandler
     breaks = packet.break
     for br in breaks
       switch br.type
-        when 'point' then Simulation.stop()
+#        when 'point' then Simulation.stop()
         when 'up'
           if @stackDeep >= 1
             @stackDeep -= 1

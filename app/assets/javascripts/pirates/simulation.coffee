@@ -274,7 +274,7 @@ class @Simulation
     tempStorage = null
 
     window.dispatchEvent new Event('simulationReset')
-
+    CodeGUI.breakpointlist.showAll()
   # private scope within Simulation
   # makes sure that there are no old packets in the SocketHandler queue
   clear = () ->

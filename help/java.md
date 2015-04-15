@@ -47,7 +47,6 @@ Nimmt das Objekt an der aktuellen Position auf.
 
 ##Einschränkungen:  
 Die aktuelle Zeile wird während der Ausführung nicht markiert.  
-Es gibt keine Debugging und kein Break.
 
 
 

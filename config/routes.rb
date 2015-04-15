@@ -10,8 +10,10 @@ RailsPrototype::Application.routes.draw do
   root 'main#index'
 
   get 'help' => 'help#index', as: :help # creates learn_path and learn_url
+  get 'challenge' => 'challenge#index', as: :challenge # creates challenge_path and challenge_url
   get 'learn' => 'game#index', as: :learn # creates learn_path and learn_url
   get 'learn/:name' => 'game#learn' # creates learn_path and learn_url
+  get 'challenge/:file' => 'challenge#index' # creates challenge_path and challenge_url
   get 'help/:file' => 'help#index' # creates help_path and help_url
   get 'learn/new' => 'game#new' # creates learn_path and learn_url
 
