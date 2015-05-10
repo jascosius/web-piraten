@@ -18,7 +18,7 @@ set :domain, 'giscours.informatik.uni-kiel.de'
 set :user, 'webpiraten'
 set :port, '55055'
 # set :identity_file, 'key.pem'
-set :deploy_to, '~/webpiraten'
+set :deploy_to, '/home/webpiraten/webpiraten'
 set :repository, 'ssh://git@git-ps.informatik.uni-kiel.de:55055/projekte/web-piraten.git'
 set :branch, 'production'
 
@@ -26,7 +26,7 @@ set :branch, 'production'
 # They will be linked in the 'deploy:link_shared_paths' step.
 set :shared_paths, ['log']
 
-set :rvm_path, '~/.rvm/scripts/rvm'
+set :rvm_path_mina, '~/.rvm/scripts/rvm'
 # Optional settings:
 #   set :user, 'foobar'    # Username in the server to SSH to.
 #   set :port, '30000'     # SSH port number.
