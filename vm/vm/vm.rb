@@ -9,13 +9,15 @@ require 'json'
 require 'thread'
 require 'digest'
 
-#ips that can connect to the vm
-WHITELIST_IPS = ['134.245.252.93'] #chevalblanc
-
 PREFIX = 'CkyUHZVL3q' #have to be the same as in initialize_communication
 TIMEOUT = 60 #have to be the same as in initialize_communication
 MAX_OPS = 10000 #the maximal counter of ops to execute
 PORT = 12340 #have to be the same as in initialize_communication
+QEMU = '10.0.2.2' #ip of qemu in production
+HOST = '127.0.0.1'
+
+#ips that can connect to the vm
+WHITELIST_IPS = [QEMU]
 
 if ARGV[0] == 'production'
   puts 'Starting VM in production-mode.'
@@ -235,6 +237,7 @@ end
 
 
 server = TCPServer.new PORT
+#server = TCPServer.new(HOST,PORT)
 loop {
   Thread.start(server.accept) do |client| #spawn new process for a new client
 

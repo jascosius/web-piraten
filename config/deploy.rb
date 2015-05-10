@@ -14,11 +14,11 @@ require 'mina/rvm' # for rvm support. (http://rvm.io)
 #   repository   - Git repo to clone from. (needed by mina/git)
 #   branch       - Branch name to deploy. (needed by mina/git)
 # chevalblanc:12343
-set :domain, 'chevalblanc.informatik.uni-kiel.de'
-set :user, 'captain'
-set :port, '12343'
+set :domain, 'giscours.informatik.uni-kiel.de'
+set :user, 'webpiraten'
+set :port, '55055'
 # set :identity_file, 'key.pem'
-set :deploy_to, '/var/www/webpiraten'
+set :deploy_to, '~/webpiraten'
 set :repository, 'ssh://git@git-ps.informatik.uni-kiel.de:55055/projekte/web-piraten.git'
 set :branch, 'production'
 
@@ -26,7 +26,7 @@ set :branch, 'production'
 # They will be linked in the 'deploy:link_shared_paths' step.
 set :shared_paths, ['log']
 
-set :rvm_path, '/home/captain/.rvm/scripts/rvm'
+set :rvm_path, '~/.rvm/scripts/rvm'
 # Optional settings:
 #   set :user, 'foobar'    # Username in the server to SSH to.
 #   set :port, '30000'     # SSH port number.
@@ -70,7 +70,7 @@ task :deploy => :environment do
     to :launch do
       queue "chmod +x #{deploy_to}/current/scripts/shutdown_server.sh"
       queue "cd #{deploy_to}/current/scripts/ && ./shutdown_server.sh"
-      queue "cd #{deploy_to}/current/ && PERFORMANCE_TEST=true /home/captain/bin/bundle exec thin start -d -e production -p 3000"
+      queue "cd #{deploy_to}/current/ && bundle exec thin start -d -e production -p 3000"
     end
   end
 end
@@ -78,22 +78,17 @@ end
 #restart the rails server
 task :restart do
   queue "cd #{deploy_to}/current/scripts/ && ./shutdown_server.sh"
-  queue "cd #{deploy_to}/current/ && PERFORMANCE_TEST=true /home/captain/bin/bundle exec thin start -d -e production -p 3000"
+  queue "cd #{deploy_to}/current/ && /home/captain/bin/bundle exec thin start -d -e production -p 3000"
 end
 
 #start the rails server
 task :start do
-  queue "cd #{deploy_to}/current/ && PERFORMANCE_TEST=true /home/captain/bin/bundle exec thin start -d -e production -p 3000"
+  queue "cd #{deploy_to}/current/ && /home/captain/bin/bundle exec thin start -d -e production -p 3000"
 end
 
 #stop the rails server
 task :stop do
   queue "cd #{deploy_to}/current/scripts/ && ./shutdown_server.sh"
-end
-
-#kill the rails server
-task :kill do
-  queue "pkill -9 ruby || true"
 end
 
 #task :deploy_vm do

@@ -2,7 +2,7 @@
 #the vm must have the same pepper
 #IMPORTANT: The pepper is a secret
 
-pepper_path = '/pepper'
+pepper_path = Dir.home + '/.webpiraten-pepper' #path to pepper
 
 if Rails.env.development?
   PEPPER = ''
