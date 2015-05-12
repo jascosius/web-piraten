@@ -24,7 +24,7 @@ set :branch, 'production'
 
 # Manually create these paths in shared/ (eg: shared/config/database.yml) in your server.
 # They will be linked in the 'deploy:link_shared_paths' step.
-set :shared_paths, ['log']
+set :shared_paths, ['log','env_conf']
 
 set :rvm_path_mina, '~/.rvm/scripts/rvm'
 # Optional settings:
