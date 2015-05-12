@@ -2,19 +2,17 @@
 #the vm must have the same pepper
 #IMPORTANT: The pepper is a secret
 
-pepper_path = Dir.home + '/.webpiraten-pepper' #path to pepper
-
 if Rails.env.development?
   PEPPER = ''
   puts 'The pepper is empty.'
 else
   pepper = ''
   begin
-    File.open(pepper_path) do |file|
+    File.open(PEPPER_PATH_RAILS) do |file|
       pepper = file.read
     end
   rescue
-    $stderr.puts "There is no pepper in '#{pepper_path}'"
+    $stderr.puts "There is no pepper in '#{PEPPER_PATH_RAILS}'"
     exit 1
   else
     if pepper.length < 32

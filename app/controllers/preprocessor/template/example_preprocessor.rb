@@ -20,7 +20,7 @@ class ExamplePreprocessor
     @operationlist = []
     @end_break = ''
     @beg_break = ''
-    @filename = "#{$prefix}_code.rb"
+    @filename = "#{VM_PREFIX}_code.rb"
     @syntaxflag = true
     @code = code
     @tracing_vars = tracing_vars

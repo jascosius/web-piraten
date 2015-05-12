@@ -45,15 +45,15 @@ def communicate_with_vm(tracing_vars)
     line = line.force_encoding('utf-8')
 
     unless line.empty?
-      array = line.split('_') #a command looks like $prefix_function_params or $prefix_?_function_params
-      if array.length > 1 and array[0] == $prefix #is the line a command?
+      array = line.split('_') #a command looks like VM_PREFIX_function_params or VM_PREFIX_?_function_params
+      if array.length > 1 and array[0] == VM_PREFIX #is the line a command?
         if array[1] == '?' #is the command a question?
           @vm.puts(proof_commands([{:response => {:value => search_and_execute_function(functions, array[2..-1])}}])) #when there is a ?, the vm expects a response
         else
           search_and_execute_function(functions, array[1..-1])
         end
       else
-        print!(:log, line) #without $prefix this must be a print from the user
+        print!(:log, line) #without VM_PREFIX this must be a print from the user
       end
     end
   end

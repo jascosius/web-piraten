@@ -63,6 +63,6 @@ end
 # remove the prefix in messages that will be printed to the user
 # makes sure that the prefix is never printed
 def remove_prefix!(string)
-  string.gsub!("#{$prefix}_", '')
-  string.gsub!($prefix, '')
+  string.gsub!("#{VM_PREFIX}_", '')
+  string.gsub!(VM_PREFIX, '')
 end

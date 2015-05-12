@@ -8,13 +8,9 @@ require 'fileutils'
 require 'json'
 require 'thread'
 require 'digest'
+require File.expand_path('vm.conf')
 
-PREFIX = 'CkyUHZVL3q' #have to be the same as in initialize_communication
-TIMEOUT = 60 #have to be the same as in initialize_communication
-MAX_OPS = 10000 #the maximal counter of ops to execute
-PORT = 12340 #have to be the same as in initialize_communication
 QEMU = '10.0.2.2' #ip of qemu in production
-HOST = '127.0.0.1'
 
 #ips that can connect to the vm
 WHITELIST_IPS = [QEMU]
@@ -38,18 +34,17 @@ end
 #get the pepper to communicate with the server
 #the server must have the same pepper
 #IMPORTANT: The pepper is a secret
-pepper_path = '/pepper'
 if DEVELOPMENT
   PEPPER = ''
   puts 'The pepper is empty.'
 else
   pepper = ''
   begin
-    File.open(pepper_path) do |file|
+    File.open(PEPPER_PATH_VM) do |file|
       pepper = file.read
     end
   rescue
-    $stderr.puts "There is no pepper in '#{pepper_path}'"
+    $stderr.puts "There is no pepper in '#{PEPPER_PATH_VM}'"
     exit 1
   else
     if pepper.length < 32
@@ -237,7 +232,6 @@ end
 
 
 server = TCPServer.new PORT
-#server = TCPServer.new(HOST,PORT)
 loop {
   Thread.start(server.accept) do |client| #spawn new process for a new client
 

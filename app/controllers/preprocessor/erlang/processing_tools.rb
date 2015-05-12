@@ -105,11 +105,11 @@ end
 def insert_prefix(code, operations, strings)
   if strings.empty?
     operations.reverse_each do |op|
-      code.insert(op[:ends], "line#{$prefix}")
+      code.insert(op[:ends], "line#{VM_PREFIX}")
     end
   else
     operations.reverse_each do |op|
-      code.insert(op[:ends], "line#{$prefix}") if is_not_in_string?(op[:starts], strings)
+      code.insert(op[:ends], "line#{VM_PREFIX}") if is_not_in_string?(op[:starts], strings)
     end
   end
   code
@@ -122,12 +122,12 @@ end
 def change_prefix_2_line_number(code)
   break_counter = 0
   starts_and_ends = []
-  code.scan(Regexp.new("(?:->|case|if|fun\\s*(?:\\s[A-Z]\\w*)?\\(.*\\)\\s*(?:when.*)?->)line#{$prefix}")) do
+  code.scan(Regexp.new("(?:->|case|if|fun\\s*(?:\\s[A-Z]\\w*)?\\(.*\\)\\s*(?:when.*)?->)line#{VM_PREFIX}")) do
     starts_and_ends << {type: 'start',
                         starts: Regexp.last_match.offset(0).first,
                         ends: Regexp.last_match.offset(0).last}
   end
-  code.scan(Regexp.new("(?:\\.|;|end)line#{$prefix}")) do
+  code.scan(Regexp.new("(?:\\.|;|end)line#{VM_PREFIX}")) do
     starts_and_ends << {type: 'end',
                         starts: Regexp.last_match.offset(0).first,
                         ends: Regexp.last_match.offset(0).last}
@@ -156,7 +156,7 @@ def change_prefix_2_line_number(code)
     if element[:type] == 'start'
       break_code.slice!(element[:starts]..element[:ends]-1)
       break_code = code.insert(element[:starts],
-                               "-> a#{$prefix}_line(number#{$prefix}), a#{$prefix}_break(fun() -> ")
+                               "-> a#{VM_PREFIX}_line(number#{VM_PREFIX}), a#{VM_PREFIX}_break(fun() -> ")
     elsif element[:type] == 'end'
       break_code = code.insert(element[:starts], " end)")
     end
@@ -168,10 +168,10 @@ def change_prefix_2_line_number(code)
 
     # every arrow with prefix for processing gets a line-function
     # for highlighting information
-    line.gsub!(regex_arrow_prefix, "-> a#{$prefix}_line(#{number}), ")
+    line.gsub!(regex_arrow_prefix, "-> a#{VM_PREFIX}_line(#{number}), ")
 
     # insert line number in former inserted line-functions
-    line.gsub!(Regexp.new("a#{$prefix}_line\\(number#{$prefix}\\)"), "a#{$prefix}_line(#{number})")
+    line.gsub!(Regexp.new("a#{VM_PREFIX}_line\\(number#{VM_PREFIX}\\)"), "a#{VM_PREFIX}_line(#{number})")
 
     # find pirate-operations and insert line-number
     line.gsub!(regex_op_prefix, "(#{number}, ")
@@ -180,7 +180,7 @@ def change_prefix_2_line_number(code)
     line.gsub!(/\(\d+,\s+\)/, "(#{number})")
 
     # add comma with line-number information
-    return_code += line.chomp + "  % #{$prefix}_(#{number}#{$prefix}_)\n"
+    return_code += line.chomp + "  % #{VM_PREFIX}_(#{number}#{VM_PREFIX}_)\n"
     number += 1
   end
   return_code
@@ -195,14 +195,14 @@ end
 def change_prefix_2_debug(code, variables)
   debug_code = code
   variables.each_with_index do |var, index|
-    debug_code = debug_code.gsub(Regexp.new("\\b#{var}line#{$prefix}\\s*=="),
+    debug_code = debug_code.gsub(Regexp.new("\\b#{var}line#{VM_PREFIX}\\s*=="),
                                  " #{var} ==")
     #
-    debug_code = debug_code.gsub(Regexp.new("\\b#{var}line#{$prefix}\\s*="),
-                                 " spawn(fun() -> a#{$prefix}_performdebugs(#{index}) end)! #{var} =")
+    debug_code = debug_code.gsub(Regexp.new("\\b#{var}line#{VM_PREFIX}\\s*="),
+                                 " spawn(fun() -> a#{VM_PREFIX}_performdebugs(#{index}) end)! #{var} =")
     full_debug_code = ''
     debug_code.each_line do |line|
-      my_array = scan_for_index_start_and_end(line, Regexp.new("\\b#{var}line#{$prefix}"))
+      my_array = scan_for_index_start_and_end(line, Regexp.new("\\b#{var}line#{VM_PREFIX}"))
       my_array.reverse_each do |stuff|
         stop = line.index(regex_stop_or_semicolon, stuff[:ends])
         arrow = line.index(regex_arrow_with_function, stuff[:ends])
@@ -211,7 +211,7 @@ def change_prefix_2_debug(code, variables)
           # of a function
         elsif arrow
           arrow_end = line.index(')', arrow) + 1
-          line = line.insert(arrow_end, ", a#{$prefix}_performdebugs(#{index}, #{var}) ")
+          line = line.insert(arrow_end, ", a#{VM_PREFIX}_performdebugs(#{index}, #{var}) ")
         end
       end
       full_debug_code += line

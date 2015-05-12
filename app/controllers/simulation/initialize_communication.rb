@@ -1,13 +1,4 @@
 # -*- encoding : utf-8 -*-
-if Rails.env.production?
-  TIMEOUT = 60 #timeout time for the programm to execute, change in the vm as well
-  PORT = 12340 #port to connect to the vm
-  HOST = 'localhost' #host to connect to the vm
-else
-  TIMEOUT = 60 #timeout time for the programm to execute, change in the vm as well
-  PORT = 12340 #port to connect to the vm
-  HOST = 'localhost' #chevalblanc.informatik.uni-kiel.de' #host to connect to the vm #localhost
-end
 
 # initialize the grid on the server and start timeout for the simulation
 # initialize the vm and start simulation
@@ -27,7 +18,7 @@ end
 def initialize_timeout(thread)
   #Thread to stop the execution after timeout time
   Thread.start(thread) do |thr|
-    sleep(TIMEOUT + 3) #add a little because normaly vm triggers timeout
+    sleep(VM_TIMEOUT + 3) #add a little because normaly vm triggers timeout
     if thr.alive?
       puts 'kill'
       thr.kill
@@ -43,7 +34,7 @@ def initialize_vm
 
   begin
     #connect to TCPServer to execute the programm
-    vm = TCPSocket.open(HOST, PORT)
+    vm = TCPSocket.open(VM_HOST, VM_PORT)
   rescue
     $stderr.puts 'Could not connect to TCPSocket. Start ruby vm/vm/vm.rb development'
     exit_simulation!('Ein interner Fehler ist aufgetreten.')

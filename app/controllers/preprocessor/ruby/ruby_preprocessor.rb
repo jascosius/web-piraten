@@ -16,7 +16,7 @@ class RubyPreprocessor
     @end_break = ''
     @beg_break = ''
     @line_first = true
-    @filename = "#{$prefix}_code.rb"
+    @filename = "#{VM_PREFIX}_code.rb"
     @syntaxflag = true
     @code = code
     @tracing_vars = tracing_vars
@@ -78,7 +78,7 @@ class RubyPreprocessor
   # Method to add the linenumber for linehighlighting in codemirror. Previous
   # to the user's line of code.
   def insert_line_number(i, dont_skip_line)
-    dont_skip_line ? "#{$prefix}_line(#{i})\n" : ''
+    dont_skip_line ? "#{VM_PREFIX}_line(#{i})\n" : ''
   end
 
   # Adds the line of the user's code and a commment with the linenumber, doesn't add
@@ -92,12 +92,12 @@ class RubyPreprocessor
       s = s[4..-1]
     elsif ((bools[:multiline_comment] == true) || (code.start_with?('=begin')))
       bools[:multiline_comment] = true
-      return code + " # #{$prefix}_(#{i}#{$prefix}_)\n"
+      return code + " # #{VM_PREFIX}_(#{i}#{VM_PREFIX}_)\n"
     end
     code = modify_code(s, bools, code) #modify @end_break, @beg_break and the code when finding the begin or end of scope
     #add @end_break and @beg_break for the break_point function
     if bools[:dont_skip_line]
-      code = code + @end_break + " # #{$prefix}_(#{i}#{$prefix}_)\n"
+      code = code + @end_break + " # #{VM_PREFIX}_(#{i}#{VM_PREFIX}_)\n"
       @end_break = ''
     end
     if bools[:string_at_beginning] == false
@@ -246,7 +246,7 @@ class RubyPreprocessor
     if dont_skip_line
       vars.each_with_index do |variable, index|
         codes += "if defined?(#{variable}) == 'local-variable'\n" +
-            "  #{$prefix}_debug(#{variable}, #{index})\n" +
+            "  #{VM_PREFIX}_debug(#{variable}, #{index})\n" +
             "end\n"
       end
     end
@@ -285,10 +285,10 @@ class RubyPreprocessor
       new_line = ''
       @process_code.each_line do |l|
         if i == line_number.to_i
-          line_begin=l.index("#{$prefix}_(")
-          line_end=l.index("#{$prefix}_)")
+          line_begin=l.index("#{VM_PREFIX}_(")
+          line_end=l.index("#{VM_PREFIX}_)")
           if line_begin and line_end
-            new_line = l[line_begin+"#{$prefix}_(".length...line_end]
+            new_line = l[line_begin+"#{VM_PREFIX}_(".length...line_end]
           end
         end
         i += 1
@@ -312,10 +312,10 @@ class RubyPreprocessor
 # -*- encoding : utf-8 -*-
 $stdout.sync = true
 $stderr.sync = true
-def #{$prefix}_debug(var, ind)
-  puts "\n#{$prefix}_debug_\#{ind}_\#{#{$prefix}_escape(var)}"
+def #{VM_PREFIX}_debug(var, ind)
+  puts "\n#{VM_PREFIX}_debug_\#{ind}_\#{#{VM_PREFIX}_escape(var)}"
 end
-def #{$prefix}_escape(var)
+def #{VM_PREFIX}_escape(var)
   result = ''
   var.to_s.each_char do |c|
     if not c == '\n'
@@ -325,38 +325,38 @@ def #{$prefix}_escape(var)
   result
 end
 def move
-  puts "\n#{$prefix}_move"
+  puts "\n#{VM_PREFIX}_move"
 end
 def turn(direction = :back)
   if [:right, :left, :back].include? direction
-    puts "\n#{$prefix}_turn_\#{direction}"
+    puts "\n#{VM_PREFIX}_turn_\#{direction}"
   else
     raise(ArgumentError, "unknown argument")
   end
 end
 def put(element = :buoy)
   if [:buoy, :treasure].include? element
-    puts "\n#{$prefix}_put_\#{element}"
+    puts "\n#{VM_PREFIX}_put_\#{element}"
   else
     raise(ArgumentError, "unknown argument")
   end
 end
 def take
-  puts "\n#{$prefix}_take"
+  puts "\n#{VM_PREFIX}_take"
 end
 def break_point(direction = :point)
   if [:point, :up, :down].include? direction
-    puts "\n#{$prefix}_break_\#{direction}"
+    puts "\n#{VM_PREFIX}_break_\#{direction}"
   else
     raise(ArgumentError, "unknown argument")
   end
 end
-def #{$prefix}_line(i)
-  puts "\n#{$prefix}_line_\#{i}"
+def #{VM_PREFIX}_line(i)
+  puts "\n#{VM_PREFIX}_line_\#{i}"
 end
 def look(direction = :here)
   if [:right, :left, :here, :back, :front].include? direction
-    puts "\n#{$prefix}_?_look_\#{direction}"
+    puts "\n#{VM_PREFIX}_?_look_\#{direction}"
   else
     raise(ArgumentError, "unknown argument")
   end

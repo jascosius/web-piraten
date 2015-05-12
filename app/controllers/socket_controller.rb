@@ -17,7 +17,6 @@ class SocketController < WebsocketRails::BaseController
   # the code. It's primarily used to make methods unaccessible
   # for the user of the website and to handle the instructions
   # whilst execution of user's code.
-  $prefix = 'CkyUHZVL3q'
 
   def initialize_session
     puts 'initializing session with client'

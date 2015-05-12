@@ -17,35 +17,35 @@ end
 
 # Checks for arrow with processing prefix.
 def regex_arrow_prefix
-  Regexp.new("->line#{$prefix}")
+  Regexp.new("->line#{VM_PREFIX}")
 end
 
 # Checks for end with processing prefix.
 def regex_end_prefix
-  Regexp.new("endline#{$prefix}")
+  Regexp.new("endline#{VM_PREFIX}")
 end
 
 # Checks for fullstop with processing prefix.
 def regex_stop_prefix
-  Regexp.new("\\.line#{$prefix}")
+  Regexp.new("\\.line#{VM_PREFIX}")
 end
 
 # Checks for left parenthesis with processing prefix.
 def regex_op_prefix
-  Regexp.new("\\(line#{$prefix}")
+  Regexp.new("\\(line#{VM_PREFIX}")
 end
 
 # Checks for arrow with line function.
 def regex_arrow_with_function
-  Regexp.new("-> a#{$prefix}_line\\(\\d+\\),")
+  Regexp.new("-> a#{VM_PREFIX}_line\\(\\d+\\),")
 end
 
 # Checks for fullstop or semicolon with processing prefix.
 def regex_stop_or_semicolon
-  Regexp.new("(?:\\.line#{$prefix}|;line#{$prefix})")
+  Regexp.new("(?:\\.line#{VM_PREFIX}|;line#{VM_PREFIX})")
 end
 
 # Checks for processing prefix.
 def regex_lineprefix
-  Regexp.new("line#{$prefix}")
+  Regexp.new("line#{VM_PREFIX}")
 end

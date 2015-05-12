@@ -46,7 +46,7 @@ class ErlangPreprocessor
     i = 1
     codes = ''
     code_msg.each_line do |line|
-      codes += line.chomp + " % #{$prefix}_(#{i}#{$prefix}_)\n"
+      codes += line.chomp + " % #{VM_PREFIX}_(#{i}#{VM_PREFIX}_)\n"
       i += 1
     end
     insert_compile_logic + codes
@@ -118,10 +118,10 @@ class ErlangPreprocessor
           # search for original line number in the user's code
           # and store it in new_line_number
           if i == line_number
-            line_begin = lin.index("#{$prefix}_(")
-            line_end = lin.index("#{$prefix}_)")
+            line_begin = lin.index("#{VM_PREFIX}_(")
+            line_end = lin.index("#{VM_PREFIX}_)")
             if line_begin and line_end
-              new_line_number = lin[line_begin+"#{$prefix}_(".length...line_end]
+              new_line_number = lin[line_begin+"#{VM_PREFIX}_(".length...line_end]
             end
           end
           i += 1
@@ -160,10 +160,10 @@ class ErlangPreprocessor
           # search for original line number in the user's code
           # and store it in new_line_number
           if i == line_number
-            line_begin = lin.index("#{$prefix}_(")
-            line_end = lin.index("#{$prefix}_)")
+            line_begin = lin.index("#{VM_PREFIX}_(")
+            line_end = lin.index("#{VM_PREFIX}_)")
             if line_begin and line_end
-              new_line_number = lin[line_begin+"#{$prefix}_(".length...line_end]
+              new_line_number = lin[line_begin+"#{VM_PREFIX}_(".length...line_end]
             end
           end
           i += 1
@@ -258,58 +258,58 @@ class ErlangPreprocessor
                                            % standard error handling for all other exceptions
               end, halt().
 
-    a#{$prefix}_line(I) -> io:fwrite("~n#{$prefix}_line_~p~n", [I]).
+    a#{VM_PREFIX}_line(I) -> io:fwrite("~n#{VM_PREFIX}_line_~p~n", [I]).
 
-    a#{$prefix}_break(F) -> io:fwrite("~n#{$prefix}_break_down~n"),
+    a#{VM_PREFIX}_break(F) -> io:fwrite("~n#{VM_PREFIX}_break_down~n"),
                             X = F(),
-                            io:fwrite("~n#{$prefix}_break_up~n"),
+                            io:fwrite("~n#{VM_PREFIX}_break_up~n"),
                             X.
 
-    a#{$prefix}_performdebugs(Index) -> receive Value
-                                          -> io:fwrite("~n#{$prefix}_debug_~p_~p~n", [Index, Value])
+    a#{VM_PREFIX}_performdebugs(Index) -> receive Value
+                                          -> io:fwrite("~n#{VM_PREFIX}_debug_~p_~p~n", [Index, Value])
                                         end.
 
-    a#{$prefix}_performdebugs(Index, Value) -> io:fwrite("~n#{$prefix}_debug_~p_~p~n", [Index, Value]).
+    a#{VM_PREFIX}_performdebugs(Index, Value) -> io:fwrite("~n#{VM_PREFIX}_debug_~p_~p~n", [Index, Value]).
 
-    move(I)  -> a#{$prefix}_line(I),
-                io:fwrite("~n#{$prefix}_move~n").
+    move(I)  -> a#{VM_PREFIX}_line(I),
+                io:fwrite("~n#{VM_PREFIX}_move~n").
 
-    take(I)  -> a#{$prefix}_line(I),
-                io:fwrite("~n#{$prefix}_take~n").
+    take(I)  -> a#{VM_PREFIX}_line(I),
+                io:fwrite("~n#{VM_PREFIX}_take~n").
 
     puts(I)           -> puts(I, buoy).
-    puts(I, buoy)     -> a#{$prefix}_line(I),
-                         io:fwrite("~n#{$prefix}_put_buoy~n");
-    puts(I, treasure) -> a#{$prefix}_line(I),
-                         io:fwrite("~n#{$prefix}_put_treasure~n").
+    puts(I, buoy)     -> a#{VM_PREFIX}_line(I),
+                         io:fwrite("~n#{VM_PREFIX}_put_buoy~n");
+    puts(I, treasure) -> a#{VM_PREFIX}_line(I),
+                         io:fwrite("~n#{VM_PREFIX}_put_treasure~n").
 
     turn(I)        -> turn(I, back).
-    turn(I, back)  -> a#{$prefix}_line(I),
-                      io:fwrite("~n#{$prefix}_turn_back~n");
-    turn(I, right) -> a#{$prefix}_line(I),
-                      io:fwrite("~n#{$prefix}_turn_right~n");
-    turn(I, left)  -> a#{$prefix}_line(I),
-                      io:fwrite("~n#{$prefix}_turn_left~n").
+    turn(I, back)  -> a#{VM_PREFIX}_line(I),
+                      io:fwrite("~n#{VM_PREFIX}_turn_back~n");
+    turn(I, right) -> a#{VM_PREFIX}_line(I),
+                      io:fwrite("~n#{VM_PREFIX}_turn_right~n");
+    turn(I, left)  -> a#{VM_PREFIX}_line(I),
+                      io:fwrite("~n#{VM_PREFIX}_turn_left~n").
 
     look(I)        -> look(I, here).
-    look(I, here)  -> a#{$prefix}_line(I),
-                      io:fwrite("~n#{$prefix}_?_look_here~n"),
+    look(I, here)  -> a#{VM_PREFIX}_line(I),
+                      io:fwrite("~n#{VM_PREFIX}_?_look_here~n"),
                       lists:nth(1,element(2,io:fread("", "~a")));
-    look(I, front) -> a#{$prefix}_line(I),
-                      io:fwrite("~n#{$prefix}_?_look_front~n"),
+    look(I, front) -> a#{VM_PREFIX}_line(I),
+                      io:fwrite("~n#{VM_PREFIX}_?_look_front~n"),
                       lists:nth(1,element(2,io:fread("", "~a")));
-    look(I, left)  -> a#{$prefix}_line(I),
-                      io:fwrite("~n#{$prefix}_?_look_left~n"),
+    look(I, left)  -> a#{VM_PREFIX}_line(I),
+                      io:fwrite("~n#{VM_PREFIX}_?_look_left~n"),
                       lists:nth(1,element(2,io:fread("", "~a")));
-    look(I, right) -> a#{$prefix}_line(I),
-                      io:fwrite("~n#{$prefix}_?_look_right~n"),
+    look(I, right) -> a#{VM_PREFIX}_line(I),
+                      io:fwrite("~n#{VM_PREFIX}_?_look_right~n"),
                       lists:nth(1,element(2,io:fread("", "~a")));
-    look(I, back)  -> a#{$prefix}_line(I),
-                      io:fwrite("~n#{$prefix}_?_look_back~n"),
+    look(I, back)  -> a#{VM_PREFIX}_line(I),
+                      io:fwrite("~n#{VM_PREFIX}_?_look_back~n"),
                       lists:nth(1,element(2,io:fread("", "~a"))).
 
     break()      -> break(point).
-    break(point) -> io:fwrite("~n#{$prefix}_break_point~n").
+    break(point) -> io:fwrite("~n#{VM_PREFIX}_break_point~n").
 
 ]
   end
@@ -384,33 +384,33 @@ class ErlangPreprocessor
                                            % standard error handling for all other exceptions
               end, halt().
 
-    move()  -> io:fwrite("~n#{$prefix}_move~n").
+    move()  -> io:fwrite("~n#{VM_PREFIX}_move~n").
 
-    take()  -> io:fwrite("~n#{$prefix}_take~n").
+    take()  -> io:fwrite("~n#{VM_PREFIX}_take~n").
 
     puts()         -> puts(buoy).
-    puts(buoy)     -> io:fwrite("~n#{$prefix}_put_buoy~n");
-    puts(treasure) -> io:fwrite("~n#{$prefix}_put_treasure~n").
+    puts(buoy)     -> io:fwrite("~n#{VM_PREFIX}_put_buoy~n");
+    puts(treasure) -> io:fwrite("~n#{VM_PREFIX}_put_treasure~n").
 
     turn()      -> turn(back).
-    turn(back)  -> io:fwrite("~n#{$prefix}_turn_back~n");
-    turn(right) -> io:fwrite("~n#{$prefix}_turn_right~n");
-    turn(left)  -> io:fwrite("~n#{$prefix}_turn_left~n").
+    turn(back)  -> io:fwrite("~n#{VM_PREFIX}_turn_back~n");
+    turn(right) -> io:fwrite("~n#{VM_PREFIX}_turn_right~n");
+    turn(left)  -> io:fwrite("~n#{VM_PREFIX}_turn_left~n").
 
     look()      -> look(here).
-    look(here)  -> io:fwrite("~n#{$prefix}_?_look_here~n"),
+    look(here)  -> io:fwrite("~n#{VM_PREFIX}_?_look_here~n"),
                    lists:nth(1,element(2,io:fread("", "~a")));
-    look(front) -> io:fwrite("~n#{$prefix}_?_look_front~n"),
+    look(front) -> io:fwrite("~n#{VM_PREFIX}_?_look_front~n"),
                    lists:nth(1,element(2,io:fread("", "~a")));
-    look(left)  -> io:fwrite("~n#{$prefix}_?_look_left~n"),
+    look(left)  -> io:fwrite("~n#{VM_PREFIX}_?_look_left~n"),
                    lists:nth(1,element(2,io:fread("", "~a")));
-    look(right) -> io:fwrite("~n#{$prefix}_?_look_right~n"),
+    look(right) -> io:fwrite("~n#{VM_PREFIX}_?_look_right~n"),
                    lists:nth(1,element(2,io:fread("", "~a")));
-    look(back)  -> io:fwrite("~n#{$prefix}_?_look_back~n"),
+    look(back)  -> io:fwrite("~n#{VM_PREFIX}_?_look_back~n"),
                    lists:nth(1,element(2,io:fread("", "~a"))).
 
     break()      -> break(point).
-    break(point) -> io:fwrite("~n#{$prefix}_break_point~n").
+    break(point) -> io:fwrite("~n#{VM_PREFIX}_break_point~n").
 ]
 
   end
