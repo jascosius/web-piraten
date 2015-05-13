@@ -8,19 +8,15 @@ require 'fileutils'
 require 'json'
 require 'thread'
 require 'digest'
-require File.expand_path('vm.conf')
-
-QEMU = '10.0.2.2' #ip of qemu in production
-
-#ips that can connect to the vm
-WHITELIST_IPS = [QEMU]
 
 if ARGV[0] == 'production'
   puts 'Starting VM in production-mode.'
   DEVELOPMENT = false
+  ENV['mode'] = 'production'
 else
   puts 'Starting VM in development-mode.'
   DEVELOPMENT = true
+  ENV['mode'] = 'development'
 end
 
 if ARGV.length > 1 and ARGV[1] == 'performance'
@@ -30,6 +26,8 @@ else
   puts 'Performance mode set as inactive'
   PERFORMANCE_TEST = false
 end
+
+require File.expand_path('vm.conf')
 
 #get the pepper to communicate with the server
 #the server must have the same pepper
@@ -61,7 +59,7 @@ def initialize_timeout(client)
   Thread.start(Thread.current) do |thread|
     sleep(TIMEOUT)
     if thread.alive?
-      msg = "\n#{PREFIX}_enderror_Das Programm hat zu lange gebraucht."
+      msg = "\n#{PREFIX}_enderror_#{MSG_TO_LONG}"
       client.puts msg
       thread.kill
     end
@@ -155,7 +153,7 @@ end
 
 # execute a given command
 def execute(hash, client, dir, shared)
-  command = hash['command'].gsub('$LIB$', Dir.pwd + '/lib').gsub('$PATH$', dir) #replace $LIB$ and $PATH$
+  command = hash['command'].gsub('$LIB$', Dir.pwd + '/' + LIB_DIR).gsub('$PATH$', dir) #replace $LIB$ and $PATH$
 
   changeuser = 'sudo -u sailor ' # user to execute the command in a secure vm (no write permission and no internet connection)
   if DEVELOPMENT or hash['permissions'] == 'read-write'
@@ -197,7 +195,7 @@ def handle_stdout(client, stdout, tag, shared)
       break
     elsif counter > MAX_OPS
       #tell the client that the execution has finished with errors
-      msg = "#{PREFIX}_enderror_Die maximale Anzahl an Operationen wurde erreicht."
+      msg = "#{PREFIX}_enderror_#{MSG_MAX_OPS}"
       client.puts msg
       break
     end
@@ -215,7 +213,7 @@ def handle_stdout(client, stdout, tag, shared)
 end
 
 # handle the stderr-stream
-# add a prefix to the output, if tag is a stirng
+# add a prefix to the output, if tag is a string
 def handle_stderr(stderr, tag, shared)
   loop do
     line = stderr.readline
@@ -246,10 +244,7 @@ loop {
     shared = {:start_time => Time.now, :client => client, :close => []} #share data over several methods
     queue = Queue.new #queue to handle commands one after another
 
-    temp = '/codetemp'
-    if DEVELOPMENT
-      temp = '/tmp'
-    end
+    temp = CODE_DIR
 
     dir = "#{temp}/session_#{Time.now.to_i}_#{rand(1000000)}"
 

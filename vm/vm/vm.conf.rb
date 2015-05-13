@@ -1,9 +1,44 @@
-PREFIX = 'CkyUHZVL3q' #have to be the same as in initialize_communication
-TIMEOUT = 60 #have to be the same as in initialize_communication
-MAX_OPS = 10000 #the maximal counter of ops to execute
-PORT = 12340 #have to be the same as in initialize_communication
+ALTERNATIVE_CONF_PATH_PRO = File.expand_path('vm.mine.conf') #Alternativ file for this config. If not exist use this file (without .rb)
+ALTERNATIVE_CONF_PATH_DEV = File.expand_path('../../env_conf/vm.conf') #Alternativ file for this config. If not exist use this file (without .rb)
 
-#get the pepper to communicate with the server
-#the server must have the same pepper
-#IMPORTANT: The pepper is a secret
-PEPPER_PATH_VM = '/pepper'
+puts ALTERNATIVE_CONF_PATH_DEV
+
+if ENV.fetch('mode') == 'production'
+  if ALTERNATIVE_CONF_PATH_PRO and File.exist?(ALTERNATIVE_CONF_PATH_PRO + '.rb')
+    require ALTERNATIVE_CONF_PATH_PRO
+  else
+    PREFIX = 'abcdefghjk' #has to be the same as in application_conf
+    TIMEOUT = 60 #has to be the same as in application_conf
+    MAX_OPS = 10000 #the maximal counter of ops to execute
+    PORT = 11111 #port for ingoing connections, has to be the same as in application.conf
+
+    CODE_DIR = '/tmp'
+    LIB_DIR = 'lib' #relative from working dir
+
+    #pepper to communicate with the server (symmetric key)
+    #the server must have the same pepper
+    #IMPORTANT: The pepper is a secret
+    PEPPER_PATH_VM = '/pepper' #path to the pepper
+
+    WHITELIST_IPS = ['server_ip'] #ips that can connect to the vm
+
+    MSG_TO_LONG='Maximal execution time reached.'
+    MSG_MAX_OPS='Maximal operations reached.'
+  end
+else
+  if ALTERNATIVE_CONF_PATH_DEV and File.exist?(ALTERNATIVE_CONF_PATH_DEV + '.rb')
+    require ALTERNATIVE_CONF_PATH_DEV
+  else
+    PREFIX = 'abcdefghijk' #has to be the same as in application.conf
+    TIMEOUT = 60 #has to be the same as in application.conf
+    MAX_OPS = 10000 #the maximal counter of ops to execute
+    PORT = 11111 #port for ingoing connections, has to be the same as in application.conf
+
+    CODE_DIR = '/tmp'
+    LIB_DIR = 'lib' #relative from working dir
+
+    MSG_TO_LONG='Maximal execution time reached.'
+    MSG_MAX_OPS='Maximal operations reached.'
+  end
+
+end

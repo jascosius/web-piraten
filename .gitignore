@@ -7,15 +7,27 @@
 # Ignore bundler config.
 /.bundle
 /.idea
-/.idea/*
 /*.iml
+
 # Ignore the default SQLite database.
 /db/*.sqlite3
 /db/*.sqlite3-journal
 
 # Ignore all logfiles and tempfiles.
-/log/*.log
+/log
 /tmp
 performance.html
 performance.txt
 /public/assets/*
+
+config/initializers/secret_token.rb
+config/secrets.yml
+
+# unless supporting rvm < 1.11.0 or doing something fancy, ignore this:
+.rvmrc
+
+# Ignore specific config and build files
+/vm/vm/lib
+/config/deploy.rb
+/env_conf
+/scripts
