@@ -6,12 +6,13 @@ if Rails.env.production?
     require ALTERNATIVE_CONF_PATH_PRO
   else
     #Settings for production
-    VM_TIMEOUT = 60 #timeout time in sec for the programm to execute, change in vm.conf as well
-    VM_PORT = 11111 #port to connect to the vm
-    VM_HOST = 'server_ip' #host to connect to the vm
-    VM_PREFIX = 'abcdefghijk' #prefix to seperate user output and commands
+    VM_TIMEOUT = 60 #timeout time in sec for the user code to execute, change in vm.conf as well
+    VM_PORT = 11111 #port to connect to the vm for the code execution
+    VM_HOST = 'server_ip' #host to connect to the vm for the code execution
+    VM_PREFIX = 'abcdefghijk' #prefix to seperate user output and commands (use ASCII characters for best support)
 
     #pepper to communicate with the vm (symmetric key)
+    #use a random string with at least 32 characters
     #the vm must have the same pepper
     #IMPORTANT: The pepper is a secret
     PEPPER_PATH_RAILS = Dir.home + '/pepper' #path to pepper

@@ -5,7 +5,7 @@ import java.io.InputStreamReader;
 
 public class Ship {
 	
-	private final String PREFIX = "CkyUHZVL3q";
+	private final String PREFIX = "abcdefghijk";
 	
 	private BufferedReader br;
 	

@@ -31,3 +31,4 @@ config/secrets.yml
 /config/deploy.rb
 /env_conf
 /scripts
+README.rdoc

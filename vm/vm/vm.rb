@@ -155,7 +155,7 @@ end
 def execute(hash, client, dir, shared)
   command = hash['command'].gsub('$LIB$', Dir.pwd + '/' + LIB_DIR).gsub('$PATH$', dir) #replace $LIB$ and $PATH$
 
-  changeuser = 'sudo -u sailor ' # user to execute the command in a secure vm (no write permission and no internet connection)
+  changeuser = "sudo -u #{READ_ONLY_USER} " # user to execute the command in a secure vm (no write permission and no internet connection)
   if DEVELOPMENT or hash['permissions'] == 'read-write'
     changeuser = ''
   end
