@@ -68,8 +68,7 @@ task :deploy => :environment do
     invoke :'rails:assets_precompile'
 
     to :launch do
-      queue "chmod +x #{deploy_to}/current/scripts/shutdown_server.sh"
-      queue "cd #{deploy_to}/current/scripts/ && ./shutdown_server.sh"
+      queue "cd #{deploy_to}/current/env_conf/ && ./shutdown_server.sh"
       queue "cd #{deploy_to}/current/ && bundle exec thin start -d -e production -p 3000"
     end
   end
@@ -77,7 +76,7 @@ end
 
 #restart the rails server
 task :restart do
-  queue "cd #{deploy_to}/current/scripts/ && ./shutdown_server.sh"
+  queue "cd #{deploy_to}/current/env_conf/ && ./shutdown_server.sh"
   queue "cd #{deploy_to}/current/ && /home/captain/bin/bundle exec thin start -d -e production -p 3000"
 end
 
@@ -88,7 +87,7 @@ end
 
 #stop the rails server
 task :stop do
-  queue "cd #{deploy_to}/current/scripts/ && ./shutdown_server.sh"
+  queue "cd #{deploy_to}/current/env_conf/ && ./shutdown_server.sh"
 end
 
 #task :deploy_vm do
@@ -100,10 +99,8 @@ end
 #end
 
 #deploys the vm-script from the rails-vm to the vm for the execution
-#start the vm in edit-mode first
-#start the vm in use-mode after it
 task :deploy_vm do
-  queue "cd #{deploy_to}/current/scripts/ && ./update_vm.sh"
+  queue "cd #{deploy_to}/current/env_conf/ && ./update_vm.sh"
 end
 
 # For help in making your deploy script, see the Mina documentation:

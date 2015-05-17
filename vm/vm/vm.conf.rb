@@ -1,8 +1,6 @@
 ALTERNATIVE_CONF_PATH_PRO = File.expand_path('vm.mine.conf') #Alternativ file for this config. If not exist use this file (without .rb)
 ALTERNATIVE_CONF_PATH_DEV = File.expand_path('../../env_conf/vm.conf') #Alternativ file for this config. If not exist use this file (without .rb)
 
-puts ALTERNATIVE_CONF_PATH_DEV
-
 if ENV.fetch('mode') == 'production'
   if ALTERNATIVE_CONF_PATH_PRO and File.exist?(ALTERNATIVE_CONF_PATH_PRO + '.rb')
     require ALTERNATIVE_CONF_PATH_PRO
@@ -12,8 +10,10 @@ if ENV.fetch('mode') == 'production'
     MAX_OPS = 10000 #the maximal counter of ops to execute
     PORT = 11111 #port for ingoing connections, has to be the same as in application.conf
 
-    CODE_DIR = '/tmp'
-    LIB_DIR = 'lib' #relative from working dir
+    CODE_DIR = '/codetemp' #folder to store the user code for execution
+    LIB_DIR = 'lib' #folder which provides additional libaries for the programming language, relative from working dir
+
+    READ_ONLY_USER = 'sailor' #User with read-only access to everything which executes the user code
 
     #pepper to communicate with the server (symmetric key)
     #the server must have the same pepper
