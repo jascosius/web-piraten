@@ -229,10 +229,12 @@ def handle_stderr(stderr, tag, shared)
   end
 end
 
-
+puts "Waiting for connections on port #{PORT}."
 server = TCPServer.new PORT
 loop {
   Thread.start(server.accept) do |client| #spawn new process for a new client
+
+    puts "Incomming connection from #{client.peeraddr[3]}."
 
     #just accept connections from whitelisted_ips
     unless DEVELOPMENT

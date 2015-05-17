@@ -34,6 +34,7 @@ def initialize_vm
 
   begin
     #connect to TCPServer to execute the programm
+    puts "Connecting to vm on #{VM_HOST}:#{VM_PORT}."
     vm = TCPSocket.open(VM_HOST, VM_PORT)
   rescue
     $stderr.puts 'Could not connect to TCPSocket. Start ruby vm/vm/vm.rb development'
