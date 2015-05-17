@@ -50,8 +50,8 @@ else
       exit 1
     end
     PEPPER = pepper
-    end
-    puts "The hash of the pepper is '#{Digest::SHA256.hexdigest(PEPPER)}'."
+  end
+  puts "The hash of the pepper is '#{Digest::SHA256.hexdigest(PEPPER)}'."
 end
 
 #thread to kill the execution after a while
@@ -154,17 +154,18 @@ end
 # execute a given command
 def execute(hash, client, dir, shared)
   command = hash['command'].gsub('$LIB$', Dir.pwd + '/' + LIB_DIR).gsub('$PATH$', dir) #replace $LIB$ and $PATH$
-
-  changeuser = "sudo -u #{READ_ONLY_USER} " # user to execute the command in a secure vm (no write permission and no internet connection)
+  
   if DEVELOPMENT or hash['permissions'] == 'read-write'
     changeuser = ''
+  else
+    changeuser = "sudo -u #{READ_ONLY_USER} " # user to execute the command in a secure vm (no write permission and no internet connection)
   end
 
   command = "cd #{dir} && " + changeuser + command
 
   puts "#{Time.now.strftime("%Y_%m_%d %H:%M:%S:%L")} #{shared[:client]} execute: #{command}\n\n"
   Open3.popen3(command) do |stdin, stdout, stderr|
-    shared[:close].push(stdin,stdout,stderr)
+    shared[:close].push(stdin, stdout, stderr)
 
     stdout.sync = true
     stdin.sync = true
