@@ -1,10 +1,12 @@
 #Webpiraten
 
-Webpiraten is a web environment to gain inside a programming language (for example for pupils) . The user can move a pirate ship controlled by a programming language over a grid. The ship interacts with objects on the grid, which allows a lot of tasks for the user. For example one task could be to collect all treasures on the grid.
+Webpiraten is a web environment to gain inside a programming language (for example for pupils). The user can move a pirate ship controlled by a programming language over a grid. The ship interacts with objects on the grid, which allows a lot of tasks for the user. For example one task could be to collect all treasures on the grid.
 
-Webpiraten is a result of a bachelor project at the University of Kiel. The names in the code and the comments are in English, but the user interface is in German.
+Webpiraten is the result of a bachelor project at the University of Kiel. The names in the code and the comments are in English, but the user interface is in German.
 
-Webparaten support Ruby, Erlang and Java as programming languages. But it is easy to include a new one.
+Webparaten support Ruby, Erlang and Java as programming languages. But it is easy to include a new one (see below).
+
+Its recommended to use the production branch, because the master branch is used for development.
 
 ![Screenshot](/app/assets/images/help/start.png)
 
@@ -72,3 +74,11 @@ Below an exemplary description of a VM running the vm script:
 11. Run the vm script with parameter *production* as user *captain* *[su -c 'ruby -C /home/captain/vm vm.rb production' captain]*.
 
 In development mode the vm script can run without this security settings on your one computer. This means there is no need for the pepper, the whitelist and the VM. The vm script will be started by the web server in development mode (set environment variable WITHOUT_VM to start the vm script manually). But make sure that you install the additional programming languages on your computer and compile the additional libraries.
+
+##Adding a new programming language
+
+To add a new programming language follow the steps below:
+
+* Create a new preprocessor in *app/controllers/preprocessor*. You will find a template in *app/controllers/preprocessor/template/example_preprocessor.rb*. You could also have a look into the java preprocessor, which is the most basic one. Depending on how many features you want to provide (like line highlighting or tracing variables) this becomes more complex.
+* Modify the config in *config/initializers/load_languages*.
+* Implement the logic for the new language. An easy example is the implementation of the ruby logic (methode *insert_logic* in *app/controllers/preprocessor/ruby/ruby_preprocessor.rb*).
