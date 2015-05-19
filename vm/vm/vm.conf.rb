@@ -14,6 +14,7 @@ if ENV.fetch('mode') == 'production'
     LIB_DIR = 'lib' #folder which provides additional libaries for the programming language, relative from working dir
 
     READ_ONLY_USER = 'sailor' #User with read-only access to everything which executes the user code
+    READ_WRITE_USER = 'builder' #User with write to code path which compiles user code
 
     #pepper to communicate with the server (symmetric key)
     #the server must have the same pepper

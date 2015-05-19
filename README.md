@@ -43,27 +43,28 @@ Below an exemplary description of a VM running the vm script:
 1. Start with a new instance of a simple linux distribution (for example debian-linux without GUI)
 2. Add three users:
   * *sailor* (without home dir): A user to run the potential dangerous code (with read-only permissions)
+  * *builder* (without home dir): a user to compile the potential dangerous code (write permissions in code directories)
   * *captain*: A user to save the user code to a file and to compile the code (write permissions in some directories)
   * *navigator*: A user to configure the VM (root permissions)
 3. Install sudo (if not installed) and edit to sudo file *[visudo]*:
-  * allow *captain* to execute as *sailor* without password *[captain ALL = (sailor) NOPASSWD: ALL]*
+  * allow *captain* to execute as *sailor* and as *builder* without password *[captain ALL = (sailor) NOPASSWD: ALL]* *[captain ALL = (builder) NOPASSWD: ALL]*
   * allow *navigator* to execute as *root* *[navigator ALL = (ALL) NOPASSWD: ALL]*
 4. Create a folder for the user code (for example */codetemp*).
 5. Edit */etc/fstab*:
   * Mount */* read-only (This means you cannot edit anything after a reboot. Use *mount -o remount,rw /* to allow write permission until reboot.). You could even better disallow write access from outside (in the VM settings on the host system).
   * Mount */codetemp* from ram *[tmpfs /codetemp tmpfs defaults,size=50% 0 0]*.
   * Disable */tmp* (because the permissions are automatically set to *drwxrwxrwt* which allows write access to sailor) *[none /tmp tmpfs ro]*. Be aware that some programmes (like *cron* or *visudo*) did not work without */tmp*.
-6. Disallow sailor to use the network connection. You could run *iptables -A OUTPUT -m owner --uid-owner sailor -j DROP* on every start or even better disallow the network access from outside. (But make sure that the web server can connect to the vm script.)
+6. Disallow *sailor* and *builder* to use the network connection. You could run *iptables -A OUTPUT -m owner --uid-owner sailor -j DROP* and *iptables -A OUTPUT -m owner --uid-owner builder -j DROP* on every start or even better disallow the network access from outside. (But make sure that the web server can connect to the vm script.)
 7. Install the programming languages of you choice which are supported by the web server (install ruby in every case).
 8. Copy necessary files to the vm:
   * The vm script *vm/vm/vm.rb* and the config file *vm/vm/vm.conf.rb* (for example into */home/captain/vm*).
   * The pepper from above (for example into */pepper*).
-  * Additional libraries for the supported programming languages. The source is stored in *vm/src*. In the java source *vm/src/java/logic/ship* you has to edit the prefix like above. Compile the source and copy in to the VM (for example into */home/captain/vm/lib*).
+  * Additional libraries for the supported programming languages. The source is stored in *vm/src*. In the java source *vm/src/java/logic/ship* you has to edit the prefix like above. Compile the source (java: *mkdir -p vm/vm/lib/java &&  javac -d vm/vm/lib/java vm/src/java/logic/\*.java* - erlang: *mkdir -p vm/vm/lib/erlang && erlc -o vm/vm/lib/erlang vm/src/erlang/\*.erl*) and copy in to the VM (for example into */home/captain/vm/lib*).
 9. Set permissions:
-  * Disallow *sailor* to read */pepper*, but allow *captain* to do so.
-  * Allow *sailor* te read the additional libraries *[/home/captain/vm/lib]*.
-  * Disallow *sailor* to read */home/captain/vm.rb* and */home/captain/vm.conf.rb*.
-  * Disallow *sailor* to write in */codetemp*, but allow *sailor* to read */codetemp*. Allow *captain* to read and write */codetemp*.
+  * Disallow *sailor* and *builder* to read */pepper*, but allow *captain* to do so.
+  * Allow *sailor* and *builder* to read the additional libraries *[/home/captain/vm/lib]*.
+  * Disallow *sailor* and *captain* to read */home/captain/vm.rb* and */home/captain/vm.conf.rb*.
+  * Disallow *sailor* to write in */codetemp*, but allow *sailor* to read */codetemp*. Allow *captain* and *builder* to read and write */codetemp*.
 10. Edit */home/captain/vm/vm.conf.rb*:
   * Set the prefix and the timeout as above.
   * Set the maximal operation a user program should be allowed to do.
@@ -71,6 +72,7 @@ Below an exemplary description of a VM running the vm script:
   * Set the path to */codetemp*.
   * Set the path to the additional libraries relative from the running dir of the vm script.
   * Set the name of the user which should execute the code *(sailor)*.
+  * Set the name of the user which should compile the code *(builder)*.
   * Set the path to */pepper*.
   * Set the list of IPs which are allowed to connect to the vm script (the server ip).
 11. Run the vm script with parameter *production* as user *captain* *[su -c 'ruby -C /home/captain/vm vm.rb production' captain]*.
@@ -83,4 +85,4 @@ To add a new programming language follow the steps below:
 
 * Create a new preprocessor in *app/controllers/preprocessor*. You will find a template in *app/controllers/preprocessor/template/example_preprocessor.rb*. You could also have a look into the java preprocessor, which is the most basic one. Depending on how many features you want to provide (like line highlighting or tracing variables) this becomes more complex.
 * Modify the config in *config/initializers/load_languages*.
-* Implement the logic for the new language. An easy example is the implementation of the ruby logic (methode *insert_logic* in *app/controllers/preprocessor/ruby/ruby_preprocessor.rb*).
+* Implement the logic for the new language. An easy example is the implementation of the ruby logic (method *insert_logic* in *app/controllers/preprocessor/ruby/ruby_preprocessor.rb*).

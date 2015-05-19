@@ -154,11 +154,15 @@ end
 # execute a given command
 def execute(hash, client, dir, shared)
   command = hash['command'].gsub('$LIB$', Dir.pwd + '/' + LIB_DIR).gsub('$PATH$', dir) #replace $LIB$ and $PATH$
-  
-  if DEVELOPMENT or hash['permissions'] == 'read-write'
+
+  if DEVELOPMENT
     changeuser = ''
   else
-    changeuser = "sudo -u #{READ_ONLY_USER} " # user to execute the command in a secure vm (no write permission and no internet connection)
+    if hash['permissions'] == 'read-write'
+      changeuser = "sudo -u #{READ_WRITE_USER}" # user to execute compile command in a secure vm (no write permission (except code path) and no internet connection)
+    else
+      changeuser = "sudo -u #{READ_ONLY_USER} " # user to execute the command in a secure vm (no write permission and no internet connection)
+    end
   end
 
   command = "cd #{dir} && " + changeuser + command
