@@ -159,7 +159,7 @@ def execute(hash, client, dir, shared)
     changeuser = ''
   else
     if hash['permissions'] == 'read-write'
-      changeuser = "sudo -u #{READ_WRITE_USER}" # user to execute compile command in a secure vm (no write permission (except code path) and no internet connection)
+      changeuser = "sudo -u #{READ_WRITE_USER} " # user to execute compile command in a secure vm (no write permission (except code path) and no internet connection)
     else
       changeuser = "sudo -u #{READ_ONLY_USER} " # user to execute the command in a secure vm (no write permission and no internet connection)
     end
