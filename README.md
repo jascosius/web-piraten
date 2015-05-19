@@ -64,7 +64,7 @@ Below an exemplary description of a VM running the vm script:
   * Disallow *sailor* and *builder* to read */pepper*, but allow *captain* to do so.
   * Allow *sailor* and *builder* to read the additional libraries *[/home/captain/vm/lib]*.
   * Disallow *sailor* and *captain* to read */home/captain/vm.rb* and */home/captain/vm.conf.rb*.
-  * Disallow *sailor* to write in */codetemp*, but allow *sailor* to read */codetemp*. Allow *captain* and *builder* to read and write */codetemp*.
+  * Disallow *sailor* to write in */codetemp*, but allow *sailor* to read */codetemp*. Allow *captain* and *builder* to read and write */codetemp*. The vm script creates a subfolder in */codetemp* for every execution. Make sure that *captain* and *builder* are allowed to write into the subfolder. For example you could set the owner to *captain* and the group to *builder* and set the setgid-bit *[chown captain:builder /codetemp; chmod 2775 /codetemp]*. It can happen that the permissions are lost after every reboot (because the folder is mounted from ram), so set the permissions after every reboot.
 10. Edit */home/captain/vm/vm.conf.rb*:
   * Set the prefix and the timeout as above.
   * Set the maximal operation a user program should be allowed to do.

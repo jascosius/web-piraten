@@ -263,7 +263,6 @@ loop {
       thread = Thread.current
 
       FileUtils.mkdir dir, :mode => 0775
-      FileUtils.chown nil, READ_WRITE_USER, dir
 
       # functions that are supported by the vm
       functions = {:response => lambda { |hash| response(hash, shared) }, #execute immediate
