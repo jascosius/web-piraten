@@ -9,6 +9,9 @@ require 'json'
 require 'thread'
 require 'digest'
 
+$stdout.sync = true
+$stderr.sync = true
+
 if ARGV[0] == 'production'
   puts 'Starting VM in production-mode.'
   DEVELOPMENT = false
@@ -238,7 +241,7 @@ server = TCPServer.new PORT
 loop {
   Thread.start(server.accept) do |client| #spawn new process for a new client
 
-    puts "Incomming connection from #{client.peeraddr[3]}."
+    puts "Incoming connection from #{client.peeraddr[3]}."
 
     #just accept connections from whitelisted_ips
     unless DEVELOPMENT
@@ -259,7 +262,7 @@ loop {
       initialize_timeout(client)
       thread = Thread.current
 
-      Dir.mkdir(dir, 0755)
+      Dir.mkdir(dir, 0775)
 
       # functions that are supported by the vm
       functions = {:response => lambda { |hash| response(hash, shared) }, #execute immediate
