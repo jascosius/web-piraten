@@ -59,7 +59,7 @@ Below an exemplary description of a VM running the vm script:
 8. Copy necessary files to the vm:
   * The vm script *vm/vm/vm.rb* and the config file *vm/vm/vm.conf.rb* (for example into */home/captain/vm*).
   * The pepper from above (for example into */pepper*).
-  * Additional libraries for the supported programming languages. The source is stored in *vm/src*. In the java source *vm/src/java/logic/Ship.java* you have to edit the prefix like above. Compile the source (java: *mkdir -p vm/vm/lib/java &&  javac -d vm/vm/lib/java vm/src/java/logic/\*.java* - erlang: *mkdir -p vm/vm/lib/erlang && erlc -o vm/vm/lib/erlang vm/src/erlang/\*.erl*) and copy it into the VM (for example into */home/captain/vm/lib*).
+  * Additional libraries for the supported programming languages. The source is stored in *vm/src*. In the java source *vm/src/java/logic/Ship.java* you have to edit the prefix like above. Compile the source (java: 'mkdir -p vm/vm/lib/java &&  javac -d vm/vm/lib/java vm/src/java/logic/\*.java' - erlang: 'mkdir -p vm/vm/lib/erlang && erlc -o vm/vm/lib/erlang vm/src/erlang/\*.erl') and copy it into the VM (for example into */home/captain/vm/lib*).
 9. Set permissions:
   * Disallow *sailor* and *builder* to read */pepper*, but allow *captain* to do so.
   * Allow *sailor* and *builder* to read the additional libraries *[/home/captain/vm/lib]*.
