@@ -125,6 +125,20 @@ class @CodeGUI
     #breakpoitlist
     @breakpointlist =
       list : []
+      curLine: false
+
+      stopSimulation: (i) ->
+        console.log("drin")
+        console.log(@curLine)
+        console.log(i)
+        if ((i in @list) and (@curLine != i) )
+          @curLine = i
+          return true
+        else if (@curLine != i)
+          @curLine = false
+        return false
+
+
       showAll: ()->
         for i in @list
           @showOne(i)

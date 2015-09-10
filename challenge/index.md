@@ -44,11 +44,11 @@ Programms in der linken oberen Ecke des Feldes befindet und nach rechts guckt.<b
 Die Schätze sollen in folgender Richtung aufgenommen werden:<br>
 (a) waagerecht<br>
 (b) diagonal
-<br><br>
-<a name="auf2"></a>
-**Aufgaben:**
+<a name="auf2"></a> 
+<!--- **Aufgaben:**
  [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
-<br>[Nach oben](index "springe zum Anfang der Seite")
+<br>[Nach oben](index "springe zum Anfang der Seite") --->
+
 <br><br><br>
 
 
@@ -58,11 +58,11 @@ Die Schätze sollen in folgender Richtung aufgenommen werden:<br>
 
 Schreibt ein Programm, das in einem vollen Feld alle Schätze vor den Piraten bis<br>
 zum Rand aufsammelt. Am Rand sollen die Piraten stehen bleiben.
-<br><br>
 <a name="auf3"></a>
-**Aufgaben:**
+<!--- **Aufgaben:**
  [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
-<br>[Nach oben](index "springe zum Anfang der Seite")
+<br>[Nach oben](index "springe zum Anfang der Seite") --->
+
 <br><br><br>
 
 
@@ -77,11 +77,11 @@ erzeugen lassen:<br><br>
 <br><br>
 Funktionieren Eure Programme auch auf Feldern beliebiger Größe?<br>
 Welche Einschränkungen gibt es?
-<br><br>
 <a name="auf4"></a>
-**Aufgaben:**
+<!--- **Aufgaben:**
  [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
-<br>[Nach oben](index "springe zum Anfang der Seite")
+<br>[Nach oben](index "springe zum Anfang der Seite") --->
+
 <br><br><br>
 
 
@@ -103,11 +103,11 @@ vorher:<br>
 nachher:<br>
 <img title = "Bild" width="30%" height="30%" src="/assets/challenge/challenge4b.jpg"><br><br>
 Wo sich die Piraten am Programmende befinden ist egal.
-<br><br>
 <a name="auf5"></a>
-**Aufgaben:**
+<!--- **Aufgaben:**
  [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
-<br>[Nach oben](index "springe zum Anfang der Seite")
+<br>[Nach oben](index "springe zum Anfang der Seite") --->
+
 <br><br><br>
 
 
@@ -121,11 +121,11 @@ keine Schatz mehr sehen.<br><br>
 Geht davon aus, dass die Piraten am Anfang der Schatzspur stehen und jeder Schatz<br>
 in der Spur neben maximal zwei anderen Schätzen liegt.<br>
 Nehmt euch aber von Monsterwellen und Kraken in acht.
-<br><br>
 <a name="auf6"></a>
-**Aufgaben:**
+<!--- **Aufgaben:**
  [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
-<br>[Nach oben](index "springe zum Anfang der Seite")
+<br>[Nach oben](index "springe zum Anfang der Seite") --->
+
 <br><br><br>
 
 
@@ -139,11 +139,11 @@ herausfinden. Der Ausgang ist mit einem Schatz markiert.<br><br>
 Überlegt, ob euer Algorithmus immer den Ausweg aus einem Labyrinth finden kann.<br>
 Konstruiert Situationen, in denen euer Programm fehl schlägt. Versucht<br>
 euer Programm zu verbessern.
-<br><br>
 <a name="auf7"></a>
-**Aufgaben:**
+<!--- **Aufgaben:**
  [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
-<br>[Nach oben](index "springe zum Anfang der Seite")
+<br>[Nach oben](index "springe zum Anfang der Seite") --->
+
 <br><br><br>
 
 
@@ -165,11 +165,11 @@ Programm, an denen es sinnvoll wäre, nach weiteren Schätzen Ausschau zu halten
 Hier ein Beispiel für einen unübersichtlichen, verzweigten Schatzpfad:<br><br>
 <img title = "Bild" width="30%" height="30%" src="/assets/challenge/challenge7.jpg"><br><br>
 
-<br><br>
 <a name="auf8"></a>
-**Aufgaben:**
+<!--- **Aufgaben:**
  [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
-<br>[Nach oben](index "springe zum Anfang der Seite")
+<br>[Nach oben](index "springe zum Anfang der Seite") --->
+
 <br><br><br>
 
 
@@ -189,11 +189,11 @@ funktionieren. Zunächst kann die Eingabe der Kantenlänge statisch in der *star
 Anweisungssequenz erfolgen. In einem zweiten Schritt sollen die Piraten zuerst<br>
 Schätze vor ihnen einsammeln und deren Anzahl als Kantenlänge für das Quadrat<br>
 verwenden.
-<br><br>
 <a name="auf9"></a>
-**Aufgaben:**
+<!--- **Aufgaben:**
  [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
-<br>[Nach oben](index "springe zum Anfang der Seite")
+<br>[Nach oben](index "springe zum Anfang der Seite") --->
+
 <br><br><br>
 
 
@@ -204,11 +204,11 @@ verwenden.
 Die Piraten sollen überprüfen, ob zwei aufeinander folgende Zeilen gleich viele<br>
 Schätze enthalten. Ist dies der Fall, so sollen sie in die erste Spalte der zweiten <br>
 Zeile laufen. Sonst in die letzte Spalte der zweiten Zeile.
-<br><br>
 <a name="auf10"></a>
-**Aufgaben:**
+<!--- **Aufgaben:**
  [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
-<br>[Nach oben](index "springe zum Anfang der Seite")
+<br>[Nach oben](index "springe zum Anfang der Seite") --->
+
 <br><br><br>
 
 
@@ -222,11 +222,11 @@ Sollte für die Ausgabe eine Zeile nicht ausreichen, könnt Ihr mehrere Zeilen<b
 verwenden.<br>
 Geht davon aus, dass die Piraten in der linken Ecke stehen und nach<br>
 rechts schauen.
-<br><br>
 <a name="auf11"></a>
-**Aufgaben:**
+<!--- **Aufgaben:**
  [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
-<br>[Nach oben](index "springe zum Anfang der Seite")
+<br>[Nach oben](index "springe zum Anfang der Seite") --->
+
 <br><br><br>
 
 
@@ -241,11 +241,11 @@ den meisten Schätzen nicht eindeutig ist, können die Piraten in einer der Zeil
 den meisten Schätzen stehen bleiben.<br>
 Vernachlässigt zunächst die Schätze in der ersten Zeile(nicht zählen!). Wer will<br>
 kann sie später noch in den Algorithmus aufnehmen.
-<br><br>
 <a name="auf12"></a>
-**Aufgaben:**
+<!--- **Aufgaben:**
  [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
-<br>[Nach oben](index "springe zum Anfang der Seite")
+<br>[Nach oben](index "springe zum Anfang der Seite") --->
+
 <br><br><br>
 
 
@@ -254,11 +254,11 @@ kann sie später noch in den Algorithmus aufnehmen.
 ### Aufgabe 12
 ***Zusatzaufgabe.***<br>
 Implementiert Aufgabe 9 ohne Parameter zu verwenden.
-<br><br>
 <a name="auf13"></a>
-**Aufgaben:**
+<!--- **Aufgaben:**
  [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
-<br>[Nach oben](index "springe zum Anfang der Seite")
+<br>[Nach oben](index "springe zum Anfang der Seite") --->
+
 <br><br><br>
 
 
@@ -269,11 +269,11 @@ Implementiert Aufgabe 9 ohne Parameter zu verwenden.
 ***Zusatzaufgabe.***<br>
 Ändert Aufgabe 8 so ab, dass das Quadrat um 45° verdreht dargestellt wird,<br>
 also auf einer Spitze stehend.
-<br><br>
 <a name="auf14"></a>
-**Aufgaben:**
+<!--- **Aufgaben:**
  [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
-<br>[Nach oben](index "springe zum Anfang der Seite")
+<br>[Nach oben](index "springe zum Anfang der Seite") --->
+
 <br><br><br>
 
 
@@ -285,15 +285,15 @@ also auf einer Spitze stehend.
 Bei dieser Aufgabe stehen die Piraten in der linken oberen Ecke des Feldes. Vor<br>
 ihnen befinden sich Schätze und leere Felder, welche die binären Ziffern 1 und 0<br>
 repräsentieren. Diese binären Ziffern ergeben eine Binärzahl, welche zur Erkennung<br>
-des Zahlenendes mit einer Welle abschließt.
+des Zahlenendes mit einer Welle abschließt. <br>
 Die Piraten sollen diese Binärzahl (z.B. 11001) einlesen und in dem entsprechden<br>
 Feld (hier z.B. das 25. Feld) eine Markierung ablegen. Um das Feld möglichst<br>
 effizient zu finden, könnt ihr von einer festen Feldbreite ausgehen.
-<br><br>
 <a name="auf15"></a>
-**Aufgaben:**
+<!--- **Aufgaben:**
  [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
-<br>[Nach oben](index "springe zum Anfang der Seite")
+<br>[Nach oben](index "springe zum Anfang der Seite") --->
+
 <br><br><br>
 
 
@@ -308,11 +308,11 @@ von einander" gemeint ist:<br><br>
 <img title = "Bild" width="30%" height="30%" src="/assets/challenge/challenge15.jpg"><br><br>
 Wie könnt Ihr Euer Programm ändern,damit nicht das Spiegelbild, sondern die<br>
 Gleichheit der Zeilen überprüft wird?
-<br><br>
 <a name="auf16"></a>
-**Aufgaben:**
+<!--- **Aufgaben:**
  [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
-<br>[Nach oben](index "springe zum Anfang der Seite")
+<br>[Nach oben](index "springe zum Anfang der Seite") --->
+
 <br><br><br>
 
 
@@ -324,11 +324,11 @@ Die Piraten sollen sich eine Zeile (bestehend aus Schätzen und freien Feldern)<
 merken und eine andere Zeile suchen, die mit der ersten Zeile identisch ist. In<br>
 dieser Zeile sollen sie stehen bleiben. Ist keine Zeile mit der ersten Zeile identisch,<br>
 sollen sie zurück in die erste Zeile laufen.
-<br><br>
 <a name="auf17"></a>
-**Aufgaben:**
+<!--- **Aufgaben:**
  [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
-<br>[Nach oben](index "springe zum Anfang der Seite")
+<br>[Nach oben](index "springe zum Anfang der Seite") --->
+
 <br><br><br>
 
 
@@ -343,11 +343,11 @@ zunächst aufgesammelte Spur nachträglich mit Bojen markieren und am Ende der<b
 Spur stehen bleiben.<br>
 Könnt Ihr die aufgesammelte Intormation auch dazu verwenden, zum Ausgangspunkt<br>
 zurückzukehren, also hierzu nicht die Rekursion verwenden?
-<br><br>
 <a name="auf18"></a>
-**Aufgaben:**
+<!--- **Aufgaben:**
  [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
-<br>[Nach oben](index "springe zum Anfang der Seite")
+<br>[Nach oben](index "springe zum Anfang der Seite") --->
+
 <br><br><br>
 
 
@@ -366,11 +366,11 @@ Schreibt ein Programm, welches die Piraten zunächst einen Spurcode (welcher <br
 direkt vor den Piraten beginnen sollte) einlesen lässt und dann die Spurfolge<br>
 interpretiert. D.h. die Piraten von der linken oberen Ecke aus an eine beliebige<br>
 Feldposition navigieren lässt und dort abschließend eine Boje ablegt.
-<br><br>
 <a name="auf19"></a>
-**Aufgaben:**
+<!--- **Aufgaben:**
  [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
-<br>[Nach oben](index "springe zum Anfang der Seite")
+<br>[Nach oben](index "springe zum Anfang der Seite") --->
+
 <br><br><br>
 
 

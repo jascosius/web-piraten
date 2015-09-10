@@ -218,6 +218,13 @@ class @SocketHandler
     # get first in queue
     currentPacket = @packetQueue.shift()
 
+    # breakpoint with breakpointlist
+    if CodeGUI.breakpointlist.stopSimulation(currentPacket.line - 1)
+      Simulation.stop()
+      simulateLine currentPacket if currentPacket.line
+      @packetQueue.unshift currentPacket
+      return
+
     # do not allow packets from old execution that might be from an old execution
     if !currentPacket or @currentId is not currentPacket.id
       console.log 'skipped packet that seems to be old or null', currentPacket
@@ -230,9 +237,6 @@ class @SocketHandler
     })
     window.dispatchEvent event
     currentPacket = event['detail']
-
-    if currentPacket.line in CodeGUI.breakpointlist.get()
-      Simulation.stop()
 
     simulateLine currentPacket if currentPacket.line
     simulateAllocations currentPacket if currentPacket.allocations?
