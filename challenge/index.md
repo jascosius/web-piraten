@@ -6,25 +6,18 @@
 
 ###Liste aller Aufgaben:
 
- [1, ](#auf1 "Aufgabe 1")
- [2, ](#auf2 "Aufgabe 2")
- [3, ](#auf3 "Aufgabe 3")
- [4, ](#auf4 "Aufgabe 4")
- [5, ](#auf5 "Aufgabe 5")
- [6, ](#auf6 "Aufgabe 6")
- [7, ](#auf7 "Aufgabe 7")
- [8, ](#auf8 "Aufgabe 8")
- [9, ](#auf9 "Aufgabe 9")
- [10, ](#auf10 "Aufgabe 10")
- [11, ](#auf11 "Aufgabe 11")
- [12, ](#auf12 "Aufgabe 12")
- [13, ](#auf13 "Aufgabe 13")
- [14, ](#auf14 "Aufgabe 14")
- [15, ](#auf15 "Aufgabe 15")
- [16, ](#auf16 "Aufgabe 16")
- [17, ](#auf17 "Aufgabe 17")
- [18, ](#auf18 "Aufgabe 18")
- [19. ](#auf19 "Aufgabe 19") 
+ [Aufgabe 1, ](#auf1 "Aufgabe 1") &emsp; &emsp; &emsp;  [Aufgabe 11, ](#auf11 "Aufgabe 11")<br>
+ [Aufgabe 2, ](#auf2 "Aufgabe 2") &emsp; &emsp; &emsp;  [Aufgabe 12, ](#auf12 "Aufgabe 12")<br>
+ [Aufgabe 3, ](#auf3 "Aufgabe 3") &emsp; &emsp; &emsp;  [Aufgabe 13, ](#auf13 "Aufgabe 13")<br>
+ [Aufgabe 4, ](#auf4 "Aufgabe 4") &emsp; &emsp; &emsp;  [Aufgabe 14, ](#auf14 "Aufgabe 14")<br>
+ [Aufgabe 5, ](#auf5 "Aufgabe 5") &emsp; &emsp; &emsp;  [Aufgabe 15, ](#auf15 "Aufgabe 15")<br>
+ [Aufgabe 6, ](#auf6 "Aufgabe 6") &emsp; &emsp; &emsp;  [Aufgabe 16, ](#auf16 "Aufgabe 16")<br>
+ [Aufgabe 7, ](#auf7 "Aufgabe 7") &emsp; &emsp; &emsp;  [Aufgabe 17, ](#auf17 "Aufgabe 17")<br>
+ [Aufgabe 8, ](#auf8 "Aufgabe 8") &emsp; &emsp; &emsp;  [Aufgabe 18, ](#auf18 "Aufgabe 18")<br>
+ [Aufgabe 9, ](#auf9 "Aufgabe 9") &emsp; &emsp; &emsp;  [Aufgabe 19. ](#auf19 "Aufgabe 19")<br>
+ [Aufgabe 10, ](#auf10 "Aufgabe 10")<br>
+ 
+
 <br>
 <a name="auf1"></a>
 <br>
@@ -149,7 +142,7 @@ euer Programm zu verbessern.
 
 
 
-### Aufgabe 7
+### Aufgabe 7 - Rekursion
 
 Wir betrachten noch einmal das Problem aus Aufgabe 5.
 
@@ -172,6 +165,7 @@ Hier ein Beispiel für einen unübersichtlichen, verzweigten Schatzpfad:<br><br>
 
 <br><br><br>
 
+## Erlang mit Parametern
 
 ***In den Aufgaben 8 - 13 könnt Ihr davon ausgehen, dass die Felder keine Wellen oder<br>
 Kraken enthalten. Außerdem könnt Ihr davon ausgehen, dass ggf. bestimmte Randzeilen<br>
@@ -297,6 +291,8 @@ effizient zu finden, könnt ihr von einer festen Feldbreite ausgehen.
 <br><br><br>
 
 
+
+## Erlang mit Datenstrukturen
 
 
 ### Aufgabe 15
