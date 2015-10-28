@@ -1,46 +1,48 @@
 -module(base).
-%-export([print/1,putStr/1,putStrLn/1,getLine/0,getLine/1,show/1]).
--export([print/1,putStr/1,putStrLn/1,show/1]).
+-export([lookup/2,fst/1,snd/1,show/1,print/1,putStr/1,putStrLn/1,nth/2,subList/3,limit/2]).
 
-% Gibt einen beliebige Datenstruktur aus.
-print(X) -> putStrLn(show(X)).
+lookup(_Key,[]) -> nothing;
+lookup(Key,[{Key,Value}|_]) -> {just,Value};
+lookup(Key,[_|Xs]) -> lookup(Key,Xs).
 
-% Gibt einen String aus.
-putStr(Str) -> io:fwrite("~s",[Str]).
+fst({X,_Y}) -> X.
 
-% Wie putStr, aber zusätzlich wird ein Zeilenumbruch ausgegeben.
-putStrLn(Str) -> putStr(Str++"\n").
+snd({_X,Y}) -> Y.
 
-%%% getLine() liest eine Zeile von der Tastatur ein.
-%%getLine() -> getLine("").
-
-%%% getLine(Prompt) liest eine Zeile von der Tastatur ein.
-%%% Das Atom P wird als Prompt verwendet.
-%%getLine(P) -> L = io:get_line(list_to_atom(P)),
-%%	      {Res,_} = lists:split(length(L)-1,L),
-%%	      Res.
-
-% show wandelt einen beliebigen Erlang-Wert in einen String um.
-% Integer-Listen mit sinnvollen Ascii-Werten werden als String interpretiert.
-show(X) when is_atom(X) -> atom_to_list(X);
+show(X) when is_atom(X)    -> atom_to_list(X);
 show(X) when is_integer(X) -> integer_to_list(X);
-show(X) when is_pid(X) -> pid_to_list(X);
-show(X) when is_tuple(X) -> "{"++showList(tuple_to_list(X))++"}";
-show(X) when is_list(X) -> case allChar(X) of
-                             true -> "\""++X++"\"";
-                             false -> "["++showList(X)++"]"
-                           end.
-
-allChar([]) -> true;
-allChar([X|Xs]) when is_integer(X) ->
-  case ((7<X) and (X<14)) or ((31<X) and (X<127)) of
-    true -> allChar(Xs);
-    false -> false
-  end;
-allChar(_) -> false.
+show(X) when is_pid(X)     -> pid_to_list(X);
+show(X) when is_tuple(X)   -> "{"++showList(tuple_to_list(X))++"}";
+show(X) when is_list(X)    ->
+  case lists:all(fun(C)->(C>7) and (C<127) end,X) of
+    true -> X;
+    false -> "["++showList(X)++"]"
+  end.
 
 showList([]) -> "";
 showList([X|Xs]) -> show(X)++case Xs of
                                [] -> "";
                                _ -> ","++showList(Xs)
                              end.
+
+
+print(X) -> io:format("~s~n",[show(X)]).
+
+putStr(Str) ->  io:format("~s",[Str]).
+
+putStrLn(Str) -> putStr(Str), putStr("\n").
+
+nth(0,_) -> throw('no position 0 defined for lists');
+nth(_,[]) -> throw('no element at this position');
+nth(P,[X|Xs]) -> case P of
+                   1 -> X;
+                   _ -> nth(P-1,Xs)
+                 end.
+
+subList(0,_,_) -> throw('no position 0 defined for lists');
+subList(1,L,Xs) -> limit(L,Xs);
+subList(N,L,[_|Xs]) -> subList(N-1,L,Xs).
+
+limit(0,_) -> [];
+limit(_,[]) -> [];
+limit(N,[X|Xs]) -> [X|limit(N-1,Xs)].

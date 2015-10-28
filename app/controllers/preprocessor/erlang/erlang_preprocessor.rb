@@ -193,7 +193,7 @@ class ErlangPreprocessor
   def insert_start_logic
     %Q[
     -module(webpiraten).
-    -import(base,[print/1,putStr/1,putStrLn/1,show/1]).
+    -import(base,[lookup/2,fst/1,snd/1,show/1,print/1,putStr/1,putStrLn/1,nth/2,subList/3,limit/2]).
     -export([main/0]).
 
     main() -> try
@@ -319,7 +319,7 @@ class ErlangPreprocessor
   def insert_compile_logic
     %Q[
     -module(prewebpiraten).
-    -import(base,[print/1,putStr/1,putStrLn/1,show/1]).
+    -import(base,[lookup/2,fst/1,snd/1,show/1,print/1,putStr/1,putStrLn/1,nth/2,subList/3,limit/2]).
     -export([main/0]).
 
     main() -> try
