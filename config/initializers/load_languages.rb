@@ -23,17 +23,30 @@ LANGUAGES = {
                                   "put()",
                               file_extension: 'rb'
                           }),
+    :python => Language.new({
+                              preprocessor: PythonPreprocessor,
+                              name: 'Python',
+                              script_assets: ['codemirror/modes/python.js'],
+                              gui_options: {:codemirror => {:mode => 'python'}},
+                              default_code: "print('Ahoy!')\n"+
+                                  "while look(Dir.FRONT) is not Obj.BORDER:\n"+
+                                  "    move()\n"+
+                                  "    turn(Dir.LEFT)\n"+
+                                  "    turn(Dir.RIGHT)\n"+
+                                  "put()",
+                              file_extension: 'py'
+                          }),
     :erlang => Language.new({
-                                preprocessor: ErlangPreprocessor,
-                                name: 'Erlang',
-                                script_assets: ['codemirror/modes/erlang.js'],
-                                gui_options: {:codemirror => {:mode => 'erlang', :theme => 'blackboard'}},
-                                default_code: "start() -> move(), turn(right), turn(left), prove().\n" +
-                                    "prove() -> case look(front) of\n"+
-                                    "             border -> puts();\n"+
-                                    "             _      -> start()\n"+
-                                    "           end.",
-                                file_extension: 'erl'
+                              preprocessor: ErlangPreprocessor,
+                              name: 'Erlang',
+                              script_assets: ['codemirror/modes/erlang.js'],
+                              gui_options: {:codemirror => {:mode => 'erlang', :theme => 'blackboard'}},
+                              default_code: "start() -> move(), turn(right), turn(left), prove().\n" +
+                                  "prove() -> case look(front) of\n"+
+                                  "             border -> puts();\n"+
+                                  "             _      -> start()\n"+
+                                  "           end.",
+                              file_extension: 'erl'
                             }),
     :java => Language.new({
                               preprocessor: JavaPreprocessor,
@@ -56,6 +69,7 @@ LANGUAGES = {
                                   "    }\n"+
                                   "  }\n"+
                                   "}",
-                              file_extension: 'java'})
+                              file_extension: 'java'
+                          })
 }
 #current_language = LANGUAGES[params.lang]

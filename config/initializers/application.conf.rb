@@ -11,6 +11,8 @@ if Rails.env.production?
     VM_HOST = 'server_ip' #host to connect to the vm for the code execution
     VM_PREFIX = 'abcdefghijk' #prefix to seperate user output and commands (use ASCII characters for best support)
 
+    VM_PYTHON = 'python3.4' #the python executable to use to run Python code on the VM
+
     #pepper to communicate with the vm (symmetric key)
     #use a random string with at least 32 characters
     #the vm must have the same pepper
@@ -26,5 +28,7 @@ else
     VM_PORT = 11111 #port to connect to the vm
     VM_HOST = 'localhost' #host to connect to the vm
     VM_PREFIX = 'abcdefghijk' #prefix to seperate user output and commands
+
+    VM_PYTHON = 'python3.4' #the python executable to use to run Python code on the VM
   end
 end
