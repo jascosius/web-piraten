@@ -154,9 +154,9 @@ class PythonPreprocessor
 
   # Handles the case when our augmented code has passed syntax validation. Move to the next phase,
   # make the augmented code runnable, and trigger running it.
-  def syntax_check_success(send, line)
+  def augment_success(send, line)
     @phase = :execute
-    @augmented_code = make_runnable(@augment_code)
+    @augmented_code = make_runnable(@augmented_code)
 
     send.call([
       {:write_file => {:filename => @filename, :content => @augmented_code}},
@@ -170,7 +170,7 @@ class PythonPreprocessor
 
   # Handles the case whn our augmented code has failed syntax validation. Move to the next phase,
   # make the original code runnable, and trigger running it.
-  def syntax_check_fail(send, line)
+  def augment_fail(send, line)
     @phase = :execute
     @augmented_code = nil
     @code = make_runnable(@code)
