@@ -25,6 +25,9 @@ class PythonPreprocessor
     # The user's code
     @code = code
 
+    # This will later hold our preprocessed version of the user's code
+    @processed_code = nil
+
     # Variables whose vaues are to be traced through the program's execution
     @tracing_vars = tracing_vars
 
@@ -59,9 +62,9 @@ class PythonPreprocessor
     if type == 'compilesuccess'
       # The user's code does not contain any syntax errors that Python was able to catch. Process
       # the code and execute it.
-      @process_code = process_code(@code, @tracing_vars)
+      @processed_code = process_code(@code, @tracing_vars)
       send.call([
-        {:write_file => {:filename => @filename, :content => @process_code}},
+        {:write_file => {:filename => @filename, :content => @processed_code}},
         {:execute => {:command => "env PYTHONPATH=$LIB$/python #{VM_PYTHON} -B #{@filename}"}},
         {:exit => {}}])
       {:type => :no}

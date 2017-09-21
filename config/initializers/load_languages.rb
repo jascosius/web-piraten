@@ -28,7 +28,7 @@ LANGUAGES = {
                               preprocessor: PythonPreprocessor,
                               name: 'Python',
                               script_assets: ['codemirror/modes/python.js'],
-                              gui_options: {:codemirror => {:mode => 'python'}},
+                              gui_options: {:codemirror => {:mode => 'text/x-python', :version => 3}},
                               default_code: "print('Ahoy!')\n"+
                                   "while look(Dir.FRONT) is not Obj.BORDER:\n"+
                                   "    move()\n"+
