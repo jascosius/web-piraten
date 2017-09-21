@@ -50,7 +50,9 @@ def _issue_command(cmd):
     after 'PREFIX_', which is added automatically.
     """
     global PREFIX
-    print(F"{PREFIX}_{cmd}")
+
+    # Don't use formatted strings in order to stay compatible to Python 3.4
+    print("{0}_{1}".format(PREFIX, cmd))
 
 def _issue_request(cmd):
     """
@@ -133,7 +135,8 @@ def turn(direction=Dir.BACK):
     and BACK. Other directions cause an error.
     """
     if direction in (Dir.LEFT, Dir.RIGHT, Dir.BACK):
-        _issue_command(F"turn_{direction.value}")
+        # Don't use formatted strings in order to stay compatible to Python 3.4
+        _issue_command("turn_{0}".format(direction.value))
     else:
         # TODO Error handling
         pass
@@ -145,7 +148,8 @@ def look(direction=Dir.HERE):
     if direction in Dir:
         # Issue the command and let the Obj enumeration find out which object is
         # in the reply
-        reply = _issue_request(F"?_look_{direction.value}")
+        # Don't use formatted strings in order to stay compatible to Python 3.4
+        reply = _issue_request("?_look_{0}".format(direction.value))
         return Obj.from_str(reply)
     else:
         # TODO Error handling
@@ -157,7 +161,8 @@ def put(obj=Obj.BUOY):
     BUOY and TREASURE.
     """
     if obj in (Obj.TREASURE, Obj.BUOY):
-        _issue_command(F"put_{obj.value}")
+        # Don't use formatted strings in order to stay compatible to Python 3.4
+        _issue_command("put_{0}".format(obj.value))
     else:
         # TODO Error handling
         pass
