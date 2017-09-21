@@ -2,9 +2,10 @@
 # config for the different languages
 
 require 'languages/language'
-require 'preprocessor/ruby/ruby_preprocessor'
-require 'preprocessor/java/java_preprocessor'
 require 'preprocessor/erlang/erlang_preprocessor'
+require 'preprocessor/java/java_preprocessor'
+require 'preprocessor/python/python_preprocessor'
+require 'preprocessor/ruby/ruby_preprocessor'
 
 # load the languages the system supports
 LANGUAGES = {
