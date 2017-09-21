@@ -86,17 +86,17 @@ class PythonPreprocessor
   # Processes output from the VM. This method simply delegates to more specific handlers.
   def postprocess_print(send, type, line)
     if type == "syntaxchecksuccess"
-      return handle_syntax_check_success(send, line)
+      return syntax_check_success(send, line)
     elsif type == "syntaxcheckfail"
-      return handle_syntax_check_fail(send, line)
+      return syntax_check_fail(send, line)
     elsif type == "augmentsuccess"
-      return handle_augment_success(send, line)
+      return augment_success(send, line)
     elsif type == "augmentfail"
-      return handle_augment_fail(send, line)
+      return augment_fail(send, line)
     elsif type == "executeoutput"
-      return handle_execute_output(send, line)
+      return execute_output(send, line)
     elsif type == "executeerror"
-      return handle_execute_error(send, line)
+      return execute_error(send, line)
     end
   end
 
@@ -112,7 +112,7 @@ class PythonPreprocessor
 
   # Handles the case where the initial syntax check was successful. Move to the next phase, augment
   # the code and trigger a syntax check of the augmented code.
-  def handle_syntax_check_success(send, line)
+  def syntax_check_success(send, line)
     @phase = :augment
     @augmented_code = augment_code(@code, @tracing_vars)
 
@@ -130,7 +130,7 @@ class PythonPreprocessor
   # Handles the case where the initial syntax check has failed. This terminates the whole process
   # on the first invocation of this method and outputs the error message (which will usually be
   # distributed over several invocations of this method).
-  def handle_syntax_check_fail(send, line)
+  def syntax_check_fail(send, line)
     # Send the exit command if that hasn't already happened
     if not @exit_sent
       send.call([{:exit => {:successful => false, :message => 'Syntaxfehler'}}])
@@ -154,7 +154,7 @@ class PythonPreprocessor
 
   # Handles the case when our augmented code has passed syntax validation. Move to the next phase,
   # make the augmented code runnable, and trigger running it.
-  def handle_syntax_check_success(send, line)
+  def syntax_check_success(send, line)
     @phase = :execute
     @augmented_code = make_runnable(@augment_code)
 
@@ -170,19 +170,27 @@ class PythonPreprocessor
 
   # Handles the case whn our augmented code has failed syntax validation. Move to the next phase,
   # make the original code runnable, and trigger running it.
-  def handle_syntax_check_fail(send, line)
+  def syntax_check_fail(send, line)
     @phase = :execute
     @augmented_code = nil
     @code = make_runnable(@code)
 
-    send.call([
-      {:write_file => {:filename => @filename, :content => @code}},
-      {:execute => {:command => "env PYTHONPATH=$LIB$/python #{VM_PYTHON} -B #{@filename}",
-                    :stdout => 'stdout',
-                    :stderr => 'stderr'}}])
-
-    # Print a warning
-    return {:type => :warning, :message => "Adding extended features failed, falling back to original code..."}
+    begin
+      open("log/simplemode.log", 'a') do |file|
+        file.puts '--------------------------------'
+        file.puts Time.now
+        file.puts '--------------------------------'
+        file.puts @code
+        file.puts "\n\n\n"
+      end
+    ensure
+      send.call([
+        {:write_file => {:filename => @filename, :content => @code}},
+        {:execute => {:command => "env PYTHONPATH=$LIB$/python #{VM_PYTHON} -B #{@filename}",
+                      :stdout => 'executeoutput',
+                      :stderr => 'executeerror'}}])
+      return {:type => :warning, :message => 'Start im vereinfachten Modus.'}
+    end
   end
 
   # Add our magic to the code that will enable different features of the development environment
@@ -203,13 +211,13 @@ class PythonPreprocessor
   ####### #    # ######  ####   ####    #   ######
 
   # Handles output received on stdout during execution. Simply print the lines onto the console.
-  def handle_execute_output(send, line)
-    return {:type => :log, :message => line}
+  def execute_output(send, line)
+    return {:type => :no}
   end
 
   # Handles output received on stderr during execution. These will be Python exceptions. On the first call,
   # we issue the exit command. The remaining calls process the remaining lines in the error output.
-  def handle_execute_error(send, line)
+  def execute_error(send, line)
     # Send the exit command if that hasn't already happened
     if not @exit_sent
       send.call([{:exit => {:successful => false, :message => 'Syntaxfehler'}}])
