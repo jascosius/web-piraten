@@ -49,10 +49,13 @@ class PythonPreprocessor
   #       #   #  #      #      #   #  #    # #    # #      #    # #    # #    # #   #
   #       #    # ###### #      #    #  ####   ####  ######  ####   ####   ####  #    #
 
-  # Commands to be sent to the VM to check whether there are syntax errors in the code
+  # Commands to be sent to the VM to check whether there are syntax errors in the code. The
+  # Python call is more complex than one might anticipate since we need to prevent Python
+  # from trying to create __pycache__ folders, which the user that executes this code does
+  # not necessarily have permission to do.
   def commands_for_vm
     [{:write_file => {:filename => @filename, :content => @code}},
-    {:execute => {:command => "#{VM_PYTHON} -B -m py_compile #{@filename} && echo success", :stdout => 'compilesuccess', :stderr => 'compileerror'}}]
+    {:execute => {:command => "#{VM_PYTHON} -c \"compile(open('#{@filename}').read(), '', 'exec')\" && echo success", :stdout => 'compilesuccess', :stderr => 'compileerror'}}]
     # in this case execution is a syntax check, real execution is handled in postprocess_print
   end
 
