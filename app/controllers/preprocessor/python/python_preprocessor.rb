@@ -220,7 +220,7 @@ class PythonPreprocessor
   def execute_error(send, line)
     # Send the exit command if that hasn't already happened
     if not @exit_sent
-      send.call([{:exit => {:successful => false, :message => 'Syntaxfehler'}}])
+      send.call([{:exit => {:successful => false, :message => 'Ausführung fehlgeschlagen'}}])
       @exit_sent = true
     end
 
