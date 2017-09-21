@@ -70,7 +70,7 @@ class PythonPreprocessor
         {:write_file => {:filename => @filename, :content => @processed_code}},
         {:execute => {:command => "env PYTHONPATH=$LIB$/python #{VM_PYTHON} -B #{@filename}"}},
         {:exit => {}}])
-      {:type => :no}
+      return {:type => :no}
 
     elsif type == 'compileerror'
       # The code submitted by the user was erroneous. Tell the VM to exit once (upon encountering
@@ -84,7 +84,7 @@ class PythonPreprocessor
 
     else
       # This has nothing to do with the syntax check anymore... Shit just got real!
-      postprocess_execute(line)
+      return postprocess_execute(line)
     end
   end
 
@@ -94,7 +94,7 @@ class PythonPreprocessor
   # functions called with wrong arguments and stuff.
   def postprocess_execute(line)
     # TODO Process things
-    line
+    return {:type => :error, :message => line}
   end
 
 
@@ -117,19 +117,19 @@ class PythonPreprocessor
   # Generates the Python header necessary to run pirate ships.
   def generate_header()
     %Q[
-      from webpiraten import Dir
-      from webpiraten import Obj
+from webpiraten import Dir
+from webpiraten import Obj
 
-      from webpiraten import configure_prefix
-      from webpiraten import look
-      from webpiraten import move
-      from webpiraten import put
-      from webpiraten import take
-      from webpiraten import turn
+from webpiraten import configure_prefix
+from webpiraten import look
+from webpiraten import move
+from webpiraten import put
+from webpiraten import take
+from webpiraten import turn
 
-      configure_prefix("#{VM_PREFIX}")
+configure_prefix("#{VM_PREFIX}")
 
-    ]
+]
   end
 
 end
