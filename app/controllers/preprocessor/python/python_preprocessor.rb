@@ -119,9 +119,9 @@ class PythonPreprocessor
     # Trigger the new syntax check
     send.call([
       {:write_file => {:filename => @filename, :content => @augmented_code}},
-      {:command => "#{VM_PYTHON} -c \"compile(open('#{@filename}').read(), '', 'exec')\" && echo success",
-       :stdout => 'augmentsuccess',
-       :stderr => 'augmentfail'}])
+      {:execute => {:command => "#{VM_PYTHON} -c \"compile(open('#{@filename}').read(), '', 'exec')\" && echo success",
+                    :stdout => 'augmentsuccess',
+                    :stderr => 'augmentfail'}}])
 
     # Don't output anything
     return {:type => :no}
@@ -160,9 +160,9 @@ class PythonPreprocessor
 
     send.call([
       {:write_file => {:filename => @filename, :content => @augmented_code}},
-      {:command => "env PYTHONPATH=$LIB$/python #{VM_PYTHON} -B #{@filename}",
-       :stdout => 'executeoutput',
-       :stderr => 'executeerror'}])
+      {:execute => {:command => "env PYTHONPATH=$LIB$/python #{VM_PYTHON} -B #{@filename}",
+                    :stdout => 'executeoutput',
+                    :stderr => 'executeerror'}}])
 
     # Don't output anything
     return {:type => :no}
@@ -177,9 +177,9 @@ class PythonPreprocessor
 
     send.call([
       {:write_file => {:filename => @filename, :content => @code}},
-      {:command => "env PYTHONPATH=$LIB$/python #{VM_PYTHON} -B #{@filename}",
-       :stdout => 'stdout',
-       :stderr => 'stderr'}])
+      {:execute => {:command => "env PYTHONPATH=$LIB$/python #{VM_PYTHON} -B #{@filename}",
+                    :stdout => 'stdout',
+                    :stderr => 'stderr'}}])
 
     # Print a warning
     return {:type => :warning, :message => "Adding extended features failed, falling back to original code..."}
