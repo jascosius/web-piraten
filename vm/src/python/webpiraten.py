@@ -138,8 +138,7 @@ def turn(direction=Dir.BACK):
         # Don't use formatted strings in order to stay compatible to Python 3.4
         _issue_command("turn_{0}".format(direction.value))
     else:
-        # TODO Error handling
-        pass
+        raise ValueError("turn(...) erlaubt nur Dir.LEFT, Dir.RIGHT und Dir.BACK.")
 
 def look(direction=Dir.HERE):
     """
@@ -152,8 +151,7 @@ def look(direction=Dir.HERE):
         reply = _issue_request("?_look_{0}".format(direction.value))
         return Obj.from_str(reply)
     else:
-        # TODO Error handling
-        pass
+        raise ValueError("look(...) erlaubt nur eine der Dir-Konstanten.")
 
 def put(obj=Obj.BUOY):
     """
@@ -164,8 +162,7 @@ def put(obj=Obj.BUOY):
         # Don't use formatted strings in order to stay compatible to Python 3.4
         _issue_command("put_{0}".format(obj.value))
     else:
-        # TODO Error handling
-        pass
+        raise ValueError("put(...) erlaubt nur Obj.TREASURE und Obj.BUOY.")
 
 def take():
     """
