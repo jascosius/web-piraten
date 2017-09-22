@@ -21,6 +21,9 @@
 #      users print to the console.
 class PythonPreprocessor
 
+  require 'preprocessor/python/augmentation'
+
+
   ###
    #  #    # # ##### #   ##   #      # ######   ##   ##### #  ####  #    #
    #  ##   # #   #   #  #  #  #      #     #   #  #    #   # #    # ##   #
@@ -87,14 +90,19 @@ class PythonPreprocessor
   def postprocess_print(send, type, line)
     if type == "syntaxchecksuccess"
       return syntax_check_success(send, line)
+
     elsif type == "syntaxcheckfail"
       return syntax_check_fail(send, line)
+
     elsif type == "augmentsuccess"
       return augment_success(send, line)
+
     elsif type == "augmentfail"
       return augment_fail(send, line)
+
     elsif type == "executeoutput"
       return execute_output(send, line)
+
     elsif type == "executeerror"
       return execute_error(send, line)
     end
@@ -114,7 +122,7 @@ class PythonPreprocessor
   # the code and trigger a syntax check of the augmented code.
   def syntax_check_success(send, line)
     @phase = :augment
-    @augmented_code = augment_code(@code, @tracing_vars)
+    @augmented_code = PythonCodeAugmenter.new(@code, @tracing_vars).to_a()
 
     # Trigger the new syntax check
     send.call([
@@ -133,13 +141,12 @@ class PythonPreprocessor
   def syntax_check_fail(send, line)
     # Send the exit command if that hasn't already happened
     if not @exit_sent
-      send.call([{:exit => {:successful => false, :message => 'Syntaxfehler'}}])
+      send.call([{:exit => {:successful => false}}])
       @exit_sent = true
     end
 
     # Output the error line
-    # TODO Handle error output differently
-    return {:type => :error, :message => line}
+    return error_line(line, false)
   end
 
 
@@ -158,14 +165,23 @@ class PythonPreprocessor
     @phase = :execute
     @augmented_code = make_runnable(@augmented_code)
 
-    send.call([
-      {:write_file => {:filename => @filename, :content => @augmented_code}},
-      {:execute => {:command => "env PYTHONPATH=$LIB$/python #{VM_PYTHON} -B #{@filename}",
-                    :stdout => 'executeoutput',
-                    :stderr => 'executeerror'}}])
-
-    # Don't output anything
-    return {:type => :no}
+    begin
+      open("log/augmented_code.log", 'a') do |file|
+        file.puts '--------------------------------'
+        file.puts Time.now
+        file.puts '--------------------------------'
+        file.puts @augmented_code
+        file.puts "\n\n\n"
+      end
+    ensure
+      send.call([
+        {:write_file => {:filename => @filename, :content => @augmented_code}},
+        {:execute => {:command => "env PYTHONPATH=$LIB$/python #{VM_PYTHON} -B #{@filename}",
+                      :stdout => 'executeoutput',
+                      :stderr => 'executeerror'}}])
+      # Don't output anything
+      return {:type => :no}
+    end
   end
 
   # Handles the case whn our augmented code has failed syntax validation. Move to the next phase,
@@ -193,13 +209,6 @@ class PythonPreprocessor
     end
   end
 
-  # Add our magic to the code that will enable different features of the development environment
-  # to work.
-  def augment_code(code, tracing_vars)
-    # TODO: Actually augment the code here.
-    return code
-  end
-
 
 
   #######
@@ -220,13 +229,12 @@ class PythonPreprocessor
   def execute_error(send, line)
     # Send the exit command if that hasn't already happened
     if not @exit_sent
-      send.call([{:exit => {:successful => false, :message => 'Ausführung fehlgeschlagen'}}])
+      send.call([{:exit => {:successful => false}}])
       @exit_sent = true
     end
 
     # Output the error line
-    # TODO Handle error output differently
-    return {:type => :error, :message => line}
+    return error_line(line, true)
   end
 
 
@@ -255,6 +263,52 @@ from webpiraten import turn
 configure_prefix("#{VM_PREFIX}")
 
 ] + code
+  end
+
+
+  # Python will generally generate two types of error messages. The first is during syntax checks:
+  #
+  #     Traceback (most recent call last):
+  #       File "<string>", line 1, in <module>
+  #       File "", line 2
+  #         while look(Dir.FRONT) is not Obj.BORDER
+  #                                               ^
+  #     SyntaxError: invalid syntax
+  #
+  # Here, we throw away the first two lines completely, use the line information in the third line
+  # to display a more helpful error message (possibly converting line numbers in the process),
+  # output the fourth and fifth line as is and throw away the last line.
+  #
+  # The second is during execution:
+  #
+  #     Traceback (most recent call last):
+  #       File "pyraten.py", line 17, in <module>
+  #         turn(Dir.HERE)
+  #       File "/home/captain/vm/lib/python/webpiraten.py", line 141, in turn
+  #         raise ValueError("turn(...) erlaubt nur Dir.LEFT, Dir.RIGHT und Dir.BACK.")
+  #     ValueError: turn(...) erlaubt nur Dir.LEFT, Dir.RIGHT und Dir.BACK.
+  #
+  # Here, we throw away the first line completely. The line that has "pyraten.py" in it is turned
+  # into something more helpful (possibly converting line numbers in the process), and the line
+  # following it immediately is printed as is. All the remaining lines are thrown away until we
+  # find one that is not indented, which we print as is.
+
+
+  # Takes a line of an error message and makes it ready to be presented to the user. The second
+  # parameter is false if we are still in the syntax checking phase and true if we are already
+  # trying to execute the user's code. This may influence the output we generate.
+  def error_line(line, execute_phase)
+    chomped_line = line.chomp
+
+    # We always throw away lines that start with certain prefixes
+    throw_away_prefixes = ["Traceback ", 'File "<string>",', "SyntaxError: "]
+    if chomped_line.start_with?(*throw_away_prefixes)
+      return {:type => :no}
+    end
+
+    # TODO Add a regular expression that recognizes the File "", line \d lines
+
+    return {:type => :error, :message => line}
   end
 
 end
