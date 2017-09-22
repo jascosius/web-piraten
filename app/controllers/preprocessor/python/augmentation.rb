@@ -49,7 +49,7 @@ class PythonCodeAugmenter
 
       # Append the line number as a comment
       if should_append_line_number?()
-        line += " # #{VM_PYTHON}_LINE_#{@state[:line_number]}"
+        line += " # #{VM_PREFIX}_LINE_#{@state[:line_number]}"
       end
 
       # Prepend debugging commands

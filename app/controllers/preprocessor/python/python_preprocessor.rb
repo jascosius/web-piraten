@@ -301,12 +301,16 @@ configure_prefix("#{VM_PREFIX}")
     chomped_line = line.chomp
 
     # We always throw away lines that start with certain prefixes
-    throw_away_prefixes = ["Traceback ", 'File "<string>",', "SyntaxError: "]
+    throw_away_prefixes = ["Traceback ", "File \"<string>\"", "SyntaxError: "]
     if chomped_line.start_with?(*throw_away_prefixes)
       return {:type => :no}
     end
 
     # TODO Add a regular expression that recognizes the File "", line \d lines
+
+    # TODO The code line itself must have any end-of-line comment stripped
+
+    # TODO The line with the error pointer ^ must be printed as is during the syntax check phase
 
     return {:type => :error, :message => line}
   end
