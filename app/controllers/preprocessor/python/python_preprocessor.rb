@@ -224,7 +224,7 @@ class PythonPreprocessor
 
   # Handles output received on stdout during execution. Simply print the lines onto the console.
   def execute_output(send, line)
-    return {:type => :no}
+    return {:type => :log, :message => line}
   end
 
   # Handles output received on stderr during execution. These will be Python exceptions. On the first call,
@@ -302,8 +302,7 @@ configure_prefix("#{VM_PREFIX}")
     # A previously processed error line may cause us to drop the current one
     if @drop_next_error_line
       @drop_next_error_line = false
-      #return {:type => :no}
-      return {:type => :error, :message => "Dropped line: " + line}
+      return {:type => :no}
     end
 
     stripped_line = line.strip
@@ -311,8 +310,7 @@ configure_prefix("#{VM_PREFIX}")
     # We always throw away lines that start with certain prefixes
     throw_away_prefixes = ["Traceback ", 'File "<string>"', "SyntaxError: "]
     if stripped_line.start_with?(*throw_away_prefixes)
-      #return {:type => :no}
-      return {:type => :error, :message => "Thrown away line: " + line}
+      return {:type => :no}
     end
 
     # Recognize the syntax error message
@@ -327,7 +325,7 @@ configure_prefix("#{VM_PREFIX}")
     match = /File \"pyraten.py\", line (\d+), in <module>/.match(stripped_line)
     if match
       # We need to convert line numbers
-      ln = original_line_number(match[1])
+      ln = original_line_number(match[1]).to_s
       return {:type => :error, :message => "Laufzeitfehler in Zeile #{ln}:"}
     end
 
@@ -336,8 +334,7 @@ configure_prefix("#{VM_PREFIX}")
     if match
       # Ignore this and the next line
       @drop_next_error_line = true
-      return {:type => :error, :message => "Ignored line: " + line}
-      #return {:type => :no}
+      return {:type => :no}
     end
 
     # Recognize the syntax error marker
@@ -358,9 +355,12 @@ configure_prefix("#{VM_PREFIX}")
   # an original line number, but all we've done to the user's code was prepend a few lines,
   # so we subtract the number of prepended lines.
   def original_line_number(new_line)
+    # First of all, convert the line number to an integer
+    new_line = new_line.to_i
+
     if @phase == :execute
       # It's the execute phase, so we have more to do
-      if @augmented_code == nil
+      if @augmented_code.nil?
         # We haven't augmented the code with line numbers or anything
         number_of_prepended_lines = make_runnable("").count("\n")
         return new_line - number_of_prepended_lines
