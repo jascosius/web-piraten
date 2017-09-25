@@ -61,6 +61,9 @@ class PythonPreprocessor
     # For each user submission, we run through a number of phases as described in the
     # file header comment. This is the variable that tracks the current phase.
     @phase = :syntaxcheck
+
+    # Error line processing.
+    @drop_next_error_line = false
   end
 
 
@@ -298,21 +301,91 @@ configure_prefix("#{VM_PREFIX}")
   # parameter is false if we are still in the syntax checking phase and true if we are already
   # trying to execute the user's code. This may influence the output we generate.
   def error_line(line, execute_phase)
-    chomped_line = line.chomp
+    # A previously processed error line may cause us to drop the current one
+    if @drop_next_error_line
+      @drop_next_error_line = false
+      return
+    end
+
+    stripped_line = line.strip
 
     # We always throw away lines that start with certain prefixes
-    throw_away_prefixes = ["Traceback ", "File \"<string>\"", "SyntaxError: "]
-    if chomped_line.start_with?(*throw_away_prefixes)
+    throw_away_prefixes = ["Traceback ", 'File "<string>"', "SyntaxError: "]
+    if stripped_line.start_with?(*throw_away_prefixes)
       return {:type => :no}
     end
 
-    # TODO Add a regular expression that recognizes the File "", line \d lines
+    # Recognize the syntax error message
+    match = /File \"\", line (\d+)/.match(stripped_line)
+    if match
+      # Note that at this point, we haven't inserted any code yet, so there's no need to convert
+      # any line numbers
+      return {:type => :error, :message => "Syntaxfehler in Zeile #{match[1]}:"}
+    end
 
-    # TODO The code line itself must have any end-of-line comment stripped
+    # Recognize the first runtime error message
+    match = /File \"pyraten.py\", line (\d+), in <module>/.match(stripped_line)
+    if match
+      # We need to convert line numbers
+      ln = original_line_number(match[1])
+      return {:type => :error, :message => "Laufzeitfehler in Zeile #{ln}:"}
+    end
 
-    # TODO The line with the error pointer ^ must be printed as is during the syntax check phase
+    # Recognize further runtime error messages
+    match = /File \"[^\"]+\", line (\d+), in turn/.match(stripped_line)
+    if match
+      # Ignore this and the next line
+      @drop_next_error_line = true
+      return {:type => :no}
+    end
 
-    return {:type => :error, :message => line}
+    # Recognize the syntax error marker
+    if stripped_line == "^"
+      return {:type => :error, :message => line}
+    end
+
+    # It is some other line; be sure to remove any trailing end-of-line comment
+    return {:type => :error, :message => line.sub(/ # WPLINE_\d+$/, "")}
+  end
+
+  # Given a line number from an error message, try to find out which line number it would
+  # correspond to in the user's original code. If we're in the syntax check phase, we haven't
+  # done anything to the code yet, so the original line number equals the new line number.
+  # If we are in the augmentation phase, this method shouldn't be called. If we're in the
+  # execution phase, what we do depends on whether we're running augmented code or not. If
+  # so, we look for a line number comment in the augmented code. Otherwise, we won't find
+  # an original line number, but all we've done to the user's code was prepend a few lines,
+  # so we subtract the number of prepended lines.
+  def original_line_number(new_line)
+    if @phase == :execute
+      # It's the execute phase, so we have more to do
+      if @augmented_code == nil
+        # We haven't augmented the code with line numbers or anything
+        number_of_prepended_lines = make_runnable("").count("\n")
+        return new_line - number_of_prepended_lines
+
+      else
+        # Pull the offending line out of the augmented code
+        augmented_code_lines = @augmented_code.lines
+        if new_line > augmented_code_lines.length
+          # We were not able to find the line the error message refers to. Shouldn't happen.
+          return "<unbekannt>"
+
+        else
+          # Check if the line has a line number comment
+          match = / # WPLINE_(\d+)$/.match(augmented_code_lines[new_line - 1])
+          if match
+            return match[1]
+          else
+            return "<unbekannt>"
+          end
+        end
+      end
+
+    else
+      # It's not the execute phase, so we can simply return the line number
+      return new_line
+    end
   end
 
 end

@@ -49,7 +49,7 @@ class PythonCodeAugmenter
 
       # Append the line number as a comment
       if should_append_line_number?()
-        line += " # #{VM_PREFIX}_LINE_#{@state[:line_number]}"
+        line += " # WPLINE_#{@state[:line_number]}"
       end
 
       # Prepend debugging commands
@@ -74,11 +74,11 @@ class PythonCodeAugmenter
   # Parses the current line and updates our current state. That state is what several of our
   # decisions depends on when it comes to deciding whether or not to add certain debug information.
   def parse_line(line)
-    chomped_line = line.chomp
+    stripped_line = line.strip
 
     @state[:line_number] += 1
-    @state[:line_empty] = chomped_line.empty?
-    @state[:line_is_comment] = chomped_line[0] == "#"
+    @state[:line_empty] = stripped_line.empty?
+    @state[:line_is_comment] = stripped_line[0] == "#"
 
     # TODO Implement. Right now, there's no line we ignore
   end
