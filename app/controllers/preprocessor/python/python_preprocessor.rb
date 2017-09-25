@@ -149,7 +149,7 @@ class PythonPreprocessor
     end
 
     # Output the error line
-    return error_line(line, false)
+    return error_line(line)
   end
 
 
@@ -237,7 +237,7 @@ class PythonPreprocessor
     end
 
     # Output the error line
-    return error_line(line, true)
+    return error_line(line)
   end
 
 
@@ -297,14 +297,13 @@ configure_prefix("#{VM_PREFIX}")
   # find one that is not indented, which we print as is.
 
 
-  # Takes a line of an error message and makes it ready to be presented to the user. The second
-  # parameter is false if we are still in the syntax checking phase and true if we are already
-  # trying to execute the user's code. This may influence the output we generate.
-  def error_line(line, execute_phase)
+  # Takes a line of an error message and makes it ready to be presented to the user.
+  def error_line(line)
     # A previously processed error line may cause us to drop the current one
     if @drop_next_error_line
       @drop_next_error_line = false
-      return
+      #return {:type => :no}
+      return {:type => :error, :message => "Dropped line: " + line}
     end
 
     stripped_line = line.strip
@@ -312,7 +311,8 @@ configure_prefix("#{VM_PREFIX}")
     # We always throw away lines that start with certain prefixes
     throw_away_prefixes = ["Traceback ", 'File "<string>"', "SyntaxError: "]
     if stripped_line.start_with?(*throw_away_prefixes)
-      return {:type => :no}
+      #return {:type => :no}
+      return {:type => :error, :message => "Thrown away line: " + line}
     end
 
     # Recognize the syntax error message
@@ -336,7 +336,8 @@ configure_prefix("#{VM_PREFIX}")
     if match
       # Ignore this and the next line
       @drop_next_error_line = true
-      return {:type => :no}
+      return {:type => :error, :message => "Ignored line: " + line}
+      #return {:type => :no}
     end
 
     # Recognize the syntax error marker
