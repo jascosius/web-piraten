@@ -253,17 +253,16 @@ class PythonPreprocessor
   # Turns the code into code that is actually runnable by inserting the required imports and things.
   def make_runnable(code)
     return %Q[
+import webpiraten as garbledwebpiratenlibraryname
 from webpiraten import Dir
 from webpiraten import Obj
-
-from webpiraten import configure_prefix
 from webpiraten import look
 from webpiraten import move
 from webpiraten import put
 from webpiraten import take
 from webpiraten import turn
 
-configure_prefix("#{VM_PREFIX}")
+garbledwebpiratenlibraryname.configure_prefix("#{VM_PREFIX}")
 
 ] + code
   end
@@ -343,7 +342,7 @@ configure_prefix("#{VM_PREFIX}")
     end
 
     # It is some other line; be sure to remove any trailing end-of-line comment
-    return {:type => :error, :message => line.sub(/ # WPLINE_\d+$/, "")}
+    return {:type => :error, :message => PythonCodeAugmenter.remove_line_number(line)}
   end
 
   # Given a line number from an error message, try to find out which line number it would
@@ -371,15 +370,10 @@ configure_prefix("#{VM_PREFIX}")
         if new_line > augmented_code_lines.length
           # We were not able to find the line the error message refers to. Shouldn't happen.
           return "<unbekannt>"
-
         else
           # Check if the line has a line number comment
-          match = / # WPLINE_(\d+)$/.match(augmented_code_lines[new_line - 1])
-          if match
-            return match[1]
-          else
-            return "<unbekannt>"
-          end
+          ln = PythonCodeAugmenter.extract_line_number(augmented_code_lines[new_line - 1])
+          return if ln then ln else "<unbekannt>"
         end
       end
 
