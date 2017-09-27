@@ -25,7 +25,11 @@ class PythonCodeAugmenter
       # Whether the last encountered symbol was a \ which continues the current line to the next. The
       # symbol must have been found outside os a multiline string. This is always reset at the
       # beginning of a new line.
-      :line_continuator => false
+      :line_continuator => false,
+      # If the current line starts a logical line, this contains the indentation part of the string,
+      # that is, the (possibly empty) prefix that only contains tabs and spaces. If the line does
+      # not start a logical line, this is pretty much meaningless.
+      :indent_string => ""
     }
 
     augment_code()
@@ -107,11 +111,42 @@ class PythonCodeAugmenter
     end
   end
 
+  # The keywords we use to decide that we don't want a line number call before a line
+  KEYWORDS_WITHOUT_LINE_NUMBERS = [
+    "from", "import",                                           # Import statements
+    "def", "class",                                             # Function and class definitions
+    "if", "elif", "else", "else:",                              # Conditional control statements
+    "try", "try:", "except", "except:", "finally", "finally:"   # Exception handling
+  ]
+
   # Returns a version of the line with a line number method call added, if this line should in
   # fact have the line number call added. Otherwise, simply returns the line as is.
   def possibly_add_line_number_call(line)
-    # TODO Implement
-    return line
+    # If the current line does not start a logical line, don't bother
+    if not @state[:ll_start]
+      return line
+    end
+
+    # We will be making decisions based on the first word on the line
+    line_words = line.split
+    if line_words.empty?
+      # The line is empty, so we disregard it
+      return line
+    end
+    first_word = line_words[0]
+
+    # Extract first word and check if it makes us want to refrain from adding a line number call
+    if KEYWORDS_WITHOUT_LINE_NUMBERS.include?(first_word)
+      # It's one of the statements we don't want
+      return line
+
+    elsif ["'", '"', "#"].include?(first_word[0])
+      # The line starts with a string or with a comment
+      return line
+    end
+
+    # Do include a line number call
+    return "#{@state[:indent_string]}garbledwebpiratenlibraryname.line(#{@state[:line_number]})\n#{line}"
   end
 
 
@@ -139,6 +174,13 @@ class PythonCodeAugmenter
 
     # Reset the line continuator flag the the last line may have set to true
     @state[:line_continuator] = false
+
+    # Find the first non-(space/tab) character
+    index = 0
+    while index < line.length && [" ", "\t"].include?(line[index])
+      index += 1
+    end
+    @state[:indent_string] = line[0...index]
 
     # Iterate over the line's characters as long as there are any. We use different iteration
     # methods depending on whether we're inside a string or not

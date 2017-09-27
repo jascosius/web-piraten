@@ -169,3 +169,19 @@ def take():
     Take whatever is on the current field.
     """
     _issue_command("take")
+
+
+
+######                                                     
+#     # ###### #####  #    #  ####   ####  # #    #  ####  
+#     # #      #    # #    # #    # #    # # ##   # #    # 
+#     # #####  #####  #    # #      #      # # #  # #      
+#     # #      #    # #    # #  ### #  ### # #  # # #  ### 
+#     # #      #    # #    # #    # #    # # #   ## #    # 
+######  ###### #####   ####   ####   ####  # #    #  ####  
+
+def line(line):
+    """
+    Notifies the server that the user's code has reached the given line.
+    """
+    self._issue_command("line_{0}".format(line))
