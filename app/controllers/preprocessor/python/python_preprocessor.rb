@@ -373,7 +373,11 @@ garbledwebpiratenlibraryname.configure_prefix("#{VM_PREFIX}")
         else
           # Check if the line has a line number comment
           ln = PythonCodeAugmenter.extract_line_number(augmented_code_lines[new_line - 1])
-          return if ln then ln else "<unbekannt>"
+          if ln.nil?
+            return "<unbekannt>"
+          else
+            return ln
+          end
         end
       end
 
