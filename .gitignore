@@ -32,3 +32,10 @@ config/secrets.yml
 /env_conf
 /scripts
 README.rdoc
+
+# Ignore Python things
+__pycache__
+
+# Ignore Visual Studio Code files
+.vscode
+

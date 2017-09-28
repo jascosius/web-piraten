@@ -6,17 +6,12 @@
 
 ###Liste aller Aufgaben:
 
- [Aufgabe 1, ](#auf1 "Aufgabe 1") &emsp; &emsp; &emsp;  [Aufgabe 11, ](#auf11 "Aufgabe 11")<br>
- [Aufgabe 2, ](#auf2 "Aufgabe 2") &emsp; &emsp; &emsp;  [Aufgabe 12, ](#auf12 "Aufgabe 12")<br>
- [Aufgabe 3, ](#auf3 "Aufgabe 3") &emsp; &emsp; &emsp;  [Aufgabe 13, ](#auf13 "Aufgabe 13")<br>
- [Aufgabe 4, ](#auf4 "Aufgabe 4") &emsp; &emsp; &emsp;  [Aufgabe 14, ](#auf14 "Aufgabe 14")<br>
- [Aufgabe 5, ](#auf5 "Aufgabe 5") &emsp; &emsp; &emsp;  [Aufgabe 15, ](#auf15 "Aufgabe 15")<br>
- [Aufgabe 6, ](#auf6 "Aufgabe 6") &emsp; &emsp; &emsp;  [Aufgabe 16, ](#auf16 "Aufgabe 16")<br>
- [Aufgabe 7, ](#auf7 "Aufgabe 7") &emsp; &emsp; &emsp;  [Aufgabe 17, ](#auf17 "Aufgabe 17")<br>
- [Aufgabe 8, ](#auf8 "Aufgabe 8") &emsp; &emsp; &emsp;  [Aufgabe 18, ](#auf18 "Aufgabe 18")<br>
- [Aufgabe 9, ](#auf9 "Aufgabe 9") &emsp; &emsp; &emsp;  [Aufgabe 19. ](#auf19 "Aufgabe 19")<br>
- [Aufgabe 10, ](#auf10 "Aufgabe 10")<br>
- 
+ [Aufgabe 1, ](#auf1 "Aufgabe 1")  &emsp; &emsp; &emsp;  [Aufgabe 6, ](#auf6 "Aufgabe 6")     &emsp; &emsp; &emsp;  [Aufgabe 11, ](#auf11 "Aufgabe 11") &emsp; &emsp; &emsp;  [Aufgabe 16, ](#auf16 "Aufgabe 16")<br>
+ [Aufgabe 2, ](#auf2 "Aufgabe 2")  &emsp; &emsp; &emsp;  [Aufgabe 7, ](#auf7 "Aufgabe 7")     &emsp; &emsp; &emsp;  [Aufgabe 12, ](#auf12 "Aufgabe 12") &emsp; &emsp; &emsp;  [Aufgabe 17, ](#auf17 "Aufgabe 17")<br>
+ [Aufgabe 3, ](#auf3 "Aufgabe 3")  &emsp; &emsp; &emsp;  [Aufgabe 8, ](#auf8 "Aufgabe 8")     &emsp; &emsp; &emsp;  [Aufgabe 13, ](#auf13 "Aufgabe 13") &emsp; &emsp; &emsp;  [Aufgabe 18, ](#auf18 "Aufgabe 18")<br>
+ [Aufgabe 4, ](#auf4 "Aufgabe 4")  &emsp; &emsp; &emsp;  [Aufgabe 9, ](#auf9 "Aufgabe 9")     &emsp; &emsp; &emsp;  [Aufgabe 14, ](#auf14 "Aufgabe 14") &emsp; &emsp; &emsp;  [Aufgabe 19. ](#auf19 "Aufgabe 19")<br>
+ [Aufgabe 5, ](#auf5 "Aufgabe 5")  &emsp; &emsp; &emsp;  [Aufgabe 10, ](#auf10 "Aufgabe 10")  &emsp; &emsp; &emsp;  [Aufgabe 15, ](#auf15 "Aufgabe 15") <br>
+
 
 <br>
 <a name="auf1"></a>
@@ -37,9 +32,9 @@ Programms in der linken oberen Ecke des Feldes befindet und nach rechts guckt.<b
 Die Schätze sollen in folgender Richtung aufgenommen werden:<br>
 (a) waagerecht<br>
 (b) diagonal
-<a name="auf2"></a> 
+<a name="auf2"></a>
 <!--- **Aufgaben:**
- [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
+ [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19")
 <br>[Nach oben](index "springe zum Anfang der Seite") --->
 
 <br><br><br>
@@ -53,7 +48,7 @@ Schreibt ein Programm, das in einem vollen Feld alle Schätze vor den Piraten bi
 zum Rand aufsammelt. Am Rand sollen die Piraten stehen bleiben.
 <a name="auf3"></a>
 <!--- **Aufgaben:**
- [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
+ [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19")
 <br>[Nach oben](index "springe zum Anfang der Seite") --->
 
 <br><br><br>
@@ -65,14 +60,14 @@ zum Rand aufsammelt. Am Rand sollen die Piraten stehen bleiben.
 
 Schreibt Programme, die die Piraten auf einem vollen Schatzfeld folgende Bilder<br>
 erzeugen lassen:<br><br>
-(a)<img title = "Bild" width="30%" height="30%" src="/assets/challenge/challenge3a.jpg"> 
+(a)<img title = "Bild" width="30%" height="30%" src="/assets/challenge/challenge3a.jpg">
 (b)<img title = "Bild" width="30%" height="30%" src="/assets/challenge/challenge3b.jpg">
 <br><br>
 Funktionieren Eure Programme auch auf Feldern beliebiger Größe?<br>
 Welche Einschränkungen gibt es?
 <a name="auf4"></a>
 <!--- **Aufgaben:**
- [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
+ [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19")
 <br>[Nach oben](index "springe zum Anfang der Seite") --->
 
 <br><br><br>
@@ -98,7 +93,7 @@ nachher:<br>
 Wo sich die Piraten am Programmende befinden ist egal.
 <a name="auf5"></a>
 <!--- **Aufgaben:**
- [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
+ [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19")
 <br>[Nach oben](index "springe zum Anfang der Seite") --->
 
 <br><br><br>
@@ -116,7 +111,7 @@ in der Spur neben maximal zwei anderen Schätzen liegt.<br>
 Nehmt euch aber von Monsterwellen und Kraken in acht.
 <a name="auf6"></a>
 <!--- **Aufgaben:**
- [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
+ [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19")
 <br>[Nach oben](index "springe zum Anfang der Seite") --->
 
 <br><br><br>
@@ -134,7 +129,7 @@ Konstruiert Situationen, in denen euer Programm fehl schlägt. Versucht<br>
 euer Programm zu verbessern.
 <a name="auf7"></a>
 <!--- **Aufgaben:**
- [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
+ [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19")
 <br>[Nach oben](index "springe zum Anfang der Seite") --->
 
 <br><br><br>
@@ -160,7 +155,7 @@ Hier ein Beispiel für einen unübersichtlichen, verzweigten Schatzpfad:<br><br>
 
 <a name="auf8"></a>
 <!--- **Aufgaben:**
- [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
+ [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19")
 <br>[Nach oben](index "springe zum Anfang der Seite") --->
 
 <br><br><br>
@@ -185,7 +180,7 @@ Schätze vor ihnen einsammeln und deren Anzahl als Kantenlänge für das Quadrat
 verwenden.
 <a name="auf9"></a>
 <!--- **Aufgaben:**
- [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
+ [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19")
 <br>[Nach oben](index "springe zum Anfang der Seite") --->
 
 <br><br><br>
@@ -200,7 +195,7 @@ Schätze enthalten. Ist dies der Fall, so sollen sie in die erste Spalte der zwe
 Zeile laufen. Sonst in die letzte Spalte der zweiten Zeile.
 <a name="auf10"></a>
 <!--- **Aufgaben:**
- [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
+ [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19")
 <br>[Nach oben](index "springe zum Anfang der Seite") --->
 
 <br><br><br>
@@ -218,7 +213,7 @@ Geht davon aus, dass die Piraten in der linken Ecke stehen und nach<br>
 rechts schauen.
 <a name="auf11"></a>
 <!--- **Aufgaben:**
- [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
+ [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19")
 <br>[Nach oben](index "springe zum Anfang der Seite") --->
 
 <br><br><br>
@@ -237,7 +232,7 @@ Vernachlässigt zunächst die Schätze in der ersten Zeile(nicht zählen!). Wer 
 kann sie später noch in den Algorithmus aufnehmen.
 <a name="auf12"></a>
 <!--- **Aufgaben:**
- [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
+ [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19")
 <br>[Nach oben](index "springe zum Anfang der Seite") --->
 
 <br><br><br>
@@ -250,7 +245,7 @@ kann sie später noch in den Algorithmus aufnehmen.
 Implementiert Aufgabe 9 ohne Parameter zu verwenden.
 <a name="auf13"></a>
 <!--- **Aufgaben:**
- [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
+ [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19")
 <br>[Nach oben](index "springe zum Anfang der Seite") --->
 
 <br><br><br>
@@ -265,7 +260,7 @@ Implementiert Aufgabe 9 ohne Parameter zu verwenden.
 also auf einer Spitze stehend.
 <a name="auf14"></a>
 <!--- **Aufgaben:**
- [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
+ [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19")
 <br>[Nach oben](index "springe zum Anfang der Seite") --->
 
 <br><br><br>
@@ -285,7 +280,7 @@ Feld (hier z.B. das 25. Feld) eine Markierung ablegen. Um das Feld möglichst<br
 effizient zu finden, könnt ihr von einer festen Feldbreite ausgehen.
 <a name="auf15"></a>
 <!--- **Aufgaben:**
- [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
+ [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19")
 <br>[Nach oben](index "springe zum Anfang der Seite") --->
 
 <br><br><br>
@@ -306,7 +301,7 @@ Wie könnt Ihr Euer Programm ändern,damit nicht das Spiegelbild, sondern die<br
 Gleichheit der Zeilen überprüft wird?
 <a name="auf16"></a>
 <!--- **Aufgaben:**
- [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
+ [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19")
 <br>[Nach oben](index "springe zum Anfang der Seite") --->
 
 <br><br><br>
@@ -322,7 +317,7 @@ dieser Zeile sollen sie stehen bleiben. Ist keine Zeile mit der ersten Zeile ide
 sollen sie zurück in die erste Zeile laufen.
 <a name="auf17"></a>
 <!--- **Aufgaben:**
- [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
+ [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19")
 <br>[Nach oben](index "springe zum Anfang der Seite") --->
 
 <br><br><br>
@@ -341,7 +336,7 @@ Könnt Ihr die aufgesammelte Intormation auch dazu verwenden, zum Ausgangspunkt<
 zurückzukehren, also hierzu nicht die Rekursion verwenden?
 <a name="auf18"></a>
 <!--- **Aufgaben:**
- [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
+ [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19")
 <br>[Nach oben](index "springe zum Anfang der Seite") --->
 
 <br><br><br>
@@ -364,7 +359,7 @@ interpretiert. D.h. die Piraten von der linken oberen Ecke aus an eine beliebige
 Feldposition navigieren lässt und dort abschließend eine Boje ablegt.
 <a name="auf19"></a>
 <!--- **Aufgaben:**
- [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
+ [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19")
 <br>[Nach oben](index "springe zum Anfang der Seite") --->
 
 <br><br><br>
@@ -379,6 +374,6 @@ Aufgabe 15 kann auch ohne Parameter und Datenstrukturen gelöst werden. Die<br>
 Idee ist wieder die Verwendung von Rekursion und dem Laufzeitkeller.
 <br><br>
 **Aufgaben:**
- [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19") 
+ [1, ](#auf1 "Aufgabe 1") [2, ](#auf2 "Aufgabe 2") [3, ](#auf3 "Aufgabe 3") [4, ](#auf4 "Aufgabe 4") [5, ](#auf5 "Aufgabe 5") [6, ](#auf6 "Aufgabe 6") [7, ](#auf7 "Aufgabe 7") [8, ](#auf8 "Aufgabe 8") [9, ](#auf9 "Aufgabe 9") [10, ](#auf10 "Aufgabe 10") [11, ](#auf11 "Aufgabe 11") [12, ](#auf12 "Aufgabe 12") [13, ](#auf13 "Aufgabe 13") [14, ](#auf14 "Aufgabe 14") [15, ](#auf15 "Aufgabe 15") [16, ](#auf16 "Aufgabe 16") [17, ](#auf17 "Aufgabe 17") [18, ](#auf18 "Aufgabe 18") [19. ](#auf19 "Aufgabe 19")
 <br>[Nach oben](index "springe zum Anfang der Seite")
 <br><br><br><br><br><br><br><br><br>
