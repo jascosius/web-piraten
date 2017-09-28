@@ -110,7 +110,7 @@ class PythonCodeAugmenter
 
     if @tracing_vars
       @tracing_vars.each_with_index do |var_name, var_index|
-        result += "add_traced_variable('#{var_name}', #{var_index})\n"
+        result += "garbledwebpiratenlibraryname.add_traced_variable('#{var_name}', #{var_index})\n"
       end
       result += "\n"
     end

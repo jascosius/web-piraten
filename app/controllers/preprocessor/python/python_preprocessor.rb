@@ -168,30 +168,19 @@ class PythonPreprocessor
     @phase = :execute
     @augmented_code = make_runnable(@augmented_code)
 
-    begin
-      open("log/augmented_code.log", 'a') do |file|
-        file.puts '--------------------------------'
-        file.puts Time.now
-        file.puts '--------------------------------'
-        file.puts @augmented_code
-        file.puts "\n\n\n"
-      end
-    ensure
-      send.call([
-        {:write_file => {:filename => @filename, :content => @augmented_code}},
-        {:execute => {:command => "env PYTHONPATH=$LIB$/python #{VM_PYTHON} -B #{@filename}",
-                      :stdout => 'executeoutput',
-                      :stderr => 'executeerror'}}])
-      # Don't output anything
-      return {:type => :no}
-    end
+    send.call([
+      {:write_file => {:filename => @filename, :content => @augmented_code}},
+      {:execute => {:command => "env PYTHONPATH=$LIB$/python #{VM_PYTHON} -B #{@filename}",
+                    :stdout => 'executeoutput',
+                    :stderr => 'executeerror'}}])
+    # Don't output anything
+    return {:type => :no}
   end
 
   # Handles the case whn our augmented code has failed syntax validation. Move to the next phase,
   # make the original code runnable, and trigger running it.
   def augment_fail(send, line)
     @phase = :execute
-    @augmented_code = nil
     @code = make_runnable(@code)
 
     begin
@@ -199,8 +188,10 @@ class PythonPreprocessor
         file.puts '--------------------------------'
         file.puts Time.now
         file.puts '--------------------------------'
-        file.puts @code
+        file.puts @augmented_code
         file.puts "\n\n\n"
+
+        @augmented_code = nil
       end
     ensure
       send.call([
