@@ -81,6 +81,10 @@ class PythonCodeAugmenter
   def augment_code()
     @augmented_code = ""
 
+    # Configure variable tracing (the variables to be traced are declared at the
+    # beginning of the program)
+    @augmented_code += generate_tracing_configuration()
+
     # Iterate over the original code's lines
     @code.each_line do |line|
       @state[:line_number] += 1
@@ -93,11 +97,25 @@ class PythonCodeAugmenter
 
         # Add stuff if necessary
         line = possibly_add_line_number_comment(line)
-        line = possibly_add_line_number_call(line)
+        line = possibly_add_trace_info_calls(line)
       end
 
       @augmented_code += line + "\n"
     end
+  end
+
+  # Generates the necessary library calls to trace variables.
+  def generate_tracing_configuration()
+    result = ""
+
+    if @tracing_vars
+      @tracing_vars.each_with_index do |var_name, var_index|
+        result += "add_traced_variable('#{var_name}', #{var_index})\n"
+      end
+      result += "\n"
+    end
+
+    return result
   end
 
   # Returns a version of the line with a line number comment added, if this line should in
@@ -119,9 +137,11 @@ class PythonCodeAugmenter
     "try", "try:", "except", "except:", "finally", "finally:"   # Exception handling
   ]
 
-  # Returns a version of the line with a line number method call added, if this line should in
-  # fact have the line number call added. Otherwise, simply returns the line as is.
-  def possibly_add_line_number_call(line)
+  # Returns a version of the line with calls to the tracing methods prepended. These
+  # are calls to send the current line number and values of watched variables back to
+  # the server. If this line shouldn't have these calles added, simply returns the line
+  # as is.
+  def possibly_add_trace_info_calls(line)
     # If the current line does not start a logical line, don't bother
     if not @state[:ll_start]
       return line
@@ -146,7 +166,9 @@ class PythonCodeAugmenter
     end
 
     # Do include a line number call
-    return "#{@state[:indent_string]}garbledwebpiratenlibraryname.line(#{@state[:line_number]})\n#{line}"
+    return "#{@state[:indent_string]}garbledwebpiratenlibraryname.debug(locals(), globals())\n" +
+           "#{@state[:indent_string]}garbledwebpiratenlibraryname.line(#{@state[:line_number]})\n" +
+           "#{line}"
   end
 
 

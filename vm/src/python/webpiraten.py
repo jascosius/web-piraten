@@ -23,6 +23,13 @@ The prefix is used to send proper messages to the server. It is configured throu
 call to configure_prefix(...) below at the start of the user's program.
 """
 
+TRACE_VARS = []
+"""
+List of tuples of variable names and indices to watch. On debug(...) calls, the values of these
+variables are sent to the server, if defined. Variable names identify variables in Python,
+while variable indices identify variables in the corresponding message back to the server.
+"""
+
 def configure_prefix(prefix):
     """
     Called at the beginning of the user's program to setup the prefix the current VM will
@@ -33,6 +40,16 @@ def configure_prefix(prefix):
     # Only allow the prefix to be set once to keep users from messing with it
     if PREFIX is None:
         PREFIX = prefix
+
+def add_traced_variable(name, index):
+    """
+    Adds a new variable to be traced.
+    """
+    global TRACE_VARS
+
+    # Exclude Python-internal stuff
+    if not name.startswith("__"):
+        TRACE_VARS.append((name, index))
 
 
 
@@ -185,3 +202,21 @@ def line(line):
     Notifies the server that the user's code has reached the given line.
     """
     _issue_command("line_{0}".format(line))
+
+def debug(local_scope, global_scope):
+    """
+    If there is a variable with the given name in the given local or global scope, sends
+    a debug message with a string representation of the variable's value.
+    """
+    global TRACE_VARS
+
+    representation = None
+
+    for var_name, var_index in TRACE_VARS:
+        if var_name in local_scope:
+            representation = repr(local_scope[var_name])
+        elif var_name in global_scope:
+            representation = repr(global_scope[var_name])
+
+        if representation is not None:
+            _issue_command("debug_{0}_{1}".format(var_index, representation.replace("\n", "")))
