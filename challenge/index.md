@@ -11,13 +11,6 @@ Die 7. Aufgabe würde also zum Beispiel unter "07.py" abgespeichert und Aufgabe 
 
 **Da die Aufgaben aufeinander aufbauen, sollten sie der Reihe nach bearbeitet werden.**
 
- [Aufgabe 1](#auf1 "Aufgabe 1")  &emsp; &emsp; &emsp;  [Aufgabe 6](#auf6 "Aufgabe 6")     &emsp; &emsp; &emsp;  [Aufgabe 11](#auf11 "Aufgabe 11") &emsp; &emsp; &emsp;  [Aufgabe 16](#auf16 "Aufgabe 16")<br>
- [Aufgabe 2](#auf2 "Aufgabe 2")  &emsp; &emsp; &emsp;  [Aufgabe 7](#auf7 "Aufgabe 7")     &emsp; &emsp; &emsp;  [Aufgabe 12](#auf12 "Aufgabe 12") &emsp; &emsp; &emsp;  [Aufgabe 17](#auf17 "Aufgabe 17")<br>
- [Aufgabe 3](#auf3 "Aufgabe 3")  &emsp; &emsp; &emsp;  [Aufgabe 8](#auf8 "Aufgabe 8")     &emsp; &emsp; &emsp;  [Aufgabe 13](#auf13 "Aufgabe 13") &emsp; &emsp; &emsp;  [Aufgabe 18](#auf18 "Aufgabe 18")<br>
- [Aufgabe 4](#auf4 "Aufgabe 4")  &emsp; &emsp; &emsp;  [Aufgabe 9](#auf9 "Aufgabe 9")     &emsp; &emsp; &emsp;  [Aufgabe 14](#auf14 "Aufgabe 14") &emsp; &emsp; &emsp;  [Aufgabe 19](#auf19 "Aufgabe 19")<br>
- [Aufgabe 5](#auf5 "Aufgabe 5")  &emsp; &emsp; &emsp;  [Aufgabe 10](#auf10 "Aufgabe 10")  &emsp; &emsp; &emsp;  [Aufgabe 15](#auf15 "Aufgabe 15") &emsp; &emsp; &emsp;  [Aufgabe 20](#auf20 "Aufgabe 20")
-
-
 
 ## Grundlagen
 
@@ -163,7 +156,7 @@ Die Piraten sollen überprüfen, ob zwei aufeinander folgende Zeilen gleich viel
 
 ### Aufgabe 11
 
-Schreibt ein Programm, welches alle Schätze in der Piratenwelt zählt und anschließend diese Zahl als aufeinanderfolgende Bojen ausgibt. Sollte für die Ausgabe eine Zeile nicht ausreichen, könnt Ihr mehrere Zeilen verwenden.
+Die Piraten haben ihre Welt mal wieder dezent unaufgeräumt hinterlassen. Schreibt ein Programm, welches zunächst alle Schätze einsammelt um sie dann, beginnend in der unteren linken Ecke, aufeinanderfolgend wieder auszulegen. Sollte für die Ausgabe eine Zeile nicht ausreichen, könnt Ihr mehrere Zeilen verwenden.
 
 Geht davon aus, dass die Piraten am Anfang in der oberen linken Ecke stehen und nach rechts schauen.
 
@@ -203,13 +196,21 @@ Bei dieser Aufgabe stehen die Piraten in der linken oberen Ecke des Feldes. Vor 
 
 
 
+<a name="auf16"></a>
+
+### Aufgabe 16 (Zusatzaufgabe)
+
+Schreibt ein Programm, welches die Piraten zunächst vor ihnen liegende Schätze einsammeln lässt. Die Anzahl der Schätze bestimmt den Radius eines nun mit Bojen zu "zeichnenden" Kreises, der seinen Mittelpunkt in einem Feld der Welt haben soll. Wir gehen davon aus, dass die Seitenlänge eines Feldes 1 ist. Ein Feld soll nun mit einer Boje markiert werden, wenn der Abstand seines Mittelpunkts zum Mittelpunkt des zentralen Feldes kleiner oder gleich dem Radius des zu zeichnenden Kreises ist.
+
+
+
 ## Datenstrukturen
 
 
 
-<a name="auf16"></a>
+<a name="auf17"></a>
 
-### Aufgabe 16
+### Aufgabe 17
 
 Die Piraten sollen überprüfen, ob zwei aufeinanderfolgende Zeilen jeweils das Spiegelbild voneinander sind. Ist dies der Fall, sollen sie ganz nach unten laufen. Sonst ganz nach oben. Folgendes Beispiel soll verdeutlichen, was mit "Spiegelbild voneinander" gemeint ist:
 
@@ -219,25 +220,33 @@ Wie könnt Ihr Euer Programm ändern, damit nicht das Spiegelbild, sondern die G
 
 
 
-<a name="auf17"></a>
+<a name="auf18"></a>
 
-### Aufgabe 17
+### Aufgabe 19
 
 Die Piraten sollen sich eine Zeile (bestehend aus Schätzen und freien Feldern) merken und eine andere Zeile suchen, die mit der ersten Zeile identisch ist. In dieser Zeile sollen sie stehen bleiben. Ist keine Zeile mit der ersten Zeile identisch, sollen sie zurück in die erste Zeile laufen.
 
 
 
-<a name="auf18"></a>
+<a name="auf19"></a>
 
-### Aufgabe 18
+### Aufgabe 19
+
+Schreibt ein Programm, welches sich wie das Programm aus Aufgabe 8.2 verhält, dazu allerdings nicht Rekursion, sondern Listen verwendet. Was würdet ihr in die Listen stecken?
+
+
+
+<a name="auf20"></a>
+
+### Aufgabe 20
 
 Schreibt ein Programm, welches sich ähnlich wie das Programm aus Aufgabe 8.1 verhält. Allerdings sollen die Bojen nicht in umgekehrter Reihenfolge gelegt werden. Vielmehr sollen die Piraten an den Ausgangspunkt zurücksegeln und von dort die zunächst aufgesammelte Spur nachträglich mit Bojen markieren und am Ende der Spur stehen bleiben. Könnt Ihr die aufgesammelten Informationen auch dazu verwenden, zum Ausgangspunkt zurückzukehren, also hierzu nicht die Rekursion verwenden?
 
 
 
-<a name="auf19"></a>
+<a name="auf21"></a>
 
-### Aufgabe 19 (Zusatzaufgabe)
+### Aufgabe 21 (Zusatzaufgabe)
 
 Die Piraten sollen durch einen Spurcode gesteuert werden können. Der Spurcode ist eine Folge von Schätzen, Bojen und freien Feldern, welche durch eine Monsterwelle abgeschlossen wird. Damit der Spurcode auch mehr als 10 Zeichen lang sein kann, darf er auch mehrere Zeilen lang sein. Im Spurcode steht jedes freie Feld für einen Schritt nach vorne, jeder Schatz für eine Drehung nach links und jede Boje für eine Drehung nach rechts.
 
@@ -245,8 +254,8 @@ Schreibt ein Programm, welches die Piraten zunächst einen Spurcode (welcher dir
 
 
 
-<a name="auf20"></a>
+<a name="auf22"></a>
 
-### Aufgabe 20 (Zusatzaufgabe)
+### Aufgabe 22 (Zusatzaufgabe)
 
-Aufgabe 16 kann auch ohne Parameter und Datenstrukturen gelöst werden. Die Idee ist wieder die Verwendung von Rekursion.
+Aufgabe 17 kann auch ohne Parameter und Datenstrukturen gelöst werden. Die Idee ist wieder die Verwendung von Rekursion.
