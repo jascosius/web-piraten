@@ -210,9 +210,9 @@ def debug(local_scope, global_scope):
     """
     global TRACE_VARS
 
-    representation = None
 
     for var_name, var_index in TRACE_VARS:
+        representation = None
         if var_name in local_scope:
             representation = repr(local_scope[var_name])
         elif var_name in global_scope:
