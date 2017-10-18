@@ -6,7 +6,7 @@ if Rails.env.production?
     require ALTERNATIVE_CONF_PATH_PRO
   else
     #Settings for production
-    VM_TIMEOUT = 60 #timeout time in sec for the user code to execute, change in vm.conf as well
+    VM_TIMEOUT = 120 #timeout time in sec for the user code to execute, change in vm.conf as well
     VM_PORT = 11111 #port to connect to the vm for the code execution
     VM_HOST = 'server_ip' #host to connect to the vm for the code execution
     VM_PREFIX = 'abcdefghijk' #prefix to seperate user output and commands (use ASCII characters for best support)
@@ -24,7 +24,7 @@ else
     require ALTERNATIVE_CONF_PATH_DEV
   else
     #Settings for development
-    VM_TIMEOUT = 60 #timeout time in sec for the programm to execute, change in the vm.conf as well
+    VM_TIMEOUT = 120 #timeout time in sec for the programm to execute, change in the vm.conf as well
     VM_PORT = 11111 #port to connect to the vm
     VM_HOST = 'localhost' #host to connect to the vm
     VM_PREFIX = 'abcdefghijk' #prefix to seperate user output and commands

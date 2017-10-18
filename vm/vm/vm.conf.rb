@@ -6,7 +6,7 @@ if ENV.fetch('mode') == 'production'
     require ALTERNATIVE_CONF_PATH_PRO
   else
     PREFIX = 'abcdefghjk' #has to be the same as in application_conf
-    TIMEOUT = 60 #has to be the same as in application_conf
+    TIMEOUT = 120 #has to be the same as in application_conf
     MAX_OPS = 10000 #the maximal counter of ops to execute
     PORT = 11111 #port for ingoing connections, has to be the same as in application.conf
 
@@ -31,7 +31,7 @@ else
     require ALTERNATIVE_CONF_PATH_DEV
   else
     PREFIX = 'abcdefghijk' #has to be the same as in application.conf
-    TIMEOUT = 60 #has to be the same as in application.conf
+    TIMEOUT = 120 #has to be the same as in application.conf
     MAX_OPS = 10000 #the maximal counter of ops to execute
     PORT = 11111 #port for ingoing connections, has to be the same as in application.conf
 
