@@ -63,7 +63,8 @@ GEM
     jquery-ui-rails (4.2.1)
       railties (>= 3.2.16)
     json (1.8.3)
-    kramdown (1.4.1)
+    kramdown (2.3.0)
+      rexml
     less (2.5.1)
       commonjs (~> 0.2.7)
     less-rails (2.5.0)
@@ -115,6 +116,7 @@ GEM
     redis-objects (1.0.0)
       redis (>= 3.0.2)
     ref (1.0.5)
+    rexml (3.2.4)
     sdoc (0.4.1)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
